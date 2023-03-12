@@ -5,12 +5,7 @@ import {DrawerActions, useNavigation} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import React from "react"
-import {
-  Dimensions,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native"
+import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
 import {IconButton, useTheme} from "react-native-paper"
 import useHeaderHeight from "../hooks/useHeaderHeight"
 import {NoteHandler} from "../lib/NoteHandler"
@@ -35,17 +30,6 @@ export default function ListHeader(props: ListHeaderProps) {
   const shallowScreen = useShallowScreen()
   const {listRef} = props
   const navigation = useNavigation()
-  const {height, width} = Dimensions.get("window")
-  const landscapeFromDimensions = width > height
-
-  if (shallowScreen !== landscapeFromDimensions) {
-    console.warn(
-      "shallowScreen =",
-      shallowScreen,
-      "but width > height =",
-      landscapeFromDimensions,
-    )
-  }
 
   const themedStyles = StyleSheet.create({
     logoButton: {

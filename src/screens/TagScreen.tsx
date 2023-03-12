@@ -17,6 +17,7 @@ import useSelectedTag from "@app/hooks/useSelectedTag"
 import {setTagState, TagState} from "@app/modules/visitSlice"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {ImpactFeedbackStyle} from "expo-haptics"
+import {isTablet} from "react-native-device-info"
 import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
 import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
@@ -354,13 +355,20 @@ const TagScreen = ({navigation}: Props) => {
     [brightenThenFade, dimmableIconHolderStyle, theme.colors.primary],
   )
 
+  const iPad = Platform.OS === "ios" && isTablet()
+
+  // avoid split screen controls interfering with favorite button on iPad
+  const topBarStyle = {
+    ...styles.topBar,
+    paddingTop: Math.min(insets.top, 33),
+    ...(iPad ? {left: 120} : {left: 0, right: 0}),
+  }
+
   // need to zero out insets to make modal cover whole screen in ios
   return (
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
-      <View
-        style={[styles.topBar, {paddingTop: Math.min(insets.top, 33)}]}
-        pointerEvents="box-none">
+      <View style={topBarStyle} pointerEvents="box-none">
         {/* using TouchableOpacity instead of button to make sure
                 visual feedback matches shape of button */}
         <TouchableOpacity
@@ -499,8 +507,6 @@ const styles = StyleSheet.create({
   topBar: {
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
     flexDirection: "row",
     justifyContent: "center",
     backgroundColor: "transparent",

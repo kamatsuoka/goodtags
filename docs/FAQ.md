@@ -30,3 +30,12 @@ to streamline the app if I hope to make it sustainable for the long term.
 ## how did you get smooth, auto-rotating transitions to/from sheet music in v2?
 
 So glad you asked. See [transitions](./transitions.md).
+
+## why do the bottom buttons disappear from sheet music view?
+
+The bottom buttons on the sheet music view — play key note, play tracks, navigate up/down in list —
+disappear after a few seconds so you can enjoy the sheet music with fewer distractions.
+
+## what if I want to use those buttons later?
+
+Tap on the sheet music to make the buttons reappear.
