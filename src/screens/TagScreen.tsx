@@ -1,0 +1,550 @@
+/**
+ * Screen for displaying tag sheet music
+ */
+import {useCallback, useEffect, useMemo, useRef, useState} from "react"
+import {
+  ColorValue,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
+import CommonStyles from "../constants/CommonStyles"
+// @ts-ignore
+import useHaptics from "@app/hooks/useHaptics"
+import useSelectedTag from "@app/hooks/useSelectedTag"
+import {setTagState, TagState} from "@app/modules/visitSlice"
+import {NativeStackScreenProps} from "@react-navigation/native-stack"
+import {ImpactFeedbackStyle} from "expo-haptics"
+import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
+import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
+import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
+import {
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context"
+import SoundPlayer from "react-native-sound-player"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import {FABDown} from "../components/FABDown"
+import NoteButton from "../components/NoteButton"
+import SheetMusic from "../components/SheetMusic"
+import TagInfoView from "../components/TagInfoView"
+import TrackMenu from "../components/TrackMenu"
+import VideoView from "../components/VideoView"
+import {useAppDispatch, useAppSelector} from "../hooks"
+import {NoteHandler} from "../lib/NoteHandler"
+import {noteForKey} from "../lib/NotePlayer"
+import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
+import {FavoritesActions} from "../modules/favoritesSlice"
+import {HistoryActions} from "../modules/historySlice"
+import {TagListType} from "../modules/tagLists"
+import {getSelectedTagSetter, getTagListSelector} from "../modules/tagListUtil"
+import {
+  PlayingState,
+  playTrack,
+  setPlayingState,
+  setTagTracks,
+  stopTrack,
+} from "../modules/tracksSlice"
+import {StackParamList} from "../navigation/navigationParams"
+
+type Props = NativeStackScreenProps<StackParamList, "Tag">
+
+/**
+ * Sheet music screen
+ */
+const TagScreen = ({navigation}: Props) => {
+  const haptics = useHaptics()
+  const theme = useTheme()
+  const [buttonsDimmed, setButtonsDimmed] = useState(false)
+  const [tracksVisible, setTracksVisible] = useState(false)
+  const [videosVisible, setVideosVisible] = useState(false)
+  const [infoVisible, setInfoVisible] = useState(false)
+  const [fabOpen, setFabOpen] = useState(false)
+  const insets = useSafeAreaInsets()
+  const dispatch = useAppDispatch()
+  const favoritesById = useAppSelector(state => state.favorites.tagsById)
+  const tagListType = useAppSelector(state => state.visit.tagListType)
+  const {allTagIds, selectedTag} = useAppSelector(
+    getTagListSelector(tagListType),
+  )
+  const playingState = useAppSelector(state => state.tracks.playingState)
+  const tag = useSelectedTag(tagListType)
+  const keyNote = noteForKey(tag.key)
+  const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
+  const tracksState = useAppSelector(state => state.tracks)
+  const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
+  const delabeledSelectedTag = useAppSelector(
+    state => state.favorites.strandedTag,
+  )
+
+  const setSelectedTag = getSelectedTagSetter(tagListType)
+
+  const themedStyles = StyleSheet.create({
+    id: {
+      color: theme.colors.primary,
+      fontSize: 18,
+      marginRight: 7,
+    },
+    idHolder: {
+      alignItems: "baseline",
+      backgroundColor: IdBackground,
+      borderBottomLeftRadius: 7,
+      borderBottomRightRadius: 7,
+      borderColor: theme.colors.secondaryContainer,
+      borderWidth: 2,
+      borderTopWidth: 0,
+      flexDirection: "row",
+      paddingHorizontal: 7,
+      paddingBottom: 4,
+      paddingVertical: Platform.OS === "ios" ? 4 : 0,
+    },
+    modal: {
+      ...CommonStyles.modal,
+      borderWidth: 1,
+      backgroundColor: theme.colors.backdrop,
+    },
+    videoModal: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.backdrop,
+    },
+    iconHolderDim: {
+      backgroundColor: theme.colors.inverseOnSurface,
+      opacity: BUTTON_DIM_OPACITY,
+    },
+    iconHolderBright: {
+      backgroundColor: theme.colors.inverseOnSurface,
+      opacity: 1.0,
+    },
+  })
+
+  const videoModalStyle = StyleSheet.compose<ViewStyle>(
+    themedStyles.modal,
+    themedStyles.videoModal,
+  )
+
+  const dimmerTimerRef = useRef(0)
+
+  const BUTTON_DIM_TIME = 4000
+
+  const brightenButtons = useCallback(() => {
+    clearTimeout(dimmerTimerRef.current)
+    setButtonsDimmed(false)
+  }, [])
+
+  const dimButtons = useCallback(() => {
+    clearTimeout(dimmerTimerRef.current)
+    setButtonsDimmed(true)
+  }, [])
+
+  const brightenThenFade = useCallback(() => {
+    brightenButtons()
+    // @ts-ignore
+    dimmerTimerRef.current = setTimeout(() => {
+      setButtonsDimmed(true)
+    }, BUTTON_DIM_TIME)
+  }, [brightenButtons])
+
+  useEffect(() => {
+    brightenThenFade()
+    return () => clearTimeout(dimmerTimerRef.current)
+  }, [brightenThenFade])
+
+  const HISTORY_MIN_VIEW_TIME = 7000
+  useEffect(() => {
+    // after viewing tag for a while, add it to history
+    const timeoutId = setTimeout(() => {
+      dispatch(HistoryActions.addHistory({tag}))
+    }, HISTORY_MIN_VIEW_TIME)
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [dispatch, tag])
+
+  // set track data into store
+  useEffect(() => {
+    dispatch(setTagTracks(tag))
+  }, [dispatch, tag])
+
+  useEffect(() => {
+    // Subscribe to FinishedPlaying event so we can flip the
+    // track control back to 'play'. This may take a few seconds.
+    const onFinishedPlayingSubscription = SoundPlayer.addEventListener(
+      "FinishedPlaying",
+      ({success}) => {
+        console.log("got FinishedPlaying")
+        if (!success) {
+          console.log(
+            "got success = false from SoundPlayer FinishedPlaying callback",
+          )
+        }
+        dispatch(setPlayingState(PlayingState.ended))
+      },
+    )
+    return () => {
+      // When the conponent unmounts, stop the track and remove the FinishedPlaying subscription
+      dispatch(stopTrack())
+      onFinishedPlayingSubscription.remove()
+    }
+  }, [dispatch, selectedTag])
+
+  /**
+   * Go back to the Home screen (includes all tag lists),
+   * setting cameFromTagScreen to enable scrolling to current tag in list
+   */
+  function goBack() {
+    if (
+      tagListType === TagListType.Favorites &&
+      delabeledSelectedTag?.label === selectedLabel &&
+      delabeledSelectedTag?.tag.id === selectedTag?.id
+    ) {
+      dispatch(FavoritesActions.removeStrandedTag())
+    }
+    dispatch(setTagState(TagState.closing))
+    navigation.goBack()
+  }
+
+  function selectPrevTag() {
+    // causes previous tag in list to be displayed
+    if (selectedTag) {
+      const i = selectedTag.index
+      if (i > 0) {
+        selectTag(i - 1)
+      }
+    }
+  }
+
+  function selectNextTag() {
+    // causes next tag in list to be displayed
+    if (selectedTag) {
+      const i = selectedTag.index
+      if (i < allTagIds.length - 1) {
+        selectTag(i + 1)
+      }
+    }
+  }
+
+  function selectTag(index: number) {
+    const id = allTagIds[index]
+    dispatch(setSelectedTag({index, id}))
+  }
+
+  function indexValid(index: number) {
+    return index >= 0 && index < allTagIds.length
+  }
+
+  function getMaxIndex(): number {
+    if (selectedTag !== undefined && indexValid(selectedTag.index)) {
+      return allTagIds.length - 1
+    }
+    // may happen when last favorite is removed
+    return 0 // sus
+  }
+
+  const hasTracks = (): boolean => {
+    const tracks = tag.tracks
+    return tracks?.length > 0 && tracks[0] !== undefined
+  }
+  const hasVideos = (): boolean => {
+    const videos = tag.videos
+    return videos?.length > 0 && videos[0] !== undefined
+  }
+  const hasPrevTag = () => selectedTag && selectedTag.index > 0
+  const hasNextTag = () => selectedTag && selectedTag.index < getMaxIndex()
+
+  const fabActions = [
+    {
+      icon: "file-document-outline",
+      label: "tag info",
+      onPress: () => setInfoVisible(true),
+    },
+    {
+      icon: "tag-outline",
+      label: "labels",
+      onPress: () => navigation.navigate("TagLabels"),
+    },
+  ]
+  if (hasTracks()) {
+    fabActions.push({
+      icon: "headphones",
+      label: "tracks",
+      onPress: () => setTracksVisible(true),
+    })
+  }
+  if (hasVideos()) {
+    fabActions.push({
+      icon: "video-box",
+      label: "videos",
+      onPress: () => setVideosVisible(true),
+    })
+  }
+
+  async function toggleFavorite(id: number) {
+    await haptics.selectionAsync()
+    brightenThenFade()
+    if (favoritesById[id]) {
+      const lastFavorite =
+        tagListType === TagListType.Favorites && allTagIds.length === 1
+      dispatch(FavoritesActions.removeFavorite(id))
+      if (lastFavorite) {
+        await haptics.impactAsync(ImpactFeedbackStyle.Light)
+        return goBack()
+      }
+    } else {
+      dispatch(FavoritesActions.addFavorite(tag))
+    }
+  }
+
+  const playOrPause = () => {
+    if (tracksState.selectedTrack) {
+      if (playingState === PlayingState.playing) {
+        SoundPlayer.pause()
+        dispatch(setPlayingState(PlayingState.paused))
+      } else {
+        dispatch(playTrack(false))
+      }
+    }
+  }
+
+  const noteIcon = useCallback(
+    (props: {size: number; color: ColorValue}) => (
+      <NoteButton note={keyNote} {...props} />
+    ),
+    [keyNote],
+  )
+  const memoizedSheetMusic = useMemo(
+    () => <SheetMusic uri={tag.uri} onPress={brightenThenFade} />,
+    [brightenThenFade, tag.uri],
+  )
+
+  const SMALL_BUTTON_SIZE = 26
+  const BIG_BUTTON_SIZE = 40
+
+  const dimmableIconHolderStyle = buttonsDimmed
+    ? themedStyles.iconHolderDim
+    : themedStyles.iconHolderBright
+
+  type AppActionProps = {
+    icon: string | IconSource
+    onPress: () => void
+    disabled?: boolean
+    onPressIn?: () => void
+    onPressOut?: () => void
+  }
+
+  const AppAction = useCallback(
+    (props: AppActionProps) => {
+      return (
+        <Appbar.Action
+          icon={props.icon}
+          color={theme.colors.primary}
+          onPress={() => {
+            brightenThenFade()
+            props.onPress()
+          }}
+          onPressIn={props.onPressIn}
+          onPressOut={props.onPressOut}
+          disabled={props.disabled}
+          size={BIG_BUTTON_SIZE}
+          style={dimmableIconHolderStyle}
+        />
+      )
+    },
+    [brightenThenFade, dimmableIconHolderStyle, theme.colors.primary],
+  )
+
+  // need to zero out insets to make modal cover whole screen in ios
+  return (
+    <View style={CommonStyles.container}>
+      {memoizedSheetMusic}
+      <View
+        style={[styles.topBar, {paddingTop: Math.min(insets.top, 33)}]}
+        pointerEvents="box-none">
+        {/* using TouchableOpacity instead of button to make sure
+                visual feedback matches shape of button */}
+        <TouchableOpacity
+          onPress={() => toggleFavorite(tag.id)}
+          activeOpacity={0.4}>
+          <View style={themedStyles.idHolder}>
+            <Text style={themedStyles.id}># {tag.id}</Text>
+            <Icon
+              name={favoritesById[tag.id] ? "heart" : "heart-outline"}
+              color={theme.colors.primary}
+              size={16}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonHolder} pointerEvents="box-none">
+        <View style={styles.actionBar} pointerEvents="box-none">
+          <Appbar.BackAction
+            color={theme.colors.primary}
+            onPress={goBack}
+            size={SMALL_BUTTON_SIZE}
+            style={styles.backButton}
+          />
+        </View>
+        {buttonsDimmed ? null : (
+          <Animated.View
+            style={styles.actionBar}
+            pointerEvents="box-none"
+            entering={FadeIn.duration(100)}
+            exiting={FadeOut.duration(1200)}>
+            {/* not using AppAction here b/c onPressOut got lost */}
+            <Appbar.Action
+              icon={noteIcon}
+              onPress={() => {
+                // handler required for onPressIn to be handled
+              }}
+              onPressIn={async () => {
+                await haptics.selectionAsync()
+                noteHandler.onPressIn()
+                brightenButtons()
+              }}
+              onPressOut={async () => {
+                await haptics.selectionAsync()
+                noteHandler.onPressOut()
+                brightenThenFade()
+              }}
+              color={theme.colors.primary}
+              size={BIG_BUTTON_SIZE}
+              style={dimmableIconHolderStyle}
+            />
+            <AppAction
+              icon={playingState === PlayingState.playing ? "pause" : "play"}
+              onPress={async () => {
+                await haptics.selectionAsync()
+                dispatch(playOrPause)
+              }}
+              disabled={!hasTracks()}
+            />
+            <Appbar.Content title=" " pointerEvents="none" />
+            <AppAction
+              icon="arrow-up"
+              onPress={async () => {
+                await haptics.selectionAsync()
+                selectPrevTag()
+              }}
+              disabled={!hasPrevTag()}
+            />
+            <AppAction
+              icon="arrow-down"
+              onPress={async () => {
+                await haptics.selectionAsync()
+                selectNextTag()
+              }}
+              disabled={!hasNextTag()}
+            />
+          </Animated.View>
+        )}
+        <FABDown
+          icon={fabOpen ? "minus" : "plus"}
+          open={fabOpen}
+          actions={fabActions}
+          onStateChange={({open}) => {
+            dimButtons()
+            setFabOpen(open)
+          }}
+          style={styles.fabGroup}
+          fabStyle={styles.fabDown}
+        />
+      </View>
+      <SafeAreaInsetsContext.Provider
+        value={{
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}>
+        <Modal
+          visible={infoVisible}
+          onDismiss={() => setInfoVisible(false)}
+          style={themedStyles.modal}>
+          <TagInfoView tag={tag} tagListType={tagListType} />
+        </Modal>
+        {hasVideos() ? (
+          <Modal
+            visible={videosVisible}
+            onDismiss={() => setVideosVisible(false)}
+            style={videoModalStyle}>
+            <VideoView tag={tag} />
+          </Modal>
+        ) : null}
+        <Modal
+          visible={tracksVisible}
+          onDismiss={() => setTracksVisible(false)}
+          style={themedStyles.modal}>
+          <TrackMenu onDismiss={() => setTracksVisible(false)} />
+        </Modal>
+        {videosVisible ? (
+          <IconButton
+            icon="close"
+            mode="contained"
+            onPress={() => setVideosVisible(false)}
+            style={styles.closeButton}
+          />
+        ) : null}
+      </SafeAreaInsetsContext.Provider>
+    </View>
+  )
+}
+
+const BUTTON_DIM_OPACITY = 0.5
+
+const styles = StyleSheet.create({
+  container: {
+    ...CommonStyles.container,
+  },
+  topBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+  },
+  buttonHolder: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 3,
+    justifyContent: "space-between",
+    paddingHorizontal: 18,
+  },
+  actionBar: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 80,
+  },
+  fabDown: {
+    ...CommonStyles.fabDown,
+    marginBottom: 20,
+  },
+  fabGroup: {
+    paddingTop: 21,
+    paddingRight: 16,
+  },
+  noteIcon: {
+    position: "absolute",
+    margin: 20,
+    left: 0,
+    bottom: 56,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 5,
+    left: 10,
+  },
+  backButton: {
+    backgroundColor: IdBackground,
+  },
+  iconHolder: {
+    backgroundColor: InversePrimaryLowAlpha,
+  },
+})
+
+export default TagScreen

@@ -1,0 +1,12 @@
+node_modules/
+vendor/
+.bundle/
+.expo/
+.github/
+.idea/
+.yarn/
+android/
+ios/
+keystores/
+patches/
+scripts/

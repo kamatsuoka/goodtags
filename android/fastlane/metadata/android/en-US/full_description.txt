@@ -1,0 +1,11 @@
+Goodtags is a front end to the barbershoptags.com tag database with a focus on ease of use.
+
+Key Features:
+
+- Navigate seach results from within the sheet music view, to quickly find the right version of the tag you're looking for
+- Retrieve tags by id number 
+- Press a button in the sheet music to hear the root of the key the tag is in
+- Listen to learning tracks while looking at sheet music
+- Add favorites and organize them using labels
+- Backup and sync your favorites across devices
+- Pitch pipe

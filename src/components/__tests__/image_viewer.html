@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>image viewer</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      div#positioner {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      img#music {
+        object-fit: contain;
+        width: 100%;
+      }
+      div#buttons {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 40px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+      .left {
+        margin: 10px;
+        font-size: 250%;
+      }
+      .right {
+        margin: 10px;
+        font-size: 250%;
+      }
+    </style>
+    <script>
+      const urls = [
+        "https://www.barbershoptags.com/tags/A_Foggy_Day_.jpg",
+        "https://www.barbershoptags.com/tags/If_(Simply_Fly_Away).png",
+        "https://www.barbershoptags.com/tags/Foggy_London_Town.gif",
+      ]
+      let selectedIndex = 0
+      function prev() {
+        if (selectedIndex > 0) selectedIndex -= 1
+        else selectedIndex = urls.length - 1
+        document.querySelector("#music").src = urls[selectedIndex]
+      }
+      function next() {
+        if (selectedIndex < urls.length - 1) selectedIndex += 1
+        else selectedIndex = 0
+        document.querySelector("#music").src = urls[selectedIndex]
+      }
+      window.onload = () => (document.querySelector("#music").src = urls[0])
+    </script>
+  </head>
+  <body>
+    <div id="positioner">
+      <img id="music" src="" alt="" />
+      <div id="buttons">
+        <a class="button left" href="javascript:prev()">⬅️</a>
+        <a class="button right" href="javascript:next()">➡️</a>
+      </div>
+    </div>
+  </body>
+</html>

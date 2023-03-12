@@ -1,0 +1,2 @@
+json_key_file("pc-api-7398647591476668448-602-a16eb0cec7cb.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("com.fogcitysingers.goodtags") # e.g. com.krausefx.app
