@@ -22,12 +22,14 @@ the instructions under the **React Native CLI Quickstart** tab.
 
 - `yarn start`
 
-## launch goodtags in an android emulator
+## build and launch goodtags in an android emulator
 
 - `yarn android`
 
-## launch goodtags in an ios simulator
+## build and launch goodtags in an ios simulator
 
+- `bundle install`
+- `yarn pod`
 - `yarn ios`
 
 # test
