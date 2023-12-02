@@ -44,9 +44,6 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
 *.keystore
 !debug.keystore
 
@@ -95,3 +92,10 @@ pc-api*.json
 .expo
 dist/
 web-build/
+
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+# testing
+/coverage
