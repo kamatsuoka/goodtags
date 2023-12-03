@@ -70,9 +70,6 @@ const styles = StyleSheet.create({
   title: {
     paddingLeft: 8,
   },
-  divider: {
-    marginVertical: 5,
-  },
 })
 
 export default SearchOptions

@@ -5,7 +5,7 @@ import {Checkbox, RadioButton, Searchbar, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import {Collection, Parts} from "../constants/Search"
 import {useAppDispatch} from "../hooks"
-import {newSearch, SearchFilters} from "../modules/searchSlice"
+import {SearchFilters, newSearch} from "../modules/searchSlice"
 import SearchOptions from "./SearchOptions"
 
 type Props = {
@@ -31,6 +31,8 @@ export default function SearchDialog(props: Props) {
       flexDirection: "row",
       justifyContent: "flex-start",
       flexWrap: "wrap",
+      alignItems: "flex-start",
+      paddingLeft: 20,
     },
     searchInput: {
       borderWidth: 0,

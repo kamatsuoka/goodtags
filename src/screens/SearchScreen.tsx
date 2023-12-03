@@ -246,9 +246,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   compactSearchBar: {
-    flex: 1,
     marginHorizontal: 5,
     margin: 5,
+    maxWidth: 200,
   },
   compactSearchContent: {
     flexDirection: "row-reverse",
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   },
   buttonHolder: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
   },
   statusText: {
     paddingTop: 2,
