@@ -21,10 +21,10 @@ import {useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {
   InitialFilters,
+  SearchActions,
   isASearchPayload,
   moreSearch,
   newSearch,
-  SearchActions,
   selectSearchResults,
 } from "../modules/searchSlice"
 import {
@@ -186,7 +186,10 @@ const SearchScreen = () => {
         mode="elevated"
         contentStyle={styles.compactSearchContent}
         icon="magnify"
-        onPress={() => setSearchMenuVisible(true)}
+        onPress={() => {
+          dispatch(SearchActions.clearSearch())
+          return setSearchMenuVisible(true)
+        }}
         style={styles.compactSearchBar}
         labelStyle={
           query

@@ -90,3 +90,8 @@ android/app/release/
 *.p12
 pc-api*.json
 *.mobileprovision
+
+# Expo
+.expo
+dist/
+web-build/
