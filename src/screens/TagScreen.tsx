@@ -194,8 +194,9 @@ const TagScreen = ({navigation}: Props) => {
   }, [dispatch, selectedTag])
 
   /**
-   * Go back to the Home screen (includes all tag lists),
-   * setting cameFromTagScreen to enable scrolling to current tag in list
+   * Go back to the Home screen (includes all tag lists).
+   * Set TagState to closing so that when we return to the Home screen,
+   * we can scroll to the selected tag.
    */
   function goBack() {
     if (
