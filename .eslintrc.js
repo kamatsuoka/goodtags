@@ -35,6 +35,15 @@ module.exports = {
       files: ["*.ts", "*.tsx"],
       rules: {
         "@typescript-eslint/no-shadow": ["error"],
+        "import/order": [
+          "warn",
+          {
+            alphabetize: {
+              order: "asc",
+              caseInsensitive: true,
+            },
+          },
+        ],
         "linebreak-style": "off",
         "no-shadow": "off",
         "no-undef": "off",
