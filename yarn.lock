@@ -7676,6 +7676,7 @@ __metadata:
     metro-react-native-babel-preset: 0.76.8
     prettier: ^2.8.1
     prettier-plugin-organize-imports: ^3.2.2
+    proxy-memoize: ^2.0.4
     react: 18.2.0
     react-dom: ^18.2.0
     react-native: 0.72.6
@@ -11650,10 +11651,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-compare@npm:2.5.1":
+  version: 2.5.1
+  resolution: "proxy-compare@npm:2.5.1"
+  checksum: c7cc151ac255150bcb24becde6495b3e399416c31991af377ce082255b51f07eaeb5d861bf8bf482703e92f88b90a5892ad57d3153ea29450d03ef921683d9fa
+  languageName: node
+  linkType: hard
+
 "proxy-from-env@npm:^1.1.0":
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
   checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
+  languageName: node
+  linkType: hard
+
+"proxy-memoize@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "proxy-memoize@npm:2.0.4"
+  dependencies:
+    proxy-compare: 2.5.1
+  checksum: d97b5cf6c50ebe050c5ff7ecd0bb040423d0ba41deb5795d421a34159deb12fbd9d99792fb9108ffe03e6ada225d863b2d31f51f2230bf4fcb2761f30987c7d7
   languageName: node
   linkType: hard
 

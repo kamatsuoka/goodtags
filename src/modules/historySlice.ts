@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import _ from "lodash"
+import {memoize} from "proxy-memoize"
 import {SortOrder} from "../constants/Search"
 import Tag from "../lib/models/Tag"
 import {RootState} from "../store"
@@ -75,7 +76,7 @@ const historySlice = createSlice({
   },
 })
 
-export const selectHistory = (state: RootState): TagListState => {
+export const selectHistory = memoize((state: RootState): TagListState => {
   return {
     allTagIds: state.history.allTagIds,
     error: state.history.error,
@@ -84,7 +85,7 @@ export const selectHistory = (state: RootState): TagListState => {
     tagsById: state.history.tagsById,
     sortOrder: state.history.sortOrder,
   }
-}
+})
 
 export const HistoryActions = historySlice.actions
 
