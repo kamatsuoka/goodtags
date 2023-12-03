@@ -9,7 +9,6 @@ import Tag, {
 import {RootState} from "@app/store"
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
 import _ from "lodash"
-import {memoize} from "proxy-memoize"
 import {fetchAndConvertTags} from "./searchutil"
 import {
   LoadingState,
@@ -291,7 +290,7 @@ export const refreshFavorite = createAsyncThunk<
   }
 })
 
-export const selectFavorites = memoize((state: RootState): TagListState => {
+export const selectFavorites = (state: RootState): TagListState => {
   const favs = state.favorites
   if (favs.selectedLabel) {
     const ids = favs.tagIdsByLabel[favs.selectedLabel]
@@ -337,7 +336,7 @@ export const selectFavorites = memoize((state: RootState): TagListState => {
       sortOrder: favs.sortOrder,
     }
   }
-})
+}
 
 export const FavoritesActions = favoritesSlice.actions
 

@@ -7676,7 +7676,6 @@ __metadata:
     metro-react-native-babel-preset: 0.76.8
     prettier: ^2.8.1
     prettier-plugin-organize-imports: ^3.2.2
-    proxy-memoize: ^2.0.4
     react: 18.2.0
     react-dom: ^18.2.0
     react-native: 0.72.6
@@ -7687,7 +7686,7 @@ __metadata:
     react-native-error-boundary: ^1.1.16
     react-native-gesture-handler: ~2.12.0
     react-native-gradle-plugin: ^0.71.19
-    react-native-paper: ^5.1.2
+    react-native-paper: ^5.11.3
     react-native-pdf: ^6.6.2
     react-native-promise-rejection-utils: ^0.0.1
     react-native-reanimated: ~3.3.0
@@ -11651,26 +11650,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-compare@npm:2.5.1":
-  version: 2.5.1
-  resolution: "proxy-compare@npm:2.5.1"
-  checksum: c7cc151ac255150bcb24becde6495b3e399416c31991af377ce082255b51f07eaeb5d861bf8bf482703e92f88b90a5892ad57d3153ea29450d03ef921683d9fa
-  languageName: node
-  linkType: hard
-
 "proxy-from-env@npm:^1.1.0":
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
   checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
-  languageName: node
-  linkType: hard
-
-"proxy-memoize@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "proxy-memoize@npm:2.0.4"
-  dependencies:
-    proxy-compare: 2.5.1
-  checksum: d97b5cf6c50ebe050c5ff7ecd0bb040423d0ba41deb5795d421a34159deb12fbd9d99792fb9108ffe03e6ada225d863b2d31f51f2230bf4fcb2761f30987c7d7
   languageName: node
   linkType: hard
 
@@ -11931,9 +11914,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-paper@npm:^5.1.2":
-  version: 5.11.0
-  resolution: "react-native-paper@npm:5.11.0"
+"react-native-paper@npm:^5.11.3":
+  version: 5.11.3
+  resolution: "react-native-paper@npm:5.11.3"
   dependencies:
     "@callstack/react-theme-provider": ^3.0.9
     color: ^3.1.2
@@ -11943,7 +11926,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-vector-icons: "*"
-  checksum: ae1d26bd36520ae759a386146a85765c2705460ccc874cb8062b15643988db6512b09db063c3826b328d2ed9a282f4730b07517b92984e3b91cd21a2709ee9ba
+  checksum: 33e6877e8c22f3631de109f31450fe139f2d2d2a088326e57b0cb264ffde99772b30ebbd47451a8bde313a103b5df2bb75dbf0154833475691a65fbe41700b6f
   languageName: node
   linkType: hard
 

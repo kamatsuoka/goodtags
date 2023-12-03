@@ -31,8 +31,17 @@ const TagList = (props: TagListProps) => {
     min: 0,
   })
   const dispatch = useAppDispatch()
-  const {allTagIds, tagsById, selectedTag, loadingState} = useAppSelector(
-    getTagListSelector(props.tagListType),
+  const allTagIds = useAppSelector(
+    state => getTagListSelector(props.tagListType)(state).allTagIds,
+  )
+  const tagsById = useAppSelector(
+    state => getTagListSelector(props.tagListType)(state).tagsById,
+  )
+  const selectedTag = useAppSelector(
+    state => getTagListSelector(props.tagListType)(state).selectedTag,
+  )
+  const loadingState = useAppSelector(
+    state => getTagListSelector(props.tagListType)(state).loadingState,
   )
   const setSelectedTag = getSelectedTagSetter(props.tagListType)
   const autoRotate = useAppSelector(state => state.options.autoRotate)

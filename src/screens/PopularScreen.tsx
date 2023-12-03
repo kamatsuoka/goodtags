@@ -14,8 +14,8 @@ import {SortOrder} from "../constants/Search"
 import {AppDispatch, useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {
-  getPopularTags,
   PopularActions,
+  getPopularTags,
   selectPopular,
 } from "../modules/popularSlice"
 import {
@@ -32,7 +32,11 @@ const PopularScreen = () => {
   const haptics = useHaptics()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
-  const {loadingState, error, sortOrder} = useAppSelector(selectPopular)
+  const loadingState = useAppSelector(
+    state => selectPopular(state).loadingState,
+  )
+  const error = useAppSelector(state => selectPopular(state).error)
+  const sortOrder = useAppSelector(state => selectPopular(state).sortOrder)
   const listRef = useRef<FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 

@@ -4,7 +4,6 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit"
-import {memoize} from "proxy-memoize"
 import {Collection, Parts, SortOrder} from "../constants/Search"
 import {
   buildTagIds,
@@ -225,7 +224,7 @@ export const moreSearch = createAsyncThunk<
 export const SearchActions = searchSlice.actions
 export default searchSlice.reducer
 
-export const selectSearchResults = memoize((state: RootState): TagListState => {
+export const selectSearchResults = (state: RootState): TagListState => {
   return {
     allTagIds: state.search.results.allTagIds,
     error: state.search.error,
@@ -234,4 +233,4 @@ export const selectSearchResults = memoize((state: RootState): TagListState => {
     selectedTag: state.search.selectedTag,
     sortOrder: state.search.sortOrder,
   }
-})
+}

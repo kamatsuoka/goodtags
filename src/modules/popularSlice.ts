@@ -1,5 +1,4 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {memoize} from "proxy-memoize"
 import {QueryParams, SortOrder} from "../constants/Search"
 import {
   buildTagIds,
@@ -150,7 +149,7 @@ export const getPopularTags = createAsyncThunk<
   }
 })
 
-export const selectPopular = memoize((state: RootState): TagListState => {
+export const selectPopular = (state: RootState): TagListState => {
   return {
     allTagIds: state.popular.allTagIds,
     error: state.popular.error,
@@ -159,7 +158,7 @@ export const selectPopular = memoize((state: RootState): TagListState => {
     sortOrder: state.popular.sortOrder,
     tagsById: state.popular.tagsById,
   }
-})
+}
 
 export const PopularActions = popularSlice.actions
 export default popularSlice.reducer

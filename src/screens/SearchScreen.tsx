@@ -41,7 +41,13 @@ const SearchScreen = () => {
   const haptics = useHaptics()
   const theme = useTheme()
   const [searchMenuVisible, setSearchMenuVisible] = useState(false)
-  const {loadingState, error, sortOrder} = useAppSelector(selectSearchResults)
+  const loadingState = useAppSelector(
+    state => selectSearchResults(state).loadingState,
+  )
+  const error = useAppSelector(state => selectSearchResults(state).error)
+  const sortOrder = useAppSelector(
+    state => selectSearchResults(state).sortOrder,
+  )
   const listRef = useRef<FlashList<number>>(null)
   const moreAvailable = useAppSelector(
     state => state.search.results.moreAvailable,
@@ -182,22 +188,41 @@ const SearchScreen = () => {
       {loadingState === LoadingState.morePending ? (
         <ActivityIndicator style={styles.spinner} size="small" />
       ) : null}
-      <Button
-        mode="elevated"
-        contentStyle={styles.compactSearchContent}
-        icon="magnify"
-        onPress={() => {
-          dispatch(SearchActions.clearSearch())
-          return setSearchMenuVisible(true)
-        }}
-        style={styles.compactSearchBar}
-        labelStyle={
-          query
-            ? styles.compactSearchLabel
-            : themedStyles.compactSearchLabelEmpty
-        }>
-        {query ? query : "search for tags"}
-      </Button>
+      <View style={styles.buttonHolder}>
+        <Button
+          mode="elevated"
+          contentStyle={styles.compactSearchContent}
+          icon="magnify"
+          onPress={() => {
+            dispatch(SearchActions.clearSearch())
+            return setSearchMenuVisible(true)
+          }}
+          style={styles.compactSearchBar}
+          labelStyle={
+            query
+              ? styles.compactSearchLabel
+              : themedStyles.compactSearchLabelEmpty
+          }>
+          {"new search"}
+        </Button>
+        {query ? (
+          <Button
+            mode="elevated"
+            contentStyle={styles.compactSearchContent}
+            icon="magnify"
+            onPress={() => {
+              return setSearchMenuVisible(true)
+            }}
+            style={styles.compactSearchBar}
+            labelStyle={
+              query
+                ? styles.compactSearchLabel
+                : themedStyles.compactSearchLabelEmpty
+            }>
+            {query}
+          </Button>
+        ) : null}
+      </View>
       <Snackbar
         visible={loadingState === LoadingState.failed}
         onDismiss={setIdle}
@@ -230,8 +255,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   compactSearchBar: {
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     margin: 5,
+    maxWidth: "50%",
   },
   compactSearchContent: {
     flexDirection: "row-reverse",
@@ -244,6 +270,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingBottom: 0,
     marginBottom: 0,
+  },
+  buttonHolder: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   statusText: {
     paddingTop: 2,
