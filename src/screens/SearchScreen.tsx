@@ -205,16 +205,11 @@ const SearchScreen = () => {
           <Button
             mode="elevated"
             contentStyle={styles.compactSearchContent}
-            icon="magnify"
             onPress={() => {
               return setSearchMenuVisible(true)
             }}
             style={styles.compactSearchBar}
-            labelStyle={
-              query
-                ? styles.compactSearchLabel
-                : themedStyles.compactSearchLabelEmpty
-            }>
+            labelStyle={styles.compactSearchLabel}>
             {query}
           </Button>
         ) : null}
@@ -251,9 +246,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   compactSearchBar: {
+    flex: 1,
     marginHorizontal: 5,
     margin: 5,
-    maxWidth: "50%",
   },
   compactSearchContent: {
     flexDirection: "row-reverse",
@@ -269,8 +264,7 @@ const styles = StyleSheet.create({
   },
   buttonHolder: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
   },
   statusText: {
     paddingTop: 2,
