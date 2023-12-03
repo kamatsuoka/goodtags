@@ -31,7 +31,6 @@ type LabelsState = {
   labeledSortOrder: SortOrder
   labeledSelectedTag?: SelectedTag
   labelError?: string
-  migratedV1: boolean
   // selected tag that has had selected label removed
   strandedTag?: {tag: Tag; label: string}
 }
@@ -50,7 +49,6 @@ export const LabelsInitialState: LabelsState = {
   labeledById: {},
   labels: [],
   labeledSortOrder: SortOrder.alpha,
-  migratedV1: false,
 }
 
 export const InitialState: FavoritesState = {
@@ -244,20 +242,6 @@ const favoritesSlice = createSlice({
     },
     setLabels: (state, action: PayloadAction<string[]>) => {
       state.labels = action.payload
-    },
-    migrateV1Labels: state => {
-      // v1 made all labeled tags be favorites,
-      // so it didn't have a separate labeledById object
-      if (!state.migratedV1) {
-        const labeledIds = Object.values(state.tagIdsByLabel).flat()
-        const uniqueIds = [...new Set(labeledIds)]
-        uniqueIds.forEach(id => {
-          if (!(id in state.labeledById) && id in state.tagsById) {
-            state.labeledById[id] = {...state.tagsById[id]}
-          }
-        })
-        state.migratedV1 = true
-      }
     },
   },
   extraReducers: builder => {
