@@ -198,11 +198,7 @@ const SearchScreen = () => {
             return setSearchMenuVisible(true)
           }}
           style={styles.compactSearchBar}
-          labelStyle={
-            query
-              ? styles.compactSearchLabel
-              : themedStyles.compactSearchLabelEmpty
-          }>
+          labelStyle={themedStyles.compactSearchLabelEmpty}>
           {"new search"}
         </Button>
         {query ? (
