@@ -25,7 +25,7 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@reduxjs/toolkit": "^1.9.0",
     "@shopify/flash-list": "^1.6.3",
-    "axios": "^1.2.1",
+    "axios": "^1.6.2",
     "expo": "^49.0.0",
     "expo-haptics": "~12.4.0",
     "fast-xml-parser": "^4.0.12",
@@ -53,7 +53,8 @@
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.4.2"
+    "redux-thunk": "^2.4.2",
+    "semver": "^7.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -62,7 +63,7 @@
     "@babel/runtime": "^7.20.0",
     "@react-native/eslint-config": "^0.72.2",
     "@react-native/metro-config": "^0.72.11",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-native": "^11.5.0",
     "@tsconfig/react-native": "^3.0.0",
