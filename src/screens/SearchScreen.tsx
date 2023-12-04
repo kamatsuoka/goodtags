@@ -40,7 +40,7 @@ import {
 const SearchScreen = () => {
   const haptics = useHaptics()
   const theme = useTheme()
-  const [searchMenuVisible, setSearchMenuVisible] = useState(false)
+  const [searchMenuVisible, setSearchMenuVisible] = useState(true)
   const loadingState = useAppSelector(
     state => selectSearchResults(state).loadingState,
   )
@@ -145,11 +145,15 @@ const SearchScreen = () => {
       </Chip>
     ) : null
 
+  const dismissSearchDialog = () => {
+    setSearchMenuVisible(false)
+  }
+
   return searchMenuVisible ? (
     <SearchDialog
       query={query}
       filters={filters}
-      dismiss={() => setSearchMenuVisible(false)}
+      dismiss={dismissSearchDialog}
     />
   ) : (
     <View style={CommonStyles.container}>

@@ -4,8 +4,12 @@ import {StyleSheet, View} from "react-native"
 import {Checkbox, RadioButton, Searchbar, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import {Collection, Parts} from "../constants/Search"
-import {useAppDispatch} from "../hooks"
-import {SearchFilters, newSearch} from "../modules/searchSlice"
+import {useAppDispatch, useAppSelector} from "../hooks"
+import {
+  SearchFilters,
+  newSearch,
+  selectSearchResults,
+} from "../modules/searchSlice"
 import SearchOptions from "./SearchOptions"
 
 type Props = {
@@ -21,6 +25,9 @@ export default function SearchDialog(props: Props) {
   const [draftFilters, setDraftFilters] = useState(filters)
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
+  const allTagIds = useAppSelector(
+    state => selectSearchResults(state).allTagIds,
+  )
 
   const styles = StyleSheet.create({
     container: {
@@ -57,6 +64,8 @@ export default function SearchDialog(props: Props) {
     },
   })
 
+  const existingSearchResults = allTagIds.length > 0
+
   return (
     <View style={styles.container}>
       <Searchbar
@@ -64,12 +73,12 @@ export default function SearchDialog(props: Props) {
         autoComplete="off"
         autoCorrect={false}
         autoFocus={true}
-        icon="chevron-left"
+        icon={existingSearchResults ? "chevron-left" : () => null}
         inputStyle={styles.searchInput}
         multiline={false}
         numberOfLines={1}
         onChangeText={setDraftQuery}
-        onIconPress={dismiss}
+        onIconPress={existingSearchResults ? dismiss : () => null}
         placeholder="search for tags"
         placeholderTextColor={theme.colors.secondary}
         value={draftQuery}

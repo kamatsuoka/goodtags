@@ -132,6 +132,6 @@
   "packageManager": "yarn@3.3.0",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
-    "*.{js,jsx,ts,tsx,css,md}": "prettier --write"
+    "*.{css,md}": "prettier --write"
   }
 }
