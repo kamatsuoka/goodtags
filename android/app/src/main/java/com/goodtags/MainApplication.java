@@ -1,6 +1,8 @@
 package com.goodtags;
 
 import android.app.Application;
+
+import com.goodtags.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -8,6 +10,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -58,6 +62,16 @@ public class MainApplication extends Application implements ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
-    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    // ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    String packagePath = "com.goodtags";
+    if(BuildConfig.DEBUG){
+        try{
+            Class flipperClass = Class.forName(packagePath + ".ReactNativeFlipper");
+            Method method = flipperClass.getMethod("initializeFlipper");
+            method.invoke(null,this,getReactNativeHost().getReactInstanceManager());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
   }
 }
