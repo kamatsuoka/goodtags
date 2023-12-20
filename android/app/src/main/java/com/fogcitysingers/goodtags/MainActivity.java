@@ -1,4 +1,4 @@
-package com.goodtags;
+package com.fogcitysingers.goodtags;
 import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.ReactActivity;

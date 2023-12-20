@@ -1,8 +1,7 @@
-package com.goodtags;
+package com.fogcitysingers.goodtags;
 
 import android.app.Application;
 
-import com.goodtags.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -63,7 +62,7 @@ public class MainApplication extends Application implements ReactApplication {
       DefaultNewArchitectureEntryPoint.load();
     }
     // ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    String packagePath = "com.goodtags";
+    String packagePath = "com.fogcitysingers.goodtags";
     if(BuildConfig.DEBUG){
         try{
             Class flipperClass = Class.forName(packagePath + ".ReactNativeFlipper");
