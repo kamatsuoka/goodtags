@@ -17,9 +17,7 @@ export type StackParamList = {
 }
 
 export type DrawerParamList = {
-  Tabs: {
-    cameFromTagScreen: boolean
-  }
+  Tabs: undefined
 }
 
 export type TabsParamList = {

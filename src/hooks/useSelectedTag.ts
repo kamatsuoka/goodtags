@@ -7,8 +7,14 @@ import {getTagListSelector} from "@app/modules/tagListUtil"
  * Get selected tag
  */
 export default function useSelectedTag(tagListType: TagListType) {
-  const {allTagIds, tagsById, selectedTag} = useAppSelector(
-    getTagListSelector(tagListType),
+  const allTagIds = useAppSelector(
+    state => getTagListSelector(tagListType)(state).allTagIds,
+  )
+  const tagsById = useAppSelector(
+    state => getTagListSelector(tagListType)(state).tagsById,
+  )
+  const selectedTag = useAppSelector(
+    state => getTagListSelector(tagListType)(state).selectedTag,
   )
 
   function indexValid(index: number) {

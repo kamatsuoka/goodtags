@@ -3,8 +3,6 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs"
-import {DrawerScreenProps} from "@react-navigation/drawer"
-import {useEffect} from "react"
 import {Platform, StyleSheet} from "react-native"
 import {useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
@@ -14,16 +12,14 @@ import {FavoritesScreen} from "../screens/FavoritesScreen"
 import HistoryScreen from "../screens/HistoryScreen"
 import PopularScreen from "../screens/PopularScreen"
 import SearchScreen from "../screens/SearchScreen"
-import {DrawerParamList, TabsParamList} from "./navigationParams"
-
-type TabsProps = DrawerScreenProps<DrawerParamList>
+import {TabsParamList} from "./navigationParams"
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
 
 /**
  * Tab view of tag lists
  */
-export default function TabNavigator({navigation}: TabsProps) {
+export default function TabNavigator() {
   const Tab = createBottomTabNavigator<TabsParamList>()
   const theme = useTheme()
   const shallowScreen = useShallowScreen()
@@ -46,12 +42,6 @@ export default function TabNavigator({navigation}: TabsProps) {
       fontFamily: theme.fonts.labelSmall.fontFamily,
       fontSize: 14,
     },
-  })
-
-  useEffect(() => {
-    return navigation.addListener("focus", _ => {
-      return navigation.setParams({cameFromTagScreen: false})
-    })
   })
 
   // note: setting freezeOnBlur: true improves performance, but

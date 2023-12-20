@@ -67,8 +67,11 @@ const TagScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
-  const {allTagIds, selectedTag} = useAppSelector(
-    getTagListSelector(tagListType),
+  const allTagIds = useAppSelector(
+    state => getTagListSelector(tagListType)(state).allTagIds,
+  )
+  const selectedTag = useAppSelector(
+    state => getTagListSelector(tagListType)(state).selectedTag,
   )
   const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useSelectedTag(tagListType)
@@ -191,8 +194,9 @@ const TagScreen = ({navigation}: Props) => {
   }, [dispatch, selectedTag])
 
   /**
-   * Go back to the Home screen (includes all tag lists),
-   * setting cameFromTagScreen to enable scrolling to current tag in list
+   * Go back to the Home screen (includes all tag lists).
+   * Set TagState to closing so that when we return to the Home screen,
+   * we can scroll to the selected tag.
    */
   function goBack() {
     if (

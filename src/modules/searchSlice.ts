@@ -14,7 +14,7 @@ import {
 import {RootState} from "../store"
 import {handleError} from "./handleError"
 import {fetchAndConvertTags, getQueryParams} from "./searchutil"
-import {LoadingState} from "./tagLists"
+import {LoadingState, TagListState} from "./tagLists"
 import {SelectedTag} from "./tagListUtil"
 import {ThunkApiConfig} from "./thunkApiConfig"
 
@@ -224,7 +224,7 @@ export const moreSearch = createAsyncThunk<
 export const SearchActions = searchSlice.actions
 export default searchSlice.reducer
 
-export const selectSearchResults = (state: RootState) => {
+export const selectSearchResults = (state: RootState): TagListState => {
   return {
     allTagIds: state.search.results.allTagIds,
     error: state.search.error,

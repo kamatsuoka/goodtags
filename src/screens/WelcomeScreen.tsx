@@ -51,7 +51,9 @@ export default function WelcomeScreen(props: Props) {
           onPress={async () => {
             await haptics.selectionAsync()
             dispatch(setLastVisited())
-            navigation.navigate("Drawer", {cameFromTagScreen: false})
+            navigation.navigate("Drawer", {
+              screen: "Tabs",
+            })
           }}
           icon="arrow-right"
           iconColor={theme.colors.onPrimary}

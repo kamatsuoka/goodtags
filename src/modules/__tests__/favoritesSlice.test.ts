@@ -1,11 +1,9 @@
 import {buildFavorite, Favorite} from "@app/lib/models/Favorite"
 import Tag from "@app/lib/models/Tag"
-import {RootState} from "@app/store"
 import reducer, {
   FavoritesActions,
   FavoritesState,
   InitialState,
-  selectFavorites,
 } from "../favoritesSlice"
 import {TagListType} from "../tagLists"
 const {
@@ -18,7 +16,6 @@ const {
   deleteLabel,
   selectLabel,
   clearLabels,
-  migrateV1Labels,
 } = FavoritesActions
 
 const fav12 = buildFavorite({
@@ -279,40 +276,5 @@ describe("favorites reducer", () => {
     const state2 = reducer(state1, addLabel({tag: fav12, label: label1}))
     const state3 = reducer(state2, clearLabels())
     expect(state3).toEqual(singleFavState(fav12))
-  })
-
-  // labels in tagIdsByLabel and labelsByTagId, but no tags in labeledById
-  const v1State: FavoritesState = {
-    ...InitialState,
-    tagsById: {
-      [fav12.id]: fav12,
-      [fav99.id]: fav99,
-    },
-    allTagIds: [fav12.id, fav99.id],
-    labelsByTagId: {
-      [fav12.id]: ["quiet", "5 part"],
-      [fav99.id]: ["to learn", "quiet"],
-    },
-    labels: ["quiet", "5 part", "to learn"],
-    tagIdsByLabel: {
-      quiet: [fav12.id, fav99.id],
-      "to learn": [fav99.id],
-      "5 part": [fav12.id],
-    },
-    selectedLabel: "quiet",
-  }
-
-  it("should copy stored labeled favorites into labeledById to support migration from v1", () => {
-    const v1RootState = {favorites: v1State}
-    const {allTagIds, tagsById} = selectFavorites(v1RootState as RootState)
-    expect(allTagIds).toEqual([fav12.id, fav99.id])
-    expect(tagsById).toEqual({})
-    const migratedState = reducer(v1State, migrateV1Labels())
-    const v2RootState = {favorites: migratedState}
-    const {allTagIds: allTagIds2, tagsById: tagsById2} = selectFavorites(
-      v2RootState as RootState,
-    )
-    expect(allTagIds2).toEqual([fav12.id, fav99.id])
-    expect(tagsById2).toEqual({[fav12.id]: fav12, [fav99.id]: fav99})
   })
 })

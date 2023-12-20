@@ -2,7 +2,6 @@ import CreateLabel from "@app/components/CreateLabel"
 import LabelEditor from "@app/components/LabelEditor"
 import TagLabels from "@app/components/TagLabels"
 import {MainTheme, SansSerifTheme} from "@app/lib/theme"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
 import AboutScreen from "@app/screens/AboutScreen"
 import LandscapeTransition from "@app/screens/LandscapeTransition"
 import OptionsScreen from "@app/screens/OptionsScreen"
@@ -13,15 +12,15 @@ import {
   useNavigation,
 } from "@react-navigation/native"
 import {
-  createNativeStackNavigator,
   NativeStackNavigationOptions,
+  createNativeStackNavigator,
 } from "@react-navigation/native-stack"
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/lib/typescript/src/types"
-import {useEffect, useMemo} from "react"
+import {useMemo} from "react"
 import {Provider as PaperProvider, Text} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import {useAppDispatch, useAppSelector} from "../hooks"
+import {useAppSelector} from "../hooks"
 import TagScreen from "../screens/TagScreen"
 import WelcomeScreen from "../screens/WelcomeScreen"
 import DrawerNavigator from "./DrawerNavigator"
@@ -64,12 +63,7 @@ export default function StackNavigator() {
   const lastVisited = useAppSelector(state => state.visit.lastVisited)
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const serifs = useAppSelector(state => state.options.serifs)
-  const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
-
-  useEffect(() => {
-    dispatch(FavoritesActions.migrateV1Labels())
-  }, [dispatch])
 
   const drawerOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
