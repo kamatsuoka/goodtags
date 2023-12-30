@@ -1,10 +1,10 @@
 package com.fogcitysingers.goodtags;
-import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
 
@@ -15,6 +15,12 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "goodtags";
+  }
+
+  // react-native-screens override -- see https://github.com/software-mansion/react-native-screens#android
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
   }
 
   /**
