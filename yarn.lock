@@ -7717,17 +7717,17 @@ __metadata:
     react-native: 0.72.6
     react-native-blob-util: ^0.17.0
     react-native-clean-project: ^4.0.1
-    react-native-device-info: ^10.3.0
-    react-native-draggable-flatlist: ^4.0.0
+    react-native-device-info: ^10.12.0
+    react-native-draggable-flatlist: ^4.0.1
     react-native-error-boundary: ^1.1.16
     react-native-gesture-handler: ~2.12.0
     react-native-gradle-plugin: ^0.71.19
     react-native-paper: ^5.11.3
     react-native-pdf: ^6.7.3
     react-native-promise-rejection-utils: ^0.0.1
-    react-native-reanimated: ~3.3.0
+    react-native-reanimated: ^3.6.1
     react-native-restart: ^0.0.24
-    react-native-safe-area-context: ^4.7.4
+    react-native-safe-area-context: ^4.8.2
     react-native-screens: ^3.29.0
     react-native-sound: ^0.11.2
     react-native-sound-player: ^0.13.2
@@ -11931,16 +11931,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-device-info@npm:^10.3.0":
-  version: 10.11.0
-  resolution: "react-native-device-info@npm:10.11.0"
+"react-native-device-info@npm:^10.12.0":
+  version: 10.12.0
+  resolution: "react-native-device-info@npm:10.12.0"
   peerDependencies:
     react-native: "*"
-  checksum: 3f2de34df4e95e87291673fe69b09d3b96f9088177a8dadd92eccec86549cea63ca08ab82f120d4150eb0302ac721ad8a5e4b3a8136c9f54f0212e4c055762b0
+  checksum: dc3a4ada40f0de960f652f1e7962c5f2b538695cad5ad11ca85a6ab445a7f01a7123dceeb7ead234dd110a54935cb9c10fccc648cfd0d6f157041e9299075f74
   languageName: node
   linkType: hard
 
-"react-native-draggable-flatlist@npm:^4.0.0":
+"react-native-draggable-flatlist@npm:^4.0.1":
   version: 4.0.1
   resolution: "react-native-draggable-flatlist@npm:4.0.1"
   dependencies:
@@ -12030,9 +12030,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:~3.3.0":
-  version: 3.3.0
-  resolution: "react-native-reanimated@npm:3.3.0"
+"react-native-reanimated@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "react-native-reanimated@npm:3.6.1"
   dependencies:
     "@babel/plugin-transform-object-assign": ^7.16.7
     "@babel/preset-typescript": ^7.16.7
@@ -12047,7 +12047,7 @@ __metadata:
     "@babel/plugin-transform-template-literals": ^7.0.0-0
     react: "*"
     react-native: "*"
-  checksum: 58096b28caef8af261c446eccb91a5a74caa303ba3520b1a2767c5b922b3d19b9a58612ab9b517a959c1b562b2e76e4cf4a8ffb21136960ed63375f6a4c37d1e
+  checksum: 245e542de7496081c4c64fe219a6d33a4d7195502fd6e9c12374c04acb1318bdeb0c50889def5e213e3fe3cd0f6316b113a6b1c382715f1b6cf8a6a29f0cf4ab
   languageName: node
   linkType: hard
 
@@ -12061,13 +12061,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:^4.7.4":
-  version: 4.7.4
-  resolution: "react-native-safe-area-context@npm:4.7.4"
+"react-native-safe-area-context@npm:^4.8.2":
+  version: 4.8.2
+  resolution: "react-native-safe-area-context@npm:4.8.2"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: c8553ca1b5972bb7180657574e8d9a9512b571724484f657e4f9bf269e60777fe623bd525082140c638904974981a59abd8e968595f4a000e16098faa41aeaf6
+  checksum: 929eaa5ee522f712e7bfabd0f22908f033918d030c932ddf6a83e4315bc781f7aa44e315806dc8130f75619f09951f3237082f720f4fa65a6670469886cf9735
   languageName: node
   linkType: hard
 
