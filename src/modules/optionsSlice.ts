@@ -14,7 +14,7 @@ export interface OptionsState {
 export const initialState: OptionsState = {
   haptics: Platform.OS === "ios",
   serifs: true,
-  autoRotate: !isTablet(),
+  autoRotate: !isTablet() && Platform.OS === "ios",
   autoRotateDelay: 200,
 }
 export const optionsSlice = createSlice({
