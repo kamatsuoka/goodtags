@@ -1,7 +1,7 @@
 import CommonStyles from "@app/constants/CommonStyles"
 import StackNavigator from "@app/navigation/StackNavigator"
 import {persistor, store} from "@app/store"
-import {LogBox, StatusBar} from "react-native"
+import {LogBox, Platform, StatusBar} from "react-native"
 import ErrorBoundary from "react-native-error-boundary"
 import {GestureHandlerRootView} from "react-native-gesture-handler"
 import {SafeAreaProvider} from "react-native-safe-area-context"
@@ -22,7 +22,7 @@ const App = () => {
         <ErrorBoundary>
           <ReactReduxProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <StatusBar hidden={true} />
+              {Platform.OS !== "android" && <StatusBar hidden={true} />}
               <StackNavigator />
             </PersistGate>
           </ReactReduxProvider>

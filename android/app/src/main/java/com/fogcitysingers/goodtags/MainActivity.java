@@ -4,7 +4,12 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+
+import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
 
 public class MainActivity extends ReactActivity {
 
@@ -20,6 +25,7 @@ public class MainActivity extends ReactActivity {
   // react-native-screens override -- see https://github.com/software-mansion/react-native-screens#android
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this, SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT));
     super.onCreate(null);
   }
 

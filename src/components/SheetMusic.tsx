@@ -1,7 +1,8 @@
 import {useAppSelector} from "@app/hooks"
-import {StyleSheet, useWindowDimensions, View} from "react-native"
+import {Platform, StyleSheet, useWindowDimensions, View} from "react-native"
 import {ActivityIndicator, Text} from "react-native-paper"
 import Pdf from "react-native-pdf"
+import {EdgeInsets, useSafeAreaInsets} from "react-native-safe-area-context"
 import WebView from "react-native-webview"
 
 const isPdf = (uri: string) => uri.toLowerCase().endsWith(".pdf")
@@ -22,6 +23,20 @@ export default function SheetMusic(props: Props) {
   const doAutoRotate = useAppSelector(state => state.options.autoRotate)
   // on android, sometimes pdfs render before orientation change registers
   const showPdf = wideMode || !doAutoRotate
+  const rawInsets = useSafeAreaInsets()
+  const insets =
+    Platform.OS === "android"
+      ? rawInsets
+      : {top: 0, bottom: 0, left: 0, right: 0}
+
+  const pdfStyle = {
+    ...styles.pdf,
+    elevation: 0,
+    paddingTop: insets.top,
+    paddingBottom: insets.bottom,
+    paddingLeft: insets.left,
+    paddingRight: insets.right,
+  }
 
   if (uri) {
     if (isPdf(uri)) {
@@ -35,11 +50,11 @@ export default function SheetMusic(props: Props) {
           minScale={0.5}
           maxScale={2.0}
           renderActivityIndicator={() => <ActivityIndicator />}
-          style={styles.pdf}
+          style={pdfStyle}
         />
       ) : null
     } else {
-      const source = imageSource(uri)
+      const source = imageSource(uri, insets)
       return (
         <WebView
           key={uri}
@@ -66,7 +81,7 @@ export default function SheetMusic(props: Props) {
  * HTML page for viewing non-pdf images in WebView.
  * Designed for landscape or wide screens, puts music full width.
  */
-function imageSource(uri: string): {html: string} {
+function imageSource(uri: string, insets: EdgeInsets): {html: string} {
   return {
     html: `<head>
          <title>sheet music</title>
@@ -87,6 +102,7 @@ function imageSource(uri: string): {html: string} {
              min-height: 100vh;
              align-items: center;
              justify-content: center;
+             padding: ${insets.top}px ${insets.right}px ${insets.bottom}px ${insets.left}px;
            }
            img#music {
              object-fit: contain;

@@ -34,9 +34,11 @@ export default function TabNavigator() {
     },
     tabBar: {
       backgroundColor: TabBarBackground,
-      height: (ios ? 90 : 75) - (shallowScreen ? 30 : 0),
+      height: (ios ? 90 : 75 + insets.bottom) - (shallowScreen ? 30 : 0),
       paddingTop: 5,
-      paddingBottom: ios ? 25 : 15,
+      paddingBottom: ios ? 25 : 15 + insets.bottom,
+      paddingLeft: ios ? 0 : insets.left,
+      paddingRight: ios ? 0 : insets.right,
     },
     tabBarLabel: {
       fontFamily: theme.fonts.labelSmall.fontFamily,
