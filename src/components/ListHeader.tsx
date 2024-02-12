@@ -5,8 +5,14 @@ import {DrawerActions, useNavigation} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import React from "react"
-import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
+import {
+  Platform,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native"
 import {IconButton, useTheme} from "react-native-paper"
+import {useSafeAreaInsets} from "react-native-safe-area-context"
 import useHeaderHeight from "../hooks/useHeaderHeight"
 import {NoteHandler} from "../lib/NoteHandler"
 
@@ -30,6 +36,7 @@ export default function ListHeader(props: ListHeaderProps) {
   const shallowScreen = useShallowScreen()
   const {listRef} = props
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -43,8 +50,14 @@ export default function ListHeader(props: ListHeaderProps) {
     },
   })
 
+  const shallowScreenStyle = {
+    height: Platform.OS === "android" ? insets.top : 0,
+  }
+
   // don't show header on shallow screens
-  return shallowScreen ? null : (
+  return shallowScreen ? (
+    <View style={shallowScreenStyle} />
+  ) : (
     <>
       <TouchableWithoutFeedback
         onPress={async () => {

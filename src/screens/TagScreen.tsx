@@ -85,6 +85,9 @@ const TagScreen = ({navigation}: Props) => {
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
 
+  const ios = Platform.OS === "ios"
+  const iPad = ios && isTablet()
+
   const themedStyles = StyleSheet.create({
     id: {
       color: theme.colors.primary,
@@ -102,7 +105,7 @@ const TagScreen = ({navigation}: Props) => {
       flexDirection: "row",
       paddingHorizontal: 7,
       paddingBottom: 4,
-      paddingVertical: Platform.OS === "ios" ? 4 : 0,
+      paddingVertical: ios ? 4 : 0,
     },
     modal: {
       ...CommonStyles.modal,
@@ -122,6 +125,34 @@ const TagScreen = ({navigation}: Props) => {
       opacity: 1.0,
     },
   })
+
+  // avoid split screen controls interfering with favorite button on iPad
+  const topBarStyle = {
+    ...styles.topBar,
+    paddingTop: ios ? Math.min(insets.top, 33) : insets.top,
+    ...(iPad ? {left: 120} : {left: 0, right: 0}),
+  }
+
+  const fabGroupStyle = {...styles.fabGroup, marginTop: 0, marginRight: 0}
+  const backButtonStyle = {...styles.backButton, marginTop: 0, marginLeft: 0}
+  const bottomActionBarStyle = {
+    ...styles.actionBar,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+  }
+  const modalCloseButtonStyle = {...styles.closeButton}
+  if (!ios) {
+    fabGroupStyle.marginTop = insets.top - fabGroupStyle.paddingTop
+    fabGroupStyle.marginRight = insets.right - fabGroupStyle.paddingRight
+    backButtonStyle.marginTop = insets.top + 15
+    backButtonStyle.marginLeft = insets.left
+    bottomActionBarStyle.marginBottom = insets.bottom
+    bottomActionBarStyle.marginLeft = insets.left
+    bottomActionBarStyle.marginRight = insets.right
+    modalCloseButtonStyle.top += insets.top
+    modalCloseButtonStyle.left += insets.left
+  }
 
   const videoModalStyle = StyleSheet.compose<ViewStyle>(
     themedStyles.modal,
@@ -359,15 +390,6 @@ const TagScreen = ({navigation}: Props) => {
     [brightenThenFade, dimmableIconHolderStyle, theme.colors.primary],
   )
 
-  const iPad = Platform.OS === "ios" && isTablet()
-
-  // avoid split screen controls interfering with favorite button on iPad
-  const topBarStyle = {
-    ...styles.topBar,
-    paddingTop: Math.min(insets.top, 33),
-    ...(iPad ? {left: 120} : {left: 0, right: 0}),
-  }
-
   // need to zero out insets to make modal cover whole screen in ios
   return (
     <View style={CommonStyles.container}>
@@ -394,12 +416,12 @@ const TagScreen = ({navigation}: Props) => {
             color={theme.colors.primary}
             onPress={goBack}
             size={SMALL_BUTTON_SIZE}
-            style={styles.backButton}
+            style={backButtonStyle}
           />
         </View>
         {buttonsDimmed ? null : (
           <Animated.View
-            style={styles.actionBar}
+            style={bottomActionBarStyle}
             pointerEvents="box-none"
             entering={FadeIn.duration(100)}
             exiting={FadeOut.duration(1200)}>
@@ -458,7 +480,7 @@ const TagScreen = ({navigation}: Props) => {
             dimButtons()
             setFabOpen(open)
           }}
-          style={styles.fabGroup}
+          style={fabGroupStyle}
           fabStyle={styles.fabDown}
         />
       </View>
@@ -494,7 +516,7 @@ const TagScreen = ({navigation}: Props) => {
             icon="close"
             mode="contained"
             onPress={() => setVideosVisible(false)}
-            style={styles.closeButton}
+            style={modalCloseButtonStyle}
           />
         ) : null}
       </SafeAreaInsetsContext.Provider>

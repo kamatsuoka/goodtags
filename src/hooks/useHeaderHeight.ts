@@ -1,3 +1,4 @@
+import {Platform} from "react-native"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 export const HEADER_HEIGHT = 65
@@ -6,5 +7,6 @@ export const HEADER_HEIGHT = 65
  */
 export default function useHeaderHeight() {
   const {top} = useSafeAreaInsets()
-  return top ? HEADER_HEIGHT + top / 4 : HEADER_HEIGHT
+  const topFactor = Platform.OS === "android" ? 1 : 4
+  return top ? HEADER_HEIGHT + top / topFactor : HEADER_HEIGHT
 }
