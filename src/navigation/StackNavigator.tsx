@@ -17,6 +17,7 @@ import {
 } from "@react-navigation/native-stack"
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/lib/typescript/src/types"
 import {useMemo} from "react"
+import {Platform} from "react-native"
 import {Provider as PaperProvider, Text} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
@@ -36,17 +37,31 @@ const BACK_ICON_SIZE = 36
 
 const BackButton = (_props: HeaderBackButtonProps) => {
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
+
+  const style = {paddingLeft: Platform.OS === "android" ? insets.left : 0}
+
   return (
-    <Icon name={BACK_ICON} size={BACK_ICON_SIZE} onPress={navigation.goBack} />
+    <Icon
+      name={BACK_ICON}
+      size={BACK_ICON_SIZE}
+      style={style}
+      onPress={navigation.goBack}
+    />
   )
 }
 
 const BackToDrawerClose = (_props: HeaderBackButtonProps) => {
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
+
+  const style = {paddingLeft: Platform.OS === "android" ? insets.left : 0}
+
   return (
     <Icon
       name={BACK_ICON}
       size={BACK_ICON_SIZE}
+      style={style}
       onPress={() => {
         navigation.dispatch(DrawerActions.closeDrawer())
         navigation.goBack()
