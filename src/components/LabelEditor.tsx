@@ -5,7 +5,7 @@ import {StackParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {useState} from "react"
-import {StyleSheet, TouchableOpacity, View} from "react-native"
+import {Platform, StyleSheet, TouchableOpacity, View} from "react-native"
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
@@ -14,6 +14,7 @@ import {
 import {Button, Dialog, IconButton, Text, TextInput} from "react-native-paper"
 import {useTheme} from "react-native-paper/src/core/theming"
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
+import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 const ITEM_HEIGHT = 60
 
@@ -29,6 +30,7 @@ export default function LabelEditor() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   // start editing
   const startEditing = (label: string) => {
@@ -124,8 +126,13 @@ export default function LabelEditor() {
     )
   }
 
+  const containerStyle = {...styles.container}
+  if (Platform.OS === "android") {
+    containerStyle.paddingBottom += insets.bottom
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <NestableScrollContainer keyboardShouldPersistTaps="handled">
         <NestableDraggableFlatList
           keyboardShouldPersistTaps="handled"
@@ -175,7 +182,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     height: "100%",
-    padding: 7,
+    // Keeping separate so we can change the bottom padding
+    paddingTop: 7,
+    paddingRight: 7,
+    paddingBottom: 7,
+    paddingLeft: 7,
   },
   header: {
     height: 35,

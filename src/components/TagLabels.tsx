@@ -6,8 +6,9 @@ import {TagListType} from "@app/modules/tagLists"
 import {StackParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
-import {ScrollView, StyleSheet, View} from "react-native"
+import {Platform, ScrollView, StyleSheet, View} from "react-native"
 import {Button, Checkbox, useTheme} from "react-native-paper"
+import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 const LabelSelector = (props: {
   tag: Tag
@@ -46,6 +47,7 @@ const TagLabels = () => {
     state => state.favorites.labelsByTagId[tag.id],
   )
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const themedStyles = StyleSheet.create({
     container: {
@@ -53,6 +55,7 @@ const TagLabels = () => {
       margin: 10,
       borderRadius: 15,
       justifyContent: "space-between",
+      paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
     },
     divider: {
       marginTop: 10,
