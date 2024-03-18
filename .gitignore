@@ -99,3 +99,6 @@ web-build/
 
 # testing
 /coverage
+
+# Generating offline search DB
+/out/

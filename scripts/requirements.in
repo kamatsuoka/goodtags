@@ -1,0 +1,5 @@
+# Used to generate requirements.txt; see that file for the command
+click
+requests
+xmltodict
+pip-tools
