@@ -1,0 +1,36 @@
+name: 'Generate offline search database'
+
+on:
+  schedule:
+    # 09:25 UTC (2:25 am PDT / 1:25am PST) on Wednesdays
+    # Running in the middle of the night (in the US) on Wednesdays to try to minimize DB load
+    # Running 25 minutes into the hour to avoid peak GitHub Actions usage time
+    - cron: '25 9 * * 3'
+  # Allows manually triggering, for testing; might want to be removed once this is stable.
+  workflow_dispatch: {}
+
+jobs:
+  fetch_and_deploy:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Checkout primary branch'
+        uses: 'actions/checkout@v4'
+      # Do this so we have push permissions. Note, this relies an the branch already existing; the initial commit of
+      # the branch will need to be manual.
+      - name: 'Checkout GH Pages branch'
+        uses: 'actions/checkout@v4'
+        with:
+          ref: 'gh-pages'
+          path: 'out'
+      - name: 'Set up Python'
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: 'actions/setup-python@v4'
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: 'Install dependencies'
+        run: |
+          python -m pip install --upgrade pip==24.0
+          pip install -r scripts/requirements.txt
+      - name: 'Fetch and deploy database'
+        run: 'python scripts/fetch_search_database.py'
