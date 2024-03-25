@@ -53,12 +53,15 @@ def fetch_xml_batches() -> list[dict]:
             break
 
         i += 1
+        # Give the server some breathing room
+        time.sleep(2)
 
     return batches
 
 
-def massage_tag_row(tag: dict) -> dict:
-    keys = [
+ROW_DEFAULTS = {
+    key: ""
+    for key in (
         "id",
         "Title",
         "AltTitle",
@@ -71,21 +74,27 @@ def massage_tag_row(tag: dict) -> dict:
         "SheetMusicAlt",
         "Quartet",
         "QWebsite",
-    ]
-    for key in keys:
-        tag.setdefault(key, "")
-    return tag
+    )
+}
 
 
 def parse_batches_to_tags(batches: list[dict]) -> list[dict]:
-    return [massage_tag_row(t) for batch in batches for t in batch["tags"]["tag"]]
+    return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
 
 
 def prepare_out_dir(out_dir: Path) -> None:
-    # Make sure it exists and clear out everything in here (aside from, say, the .git dir)
+    # Make sure the directory is ready for our files. We assume it already exists and is a valid git repo (see the
+    # docstring in `main` for more details on why), but we want to clear out all other existing files that may have
+    # been in previous commits on the `gh-pages` branch so we know that we're only going to be including the files we
+    # generate during this run of the script.
+    out_git_dir = out_dir / ".git"
+    assert out_git_dir.is_dir(), (
+        f"Expected the out dir {out_dir} to already be set up as a git repo with correct authentication and an `origin`"
+        " remote pointing at the correct repo."
+    )
     out_dir.mkdir(exist_ok=True, parents=True)
     for path in out_dir.iterdir():
-        if not path.name.startswith("."):
+        if path != out_git_dir:
             if path.is_dir():
                 shutil.rmtree(path)
             else:
@@ -323,7 +332,8 @@ def main() -> None:
 
     This script makes a few assumptions that it's being run by the `generate_offline_search_database.yml` workflow,
     such as assuming that the `out/` directory is already setup correctly as a git repo with an `origin` pointing at
-    the remote.
+    the remote. In particular this was done because the `checkout` step for the `out/` dir in the workflow sets up auth,
+    so we're relying on the `.git` directory it creates to be able to push our changes.
     """
     batches = fetch_xml_batches()
     tags = parse_batches_to_tags(batches)
