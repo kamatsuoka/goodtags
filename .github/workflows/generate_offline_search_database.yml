@@ -6,8 +6,11 @@ on:
     # Running in the middle of the night (in the US) on Wednesdays to try to minimize DB load
     # Running 25 minutes into the hour to avoid peak GitHub Actions usage time
     - cron: '25 9 * * 3'
-  # Allows manually triggering, for testing; might want to be removed once this is stable.
-  workflow_dispatch: {}
+  workflow_dispatch:
+    # Allows manually triggering, for testing; might want to be removed once this is stable.
+
+permissions:
+  contents: write
 
 jobs:
   fetch_and_deploy:
@@ -33,4 +36,5 @@ jobs:
           python -m pip install --upgrade pip==24.0
           pip install -r scripts/requirements.txt
       - name: 'Fetch and deploy database'
-        run: 'python scripts/fetch_search_database.py'
+        run: |
+          python scripts/fetch_search_database.py
