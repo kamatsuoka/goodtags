@@ -54,7 +54,7 @@ def fetch_xml_batches() -> list[dict]:
 
         i += 1
         # Give the server some breathing room
-        time.sleep(2)
+        time.sleep(1)
 
     return batches
 
