@@ -14,7 +14,11 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "react-native-clean-project",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "download-search-db": "ts-node ./scripts/downloadLatestSearchDb.ts",
+    "preandroid": "yarn run download-search-db",
+    "preios": "yarn run download-search-db",
+    "prestart": "yarn run download-search-db"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
@@ -27,7 +31,10 @@
     "@shopify/flash-list": "^1.6.3",
     "axios": "^1.6.2",
     "expo": "^49.0.0",
+    "expo-asset": "~8.10.1",
+    "expo-file-system": "~15.4.5",
     "expo-haptics": "~12.4.0",
+    "expo-sqlite": "~11.3.3",
     "fast-xml-parser": "^4.0.12",
     "html-entities": "^2.3.3",
     "lodash": "^4.17.21",
@@ -97,6 +104,7 @@
     "react-native-gradle-plugin": "^0.71.19",
     "react-test-renderer": "^18.2.0",
     "redux-mock-store": "^1.5.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.1.3"
   },
   "engines": {

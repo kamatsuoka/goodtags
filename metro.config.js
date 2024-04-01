@@ -8,4 +8,9 @@ const {getDefaultConfig, mergeConfig} = require("@react-native/metro-config")
  */
 const config = {}
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config)
+let defaultConfig = getDefaultConfig(__dirname)
+
+// Can't use the mergeConfig mechanism below because it doesn't merge lists, it just replaces them.
+defaultConfig.resolver.assetExts.push("sqlite")
+
+module.exports = mergeConfig(defaultConfig, config)

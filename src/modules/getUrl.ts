@@ -1,21 +1,19 @@
-import axios from "axios"
-import {QueryParams} from "../constants/Search"
+import axios, {AxiosRequestConfig} from "axios"
 
-export default async function getUrl(
+export default async function getUrl<T = string>(
   baseUrl: string,
-  queryParams: QueryParams,
-): Promise<string> {
-  console.debug(
-    `getUrl: baseUrl=${baseUrl}, queryParams = ${JSON.stringify(queryParams)}`,
-  )
-  const response = await axios.get(baseUrl, {params: queryParams})
+  config: AxiosRequestConfig<any> = {},
+): Promise<T> {
+  const configDebugString = JSON.stringify(config)
+  console.debug(`getUrl: baseUrl=${baseUrl}, config = ${configDebugString}`)
+  const response = await axios.get(baseUrl, config)
   if (response.status !== 200) {
     // TODO: store debugging log
     const msg =
       response.statusText ||
       `${response.status}` ||
       `got undefined status from ${response.request.url} ` +
-        `with params ${JSON.stringify(queryParams)}`
+        `with config ${configDebugString}`
     throw Error(msg)
   }
   return response.data

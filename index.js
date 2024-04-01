@@ -2,6 +2,7 @@
  * @format
  */
 
+import {warmupDb} from "@app/modules/sqlUtil"
 import {AppRegistry} from "react-native"
 import "react-native-gesture-handler"
 import {
@@ -37,3 +38,6 @@ setUnhandledPromiseRejectionTracker((id, error) => {
   }
 })
 AppRegistry.registerComponent(appName, () => App)
+
+// Kickoff setting up the DB, including potentially downloading an updated DB, at app startup.
+warmupDb()
