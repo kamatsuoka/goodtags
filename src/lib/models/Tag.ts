@@ -1,3 +1,4 @@
+import {DbRow} from "@app/modules/searchutil"
 import _ from "lodash"
 import parseXml from "../../util/xmlparser"
 
@@ -191,7 +192,7 @@ export interface SearchResult extends Tag {
   downloaded: number
 }
 
-export function buildSearchResult(t: XmlTag): SearchResult {
+export function tagFromApiXml(t: XmlTag): SearchResult {
   const tag = buildTag(
     t.id,
     t.Title,
@@ -208,9 +209,38 @@ export function buildSearchResult(t: XmlTag): SearchResult {
     extractTracks(t),
     extractVideos(t),
   ) as SearchResult
-  tag.searchResultIndex = parseInt(t.attr.index, 10) // 1-based index in search results
+  tag.searchResultIndex = parseInt(t.attr.index, 10) - 1 // Convert 1-based index from API to 0-based
   tag.downloaded = t.Downloaded
   return tag
+}
+
+function tagFromDbRow(
+  row: DbRow,
+  tracks: Track[],
+  videos: Video[],
+  idx: number,
+): SearchResult {
+  const tag = buildTag(
+    row.id,
+    row.title,
+    row.alt_title,
+    row.arranger,
+    row.key,
+    row.lyrics,
+    row.parts,
+    row.posted,
+    row.sheet_music_alt,
+    row.quartet,
+    row.quartet_url,
+    CurrentTagVersion,
+    tracks,
+    videos,
+  )
+  return {
+    ...tag,
+    searchResultIndex: idx,
+    downloaded: row.downloaded,
+  }
 }
 
 export interface TagsById {
@@ -245,18 +275,54 @@ export interface ConvertedTags {
   highestIndex: number
 }
 
-export function convertTags(responseText: string): ConvertedTags {
+export function tagsFromApiResponse(responseText: string): ConvertedTags {
   const xmlObj = parseXml(responseText)
   const available: number = parseInt(xmlObj.tags.attr.available, 10)
   const xmlTags = xmlObj.tags.tag || []
   const rawTags: XmlTag[] = Array.isArray(xmlTags) ? xmlTags : [xmlTags]
-  const tags: SearchResult[] = rawTags.map((t: XmlTag) => buildSearchResult(t))
+  const tags: SearchResult[] = rawTags.map((t: XmlTag) => tagFromApiXml(t))
   const highestIndex: number =
     tags.length > 0 ? tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
-    rawTags,
+    rawTags, // TODO - Unused, delete this field
     tags,
     highestIndex,
   }
+}
+
+export function tagsFromDbRows(
+  tagRows: DbRow[],
+  trackRows: DbRow[],
+  videoRows: DbRow[],
+  count: string,
+  offset: number,
+): ConvertedTags {
+  const available = parseInt(count, 10)
+  const tracksById = groupByTagId(trackRows, row => row as Track)
+  const videosById = groupByTagId(videoRows, row => row as Video)
+  const tags = tagRows.map((row, idx) =>
+    tagFromDbRow(row, tracksById[row.id], videosById[row.id], idx),
+  )
+  const highestIndex: number =
+    tags.length > 0 ? offset + tags[tags.length - 1].searchResultIndex : 0
+  return {
+    available,
+    rawTags: [], // TODO - Unused, delete this field
+    tags,
+    highestIndex,
+  }
+}
+
+function groupByTagId<T>(
+  rows: DbRow[],
+  transform: (row: DbRow) => T,
+): {[id: string]: T[]} {
+  const byId: {[id: string]: T[]} = {}
+  rows.forEach(({tag_id, ...row}) => {
+    const group: T[] = byId[tag_id] || []
+    group.push(transform(row))
+    byId[tag_id] = group
+  })
+  return byId
 }

@@ -1,5 +1,5 @@
 import {findNonSerializableValue} from "@reduxjs/toolkit"
-import {buildSearchResult, buildTagIds, XmlTag} from "../Tag"
+import {XmlTag, buildTagIds, tagFromApiXml} from "../Tag"
 
 // result of calling parseXml on api response text
 // and gettine one of xml.tags.tag[]
@@ -62,9 +62,9 @@ const xmlTag: XmlTag = {
   },
 }
 
-describe("buildSearchResult", () => {
+describe("tagFromApiXml", () => {
   it("should extract values", () => {
-    const r = buildSearchResult(xmlTag)
+    const r = tagFromApiXml(xmlTag)
     expect(r).toEqual({
       id: 1809,
       title: "Lost",
@@ -114,7 +114,7 @@ describe("buildSearchResult", () => {
         },
       ],
       version: 5,
-      searchResultIndex: 1,
+      searchResultIndex: 0,
       downloaded: 134646,
     })
   })
@@ -122,7 +122,7 @@ describe("buildSearchResult", () => {
 
 describe("buildTagIds", () => {
   it("should produce serializable results", () => {
-    const searchResult = buildSearchResult(xmlTag)
+    const searchResult = tagFromApiXml(xmlTag)
     const {tagsById} = buildTagIds([searchResult])
     const nonser = findNonSerializableValue(tagsById, "test ser")
     expect(nonser).toBe(false)

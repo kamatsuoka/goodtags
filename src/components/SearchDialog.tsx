@@ -1,9 +1,19 @@
 import useHaptics from "@app/hooks/useHaptics"
 import {useState} from "react"
 import {Keyboard, Pressable, StyleSheet, View} from "react-native"
-import {Checkbox, RadioButton, Searchbar, useTheme} from "react-native-paper"
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  IconButton,
+  Portal,
+  RadioButton,
+  Searchbar,
+  Text,
+  useTheme,
+} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
-import {Collection, Parts} from "../constants/Search"
+import {Collection, Mode, Parts} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import {
   SearchFilters,
@@ -28,6 +38,8 @@ export default function SearchDialog(props: Props) {
   const allTagIds = useAppSelector(
     state => selectSearchResults(state).allTagIds,
   )
+  const [modeExplanationDialogVisible, setModeExplanationDialogVisible] =
+    useState(false)
 
   const styles = StyleSheet.create({
     container: {
@@ -61,6 +73,10 @@ export default function SearchDialog(props: Props) {
       paddingLeft: 0,
       paddingRight: 5,
       paddingVertical: 3,
+    },
+    infoButton: {
+      paddingLeft: 0,
+      marginHorizontal: 3,
     },
   })
 
@@ -179,8 +195,67 @@ export default function SearchDialog(props: Props) {
               })}
             </RadioButton.Group>
           </SearchOptions>
+          <SearchOptions title="mode" icon="cog-outline">
+            <RadioButton.Group
+              onValueChange={value =>
+                setDraftFilters({
+                  ...draftFilters,
+                  mode: value as Mode,
+                })
+              }
+              value={draftFilters.mode}>
+              {Object.values(Mode).map(value => {
+                return (
+                  <View key={`mode_${value}`} style={styles.optionsContainer}>
+                    <RadioButton.Item
+                      label={value.toLowerCase()}
+                      labelStyle={styles.optionText}
+                      position="leading"
+                      style={styles.checkboxItem}
+                      value={value}
+                    />
+                  </View>
+                )
+              })}
+            </RadioButton.Group>
+            <IconButton
+              style={styles.infoButton}
+              icon="information-outline"
+              onPress={() => {
+                setModeExplanationDialogVisible(true)
+                Keyboard.dismiss()
+              }}
+            />
+          </SearchOptions>
         </View>
       </Pressable>
+      <Portal>
+        <Dialog
+          visible={modeExplanationDialogVisible}
+          onDismiss={() => setModeExplanationDialogVisible(false)}
+          // It's otherwise a *very* round dialog
+          theme={{...theme, roundness: 3}}>
+          <Dialog.Title>Search mode</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The newer offline search is faster but may not show the same
+              results, and results may be slightly less up-to-date. Note this is
+              just for searching; viewing a non-favorited individual tag still
+              requires internet.
+            </Text>
+            <Text>{/* blank line */}</Text>
+            <Text variant="bodyMedium">
+              The offline search will be default soon, if you run into any
+              problems with it, please reach out to ???.
+            </Text>
+            <Dialog.Actions>
+              <Button onPress={() => setModeExplanationDialogVisible(false)}>
+                Ok
+              </Button>
+            </Dialog.Actions>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   )
 }

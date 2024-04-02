@@ -277,11 +277,11 @@ export const refreshFavorite = createAsyncThunk<
   try {
     let convertedTags: ConvertedTags
     try {
-      convertedTags = await fetchAndConvertTags({id})
+      convertedTags = await fetchAndConvertTags({id}, false /* useApi */)
     } catch (e) {
       console.log(e)
       const baseUrl = `https://kenjimatsuoka.net/goodtags/xml/${id}.xml` // TODO
-      convertedTags = await fetchAndConvertTags({}, baseUrl)
+      convertedTags = await fetchAndConvertTags({}, false /* useApi */, baseUrl)
     }
     const {tags} = convertedTags
     return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)

@@ -1,4 +1,4 @@
-import {PopularQueryParams} from "@app/modules/popularSlice"
+import {PopularSearchParams} from "@app/modules/popularSlice"
 import {AxiosRequestConfig} from "axios"
 import {popularXml} from "./__mocks__/popular.xml"
 
@@ -12,7 +12,7 @@ export default async function getUrl<T = string>(
   console.debug(
     `getUrl.e2e: baseUrl=${baseUrl}, config = ${JSON.stringify(config)}`,
   )
-  if (config?.params === PopularQueryParams) {
+  if (config?.params === PopularSearchParams) {
     return popularXml as T
   }
   // TODO: support search
