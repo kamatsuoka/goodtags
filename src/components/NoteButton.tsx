@@ -1,6 +1,5 @@
-import React from "react"
+import {ColorValue, Platform, StyleSheet, View} from "react-native"
 import {Text, useTheme} from "react-native-paper"
-import {ColorValue, Platform, StyleSheet, View, ViewStyle} from "react-native"
 
 type ComponentProps = {
   note: string
@@ -59,7 +58,7 @@ const NoteButton = (props: Props) => {
     const label = noteLabel(props.note)
     const labelHolderStyle =
       Platform.OS === "ios" && label.length > 1
-        ? StyleSheet.compose<ViewStyle>(styles.labelHolder, {left: 3})
+        ? StyleSheet.compose(styles.labelHolder, {left: 3})
         : styles.labelHolder
     return Platform.OS === "ios" ? (
       <View style={labelHolderStyle}>

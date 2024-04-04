@@ -7,7 +7,10 @@ class RampDownParams {
   delay: number
   increment: number
 
-  constructor(readonly totalTime: number, readonly divs: number) {
+  constructor(
+    readonly totalTime: number,
+    readonly divs: number,
+  ) {
     this.delay = totalTime / divs
     this.increment = 1.0 / divs
   }
@@ -22,7 +25,7 @@ export class NotePlayer {
   note: string
   sound: Sound
   playing: boolean = false
-  timeoutId: number | undefined = undefined
+  timeoutId: ReturnType<typeof setTimeout> | undefined = undefined
 
   constructor(note: string, sound: Sound) {
     this.note = note

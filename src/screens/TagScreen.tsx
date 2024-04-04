@@ -8,7 +8,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from "react-native"
 import CommonStyles from "../constants/CommonStyles"
 // @ts-ignore
@@ -154,7 +153,7 @@ const TagScreen = ({navigation}: Props) => {
     modalCloseButtonStyle.left += insets.left
   }
 
-  const videoModalStyle = StyleSheet.compose<ViewStyle>(
+  const videoModalStyle = StyleSheet.compose(
     themedStyles.modal,
     themedStyles.videoModal,
   )
