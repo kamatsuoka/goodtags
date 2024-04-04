@@ -11,8 +11,14 @@ import {
   NestableScrollContainer,
   RenderItemParams,
 } from "react-native-draggable-flatlist"
-import {Button, Dialog, IconButton, Text, TextInput} from "react-native-paper"
-import {useTheme} from "react-native-paper/src/core/theming"
+import {
+  Button,
+  Dialog,
+  IconButton,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper"
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 

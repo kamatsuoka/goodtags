@@ -1,8 +1,8 @@
-import {Dimensions, StyleSheet, View, ViewStyle} from "react-native"
+import {useState} from "react"
+import {Dimensions, StyleSheet, View} from "react-native"
 import {IconButton, useTheme} from "react-native-paper"
-import React, {useState} from "react"
-import Tag, {Video} from "../lib/models/Tag"
 import YoutubePlayer from "react-native-youtube-iframe"
+import Tag, {Video} from "../lib/models/Tag"
 
 /**
  * View youtube videos for a tag
@@ -71,7 +71,7 @@ const VideoView = (props: {tag: Tag}) => {
 
   const videoSize = getVideoSize()
   const buttonMode = "contained"
-  const bodyStyle = StyleSheet.compose<ViewStyle>(styles.body, videoSize)
+  const bodyStyle = StyleSheet.compose(styles.body, videoSize)
 
   return (
     <View style={bodyStyle}>

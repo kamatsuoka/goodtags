@@ -1,6 +1,11 @@
 import {StyleProp, StyleSheet, View, ViewStyle} from "react-native"
-import {Divider, Surface, Text, useTheme} from "react-native-paper"
-import {MD3TypescaleKey} from "react-native-paper/src/types"
+import {
+  Divider,
+  MD3TypescaleKey,
+  Surface,
+  Text,
+  useTheme,
+} from "react-native-paper"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
 type Props = {

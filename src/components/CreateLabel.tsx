@@ -5,8 +5,7 @@ import {useNavigation} from "@react-navigation/native"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useState} from "react"
 import {StyleSheet, View} from "react-native"
-import {Text, TextInput} from "react-native-paper"
-import {useTheme} from "react-native-paper/src/core/theming"
+import {Text, TextInput, useTheme} from "react-native-paper"
 
 type Props = NativeStackScreenProps<StackParamList, "CreateLabel">
 

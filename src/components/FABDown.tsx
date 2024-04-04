@@ -10,15 +10,12 @@ import {
   ViewStyle,
 } from "react-native"
 
+import {Card, FAB, Text} from "react-native-paper"
+import {getFABGroupColors} from "react-native-paper/lib/typescript/components/FAB/utils"
+import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
+import {withInternalTheme} from "react-native-paper/lib/typescript/core/theming"
+import {InternalTheme} from "react-native-paper/lib/typescript/types"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
-
-import {withInternalTheme} from "react-native-paper/src/core/theming"
-import type {InternalTheme} from "react-native-paper/src/types"
-import Card from "react-native-paper/src/components/Card/Card"
-import type {IconSource} from "react-native-paper/src/components/Icon"
-import Text from "react-native-paper/src/components/Typography/Text"
-import FAB from "react-native-paper/src/components/FAB/FAB"
-import {getFABGroupColors} from "react-native-paper/src/components/FAB/utils"
 
 export type Props = {
   /**
