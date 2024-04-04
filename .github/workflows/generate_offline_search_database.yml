@@ -14,11 +14,13 @@ permissions:
 
 jobs:
   fetch_and_deploy:
+    # Don't run this on forks
+    if: ${{ github.repository == 'kamatsuoka/goodtags' }}
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout primary branch'
         uses: 'actions/checkout@v4'
-      # Do this so we have push permissions. Note, this relies an the branch already existing; the initial commit of
+      # Do this so we have push permissions. Note, this relies on the branch already existing; the initial commit of
       # the branch will need to be manual.
       - name: 'Checkout GH Pages branch'
         uses: 'actions/checkout@v4'
