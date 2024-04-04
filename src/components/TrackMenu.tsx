@@ -1,8 +1,7 @@
-import React from "react"
-import {TrackPart} from "../lib/models/Tag"
-import {Divider, Menu, Text, useTheme} from "react-native-paper"
 import {StyleSheet, View} from "react-native"
+import {Divider, Menu, Text, useTheme} from "react-native-paper"
 import {useAppDispatch, useAppSelector} from "../hooks"
+import {TrackPart} from "../lib/models/Tag"
 import {playTrack, setSelectedPart} from "../modules/tracksSlice"
 
 type TrackMenuProps = {

@@ -1,12 +1,12 @@
+import {SortOrder} from "@app/constants/Search"
+import Tag, {EmptyTag} from "../../lib/models/Tag"
 import historyReducer, {
   HistoryActions,
   HistoryState,
   InitialState,
   MAX_HISTORY,
 } from "../historySlice"
-import Tag, {EmptyTag} from "../../lib/models/Tag"
 import {LoadingState, sortAlpha} from "../tagLists"
-import {SortOrder} from "@app/constants/Search"
 
 function buildTag(id: number): Tag {
   const tag: Tag = {...EmptyTag}

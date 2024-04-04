@@ -2,9 +2,9 @@
  * Keeps track of playing learning tracks.
  */
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {AppDispatch, RootState} from "../store"
-import Tag, {Track, TrackPart} from "../lib/models/Tag"
 import SoundPlayer from "react-native-sound-player"
+import Tag, {Track, TrackPart} from "../lib/models/Tag"
+import {AppDispatch, RootState} from "../store"
 
 type TagTracks = {
   [key in TrackPart]?: Track

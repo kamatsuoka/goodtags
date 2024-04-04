@@ -31,3 +31,7 @@ jobs:
         with:
           # Using --noEmit because we only care about typechecking, not compiling
           cmd: run tsc --noEmit
+      - name: lint the app
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: run eslint src

@@ -3,9 +3,9 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native"
 import {
+  MD3LightTheme,
   adaptNavigationTheme,
   configureFonts,
-  MD3LightTheme,
 } from "react-native-paper"
 
 import merge from "deepmerge"

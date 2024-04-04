@@ -1,7 +1,6 @@
-import React from "react"
 import {StyleSheet, View} from "react-native"
-import Logo from "../components/Logo"
 import {Text, useTheme} from "react-native-paper"
+import Logo from "../components/Logo"
 
 const packageJson = require("../../package.json")
 

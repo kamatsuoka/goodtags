@@ -57,8 +57,8 @@ export const FavoritesScreen = (props: Props) => {
     order === SortOrder.newest
       ? "sort alphabetically"
       : selectedLabel
-      ? "sort by id"
-      : "sort by recently added"
+        ? "sort by id"
+        : "sort by recently added"
 
   const fabActions = [
     {

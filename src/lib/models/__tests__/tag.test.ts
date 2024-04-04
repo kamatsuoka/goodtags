@@ -1,5 +1,5 @@
-import {buildSearchResult, buildTagIds, XmlTag} from "../Tag"
 import {findNonSerializableValue} from "@reduxjs/toolkit"
+import {buildSearchResult, buildTagIds, XmlTag} from "../Tag"
 
 // result of calling parseXml on api response text
 // and gettine one of xml.tags.tag[]

@@ -1,9 +1,9 @@
+import {useNavigation} from "@react-navigation/native"
+import {useEffect} from "react"
+import {StyleSheet} from "react-native"
 import {Modal, useTheme} from "react-native-paper"
 import CommonStyles from "../constants/CommonStyles"
 import AboutWithCredits from "./AboutWithCredits"
-import React, {useEffect} from "react"
-import {useNavigation} from "@react-navigation/native"
-import {StyleSheet} from "react-native"
 
 type AboutModalProps = {
   visible: boolean
