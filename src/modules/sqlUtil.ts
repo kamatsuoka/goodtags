@@ -1,6 +1,8 @@
 import getUrl from "@app/modules/getUrl"
+import {Buffer} from "buffer"
 import {Asset} from "expo-asset"
 import * as FileSystem from "expo-file-system"
+import {EncodingType} from "expo-file-system"
 import * as SQLite from "expo-sqlite"
 import {SQLTransactionAsyncCallback} from "expo-sqlite"
 
@@ -248,8 +250,16 @@ async function backgroundCheckForRemoteUpdates(
   // It's important to set the Accept-Encoding header since that should result in over-the-wire transfer sizes
   // being reduced by ~4x
   console.debug("Downloading remote DB")
-  await FileSystem.downloadAsync(remoteSqlUrl, tmpSqlPath, {
+  const responseBuffer = await getUrl<ArrayBuffer>(remoteSqlUrl, {
+    // "stream" isn't a valid type in React Native apparently so we need to save it all to an in-memory buffer.
+    responseType: "arraybuffer",
     headers: {"Accept-Encoding": "gzip"},
+  })
+  // This is *wild*, the API has no way to write binary content to a file, have to b64 encode it first and write
+  // as a string >.>
+  const responseBase64 = Buffer.from(responseBuffer).toString("base64")
+  await FileSystem.writeAsStringAsync(tmpSqlPath, responseBase64, {
+    encoding: EncodingType.Base64,
   })
   await FileSystem.writeAsStringAsync(
     tmpManifestPath,
