@@ -8,6 +8,8 @@ This is a react native application. If you're not already set up to build react 
 head to the [react native environment setup](https://reactnative.dev/docs/environment-setup) and follow
 the instructions under the **React Native CLI Quickstart** tab.
 
+For Macs with Apple silicon, I recommend `brew install` instead of `sudo gem install` for cocoapods.
+
 ## yarn
 
 - install a [modern version of yarn](https://yarnpkg.com/getting-started/install)
