@@ -8,7 +8,7 @@
     "ios": "react-native run-ios",
     "log-android": "react-native log-android",
     "log-ios": "react-native log-ios",
-    "pod": "arch -x86_64 pod --project-directory=ios install",
+    "pod": "pod --project-directory=ios install",
     "port": "adb reverse tcp:8081 tcp:8081",
     "start": "react-native start",
     "test": "jest",
