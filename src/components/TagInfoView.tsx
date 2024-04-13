@@ -1,11 +1,11 @@
-import React, {useMemo} from "react"
+import {useMemo} from "react"
 import {Linking, StyleSheet, View} from "react-native"
-import {arranger, posted} from "./tagInfo"
-import Tag from "../lib/models/Tag"
 import {Divider, IconButton, Text, useTheme} from "react-native-paper"
-import {refreshFavorite} from "../modules/favoritesSlice"
 import {useAppDispatch} from "../hooks"
+import Tag from "../lib/models/Tag"
+import {refreshFavorite} from "../modules/favoritesSlice"
 import {TagListType} from "../modules/tagLists"
+import {arranger, posted} from "./tagInfo"
 
 const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
   const {tag, tagListType} = props

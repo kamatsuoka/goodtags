@@ -1,8 +1,7 @@
-import React from "react"
-import TestRenderer from "react-test-renderer"
-import TagListItem from "../../TagListItem"
-import Tag from "../../../lib/models/Tag"
 import {TagListType} from "@app/modules/tagLists"
+import TestRenderer from "react-test-renderer"
+import Tag from "../../../lib/models/Tag"
+import TagListItem from "../../TagListItem"
 
 describe("TagListItem", () => {
   it("should show dot when it was the last viewed tag", () => {

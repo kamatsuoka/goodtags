@@ -1,9 +1,8 @@
-import React from "react"
+import {render} from "@testing-library/react-native"
 import {Provider as ReactReduxProvider} from "react-redux"
 // @ts-ignore
 import configureStore from "redux-mock-store"
 import thunk from "redux-thunk"
-import {render} from "@testing-library/react-native"
 
 const INITIAL_STATE = {
   count: 5,

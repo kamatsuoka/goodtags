@@ -1,6 +1,6 @@
+import {PopularQueryParams} from "@app/modules/popularSlice"
 import {QueryParams} from "../constants/Search"
 import {popularXml} from "./__mocks__/popular.xml"
-import {PopularQueryParams} from "@app/modules/popularSlice"
 
 /**
  * Mock for detox end-to-end testing

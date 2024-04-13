@@ -1,11 +1,11 @@
 import React from "react"
-import {arranger} from "./tagInfo"
-import Tag, {SearchResult} from "../lib/models/Tag"
 import {StyleSheet, View} from "react-native"
 import {Text, useTheme} from "react-native-paper"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import Tag, {SearchResult} from "../lib/models/Tag"
 import {TagListType} from "../modules/tagLists"
 import TagId from "./TagId"
+import {arranger} from "./tagInfo"
 
 export type ComponentProps = {
   tag: Tag

@@ -1,9 +1,8 @@
-import React from "react"
-import TagListItem from "../../TagListItem"
+import {TagListType} from "@app/modules/tagLists"
+import {cleanup} from "@testing-library/react-native"
 import Tag from "../../../lib/models/Tag"
 import {render, store} from "../../../modules/test-utils"
-import {cleanup} from "@testing-library/react-native"
-import {TagListType} from "@app/modules/tagLists"
+import TagListItem from "../../TagListItem"
 
 afterEach(() => {
   cleanup()

@@ -1,5 +1,4 @@
-import {ConvertedTags, convertTags} from "../lib/models/Tag"
-import getUrl from "./getUrl"
+import {toInteger} from "lodash"
 import {
   Collection,
   Parts,
@@ -7,7 +6,8 @@ import {
   Search,
   SortOrder,
 } from "../constants/Search"
-import {toInteger} from "lodash"
+import {ConvertedTags, convertTags} from "../lib/models/Tag"
+import getUrl from "./getUrl"
 import {SearchState} from "./searchSlice"
 
 const idRegex = /^[0-9]+$/

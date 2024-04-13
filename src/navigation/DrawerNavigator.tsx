@@ -7,8 +7,8 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {StyleSheet, View} from "react-native"
 import {Button, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
-import {DrawerParamList, StackParamList} from "./navigationParams"
 import TabNavigator from "./TabNavigator"
+import {DrawerParamList, StackParamList} from "./navigationParams"
 
 const Drawer = createDrawerNavigator<DrawerParamList>()
 
