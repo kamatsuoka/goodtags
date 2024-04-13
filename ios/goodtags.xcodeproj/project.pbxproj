@@ -558,7 +558,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "yarn run download-search-db";
+			shellScript = "PATH=\"$PATH:/opt/homebrew/bin\" yarn run download-search-db\n";
 			showEnvVarsInLog = 0;
 		};
 		743A12DB8A85CC8909793C41 /* [CP] Check Pods Manifest.lock */ = {

@@ -103,3 +103,7 @@ web-build/
 # Generating offline search DB
 /out/
 /src/assets/generated_db/
+
+# vscode settings
+.vscode/
+
