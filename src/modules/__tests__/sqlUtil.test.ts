@@ -47,14 +47,14 @@ describe("DbWrapper class", () => {
       const db2 = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db1)
 
-      await wrapper.transactionAsync(async _ => {}, true)
+      await wrapper.runTransactionAsync(async _ => {}, true)
       expect(db1.numTxns).toBe(1)
       expect(db2.numTxns).toBe(0)
 
       await wrapper.queueDbReplacement(async () => db2)
       await settle()
 
-      await wrapper.transactionAsync(async _ => {}, true)
+      await wrapper.runTransactionAsync(async _ => {}, true)
       expect(db1.numTxns).toBe(1)
       expect(db2.numTxns).toBe(1)
     })
@@ -64,8 +64,8 @@ describe("DbWrapper class", () => {
       const wrapper = new DbWrapper(db)
 
       const {promise, resolve} = promiseWithResolvers<void>()
-      const t1 = wrapper.transactionAsync(async _ => await promise, true)
-      const t2 = wrapper.transactionAsync(async _ => await promise, true)
+      const t1 = wrapper.runTransactionAsync(async _ => await promise, true)
+      const t2 = wrapper.runTransactionAsync(async _ => await promise, true)
 
       let hasDoneReplacement = false
       await wrapper.queueDbReplacement(async () => {
@@ -92,8 +92,8 @@ describe("DbWrapper class", () => {
         await promise
         return db
       })
-      const t1 = wrapper.transactionAsync(async _ => {}, true)
-      const t2 = wrapper.transactionAsync(async _ => {}, true)
+      const t1 = wrapper.runTransactionAsync(async _ => {}, true)
+      const t2 = wrapper.runTransactionAsync(async _ => {}, true)
       await settle()
 
       expect(db.numTxns).toBe(0)
@@ -109,7 +109,7 @@ describe("DbWrapper class", () => {
 
       // Prevent replacement from starting by having an ongoing txn
       const {promise, resolve} = promiseWithResolvers<void>()
-      const t = wrapper.transactionAsync(async _ => await promise, true)
+      const t = wrapper.runTransactionAsync(async _ => await promise, true)
       // Submit the two replacements
       let replacedA = false
       let replacedB = false

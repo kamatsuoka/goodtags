@@ -44,7 +44,7 @@ export class DbWrapper {
     this.replaceDbInProgress = null
   }
 
-  async transactionAsync(
+  async runTransactionAsync(
     asyncCallback: SQLTransactionAsyncCallback,
     readOnly: boolean = false,
   ): Promise<void> {

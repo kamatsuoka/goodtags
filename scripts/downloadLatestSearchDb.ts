@@ -1,6 +1,4 @@
 import * as fs from "fs"
-import http from "node:http"
-import https from "node:https"
 import path from "node:path"
 import process from "node:process"
 
@@ -26,37 +24,31 @@ async function downloadLatestSearchDb() {
   }
 }
 
+async function assertResponseOk(response: Response): Promise<Response> {
+  if (!response.ok) {
+    throw new Error(
+      "Request failed. status: " +
+        response.status +
+        ", body: " +
+        (await response.text()),
+    )
+  }
+
+  return response
+}
+
 /**
  * Downloads the current manifest and returns its contents
  */
 async function fetchRemoteManifest(): Promise<Uint8Array> {
-  // What an ugly API; If we require Node >= 18 we can just use the new `fetch` API
-  return await new Promise((resolve, reject) => {
-    const req = https.get(
-      `${ASSETS_URL_PREFIX}/${path.basename(MANIFEST_PATH)}`,
-      (res: http.IncomingMessage) => {
-        let chunks: Uint8Array[] = []
-        res.on("data", (chunk: Uint8Array) => chunks.push(chunk))
-        res.on("error", reject)
-        res.on("end", () => {
-          const body = Buffer.concat(chunks)
-          if (
-            res.statusCode != null &&
-            res.statusCode >= 200 &&
-            res.statusCode <= 299
-          ) {
-            resolve(body)
-          } else {
-            reject(
-              "Request failed. status: " + res.statusCode + ", body: " + body,
-            )
-          }
-        })
-      },
-    )
-    req.on("error", reject)
-    req.end()
-  })
+  const response = await fetch(
+    `${ASSETS_URL_PREFIX}/${path.basename(MANIFEST_PATH)}`,
+    {
+      method: "GET",
+    },
+  ).then(assertResponseOk)
+
+  return new Uint8Array(await response.arrayBuffer())
 }
 
 /**
@@ -81,32 +73,32 @@ function shouldDownload(latestManifestContents: Uint8Array): boolean {
  */
 async function downloadDb(latestManifestContents: Uint8Array) {
   fs.mkdirSync(OUT_DIR, {recursive: true})
-  fs.writeFileSync(MANIFEST_PATH, latestManifestContents)
 
-  return new Promise((resolve, reject) => {
-    const req = https.get(
-      `${ASSETS_URL_PREFIX}/${SQL_NAME_REMOTE}`,
-      (res: http.IncomingMessage) => {
-        const dbFile = fs.openSync(SQL_NAME_LOCAL, "w")
-        res.on("data", (chunk: Uint8Array) => fs.writeSync(dbFile, chunk))
-        res.on("error", reject)
-        res.on("end", () => {
-          fs.closeSync(dbFile)
-          if (
-            res.statusCode != null &&
-            res.statusCode >= 200 &&
-            res.statusCode <= 299
-          ) {
-            resolve(null)
-          } else {
-            reject("Request failed. status: " + res.statusCode)
-          }
-        })
-      },
-    )
-    req.on("error", reject)
-    req.end()
-  })
+  const response = await fetch(`${ASSETS_URL_PREFIX}/${SQL_NAME_REMOTE}`, {
+    method: "GET",
+  }).then(assertResponseOk)
+
+  const dbFile = fs.openSync(SQL_NAME_LOCAL, "w")
+  const reader = response.body?.getReader()
+  if (reader == null) {
+    throw new Error("Unable to get response reader for DB request!")
+  }
+
+  while (true) {
+    const readVal = await reader.read()
+    const {done, value} = readVal
+    // May not be set when done is true
+    if (value != null) {
+      fs.writeSync(dbFile, value)
+    }
+    if (done) {
+      fs.closeSync(dbFile)
+      break
+    }
+  }
+
+  // Only write out the manifest once we're done downloading the DB
+  fs.writeFileSync(MANIFEST_PATH, latestManifestContents)
 }
 
 downloadLatestSearchDb()
