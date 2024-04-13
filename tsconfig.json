@@ -13,6 +13,9 @@
     "paths": {
       "@app/*": [
         "src/*"
+      ],
+      "react-native-paper/lib/module/*": [
+        "node_modules/react-native-paper/lib/typescript/*"
       ]
     }
   }

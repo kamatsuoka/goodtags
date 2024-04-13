@@ -11,9 +11,9 @@ import {
 } from "react-native"
 
 import {Card, FAB, Text} from "react-native-paper"
-import {getFABGroupColors} from "react-native-paper/lib/typescript/components/FAB/utils"
-import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
-import {withInternalTheme} from "react-native-paper/lib/typescript/core/theming"
+import {getFABGroupColors} from "react-native-paper/lib/module/components/FAB/utils"
+import {IconSource} from "react-native-paper/lib/module/components/Icon"
+import {withInternalTheme} from "react-native-paper/lib/module/core/theming"
 import {InternalTheme} from "react-native-paper/lib/typescript/types"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
