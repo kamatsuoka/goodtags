@@ -34,5 +34,5 @@ jobs:
           yarn run tsc --noEmit
       - name: lint the app
         shell: bash
-        run:
+        run: |
           yarn run eslint src
