@@ -336,6 +336,7 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "goodtags" */;
 			buildPhases = (
 				743A12DB8A85CC8909793C41 /* [CP] Check Pods Manifest.lock */,
+				368F4735A18E08EAEB68A451 /* Download Search DB */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				9B866312F6A68A0CE51D2DB4 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -539,6 +540,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		368F4735A18E08EAEB68A451 /* Download Search DB */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Download Search DB";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PATH=\"$PATH:/opt/homebrew/bin\" yarn run download-search-db\n";
 			showEnvVarsInLog = 0;
 		};
 		743A12DB8A85CC8909793C41 /* [CP] Check Pods Manifest.lock */ = {

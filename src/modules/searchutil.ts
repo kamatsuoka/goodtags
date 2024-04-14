@@ -61,6 +61,6 @@ export async function fetchAndConvertTags(
   queryParams: QueryParams,
   baseUrl: string = Search.API_BASE,
 ): Promise<ConvertedTags> {
-  const responseText = await getUrl(baseUrl, queryParams)
+  const responseText = await getUrl(baseUrl, {params: queryParams})
   return convertTags(responseText)
 }

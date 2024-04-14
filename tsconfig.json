@@ -18,5 +18,10 @@
         "node_modules/react-native-paper/lib/typescript/*"
       ]
     }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "types": ["node"]
+    }
   }
 }
