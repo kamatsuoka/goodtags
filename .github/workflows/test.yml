@@ -14,24 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
-      - name: install dependencies
-        uses: Borales/actions-yarn@v4.2.0
-        with:
-          cmd: install
+          node-version: lts/*        
+          cache: yarn
+      - name: install typescript dependencies
+        shell: bash
+        run: |
+          yarn install --immutable
       - name: test the app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: test
+        shell: bash
+        run: |
+          yarn test
       - name: typecheck the app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          # Using --noEmit because we only care about typechecking, not compiling
-          cmd: run tsc --noEmit
+        shell: bash
+        # Using --noEmit because we only care about typechecking, not compiling
+        run: |
+          yarn run tsc --noEmit
       - name: lint the app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: run eslint src
+        shell: bash
+        run: |
+          yarn run eslint src
