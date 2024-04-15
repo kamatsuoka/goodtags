@@ -198,7 +198,7 @@ export const newSearch = createAsyncThunk<
   try {
     return await fetchTags(thunkAPI.getState().search, 1)
   } catch (error) {
-    let payload = await handleError(error, `search/newSearch`)
+    const payload = await handleError(error, `search/newSearch`)
     return thunkAPI.rejectWithValue(payload)
   }
 })
@@ -216,7 +216,7 @@ export const moreSearch = createAsyncThunk<
     const start = searchState.results.allTagIds.length + 1
     return await fetchTags(searchState, start)
   } catch (error) {
-    let payload = await handleError(error, `search/moreSearch`)
+    const payload = await handleError(error, `search/moreSearch`)
     return thunkAPI.rejectWithValue(payload)
   }
 })
