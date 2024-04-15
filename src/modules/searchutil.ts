@@ -177,12 +177,12 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
     const countTime = debugDbPerfCurrentTime()
     if (DEBUG_DB_PERF) {
       console.debug(
-        "Per-execution times:",
-        tagTime - start,
-        trackTime - tagTime,
-        videoTime - trackTime,
-        countTime - videoTime,
-        countTime - start,
+        `Per-execution times:\n` +
+          `tags=${tagTime - start}\n` +
+          `tracks=${trackTime - tagTime}\n` +
+          `videos=${videoTime - trackTime}\n` +
+          `count=${countTime - videoTime}\n` +
+          `total=${countTime - start}`,
       )
     }
     count = count_raw.rows[0].count
@@ -203,8 +203,8 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
  * clauses+variables (order, limit, offset).
  */
 function buildSqlParts(searchParams: SearchParams) {
-  let whereClauseParts = []
-  let whereVariables = []
+  const whereClauseParts = []
+  const whereVariables = []
 
   if (searchParams.id !== undefined) {
     whereClauseParts.push("tags.id = ?")
@@ -212,9 +212,10 @@ function buildSqlParts(searchParams: SearchParams) {
   }
   if (searchParams.query !== undefined && searchParams.query !== "") {
     whereClauseParts.push(
-      "tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?)",
+      "(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)",
     )
-    whereVariables.push(searchParams.query)
+    whereVariables.push(`${searchParams.query}*`)
+    whereVariables.push(`%${searchParams.query}%`)
   }
   if (searchParams.parts !== undefined) {
     whereClauseParts.push("tags.parts = ?")
@@ -235,13 +236,13 @@ function buildSqlParts(searchParams: SearchParams) {
       "tags.sheet_music_alt IS NOT NULL AND tags.sheet_music_alt != ''",
     )
   }
-  let whereClause =
+  const whereClause =
     whereClauseParts.length === 0
       ? ""
       : ` WHERE ${whereClauseParts.join(" AND ")}`
 
   let suffixClauses = ""
-  let suffixVariables = []
+  const suffixVariables = []
 
   switch (searchParams.sortBy) {
     case SortOrder.alpha:

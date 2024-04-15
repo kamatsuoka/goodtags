@@ -243,11 +243,6 @@ export default function SearchDialog(props: Props) {
               just for searching; viewing a non-favorited individual tag still
               requires internet.
             </Text>
-            <Text>{/* blank line */}</Text>
-            <Text variant="bodyMedium">
-              The offline search will be default soon, if you run into any
-              problems with it, please reach out to ???.
-            </Text>
             <Dialog.Actions>
               <Button onPress={() => setModeExplanationDialogVisible(false)}>
                 Ok
