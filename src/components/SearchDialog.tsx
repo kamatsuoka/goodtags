@@ -1,7 +1,17 @@
 import useHaptics from "@app/hooks/useHaptics"
 import {useState} from "react"
 import {Keyboard, Pressable, StyleSheet, View} from "react-native"
-import {Checkbox, RadioButton, Searchbar, useTheme} from "react-native-paper"
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  IconButton,
+  Portal,
+  RadioButton,
+  Searchbar,
+  Text,
+  useTheme,
+} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import {Collection, Parts} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
@@ -28,6 +38,8 @@ export default function SearchDialog(props: Props) {
   const allTagIds = useAppSelector(
     state => selectSearchResults(state).allTagIds,
   )
+  const [modeExplanationDialogVisible, setModeExplanationDialogVisible] =
+    useState(false)
 
   const styles = StyleSheet.create({
     container: {
@@ -61,6 +73,14 @@ export default function SearchDialog(props: Props) {
       paddingLeft: 0,
       paddingRight: 5,
       paddingVertical: 3,
+    },
+    infoButton: {
+      paddingLeft: 10,
+      marginHorizontal: 5,
+    },
+    offlineTitle: {
+      padding: 0,
+      paddingLeft: 10,
     },
   })
 
@@ -179,8 +199,58 @@ export default function SearchDialog(props: Props) {
               })}
             </RadioButton.Group>
           </SearchOptions>
+          <SearchOptions
+            title="offline"
+            icon="cog-outline"
+            infoButton=<IconButton
+              style={styles.infoButton}
+              icon="information-outline"
+              onPress={() => {
+                setModeExplanationDialogVisible(true)
+                Keyboard.dismiss()
+              }}
+            />
+            titleStyle={styles.offlineTitle}>
+            <View style={styles.optionsContainer}>
+              <Checkbox.Item
+                label="enabled"
+                labelStyle={styles.optionText}
+                style={styles.checkboxItem}
+                position="leading"
+                status={draftFilters.offline ? "checked" : "unchecked"}
+                onPress={() =>
+                  setDraftFilters({
+                    ...draftFilters,
+                    offline: !draftFilters.offline,
+                  })
+                }
+              />
+            </View>
+          </SearchOptions>
         </View>
       </Pressable>
+      <Portal>
+        <Dialog
+          visible={modeExplanationDialogVisible}
+          onDismiss={() => setModeExplanationDialogVisible(false)}
+          // It's otherwise a *very* round dialog
+          theme={{...theme, roundness: 3}}>
+          <Dialog.Title>Search mode</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The newer offline search is faster but may not show the same
+              results, and results may be slightly less up-to-date. Note this is
+              just for searching; viewing a non-favorited individual tag still
+              requires internet.
+            </Text>
+            <Dialog.Actions>
+              <Button onPress={() => setModeExplanationDialogVisible(false)}>
+                Ok
+              </Button>
+            </Dialog.Actions>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   )
 }

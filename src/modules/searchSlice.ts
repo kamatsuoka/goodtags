@@ -13,7 +13,7 @@ import {
 } from "../lib/models/Tag"
 import {RootState} from "../store"
 import {handleError} from "./handleError"
-import {fetchAndConvertTags, getQueryParams} from "./searchutil"
+import {fetchAndConvertTags, getSearchParams} from "./searchutil"
 import {LoadingState, TagListState} from "./tagLists"
 import {SelectedTag} from "./tagListUtil"
 import {ThunkApiConfig} from "./thunkApiConfig"
@@ -31,6 +31,8 @@ export interface SearchFilters {
   sheetMusic: boolean
   collection: Collection
   parts: Parts
+  mode: string // deprecated
+  offline: boolean
 }
 
 interface Results {
@@ -68,6 +70,8 @@ export const InitialFilters: SearchFilters = {
   sheetMusic: true,
   collection: Collection.ALL,
   parts: Parts.any,
+  mode: "OFFLINE",
+  offline: true,
 }
 
 const initialResults: Results = {
@@ -124,7 +128,7 @@ export const searchSlice = createSlice({
         state.results.tagsById = tagsById
         state.results.allTagIds = allTagIds
         state.results.moreAvailable =
-          action.payload.highestIndex < action.payload.available
+          action.payload.highestIndex < action.payload.available - 1
         state.loadingState = LoadingState.succeeded
         state.selectedTag = undefined
       })
@@ -133,7 +137,7 @@ export const searchSlice = createSlice({
         state.results.tagsById = {...state.results.tagsById, ...tagsById}
         state.results.allTagIds = state.results.allTagIds.concat(allTagIds)
         state.results.moreAvailable =
-          action.payload.highestIndex < action.payload.available
+          action.payload.highestIndex < action.payload.available - 1
         state.loadingState = LoadingState.succeeded
       })
       .addCase(newSearch.pending, state => {
@@ -160,8 +164,12 @@ async function fetchTags(
   state: SearchState,
   start: number,
 ): Promise<SearchPayload> {
-  const queryParams = getQueryParams(state, start)
-  const fetchResult: ConvertedTags = await fetchAndConvertTags(queryParams)
+  const useApi = !state.filters.offline
+  const searchParams = getSearchParams(state, start)
+  const fetchResult: ConvertedTags = await fetchAndConvertTags(
+    searchParams,
+    useApi,
+  )
   // await haptics.impactAsync(ImpactFeedbackStyle.Light) // TODO
   const available = fetchResult.available
   const tags = fetchResult.tags
@@ -170,7 +178,7 @@ async function fetchTags(
     tags,
     highestIndex,
     available,
-    queryTagId: queryParams.id || 0,
+    queryTagId: searchParams.id || 0,
     type: "SearchPayload",
   }
 }
@@ -196,7 +204,7 @@ export const newSearch = createAsyncThunk<
       thunkAPI.dispatch(SearchActions.setFilters(params.filters))
   }
   try {
-    return await fetchTags(thunkAPI.getState().search, 1)
+    return await fetchTags(thunkAPI.getState().search, 0)
   } catch (error) {
     const payload = await handleError(error, `search/newSearch`)
     return thunkAPI.rejectWithValue(payload)
@@ -213,7 +221,7 @@ export const moreSearch = createAsyncThunk<
 >("search/moreSearch", async (_, thunkAPI) => {
   try {
     const searchState = thunkAPI.getState().search
-    const start = searchState.results.allTagIds.length + 1
+    const start = searchState.results.allTagIds.length
     return await fetchTags(searchState, start)
   } catch (error) {
     const payload = await handleError(error, `search/moreSearch`)

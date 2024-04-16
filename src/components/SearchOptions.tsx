@@ -16,6 +16,8 @@ type Props = {
   titleVariant?: keyof typeof MD3TypescaleKey
   rightStyle?: StyleProp<ViewStyle>
   children: React.ReactNode
+  infoButton?: React.ReactNode
+  titleStyle?: StyleProp<ViewStyle>
 }
 
 /**
@@ -29,6 +31,8 @@ const SearchOptions = ({
   titleVariant = "bodyLarge",
   rightStyle,
   children,
+  infoButton,
+  titleStyle,
 }: Props) => {
   const theme = useTheme()
 
@@ -42,7 +46,7 @@ const SearchOptions = ({
 
   return (
     <Surface style={styles.container}>
-      <View style={styles.titleContainer}>
+      <View style={[styles.titleContainer, titleStyle]}>
         <View style={rightStyle}>
           <Icon
             name={icon}
@@ -53,6 +57,7 @@ const SearchOptions = ({
         <Text style={styles.title} numberOfLines={1} variant={titleVariant}>
           {title}
         </Text>
+        {infoButton}
       </View>
       <Divider bold />
       <View style={themedStyles.optionsContainer}>{children}</View>

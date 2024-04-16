@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {QueryParams, SortOrder} from "../constants/Search"
+import {SearchParams, SortOrder} from "../constants/Search"
 import {
   buildTagIds,
   CurrentTagVersion,
@@ -8,7 +8,7 @@ import {
 } from "../lib/models/Tag"
 import {RootState} from "../store"
 import {handleError} from "./handleError"
-import {fetchAndConvertTags, SORTBY_PARAMS} from "./searchutil"
+import {fetchAndConvertTags} from "./searchutil"
 import {LoadingState, sortAlpha, TagListState} from "./tagLists"
 import {SelectedTag} from "./tagListUtil"
 import {ThunkApiConfig} from "./thunkApiConfig"
@@ -114,10 +114,10 @@ function outdatedSearchResults(
 }
 
 // always sort by downloads when fetching from server
-export const PopularQueryParams: QueryParams = {
-  Sortby: SORTBY_PARAMS[SortOrder.downloads],
-  n: MaxPopular,
-  SheetMusic: "Yes",
+export const PopularSearchParams: SearchParams = {
+  sortBy: SortOrder.downloads,
+  limit: MaxPopular,
+  requireSheetMusic: true,
 }
 
 /**
@@ -137,7 +137,10 @@ export const getPopularTags = createAsyncThunk<
     outdatedSearchResults(state.tagsById, state.allTagIds)
   ) {
     try {
-      const fetchResult = await fetchAndConvertTags(PopularQueryParams)
+      const fetchResult = await fetchAndConvertTags(
+        PopularSearchParams,
+        false /* useApi */,
+      )
       return fetchResult.tags
     } catch (error) {
       const payload = await handleError(error, `getPopularTags`)
