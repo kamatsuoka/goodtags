@@ -40,11 +40,10 @@ export const PARTS_PARAMS = {
 export function getSearchParams(
   state: SearchState,
   start: number,
-  useApi: boolean,
 ): SearchParams {
   const trimQuery = state.query.trim()
   const cleanQuery = trimQuery.replace(/[^a-zA-Z0-9]/g, " ").trim()
-  if (useApi && isId(cleanQuery)) {
+  if (isId(cleanQuery)) {
     // treat numeric query as request for tag by id (rip 1776 tag)
     return {id: toInteger(cleanQuery)}
   }

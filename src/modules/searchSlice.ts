@@ -165,7 +165,7 @@ async function fetchTags(
   start: number,
 ): Promise<SearchPayload> {
   const useApi = !state.filters.offline
-  const searchParams = getSearchParams(state, start, useApi)
+  const searchParams = getSearchParams(state, start)
   const fetchResult: ConvertedTags = await fetchAndConvertTags(
     searchParams,
     useApi,
