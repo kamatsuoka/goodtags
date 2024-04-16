@@ -4,7 +4,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit"
-import {Collection, Mode, Parts, SortOrder} from "../constants/Search"
+import {Collection, Parts, SortOrder} from "../constants/Search"
 import {
   buildTagIds,
   ConvertedTags,
@@ -31,7 +31,8 @@ export interface SearchFilters {
   sheetMusic: boolean
   collection: Collection
   parts: Parts
-  mode: Mode
+  mode: string // deprecated
+  offline: boolean
 }
 
 interface Results {
@@ -69,7 +70,8 @@ export const InitialFilters: SearchFilters = {
   sheetMusic: true,
   collection: Collection.ALL,
   parts: Parts.any,
-  mode: Mode.OFFLINE,
+  mode: "OFFLINE",
+  offline: true,
 }
 
 const initialResults: Results = {
@@ -162,7 +164,7 @@ async function fetchTags(
   state: SearchState,
   start: number,
 ): Promise<SearchPayload> {
-  const useApi = state.filters.mode === Mode.ONLINE
+  const useApi = !state.filters.offline
   const searchParams = getSearchParams(state, start, useApi)
   const fetchResult: ConvertedTags = await fetchAndConvertTags(
     searchParams,

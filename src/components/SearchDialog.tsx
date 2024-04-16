@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
-import {Collection, Mode, Parts} from "../constants/Search"
+import {Collection, Parts} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import {
   SearchFilters,
@@ -75,8 +75,12 @@ export default function SearchDialog(props: Props) {
       paddingVertical: 3,
     },
     infoButton: {
-      paddingLeft: 0,
-      marginHorizontal: 3,
+      paddingLeft: 10,
+      marginHorizontal: 5,
+    },
+    offlineTitle: {
+      padding: 0,
+      paddingLeft: 10,
     },
   })
 
@@ -195,30 +199,10 @@ export default function SearchDialog(props: Props) {
               })}
             </RadioButton.Group>
           </SearchOptions>
-          <SearchOptions title="mode" icon="cog-outline">
-            <RadioButton.Group
-              onValueChange={value =>
-                setDraftFilters({
-                  ...draftFilters,
-                  mode: value as Mode,
-                })
-              }
-              value={draftFilters.mode}>
-              {Object.values(Mode).map(value => {
-                return (
-                  <View key={`mode_${value}`} style={styles.optionsContainer}>
-                    <RadioButton.Item
-                      label={value.toLowerCase()}
-                      labelStyle={styles.optionText}
-                      position="leading"
-                      style={styles.checkboxItem}
-                      value={value}
-                    />
-                  </View>
-                )
-              })}
-            </RadioButton.Group>
-            <IconButton
+          <SearchOptions
+            title="offline"
+            icon="cog-outline"
+            infoButton=<IconButton
               style={styles.infoButton}
               icon="information-outline"
               onPress={() => {
@@ -226,6 +210,22 @@ export default function SearchDialog(props: Props) {
                 Keyboard.dismiss()
               }}
             />
+            titleStyle={styles.offlineTitle}>
+            <View style={styles.optionsContainer}>
+              <Checkbox.Item
+                label="enabled"
+                labelStyle={styles.optionText}
+                style={styles.checkboxItem}
+                position="leading"
+                status={draftFilters.offline ? "checked" : "unchecked"}
+                onPress={() =>
+                  setDraftFilters({
+                    ...draftFilters,
+                    offline: !draftFilters.offline,
+                  })
+                }
+              />
+            </View>
           </SearchOptions>
         </View>
       </Pressable>

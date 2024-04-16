@@ -6,11 +6,6 @@ export enum Collection {
   EASY = "Easy",
 }
 
-export enum Mode {
-  OFFLINE = "offline",
-  ONLINE = "online",
-}
-
 export const Search = {
   TITLE: "Title",
   DOWNLOADS: "Downloads",
