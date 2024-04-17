@@ -4,30 +4,30 @@ import sqlite3
 import subprocess
 import time
 from pathlib import Path
+from typing import Any, TypeVar
 
-import click
-import requests
-import xmltodict
+import click  # type: ignore
+import requests  # type: ignore
+import xmltodict  # type: ignore
 
 API_URL = "https://www.barbershoptags.com/api.php"
 OUT_DIR = Path(__file__).resolve().parent.parent / "out"
 # We name this `.otf` so that GitHub Pages will transparently gzip it for us when serving it.
 # Specifically GitHub has said a few times they use a CDN to serve the content, eg:
 # https://github.blog/2014-01-07-faster-more-awesome-github-pages/
-# And some sources claim it's Fastly, though that's hard to verify. In any case, when the file
-# name is just "*.sqlite" setting `Accept-Encoding: gzip` doesn't result in a smaller file, whereas
-# with the `.otf` extension it's distinctly smaller over the wire. I picked `.otf` from this list of
-# extensions that would likely work with auto-compression (though again, it's unclear if it's actually
-# Fastly under the hood):
+# and if the presence of the x-fastly-request-id response header is any guide, it's Fastly.
+# In any case, when the file name is just "*.sqlite" setting `Accept-Encoding: gzip` doesn't
+# result in a smaller file, whereas with the `.otf` extension it's distinctly smaller over the wire.
+# I picked `.otf` from this list of extensions that would likely work with auto-compression:
 # https://docs.fastly.com/en/guides/enabling-automatic-compression#setting-up-a-compression-policy
 SQL_NAME = "tags_db.sqlite.otf"
 MANIFEST_NAME = "manifest.json"
 PAGE_SIZE = 100
 # Bump this if the format changes
-SCHEMA_VERSION = 0
+SCHEMA_VERSION = 1
 
 
-def fetch_xml_batches() -> list[dict]:
+def fetch_xml_batches() -> list[dict[str, Any]]:
     print("About to start fetching batches")
     batches = []
     i = 0
@@ -78,7 +78,7 @@ ROW_DEFAULTS = {
 }
 
 
-def parse_batches_to_tags(batches: list[dict]) -> list[dict]:
+def parse_batches_to_tags(batches: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
 
 
@@ -110,7 +110,7 @@ PART_NAMES = [
 ]
 
 
-def generate_sql_db(tags: list[dict], out_dir: Path) -> None:
+def generate_sql_db(tags: list[dict[str, Any]], out_dir: Path) -> None:
     sql_path = out_dir / SQL_NAME
     sql_path.unlink(missing_ok=True)
     db = sqlite3.connect(sql_path)
@@ -142,9 +142,9 @@ def generate_sql_db(tags: list[dict], out_dir: Path) -> None:
     )
     db.execute(
         # The versions we use don't support fts5 yet
-        # CREATE VIRTUAL TABLE tags_fts USING fts5(id, title, alt_title, arranger, lyrics, content=tags, content_rowid=id);
+        # CREATE VIRTUAL TABLE tags_fts USING fts5(title, alt_title, arranger, lyrics, content=tags, content_rowid=id);
         """
-        CREATE VIRTUAL TABLE tags_fts USING fts4(id, title, alt_title, arranger, lyrics, content=tags);
+        CREATE VIRTUAL TABLE tags_fts USING fts4(title, alt_title, arranger, lyrics, content=tags);
         """
     )
     db.execute(
@@ -215,14 +215,12 @@ def generate_sql_db(tags: list[dict], out_dir: Path) -> None:
         """
         INSERT INTO tags_fts (
             rowid,
-            id,
             title,
             alt_title,
             arranger,
             lyrics
         )
         VALUES (
-            :id,
             :id,
             :Title,
             :AltTitle,
@@ -233,7 +231,9 @@ def generate_sql_db(tags: list[dict], out_dir: Path) -> None:
         tags,
     )
 
-    def ensure_list(val):
+    T = TypeVar("T")
+
+    def ensure_list(val: T | list[T]) -> list[T]:
         if isinstance(val, list):
             return val
         else:
@@ -320,7 +320,7 @@ def deploy_to_gh_pages(out_dir: Path) -> None:
 
 
 # Note - If we need them, we can add options for whether to deploy, where to store output
-@click.command()
+@click.command()  # type: ignore
 def main() -> None:
     """
     Job to fetch an up-to-date copy of the tags database, in batches of 100 rows, and write the result to a SQL
