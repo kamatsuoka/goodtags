@@ -25,12 +25,12 @@ const rootReducer = combineReducers({
 
 export type AppState = ReturnType<typeof rootReducer>
 
+// NOTE! This should be an append-only "list" with each addition having the next incremental integer.
+//
+// In particular, the only time it *might* be safe to mutate (or remove) existing migrations is when the migrations
+// haven't made it out to any users devices yet (eg before deployment).
 const MIGRATIONS = {
   0: (state: AppState) => {
-    state.search.filters.mode = "OFFLINE"
-    return state
-  },
-  1: (state: AppState) => {
     state.search.filters.offline = true
     return state
   },
@@ -41,8 +41,7 @@ const persistConfig = {
   key: "root",
   storage: AsyncStorage,
   stateReconciler: autoMergeLevel2,
-  // for some reason ` version: _.max(Object.keys(MIGRATIONS).map(parseInt)) ?? -1` always ends up as 0
-  version: parseInt(_.max(Object.keys(MIGRATIONS)) ?? "-1", 10),
+  version: _.max(Object.keys(MIGRATIONS).map(key => parseInt(key, 10))) ?? -1,
   // The types for `createMigrate` seem just quite wrong, in particular the migration function arg/return type
   migrate: createMigrate(MIGRATIONS as unknown as MigrationManifest),
 }

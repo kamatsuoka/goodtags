@@ -31,7 +31,6 @@ export interface SearchFilters {
   sheetMusic: boolean
   collection: Collection
   parts: Parts
-  mode: string // deprecated
   offline: boolean
 }
 
@@ -70,7 +69,6 @@ export const InitialFilters: SearchFilters = {
   sheetMusic: true,
   collection: Collection.ALL,
   parts: Parts.any,
-  mode: "OFFLINE",
   offline: true,
 }
 
