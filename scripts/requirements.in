@@ -2,4 +2,10 @@
 click
 requests
 xmltodict
+
+# Tools for development
+black
+mypy
 pip-tools
+types-requests
+types-xmltodict

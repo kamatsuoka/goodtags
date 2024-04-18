@@ -8,16 +8,14 @@ on:
 
 jobs:
 
-  test:
-    strategy:
-      fail-fast: true
+  test-js:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*        
+          node-version: lts/*
           cache: yarn
       - name: install typescript dependencies
         shell: bash
@@ -36,3 +34,25 @@ jobs:
         shell: bash
         run: |
           yarn run eslint src
+
+  test-py:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'checkout repo'
+        uses: 'actions/checkout@v4'
+      - name: 'set up python'
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: 'actions/setup-python@v4'
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: 'install pip dependencies'
+        run: |
+          python -m pip install --upgrade pip==24.0
+          pip install -r scripts/requirements.txt
+      - name: 'check types'
+        run: |
+          python -m mypy --strict scripts/fetch_search_database.py
+      - name: 'check formatting'
+        run: |
+          python -m black --check --diff scripts/fetch_search_database.py

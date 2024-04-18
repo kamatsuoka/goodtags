@@ -4,11 +4,11 @@ import sqlite3
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Sequence, Mapping
 
-import click  # type: ignore
-import requests  # type: ignore
-import xmltodict  # type: ignore
+import click
+import requests
+import xmltodict
 
 API_URL = "https://www.barbershoptags.com/api.php"
 OUT_DIR = Path(__file__).resolve().parent.parent / "out"
@@ -27,7 +27,7 @@ PAGE_SIZE = 100
 SCHEMA_VERSION = 1
 
 
-def fetch_xml_batches() -> list[dict[str, Any]]:
+def fetch_xml_batches() -> Sequence[Mapping[str, Any]]:
     print("About to start fetching batches")
     batches = []
     i = 0
@@ -78,7 +78,9 @@ ROW_DEFAULTS = {
 }
 
 
-def parse_batches_to_tags(batches: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def parse_batches_to_tags(
+    batches: Sequence[Mapping[str, Any]]
+) -> Sequence[Mapping[str, Any]]:
     return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
 
 
@@ -110,7 +112,7 @@ PART_NAMES = [
 ]
 
 
-def generate_sql_db(tags: list[dict[str, Any]], out_dir: Path) -> None:
+def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> None:
     sql_path = out_dir / SQL_NAME
     sql_path.unlink(missing_ok=True)
     db = sqlite3.connect(sql_path)
@@ -320,7 +322,7 @@ def deploy_to_gh_pages(out_dir: Path) -> None:
 
 
 # Note - If we need them, we can add options for whether to deploy, where to store output
-@click.command()  # type: ignore
+@click.command()
 def main() -> None:
     """
     Job to fetch an up-to-date copy of the tags database, in batches of 100 rows, and write the result to a SQL
