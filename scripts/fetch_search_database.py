@@ -20,11 +20,13 @@ OUT_DIR = Path(__file__).resolve().parent.parent / "out"
 # result in a smaller file, whereas with the `.otf` extension it's distinctly smaller over the wire.
 # I picked `.otf` from this list of extensions that would likely work with auto-compression:
 # https://docs.fastly.com/en/guides/enabling-automatic-compression#setting-up-a-compression-policy
-SQL_NAME = "tags_db.sqlite.otf"
+SQL_NAME_TEMPLATE = "tags_db_v{}.sqlite.otf"
 MANIFEST_NAME = "manifest.json"
 PAGE_SIZE = 100
-# Bump this if the format changes
-SCHEMA_VERSION = 1
+# Bump this if the format changes. Should match the `VALID_SCHEMA_VERSION` in `src/constants/sql.ts`
+LATEST_SCHEMA_VERSION = 1
+# Use this if we need to generate more than one DB schema simultaneously
+# PREVIOUS_SCHEMA_VERSION = 0
 
 
 def fetch_xml_batches() -> Sequence[Mapping[str, Any]]:
@@ -112,8 +114,9 @@ PART_NAMES = [
 ]
 
 
-def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> None:
-    sql_path = out_dir / SQL_NAME
+def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> str:
+    sql_name = SQL_NAME_TEMPLATE.format(LATEST_SCHEMA_VERSION)
+    sql_path = out_dir / sql_name
     sql_path.unlink(missing_ok=True)
     db = sqlite3.connect(sql_path)
 
@@ -176,7 +179,7 @@ def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> None:
         """
         INSERT INTO schema (version) VALUES (?)
         """,
-        (SCHEMA_VERSION,),
+        (LATEST_SCHEMA_VERSION,),
     )
     db.executemany(
         """
@@ -291,10 +294,18 @@ def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> None:
     print("Done creating DB")
     db.close()
 
+    return sql_name
 
-def generate_manifest(out_dir: Path) -> None:
+
+def generate_manifest(out_dir: Path, db_name_by_version: dict[int, str]) -> None:
+    # This format should match the `DbManifest` interface in `src/constants/sql.ts`
     (out_dir / MANIFEST_NAME).write_text(
-        json.dumps({"generated_at_epoch_seconds": int(time.time())})
+        json.dumps(
+            {
+                "generated_at_epoch_seconds": int(time.time()),
+                "db_name_by_version": db_name_by_version,
+            }
+        )
     )
 
 
@@ -341,8 +352,8 @@ def main() -> None:
     tags = parse_batches_to_tags(batches)
 
     prepare_out_dir(OUT_DIR)
-    generate_sql_db(tags, OUT_DIR)
-    generate_manifest(OUT_DIR)
+    current_sql_name = generate_sql_db(tags, OUT_DIR)
+    generate_manifest(OUT_DIR, {LATEST_SCHEMA_VERSION: current_sql_name})
     deploy_to_gh_pages(OUT_DIR)
 
 

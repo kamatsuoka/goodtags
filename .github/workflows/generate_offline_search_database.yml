@@ -14,8 +14,8 @@ permissions:
 
 jobs:
   fetch_and_deploy:
-    # Don't run this on forks
-    if: ${{ github.repository == 'kamatsuoka/goodtags' }}
+    # Don't run this on forks (unless manually triggered)
+    if: ${{ github.repository == 'kamatsuoka/goodtags' || github.event_name == 'workflow_dispatch' }}
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout primary branch'

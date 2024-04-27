@@ -1,3 +1,12 @@
+import {
+  DbManifest,
+  getReactNativeAppManifestModule,
+  getReactNativeAppSqlModule,
+  MANIFEST_NAME,
+  REMOTE_ASSET_BASE_URL,
+  TAGS_DB_NAME,
+  VALID_SCHEMA_VERSION,
+} from "@app/constants/sql"
 import getUrl from "@app/modules/getUrl"
 import {Buffer} from "buffer"
 import {Asset} from "expo-asset"
@@ -121,12 +130,6 @@ export async function getDbConnection(): Promise<DbWrapper> {
 }
 
 const SQLITE_DIR = "SQLite"
-const TAGS_DB_NAME = "tags_db.sqlite"
-const TAGS_DB_NAME_REMOTE = "tags_db.sqlite.otf"
-const MANIFEST_NAME = "manifest.json"
-const REMOTE_ASSET_BASE_URL = "https://kamatsuoka.github.io/goodtags"
-
-const GENERATED_AT_KEY = "generated_at_epoch_seconds"
 
 /**
  * Create the DB wrapper. Copies from the app storage if needed before creating the wrapper and kicks off a check of
@@ -139,10 +142,8 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   const currentManifestPath = sqlDir + MANIFEST_NAME
   const tmpSqlPath = `${currentSqlPath}.tmp`
   const tmpManifestPath = `${currentManifestPath}.tmp`
-  const appSqlPath = Asset.fromModule(
-    require(`../assets/generated_db/${TAGS_DB_NAME}`),
-  ).uri
-  const appManifestObject = require(`../assets/generated_db/${MANIFEST_NAME}`)
+  const appSqlPath = Asset.fromModule(getReactNativeAppSqlModule()).uri
+  const appManifestObject = getReactNativeAppManifestModule()
 
   if (!(await FileSystem.getInfoAsync(sqlDir)).exists) {
     await FileSystem.makeDirectoryAsync(sqlDir)
@@ -193,7 +194,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
 async function shouldCopyFromApp(
   currentSqlPath: string,
   currentManifestPath: string,
-  appManifestContents: {[key: string]: any},
+  appManifestContents: DbManifest,
 ): Promise<boolean> {
   // If either are missing, we should obviously copy
   if (
@@ -205,7 +206,7 @@ async function shouldCopyFromApp(
 
   // If they're present, see if the app manifest is newer
   const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
-  const appGeneratedAt = generatedAtFromObject(appManifestContents)
+  const appGeneratedAt = appManifestContents.generated_at_epoch_seconds
   return appGeneratedAt > currentGeneratedAt
 }
 
@@ -213,11 +214,8 @@ async function generatedAtFromPath(manifestPath: string): Promise<number> {
   const contents = await FileSystem.readAsStringAsync(manifestPath, {
     encoding: "utf8",
   })
-  return generatedAtFromObject(JSON.parse(contents))
-}
-
-function generatedAtFromObject(manifestObject: {[key: string]: any}): number {
-  return manifestObject[GENERATED_AT_KEY]
+  const manifest: DbManifest = JSON.parse(contents)
+  return manifest.generated_at_epoch_seconds
 }
 
 /**
@@ -230,20 +228,30 @@ async function backgroundCheckForRemoteUpdates(
   tmpSqlPath: string,
   tmpManifestPath: string,
 ) {
-  const remoteSqlUrl = `${REMOTE_ASSET_BASE_URL}/${TAGS_DB_NAME_REMOTE}`
   const remoteManifestUrl = `${REMOTE_ASSET_BASE_URL}/${MANIFEST_NAME}`
 
   // Assume we have a current manifest by this point
   const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
   // Get the generated at for the remote manifest
-  const remoteManifestContents = await getUrl<object>(remoteManifestUrl)
-  const remoteGeneratedAt = generatedAtFromObject(remoteManifestContents)
+  const remoteManifestContents = await getUrl<DbManifest>(remoteManifestUrl)
+  const remoteGeneratedAt = remoteManifestContents.generated_at_epoch_seconds
 
   if (remoteGeneratedAt <= currentGeneratedAt) {
     // It's not newer, bail
     console.debug("Remote DB not newer, done checking for updates")
     return
   }
+
+  const remoteSqlName =
+    remoteManifestContents.db_name_by_version[VALID_SCHEMA_VERSION]
+  if (remoteSqlName == null) {
+    console.debug(
+      `Unable to find remote DB with valid schema version of ${VALID_SCHEMA_VERSION}`,
+    )
+    return
+  }
+
+  const remoteSqlUrl = `${REMOTE_ASSET_BASE_URL}/${remoteSqlName}`
 
   // Go ahead and download/write out both
   // To avoid race conditions, first write out to temp files then move into place, as when copying from the app files.
