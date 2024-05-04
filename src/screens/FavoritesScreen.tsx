@@ -9,7 +9,7 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {FlashList} from "@shopify/flash-list"
 import {useCallback, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
-import {Button} from "react-native-paper"
+import {Button, useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
@@ -106,6 +106,7 @@ export const FavoritesScreen = (props: Props) => {
         onStateChange={({open}) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
+        theme={useTheme()}
       />
     </View>
   )

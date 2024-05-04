@@ -481,6 +481,7 @@ const TagScreen = ({navigation}: Props) => {
           }}
           style={fabGroupStyle}
           fabStyle={styles.fabDown}
+          theme={theme}
         />
       </View>
       <SafeAreaInsetsContext.Provider

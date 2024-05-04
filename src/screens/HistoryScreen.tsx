@@ -4,6 +4,7 @@ import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useRef, useState} from "react"
 import {View} from "react-native"
+import {useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
@@ -79,6 +80,7 @@ const HistoryScreen = () => {
         onStateChange={({open}) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
+        theme={useTheme()}
       />
     </View>
   )

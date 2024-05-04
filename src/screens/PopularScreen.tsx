@@ -5,8 +5,8 @@ import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useEffect, useRef, useState} from "react"
 import {View} from "react-native"
-import {ActivityIndicator, Snackbar} from "react-native-paper"
-import FABDown from "../components/FABDown"
+import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
+import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
@@ -115,6 +115,7 @@ const PopularScreen = () => {
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
+        theme={useTheme()}
       />
     </View>
   )
