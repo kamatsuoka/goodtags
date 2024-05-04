@@ -85,10 +85,10 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Favorites"
+        name="Library"
         component={FavoritesScreen}
         options={{
-          title: "faves",
+          title: "library",
           tabBarIcon: FavoritesIcon,
         }}
       />

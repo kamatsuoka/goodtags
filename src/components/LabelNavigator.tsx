@@ -1,7 +1,6 @@
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {TabsParamList} from "@app/navigation/navigationParams"
-import {FAVORITES_TAB_INDEX} from "@app/navigation/TabNavigator"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {StyleSheet} from "react-native"
@@ -18,6 +17,7 @@ export default function LabelNavigator() {
   const labels = useAppSelector(state => state.favorites.labels)
   const tagIdsByLabel = useAppSelector(state => state.favorites.tagIdsByLabel)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
+  const numFavorites = useAppSelector(state => state.favorites.allTagIds.length)
   const theme = useTheme()
   const dispatch = useAppDispatch()
 
@@ -62,23 +62,29 @@ export default function LabelNavigator() {
     },
   })
   /**
-   * If we're on the favorites tab and the currently selected label is pressed,
-   * unselect it. Otherwise, select the new label.
+   * If we're on the library tab and the currently selected label is pressed,
+   * just close the navigator. Otherwise, select the new label.
    */
-  const handleLabelPress = (label: string) => {
-    const tabIndex =
-      navigation.getState().routes[0].state?.routes[0].state?.index
-    if (label === selectedLabel && tabIndex === FAVORITES_TAB_INDEX) {
-      dispatch(FavoritesActions.unselectLabel())
-    } else {
+  const handleLabelPress = (label?: string) => {
+    if (label) {
       dispatch(FavoritesActions.selectLabel(label))
-      navigation.navigate("Favorites", {label})
+    } else {
+      dispatch(FavoritesActions.unselectLabel())
     }
+    navigation.navigate("Library", {label})
   }
+
+  const favoriteCount = () => <Text>{numFavorites}</Text>
 
   return (
     <DrawerContentScrollView contentContainerStyle={styles.drawerContent}>
-      {/* <View style={styles.container}> */}
+      <Drawer.Item
+        icon={selectedLabel ? "heart-outline" : "heart"}
+        label="favorites"
+        right={() => favoriteCount()}
+        onPress={() => handleLabelPress()}
+        style={styles.drawerItem}
+      />
       {labels.map((label, index) => {
         return (
           <Drawer.Item
@@ -91,7 +97,6 @@ export default function LabelNavigator() {
           />
         )
       })}
-      {/* </View> */}
     </DrawerContentScrollView>
   )
 }

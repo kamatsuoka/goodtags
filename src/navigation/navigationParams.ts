@@ -22,7 +22,7 @@ export type DrawerParamList = {
 
 export type TabsParamList = {
   Search: undefined
-  Favorites: {
+  Library: {
     label?: string
   }
   Popular: undefined

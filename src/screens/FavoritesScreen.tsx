@@ -21,7 +21,7 @@ import {FavoritesActions} from "../modules/favoritesSlice"
 import {SORT_ICONS, TagListType} from "../modules/tagLists"
 
 type Props = CompositeScreenProps<
-  NativeStackScreenProps<RootStackParamList, "Favorites">,
+  NativeStackScreenProps<RootStackParamList, "Library">,
   DrawerScreenProps<DrawerParamList>
 >
 
@@ -77,22 +77,20 @@ export const FavoritesScreen = (props: Props) => {
 
   const emptyMessage = selectedLabel
     ? "no tags with this label yet"
-    : "tap the heart icon in sheet music to add favorites"
+    : "tap the heart icon on sheet music to add favorites"
   return (
     <View style={CommonStyles.container}>
       <ListHeader listRef={listRef} />
-      {selectedLabel ? (
-        <View style={styles.labelHolder}>
-          <Button
-            icon="label"
-            onPress={navigation.openDrawer}
-            mode="text"
-            compact
-            style={styles.labelButton}>
-            {selectedLabel}
-          </Button>
-        </View>
-      ) : null}
+      <View style={styles.labelHolder}>
+        <Button
+          icon={selectedLabel ? "label" : "heart"}
+          onPress={navigation.openDrawer}
+          mode="text"
+          compact
+          style={styles.labelButton}>
+          {selectedLabel || "favorites"}
+        </Button>
+      </View>
       <TagList
         listRef={listRef}
         title="favorites"
