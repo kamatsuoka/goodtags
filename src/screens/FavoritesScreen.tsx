@@ -18,7 +18,7 @@ import {SortOrder} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {FavoritesActions} from "../modules/favoritesSlice"
-import {SORT_ICONS, TagListType} from "../modules/tagLists"
+import {SORT_ICONS, SORT_LABELS, TagListType} from "../modules/tagLists"
 
 type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList, "Library">,
@@ -33,10 +33,11 @@ export const FavoritesScreen = (props: Props) => {
   const haptics = useHaptics()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
-  const labeledSortOrder = useAppSelector(
-    state => state.favorites.labeledSortOrder,
-  )
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
+  const labelSortOrder = useAppSelector(state =>
+    selectedLabel ? state.favorites.sortOrderByLabel[selectedLabel] : undefined,
+  )
+
   const dispatch = useAppDispatch()
   const listRef = useRef<FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
@@ -49,31 +50,29 @@ export const FavoritesScreen = (props: Props) => {
     }, []),
   )
 
-  const order = selectedLabel ? labeledSortOrder : sortOrder
-  const otherOrder =
-    order === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
+  const order = selectedLabel ? labelSortOrder : sortOrder
 
-  const iconLabel =
-    order === SortOrder.newest
-      ? "sort alphabetically"
-      : selectedLabel
-        ? "sort by id"
-        : "sort by recently added"
+  const sortOrders = selectedLabel
+    ? [SortOrder.alpha, SortOrder.id]
+    : [SortOrder.alpha, SortOrder.newest]
 
-  const fabActions = [
-    {
-      icon: SORT_ICONS[otherOrder],
-      label: iconLabel,
-      onPress: async () => {
-        await haptics.selectionAsync()
-        dispatch(
-          selectedLabel
-            ? FavoritesActions.toggleLabeledSortOrder()
-            : FavoritesActions.toggleSortOrder(),
-        )
-      },
-    },
-  ]
+  const fabActions = sortOrders
+    .filter(o => o !== order)
+    .map(o => {
+      return {
+        icon: SORT_ICONS[o],
+        label:
+          o === SortOrder.newest ? "sort by recently added" : SORT_LABELS[o],
+        onPress: async () => {
+          await haptics.selectionAsync()
+          dispatch(
+            selectedLabel
+              ? FavoritesActions.toggleLabelSortOrder()
+              : FavoritesActions.toggleSortOrder(),
+          )
+        },
+      }
+    })
 
   const emptyMessage = selectedLabel
     ? "no tags with this label yet"

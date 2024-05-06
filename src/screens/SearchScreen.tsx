@@ -107,7 +107,7 @@ const SearchScreen = () => {
 
   const fabActions = [
     ...Object.values(SortOrder)
-      .filter(o => o !== sortOrder)
+      .filter(o => o !== sortOrder && o !== SortOrder.id)
       .map(order => {
         return {
           icon: SORT_ICONS[order],

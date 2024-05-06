@@ -14,6 +14,7 @@ import {
   LoadingState,
   sortAlpha,
   sortTagsAlpha,
+  sortTagsById,
   TagListState,
   TagListType,
 } from "./tagLists"
@@ -27,11 +28,12 @@ type LabelsState = {
   labeledById: TagsById
   labels: Array<string>
   selectedLabel?: string
-  labeledSortOrder: SortOrder
+  labeledSortOrder: SortOrder // legacy sort order for all labels
   labeledSelectedTag?: SelectedTag
   labelError?: string
   // selected tag that has had selected label removed
   strandedTag?: {tag: Tag; label: string}
+  sortOrderByLabel: {[label: string]: SortOrder}
 }
 export type FavoritesState = {
   tagsById: FavoritesById
@@ -48,6 +50,7 @@ export const LabelsInitialState: LabelsState = {
   labeledById: {},
   labels: [],
   labeledSortOrder: SortOrder.alpha,
+  sortOrderByLabel: {},
 }
 
 export const InitialState: FavoritesState = {
@@ -133,12 +136,27 @@ const favoritesSlice = createSlice({
         state.sortOrder = SortOrder.newest
       }
     },
-    toggleLabeledSortOrder: state => {
+    toggleLabelSortOrder: state => {
       state.selectedTag = undefined
-      state.labeledSortOrder =
-        state.labeledSortOrder === SortOrder.newest
-          ? SortOrder.alpha
-          : SortOrder.newest
+      if (!state.selectedLabel) {
+        console.warn("toggleLabeledSortOrder called with no selected label")
+        return
+      }
+      // if sort order not set yet for this label, use legacy all-label sort order
+      const sortOrder =
+        state.sortOrderByLabel[state.selectedLabel] || state.labeledSortOrder
+      if (sortOrder === SortOrder.id) {
+        // switch to alphabetical
+        sortTagsAlpha(
+          state.labeledById,
+          state.tagIdsByLabel[state.selectedLabel],
+        )
+        state.sortOrderByLabel[state.selectedLabel] = SortOrder.alpha
+      } else {
+        // switch to by id
+        sortTagsById(state.tagIdsByLabel[state.selectedLabel])
+        state.sortOrderByLabel[state.selectedLabel] = SortOrder.newest
+      }
     },
     createLabel: (state, action: PayloadAction<string>) => {
       const label = action.payload.trim()
