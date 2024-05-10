@@ -142,7 +142,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   const currentManifestPath = sqlDir + MANIFEST_NAME
   const tmpSqlPath = `${currentSqlPath}.tmp`
   const tmpManifestPath = `${currentManifestPath}.tmp`
-  const appSqlPath = Asset.fromModule(getReactNativeAppSqlModule()).uri
+  const appSqlUri = Asset.fromModule(getReactNativeAppSqlModule()).uri
   const appManifestObject = getReactNativeAppManifestModule()
 
   if (!(await FileSystem.getInfoAsync(sqlDir)).exists) {
@@ -161,7 +161,12 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     // To avoid getting into a bad state if the app dies mid-copy, we write to temp files and then move the files into
     // place. There's still potential for a race condition where we've moved one file but not the other, but the
     // consequences should be much less bad (eg unlikely to brick the app).
-    await FileSystem.downloadAsync(appSqlPath, tmpSqlPath)
+
+    if (__DEV__) {
+      await FileSystem.downloadAsync(appSqlUri, tmpSqlPath)
+    } else {
+      await FileSystem.copyAsync({from: appSqlUri, to: tmpSqlPath})
+    }
     await FileSystem.writeAsStringAsync(
       tmpManifestPath,
       JSON.stringify(appManifestObject),
