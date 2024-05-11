@@ -319,10 +319,9 @@ const TagScreen = ({navigation}: Props) => {
     await haptics.selectionAsync()
     brightenThenFade()
     if (favoritesById[id]) {
-      const lastFavorite =
-        tagListType === TagListType.Favorites && allTagIds.length === 1
       dispatch(FavoritesActions.removeFavorite(id))
-      if (lastFavorite) {
+      if (tagListType === TagListType.Favorites && !selectedLabel) {
+        // if on regular favorites list (not label), go back to list
         await haptics.impactAsync(ImpactFeedbackStyle.Light)
         return goBack()
       }
