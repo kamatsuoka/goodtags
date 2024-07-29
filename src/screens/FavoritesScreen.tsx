@@ -1,15 +1,9 @@
 import useHaptics from "@app/hooks/useHaptics"
-import {
-  DrawerParamList,
-  RootStackParamList,
-} from "@app/navigation/navigationParams"
-import {DrawerScreenProps} from "@react-navigation/drawer"
-import {CompositeScreenProps, useFocusEffect} from "@react-navigation/native"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
+import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {useCallback, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
-import {Button, useTheme} from "react-native-paper"
+import {Text, useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
@@ -20,16 +14,10 @@ import useFabDownStyle from "../hooks/useFabDownStyle"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {SORT_ICONS, TagListType} from "../modules/tagLists"
 
-type Props = CompositeScreenProps<
-  NativeStackScreenProps<RootStackParamList, "Favorites">,
-  DrawerScreenProps<DrawerParamList>
->
-
 /**
  * Favorites lists and lists of labeled tags.
  */
-export const FavoritesScreen = (props: Props) => {
-  const {navigation} = props
+export const FavoritesScreen = () => {
   const haptics = useHaptics()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
@@ -80,17 +68,10 @@ export const FavoritesScreen = (props: Props) => {
     : "tap the heart icon in sheet music to add favorites"
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} />
+      <ListHeader listRef={listRef} title="faves" />
       {selectedLabel ? (
         <View style={styles.labelHolder}>
-          <Button
-            icon="label"
-            onPress={navigation.openDrawer}
-            mode="text"
-            compact
-            style={styles.labelButton}>
-            {selectedLabel}
-          </Button>
+          <Text>{selectedLabel}</Text>
         </View>
       ) : null}
       <TagList
@@ -100,7 +81,7 @@ export const FavoritesScreen = (props: Props) => {
         tagListType={TagListType.Favorites}
       />
       <FABDown
-        icon={fabOpen ? "minus" : "plus"}
+        icon={fabOpen ? "minus" : "cog"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

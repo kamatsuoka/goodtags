@@ -3,8 +3,12 @@ import LabelEditor from "@app/components/LabelEditor"
 import TagLabels from "@app/components/TagLabels"
 import {MainTheme, SansSerifTheme} from "@app/lib/theme"
 import AboutScreen from "@app/screens/AboutScreen"
+import {FavoritesScreen} from "@app/screens/FavoritesScreen"
+import HistoryScreen from "@app/screens/HistoryScreen"
+import {LabelScreen} from "@app/screens/LabelScreen"
 import LandscapeTransition from "@app/screens/LandscapeTransition"
 import OptionsScreen from "@app/screens/OptionsScreen"
+import PopularScreen from "@app/screens/PopularScreen"
 import PortraitTransition from "@app/screens/PortraitTransition"
 import {
   DrawerActions,
@@ -24,7 +28,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {useAppSelector} from "../hooks"
 import TagScreen from "../screens/TagScreen"
 import WelcomeScreen from "../screens/WelcomeScreen"
-import DrawerNavigator from "./DrawerNavigator"
+import TabNavigator from "./TabNavigator"
 import {StackParamList} from "./navigationParams"
 
 function HeaderCancel() {
@@ -35,7 +39,7 @@ function HeaderCancel() {
 const BACK_ICON = "chevron-left"
 const BACK_ICON_SIZE = 36
 
-const BackButton = (_props: HeaderBackButtonProps) => {
+export const BackButton = (_props: HeaderBackButtonProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -109,12 +113,12 @@ export default function StackNavigator() {
     <PaperProvider theme={theme}>
       <NavigationContainer theme={theme}>
         <Stack.Navigator
-          initialRouteName={lastVisited ? "Drawer" : "Welcome"}
+          initialRouteName={lastVisited ? "Tabs" : "Welcome"}
           screenOptions={screenOptions}>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen
-            name="Drawer"
-            component={DrawerNavigator}
+            name="Tabs"
+            component={TabNavigator}
             options={drawerOrientation}
           />
           <Stack.Screen
@@ -131,6 +135,26 @@ export default function StackNavigator() {
             name="LandscapeTransition"
             component={LandscapeTransition}
             options={{animation: "none", ...tagOrientation}}
+          />
+          <Stack.Screen
+            name="Popular"
+            component={PopularScreen}
+            options={{headerLeft: BackButton, ...drawerOrientation}}
+          />
+          <Stack.Screen
+            name="Favorites"
+            component={FavoritesScreen}
+            options={drawerOrientation}
+          />
+          <Stack.Screen
+            name="Label"
+            component={LabelScreen}
+            options={drawerOrientation}
+          />
+          <Stack.Screen
+            name="History"
+            component={HistoryScreen}
+            options={drawerOrientation}
           />
           <Stack.Group
             screenOptions={{

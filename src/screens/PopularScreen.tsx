@@ -87,7 +87,11 @@ const PopularScreen = () => {
 
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} />
+      <ListHeader
+        listRef={listRef}
+        showBackButton={true}
+        title="popular tags"
+      />
       <TagList
         tagListType={TagListType.Popular}
         emptyMessage={
@@ -108,7 +112,7 @@ const PopularScreen = () => {
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "plus"}
+        icon={fabOpen ? "minus" : "cog"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

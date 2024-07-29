@@ -10,7 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {TabBarBackground} from "../lib/theme"
 import {FavoritesScreen} from "../screens/FavoritesScreen"
 import HistoryScreen from "../screens/HistoryScreen"
-import PopularScreen from "../screens/PopularScreen"
+import HomeScreen from "../screens/HomeScreen"
 import SearchScreen from "../screens/SearchScreen"
 import {TabsParamList} from "./navigationParams"
 
@@ -61,7 +61,7 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Popular"
+      initialRouteName="Home"
       screenOptions={screenOptions}
       sceneContainerStyle={{
         // Paddings to handle safe area
@@ -69,11 +69,11 @@ export default function TabNavigator() {
         paddingRight: insets.right,
       }}>
       <Tab.Screen
-        name="Popular"
-        component={PopularScreen}
+        name="Home"
+        component={HomeScreen}
         options={{
-          title: "popular",
-          tabBarIcon: PopularIcon,
+          title: "home",
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tab.Screen
@@ -110,7 +110,7 @@ function tabIcon(name: string) {
   )
 }
 
-const PopularIcon = tabIcon("download")
+const HomeIcon = tabIcon("home")
 const SearchIcon = tabIcon("magnify")
 const FavoritesIcon = tabIcon("heart-outline")
 const HistoryIcon = tabIcon("history")

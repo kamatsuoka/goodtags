@@ -1,9 +1,12 @@
 import Tag from "@app/lib/models/Tag"
-import {NavigatorScreenParams} from "@react-navigation/native"
 
 export type StackParamList = {
   Welcome: undefined
-  Drawer: NavigatorScreenParams<DrawerParamList>
+  Tabs: undefined
+  Popular: undefined
+  Favorites: undefined
+  Label: {label: string}
+  History: undefined
   Tag: undefined
   About: undefined
   Options: undefined
@@ -25,7 +28,7 @@ export type TabsParamList = {
   Favorites: {
     label?: string
   }
-  Popular: undefined
+  Home: undefined
   History: undefined
 }
 

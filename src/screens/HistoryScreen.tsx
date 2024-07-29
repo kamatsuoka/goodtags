@@ -66,7 +66,7 @@ const HistoryScreen = () => {
 
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} />
+      <ListHeader listRef={listRef} title="history" />
       <TagList
         listRef={listRef}
         title="History"
@@ -74,7 +74,7 @@ const HistoryScreen = () => {
         tagListType={TagListType.History}
       />
       <FABDown
-        icon={fabOpen ? "minus" : "plus"}
+        icon={fabOpen ? "minus" : "cog"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

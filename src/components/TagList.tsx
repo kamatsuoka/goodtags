@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   emptyMessage: {
     fontSize: 14,
-    paddingTop: 15,
+    paddingTop: 55,
     textAlign: "center",
   },
   listItemHolder: {
