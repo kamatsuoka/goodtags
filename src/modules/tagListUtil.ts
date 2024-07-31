@@ -30,16 +30,21 @@ export function getTagListSelector(
   }
 }
 
+function getLabelTagListSelector(label: string) {
+  return (state: RootState) => selectLabelState(state.favorites, label)
+}
+
 export const makeSelectTagState = () =>
   createSelector(
-    [state => state, (_, tagListType) => tagListType],
-    (state, tagListType) => getTagListSelector(tagListType)(state),
-  )
-
-export const makeSelectTagsByLabel = () =>
-  createSelector(
-    [state => state.favorites, (_, label) => label],
-    (favorites, label) => selectLabelState(favorites, label),
+    [
+      state => state,
+      (_, tagListType) => tagListType,
+      (_, tagListId) => tagListId,
+    ],
+    (state, tagListType, tagListId) =>
+      tagListType === TagListType.Label
+        ? getLabelTagListSelector(tagListId)(state)
+        : getTagListSelector(tagListType)(state),
   )
 
 export type SelectedTag = {

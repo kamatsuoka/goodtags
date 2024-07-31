@@ -302,7 +302,10 @@ export const selectFavorites = (state: RootState): TagListState => {
   }
 }
 
-export const selectLabelState = (favs: FavoritesState, label: string) => {
+export const selectLabelState = (
+  favs: FavoritesState,
+  label: string,
+): TagListState => {
   const ids = favs.tagIdsByLabel[label]
   const allTagIds = ids ? [...ids] : []
   if (
