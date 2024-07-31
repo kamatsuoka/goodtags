@@ -292,48 +292,64 @@ export const refreshFavorite = createAsyncThunk<
 
 export const selectFavorites = (state: RootState): TagListState => {
   const favs = state.favorites
-  if (favs.selectedLabel) {
-    const ids = favs.tagIdsByLabel[favs.selectedLabel]
-    const allTagIds = ids ? [...ids] : []
-    if (
-      favs.strandedTag?.tag.id === favs.labeledSelectedTag?.id &&
-      favs.strandedTag?.label === favs.selectedLabel
-    ) {
-      // special case: selected label has been removed from selected tag,
-      // return just the formerly labeled tag to avoid weirdness
-      const tag = favs.strandedTag.tag
-      return {
-        allTagIds: [tag.id],
-        error: undefined,
-        loadingState: LoadingState.idle,
-        selectedTag: {id: tag.id, index: 0},
-        tagsById: {[tag.id]: tag},
-        sortOrder: favs.labeledSortOrder,
-      }
-    }
-    if (allTagIds.length > 0) {
-      if (favs.labeledSortOrder === SortOrder.alpha) {
-        sortTagsAlpha(favs.labeledById, allTagIds)
-      } else {
-        allTagIds.sort((id1, id2) => id2 - id1)
-      }
-    }
+  return {
+    allTagIds: favs.allTagIds,
+    error: favs.error,
+    loadingState: favs.loadingState,
+    selectedTag: favs.selectedTag,
+    tagsById: favs.tagsById,
+    sortOrder: favs.sortOrder,
+  }
+}
+
+export const selectLabelState = (favs: FavoritesState, label: string) => {
+  const ids = favs.tagIdsByLabel[label]
+  const allTagIds = ids ? [...ids] : []
+  if (
+    favs.strandedTag?.tag.id === favs.labeledSelectedTag?.id &&
+    favs.strandedTag?.label === label
+  ) {
+    // special case: selected label has been removed from selected tag,
+    // return just the formerly labeled tag to avoid weirdness
+    const tag = favs.strandedTag.tag
     return {
-      allTagIds,
+      allTagIds: [tag.id],
       error: undefined,
       loadingState: LoadingState.idle,
-      selectedTag: favs.labeledSelectedTag,
-      tagsById: favs.labeledById,
+      selectedTag: {id: tag.id, index: 0},
+      tagsById: {[tag.id]: tag},
       sortOrder: favs.labeledSortOrder,
     }
+  }
+  if (allTagIds.length > 0) {
+    if (favs.labeledSortOrder === SortOrder.alpha) {
+      sortTagsAlpha(favs.labeledById, allTagIds)
+    } else {
+      allTagIds.sort((id1, id2) => id2 - id1)
+    }
+  }
+  return {
+    allTagIds,
+    error: undefined,
+    loadingState: LoadingState.idle,
+    selectedTag: favs.labeledSelectedTag,
+    tagsById: favs.labeledById,
+    sortOrder: favs.labeledSortOrder,
+  }
+}
+
+export const selectLabel = (state: RootState, label: string): TagListState => {
+  const favs = state.favorites
+  if (label) {
+    return selectLabelState(favs, label)
   } else {
     return {
-      allTagIds: favs.allTagIds,
-      error: favs.error,
-      loadingState: favs.loadingState,
-      selectedTag: favs.selectedTag,
-      tagsById: favs.tagsById,
-      sortOrder: favs.sortOrder,
+      allTagIds: [],
+      error: "no label selected",
+      loadingState: LoadingState.idle,
+      selectedTag: undefined,
+      tagsById: {},
+      sortOrder: SortOrder.alpha,
     }
   }
 }

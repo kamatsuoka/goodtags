@@ -1,9 +1,13 @@
 /**
  * utilities for working with tag lists
  */
-import {ActionCreatorWithPayload} from "@reduxjs/toolkit"
+import {ActionCreatorWithPayload, createSelector} from "@reduxjs/toolkit"
 import {RootState} from "../store"
-import {FavoritesActions, selectFavorites} from "./favoritesSlice"
+import {
+  FavoritesActions,
+  selectFavorites,
+  selectLabelState,
+} from "./favoritesSlice"
 import {HistoryActions, selectHistory} from "./historySlice"
 import {PopularActions, selectPopular} from "./popularSlice"
 import {SearchActions, selectSearchResults} from "./searchSlice"
@@ -26,6 +30,18 @@ export function getTagListSelector(
   }
 }
 
+export const makeSelectTagState = () =>
+  createSelector(
+    [state => state, (_, tagListType) => tagListType],
+    (state, tagListType) => getTagListSelector(tagListType)(state),
+  )
+
+export const makeSelectTagsByLabel = () =>
+  createSelector(
+    [state => state.favorites, (_, label) => label],
+    (favorites, label) => selectLabelState(favorites, label),
+  )
+
 export type SelectedTag = {
   index: number
   id: number
@@ -36,6 +52,8 @@ export function getSelectedTagSetter(
 ): ActionCreatorWithPayload<SelectedTag> {
   switch (tagListType) {
     case TagListType.Favorites:
+      return FavoritesActions.setSelectedTag
+    case TagListType.Label:
       return FavoritesActions.setSelectedTag
     case TagListType.Popular:
       return PopularActions.setSelectedTag

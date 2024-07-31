@@ -1,3 +1,4 @@
+import useTagListState from "@app/hooks/useTagListState"
 import {setTagListType, setTagState, TagState} from "@app/modules/visitSlice"
 import {StackParamList} from "@app/navigation/navigationParams"
 import {useFocusEffect, useNavigation} from "@react-navigation/native"
@@ -10,7 +11,7 @@ import CommonStyles from "../constants/CommonStyles"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import Tag from "../lib/models/Tag"
 import {LoadingState, TagListType} from "../modules/tagLists"
-import {getSelectedTagSetter, getTagListSelector} from "../modules/tagListUtil"
+import {getSelectedTagSetter} from "../modules/tagListUtil"
 import TagListItem, {ITEM_HEIGHT} from "./TagListItem"
 
 export type TagListProps = {
@@ -19,6 +20,7 @@ export type TagListProps = {
   loadMore?: (numTags: number) => Promise<boolean>
   tagListType: TagListType
   listRef: RefObject<FlashList<number>>
+  label?: string
 }
 
 /**
@@ -31,18 +33,14 @@ const TagList = (props: TagListProps) => {
     min: 0,
   })
   const dispatch = useAppDispatch()
-  const allTagIds = useAppSelector(
-    state => getTagListSelector(props.tagListType)(state).allTagIds,
-  )
-  const tagsById = useAppSelector(
-    state => getTagListSelector(props.tagListType)(state).tagsById,
-  )
-  const selectedTag = useAppSelector(
-    state => getTagListSelector(props.tagListType)(state).selectedTag,
-  )
-  const loadingState = useAppSelector(
-    state => getTagListSelector(props.tagListType)(state).loadingState,
-  )
+
+  const tagListState = useTagListState(props.tagListType)
+
+  const allTagIds = tagListState.allTagIds
+  const tagsById = tagListState.tagsById
+  const selectedTag = tagListState.selectedTag
+  const loadingState = tagListState.loadingState
+
   const setSelectedTag = getSelectedTagSetter(props.tagListType)
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const tagState = useAppSelector(state => state.visit.tagState)

@@ -13,6 +13,7 @@ import CommonStyles from "../constants/CommonStyles"
 // @ts-ignore
 import useHaptics from "@app/hooks/useHaptics"
 import useSelectedTag from "@app/hooks/useSelectedTag"
+import useTagListState from "@app/hooks/useTagListState"
 import {setTagState, TagState} from "@app/modules/visitSlice"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {ImpactFeedbackStyle} from "expo-haptics"
@@ -39,7 +40,7 @@ import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {HistoryActions} from "../modules/historySlice"
 import {TagListType} from "../modules/tagLists"
-import {getSelectedTagSetter, getTagListSelector} from "../modules/tagListUtil"
+import {getSelectedTagSetter} from "../modules/tagListUtil"
 import {
   PlayingState,
   playTrack,
@@ -49,7 +50,9 @@ import {
 } from "../modules/tracksSlice"
 import {StackParamList} from "../navigation/navigationParams"
 
-type Props = NativeStackScreenProps<StackParamList, "Tag">
+type Props = NativeStackScreenProps<StackParamList, "Tag"> & {
+  label?: string
+}
 
 /**
  * Sheet music screen
@@ -66,12 +69,9 @@ const TagScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
-  const allTagIds = useAppSelector(
-    state => getTagListSelector(tagListType)(state).allTagIds,
-  )
-  const selectedTag = useAppSelector(
-    state => getTagListSelector(tagListType)(state).selectedTag,
-  )
+  const tagListState = useTagListState(tagListType)
+  const allTagIds = tagListState.allTagIds
+  const selectedTag = tagListState.selectedTag
   const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useSelectedTag(tagListType)
   const keyNote = noteForKey(tag.key)
