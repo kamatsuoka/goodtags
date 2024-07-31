@@ -19,10 +19,6 @@ export type StackParamList = {
   LandscapeTransition: undefined
 }
 
-export type DrawerParamList = {
-  Tabs: undefined
-}
-
 export type TabsParamList = {
   Search: undefined
   Favorites: {
@@ -32,6 +28,4 @@ export type TabsParamList = {
   History: undefined
 }
 
-export type RootStackParamList = TabsParamList &
-  StackParamList &
-  DrawerParamList
+export type RootStackParamList = TabsParamList & StackParamList

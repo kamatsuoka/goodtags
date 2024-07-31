@@ -10,11 +10,7 @@ import LandscapeTransition from "@app/screens/LandscapeTransition"
 import OptionsScreen from "@app/screens/OptionsScreen"
 import PopularScreen from "@app/screens/PopularScreen"
 import PortraitTransition from "@app/screens/PortraitTransition"
-import {
-  DrawerActions,
-  NavigationContainer,
-  useNavigation,
-} from "@react-navigation/native"
+import {NavigationContainer, useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
@@ -55,25 +51,6 @@ export const BackButton = (_props: HeaderBackButtonProps) => {
   )
 }
 
-const BackToDrawerClose = (_props: HeaderBackButtonProps) => {
-  const navigation = useNavigation()
-  const insets = useSafeAreaInsets()
-
-  const style = {paddingLeft: Platform.OS === "android" ? insets.left : 0}
-
-  return (
-    <Icon
-      name={BACK_ICON}
-      size={BACK_ICON_SIZE}
-      style={style}
-      onPress={() => {
-        navigation.dispatch(DrawerActions.closeDrawer())
-        navigation.goBack()
-      }}
-    />
-  )
-}
-
 /**
  * Navigator stack.
  */
@@ -84,7 +61,7 @@ export default function StackNavigator() {
   const serifs = useAppSelector(state => state.options.serifs)
   const insets = useSafeAreaInsets()
 
-  const drawerOrientation: NativeStackNavigationOptions = useMemo(
+  const homeOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
       orientation: autoRotate ? "portrait_up" : "all",
     }),
@@ -119,7 +96,7 @@ export default function StackNavigator() {
           <Stack.Screen
             name="Tabs"
             component={TabNavigator}
-            options={drawerOrientation}
+            options={homeOrientation}
           />
           <Stack.Screen
             name="Tag"
@@ -129,7 +106,7 @@ export default function StackNavigator() {
           <Stack.Screen
             name="PortraitTransition"
             component={PortraitTransition}
-            options={{animation: "none", ...drawerOrientation}}
+            options={{animation: "none", ...homeOrientation}}
           />
           <Stack.Screen
             name="LandscapeTransition"
@@ -139,22 +116,22 @@ export default function StackNavigator() {
           <Stack.Screen
             name="Popular"
             component={PopularScreen}
-            options={{headerLeft: BackButton, ...drawerOrientation}}
+            options={{headerLeft: BackButton, ...homeOrientation}}
           />
           <Stack.Screen
             name="Favorites"
             component={FavoritesScreen}
-            options={drawerOrientation}
+            options={homeOrientation}
           />
           <Stack.Screen
             name="Label"
             component={LabelScreen}
-            options={drawerOrientation}
+            options={homeOrientation}
           />
           <Stack.Screen
             name="History"
             component={HistoryScreen}
-            options={drawerOrientation}
+            options={homeOrientation}
           />
           <Stack.Group
             screenOptions={{
@@ -181,7 +158,7 @@ export default function StackNavigator() {
                   paddingLeft: 0,
                   paddingRight: 0,
                 },
-                ...drawerOrientation,
+                ...homeOrientation,
               }}
             />
             <Stack.Screen
@@ -189,8 +166,8 @@ export default function StackNavigator() {
               component={OptionsScreen}
               options={{
                 title: "options",
-                headerLeft: BackToDrawerClose,
-                ...drawerOrientation,
+                headerLeft: BackButton,
+                ...homeOrientation,
               }}
             />
             <Stack.Screen
@@ -199,7 +176,7 @@ export default function StackNavigator() {
               options={{
                 title: "edit labels",
                 headerLeft: BackButton,
-                ...drawerOrientation,
+                ...homeOrientation,
               }}
             />
             <Stack.Screen

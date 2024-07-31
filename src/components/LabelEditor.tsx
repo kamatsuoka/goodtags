@@ -207,9 +207,6 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
   },
-  drawerContent: {
-    alignItems: "flex-start",
-  },
   itemHolder: {
     flex: 1,
     flexDirection: "row",
@@ -228,9 +225,6 @@ const styles = StyleSheet.create({
   itemText: {
     flexGrow: 1,
     marginLeft: 5,
-  },
-  drawerItem: {
-    // width: 350,
   },
   title: {
     flexDirection: "row",

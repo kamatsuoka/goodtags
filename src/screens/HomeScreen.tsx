@@ -68,7 +68,7 @@ export default function HomeScreen() {
   })
 
   return (
-    <View style={styles.container} testID="drawer_container">
+    <View style={styles.container} testID="home_container">
       <View style={styles.logoHolder}>
         <Logo size={30} dark />
       </View>
