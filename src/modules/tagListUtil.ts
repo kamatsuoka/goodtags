@@ -14,7 +14,7 @@ import {SearchActions, selectSearchResults} from "./searchSlice"
 import {TagListState, TagListType} from "./tagLists"
 
 export function getTagListSelector(
-  tagListType: TagListType,
+  tagListType: TagListType | string,
 ): (state: RootState) => TagListState {
   switch (tagListType) {
     case TagListType.Favorites:
@@ -26,8 +26,19 @@ export function getTagListSelector(
     case TagListType.SearchResults:
       return selectSearchResults
     default:
+      if (isLabelType(tagListType)) {
+        return getLabeledTagListSelector(tagListType)
+      }
       throw Error(`Unknown tagListType ${tagListType}`)
   }
+}
+
+export function isFavoriteOrLabel(tagListType: TagListType | string) {
+  return tagListType === TagListType.Favorites || isLabelType(tagListType)
+}
+
+export function isLabelType(tagListType: TagListType | string) {
+  return typeof tagListType === "string"
 }
 
 function getLabeledTagListSelector(label: string) {
@@ -38,13 +49,10 @@ export const makeSelectTagState = () =>
   createSelector(
     [
       (state: RootState) => state,
-      (_: RootState, tagListType: TagListType) => tagListType,
-      (_: RootState, label: string) => label,
+      (_: RootState, tagListType: TagListType | string) => tagListType,
     ],
-    (state: RootState, tagListType: TagListType, label: string) =>
-      tagListType === TagListType.Label
-        ? getLabeledTagListSelector(label)(state)
-        : getTagListSelector(tagListType)(state),
+    (state: RootState, tagListType: TagListType | string) =>
+      getTagListSelector(tagListType)(state),
   )
 
 export type SelectedTag = {
@@ -53,13 +61,11 @@ export type SelectedTag = {
 }
 
 export function getSelectedTagSetter(
-  tagListType: TagListType,
+  tagListType: TagListType | string,
 ): ActionCreatorWithPayload<SelectedTag> {
   switch (tagListType) {
     case TagListType.Favorites:
       return FavoritesActions.setSelectedFavoriteTag
-    case TagListType.Label:
-      return FavoritesActions.setSelectedLabeledTag
     case TagListType.Popular:
       return PopularActions.setSelectedTag
     case TagListType.History:
@@ -67,6 +73,9 @@ export function getSelectedTagSetter(
     case TagListType.SearchResults:
       return SearchActions.setSelectedTag
     default:
+      if (isLabelType(tagListType)) {
+        return FavoritesActions.setSelectedLabeledTag
+      }
       throw Error(`Unknown tagListType ${tagListType}`)
   }
 }

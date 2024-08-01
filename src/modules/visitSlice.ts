@@ -11,7 +11,7 @@ export interface VisitState {
   // Used to decide whether to show welcome screen
   lastVisited?: string
   tagState?: TagState
-  tagListType: TagListType
+  tagListType: TagListType | string
 }
 
 const initialState: VisitState = {
@@ -32,7 +32,7 @@ export const visitSlice = createSlice({
     setTagState: (state, action: PayloadAction<TagState | undefined>) => {
       state.tagState = action.payload
     },
-    setTagListType: (state, action: PayloadAction<TagListType>) => {
+    setTagListType: (state, action: PayloadAction<TagListType | string>) => {
       state.tagListType = action.payload
     },
   },

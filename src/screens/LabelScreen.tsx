@@ -12,7 +12,7 @@ import {SortOrder} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {FavoritesActions} from "../modules/favoritesSlice"
-import {SORT_ICONS, TagListType} from "../modules/tagLists"
+import {SORT_ICONS} from "../modules/tagLists"
 
 /**
  * Lists of labeled tags
@@ -66,8 +66,7 @@ export const LabelScreen = () => {
         listRef={listRef}
         title="label"
         emptyMessage={emptyMessage}
-        tagListType={TagListType.Label}
-        label={selectedLabel}
+        tagListType={selectedLabel || ""}
       />
       <FABDown
         icon={fabOpen ? "minus" : "cog"}

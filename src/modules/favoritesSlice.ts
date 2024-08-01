@@ -167,16 +167,16 @@ const favoritesSlice = createSlice({
       action: PayloadAction<{
         id: number
         label: string
-        tagListType: TagListType
+        tagListType: TagListType | string
       }>,
     ) => {
       const {id, label, tagListType} = action.payload
       if (
-        tagListType === TagListType.Favorites &&
+        tagListType === label &&
         state.selectedLabel === label &&
         state.labeledById[id]
       ) {
-        // removing currently select label from tag while in favorites list
+        // removing currently select label from tag while in label list
         // need to handle this case carefully, since tag will be "stranded"
         state.strandedTag = {tag: state.labeledById[id], label}
       }

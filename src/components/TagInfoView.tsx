@@ -1,3 +1,4 @@
+import {isFavoriteOrLabel} from "@app/modules/tagListUtil"
 import {useMemo} from "react"
 import {Linking, StyleSheet, View} from "react-native"
 import {Divider, IconButton, Text, useTheme} from "react-native-paper"
@@ -7,7 +8,7 @@ import {refreshFavorite} from "../modules/favoritesSlice"
 import {TagListType} from "../modules/tagLists"
 import {arranger, posted} from "./tagInfo"
 
-const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
+const TagInfoView = (props: {tag: Tag; tagListType: TagListType | string}) => {
   const {tag, tagListType} = props
   const theme = useTheme()
   const dispatch = useAppDispatch()
@@ -44,7 +45,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
           <Text style={styles.infoTitle} variant="titleMedium">
             {tag.title}
           </Text>
-          {tagListType === TagListType.Favorites ? (
+          {isFavoriteOrLabel(tagListType) ? (
             <IconButton
               icon="refresh"
               onPress={() => dispatch(refreshFavorite(tag.id))}

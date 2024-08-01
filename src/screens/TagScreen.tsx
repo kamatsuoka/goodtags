@@ -50,14 +50,12 @@ import {
 } from "../modules/tracksSlice"
 import {StackParamList} from "../navigation/navigationParams"
 
-type Props = NativeStackScreenProps<StackParamList, "Tag"> & {
-  label?: string
-}
+type Props = NativeStackScreenProps<StackParamList, "Tag">
 
 /**
  * Sheet music screen
  */
-const TagScreen = ({navigation, label}: Props) => {
+const TagScreen = ({navigation}: Props) => {
   const haptics = useHaptics()
   const theme = useTheme()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
@@ -69,14 +67,11 @@ const TagScreen = ({navigation, label}: Props) => {
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
-  const tagListState = useTagListState(
-    tagListType,
-    label || tagListType.toString(),
-  )
+  const tagListState = useTagListState(tagListType)
   const allTagIds = tagListState.allTagIds
   const selectedTag = tagListState.selectedTag
   const playingState = useAppSelector(state => state.tracks.playingState)
-  const tag = useSelectedTag(tagListType, label || tagListType.toString())
+  const tag = useSelectedTag(tagListType)
   const keyNote = noteForKey(tag.key)
   const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
   const tracksState = useAppSelector(state => state.tracks)

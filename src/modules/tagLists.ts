@@ -5,7 +5,6 @@ import {SelectedTag} from "./tagListUtil"
 export enum TagListType {
   SearchResults = "SearchResults",
   Favorites = "Favorites",
-  Label = "Label",
   Popular = "Popular",
   History = "History",
 }

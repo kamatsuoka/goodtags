@@ -18,9 +18,8 @@ export type TagListProps = {
   title: string
   emptyMessage: string
   loadMore?: (numTags: number) => Promise<boolean>
-  tagListType: TagListType
+  tagListType: TagListType | string
   listRef: RefObject<FlashList<number>>
-  label?: string
 }
 
 /**
@@ -34,10 +33,7 @@ const TagList = (props: TagListProps) => {
   })
   const dispatch = useAppDispatch()
 
-  const tagListState = useTagListState(
-    props.tagListType,
-    props.label || props.tagListType.toString(),
-  )
+  const tagListState = useTagListState(props.tagListType)
 
   const allTagIds = tagListState.allTagIds
   const tagsById = tagListState.tagsById
