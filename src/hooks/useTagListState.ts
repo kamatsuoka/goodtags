@@ -7,15 +7,17 @@ import {useMemo} from "react"
 /**
  * Get tag state for tag list type
  */
-export default function useTagListState(tagListType: TagListType) {
-  const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
-  const tagListId =
-    tagListType === TagListType.Label ? selectedLabel : tagListType.toString()
+export default function useTagListState(
+  tagListType: TagListType,
+  label: string,
+) {
+  const labelForList =
+    tagListType === TagListType.Label ? label : tagListType.toString()
 
-  const memoizedSelector = useMemo(makeSelectTagState, [])
+  const memoizedSelector = useMemo(makeSelectTagState, [labelForList])
 
   const getSelector = (state: RootState) =>
-    memoizedSelector(state, tagListType, tagListId)
+    memoizedSelector(state, tagListType, labelForList)
 
   return useAppSelector(getSelector)
 }

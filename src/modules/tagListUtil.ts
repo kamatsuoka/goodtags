@@ -30,20 +30,20 @@ export function getTagListSelector(
   }
 }
 
-function getLabelTagListSelector(label: string) {
+function getLabeledTagListSelector(label: string) {
   return (state: RootState) => selectLabelState(state.favorites, label)
 }
 
 export const makeSelectTagState = () =>
   createSelector(
     [
-      state => state,
-      (_, tagListType) => tagListType,
-      (_, tagListId) => tagListId,
+      (state: RootState) => state,
+      (_: RootState, tagListType: TagListType) => tagListType,
+      (_: RootState, label: string) => label,
     ],
-    (state, tagListType, tagListId) =>
+    (state: RootState, tagListType: TagListType, label: string) =>
       tagListType === TagListType.Label
-        ? getLabelTagListSelector(tagListId)(state)
+        ? getLabeledTagListSelector(label)(state)
         : getTagListSelector(tagListType)(state),
   )
 
@@ -57,9 +57,9 @@ export function getSelectedTagSetter(
 ): ActionCreatorWithPayload<SelectedTag> {
   switch (tagListType) {
     case TagListType.Favorites:
-      return FavoritesActions.setSelectedTag
+      return FavoritesActions.setSelectedFavoriteTag
     case TagListType.Label:
-      return FavoritesActions.setSelectedTag
+      return FavoritesActions.setSelectedLabeledTag
     case TagListType.Popular:
       return PopularActions.setSelectedTag
     case TagListType.History:

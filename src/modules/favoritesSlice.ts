@@ -114,12 +114,11 @@ const favoritesSlice = createSlice({
     resetFavorites: state => {
       Object.assign(state, InitialState)
     },
-    setSelectedTag: (state, action: PayloadAction<SelectedTag>) => {
-      if (state.selectedLabel) {
-        state.labeledSelectedTag = action.payload
-      } else {
-        state.selectedTag = action.payload
-      }
+    setSelectedFavoriteTag: (state, action: PayloadAction<SelectedTag>) => {
+      state.selectedTag = action.payload
+    },
+    setSelectedLabeledTag: (state, action: PayloadAction<SelectedTag>) => {
+      state.labeledSelectedTag = action.payload
     },
     toggleSortOrder: state => {
       state.selectedTag = undefined

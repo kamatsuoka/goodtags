@@ -57,7 +57,7 @@ type Props = NativeStackScreenProps<StackParamList, "Tag"> & {
 /**
  * Sheet music screen
  */
-const TagScreen = ({navigation}: Props) => {
+const TagScreen = ({navigation, label}: Props) => {
   const haptics = useHaptics()
   const theme = useTheme()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
@@ -69,11 +69,14 @@ const TagScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
-  const tagListState = useTagListState(tagListType)
+  const tagListState = useTagListState(
+    tagListType,
+    label || tagListType.toString(),
+  )
   const allTagIds = tagListState.allTagIds
   const selectedTag = tagListState.selectedTag
   const playingState = useAppSelector(state => state.tracks.playingState)
-  const tag = useSelectedTag(tagListType)
+  const tag = useSelectedTag(tagListType, label || tagListType.toString())
   const keyNote = noteForKey(tag.key)
   const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
   const tracksState = useAppSelector(state => state.tracks)

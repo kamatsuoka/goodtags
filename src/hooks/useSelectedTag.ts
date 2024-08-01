@@ -5,8 +5,11 @@ import useTagListState from "./useTagListState"
 /**
  * Get selected tag
  */
-export default function useSelectedTag(tagListType: TagListType) {
-  const tagListState = useTagListState(tagListType)
+export default function useSelectedTag(
+  tagListType: TagListType,
+  label: string,
+) {
+  const tagListState = useTagListState(tagListType, label)
 
   const allTagIds = tagListState.allTagIds
   const tagsById = tagListState.tagsById

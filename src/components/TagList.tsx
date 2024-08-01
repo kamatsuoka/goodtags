@@ -34,7 +34,10 @@ const TagList = (props: TagListProps) => {
   })
   const dispatch = useAppDispatch()
 
-  const tagListState = useTagListState(props.tagListType)
+  const tagListState = useTagListState(
+    props.tagListType,
+    props.label || props.tagListType.toString(),
+  )
 
   const allTagIds = tagListState.allTagIds
   const tagsById = tagListState.tagsById
