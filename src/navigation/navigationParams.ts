@@ -29,7 +29,10 @@ export type TabsParamList = {
 export type HomeParamList = {
   Home: undefined
   Popular: undefined
+  Labels: undefined
   Labeled: {label: string}
+  LabelEditor: undefined
+  CreateLabel: undefined
   Options: undefined
 }
 

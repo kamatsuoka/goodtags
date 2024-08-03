@@ -1,7 +1,5 @@
 // import {StackParamList} from "@app/navigation/navigationParams"
 import Logo from "@app/components/Logo"
-import {useAppDispatch, useAppSelector} from "@app/hooks"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {HomeParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
@@ -17,9 +15,6 @@ export default function HomeScreen() {
   const theme = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()
-  const labels = useAppSelector(state => state.favorites.labels)
-  // const tagIdsByLabel = useAppSelector(state => state.favorites.tagIdsByLabel)
-  const dispatch = useAppDispatch()
 
   const styles = StyleSheet.create({
     container: {
@@ -111,33 +106,24 @@ export default function HomeScreen() {
           </View>
         </List.Section>
         <List.Section>
-          <List.Subheader style={styles.subheader}>LABELS</List.Subheader>
           <View style={styles.listHolder}>
-            {labels.map((label, index) => (
-              <View style={styles.listHolder} key={`label_${index}`}>
-                <TouchableOpacity
-                  style={styles.listHolder}
-                  onPress={() => {
-                    dispatch(FavoritesActions.selectLabel(label))
-                    navigation.navigate("Labeled", {label})
-                  }}>
-                  <List.Item
-                    title={label}
-                    left={LabelIcon}
-                    right={RightIcon}
-                    style={styles.listItem}
-                  />
-                </TouchableOpacity>
-              </View>
-            ))}
+            <View style={styles.listHolder}>
+              <TouchableOpacity
+                style={styles.listHolder}
+                onPress={() => {
+                  navigation.navigate("Labels")
+                }}>
+                <List.Item
+                  title="labels"
+                  left={LabelIcon}
+                  right={RightIcon}
+                  style={styles.listItem}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </List.Section>
         <View style={styles.buttonHolder}>
-          <Button
-            icon="label-multiple-outline"
-            onPress={() => navigation.navigate("LabelEditor")}>
-            edit labels
-          </Button>
           <Button
             icon="information-outline"
             onPress={() => navigation.navigate("About")}
