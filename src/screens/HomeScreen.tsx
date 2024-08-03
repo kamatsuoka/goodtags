@@ -2,11 +2,11 @@
 import Logo from "@app/components/Logo"
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {HomeParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
-import {StyleSheet, TouchableOpacity, View} from "react-native"
-import {Button, List, useTheme} from "react-native-paper"
+import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
+import {Button, Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
@@ -15,7 +15,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
  */
 export default function HomeScreen() {
   const theme = useTheme()
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
+  const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   // const tagIdsByLabel = useAppSelector(state => state.favorites.tagIdsByLabel)
@@ -72,61 +72,85 @@ export default function HomeScreen() {
       <View style={styles.logoHolder}>
         <Logo size={30} dark />
       </View>
-      <List.Section>
-        <List.Subheader style={styles.subheader}>COLLECTIONS</List.Subheader>
-        <View style={styles.listHolder}>
-          <TouchableOpacity
-            style={styles.listHolder}
-            onPress={() => navigation.navigate("Popular")}>
-            <List.Item
-              title="popular tags"
-              left={PopularIcon}
-              right={RightIcon}
-              style={styles.listItem}
-            />
-          </TouchableOpacity>
+      <ScrollView>
+        <List.Section>
+          <List.Subheader style={styles.subheader}>COLLECTIONS</List.Subheader>
+          <View style={styles.listHolder}>
+            <TouchableOpacity
+              style={styles.listHolder}
+              onPress={() => navigation.navigate("Popular")}>
+              <List.Item
+                title="popular tags"
+                left={PopularIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity
+              style={styles.listHolder}
+              onPress={() => navigation.navigate("Popular")}>
+              <List.Item
+                title="classic tags"
+                left={PopularIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity
+              style={styles.listHolder}
+              onPress={() => navigation.navigate("Popular")}>
+              <List.Item
+                title="easy tags"
+                left={PopularIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+          </View>
+        </List.Section>
+        <List.Section>
+          <List.Subheader style={styles.subheader}>LABELS</List.Subheader>
+          <View style={styles.listHolder}>
+            {labels.map((label, index) => (
+              <View style={styles.listHolder} key={`label_${index}`}>
+                <TouchableOpacity
+                  style={styles.listHolder}
+                  onPress={() => {
+                    dispatch(FavoritesActions.selectLabel(label))
+                    navigation.navigate("Labeled", {label})
+                  }}>
+                  <List.Item
+                    title={label}
+                    left={LabelIcon}
+                    right={RightIcon}
+                    style={styles.listItem}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </List.Section>
+        <View style={styles.buttonHolder}>
+          <Button
+            icon="label-multiple-outline"
+            onPress={() => navigation.navigate("LabelEditor")}>
+            edit labels
+          </Button>
+          <Button
+            icon="information-outline"
+            onPress={() => navigation.navigate("About")}
+            testID="about_button">
+            about
+          </Button>
+          <Button
+            icon="cog-outline"
+            onPress={() => navigation.navigate("Options")}>
+            options
+          </Button>
         </View>
-      </List.Section>
-      <List.Section>
-        <List.Subheader style={styles.subheader}>LABELS</List.Subheader>
-        <View style={styles.listHolder}>
-          {labels.map((label, index) => (
-            <View style={styles.listHolder} key={`label_${index}`}>
-              <TouchableOpacity
-                style={styles.listHolder}
-                onPress={() => {
-                  dispatch(FavoritesActions.selectLabel(label))
-                  navigation.navigate("Label", {label})
-                }}>
-                <List.Item
-                  title={label}
-                  left={LabelIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </List.Section>
-      <View style={styles.buttonHolder}>
-        <Button
-          icon="label-multiple-outline"
-          onPress={() => navigation.navigate("LabelEditor")}>
-          edit labels
-        </Button>
-        <Button
-          icon="information-outline"
-          onPress={() => navigation.navigate("About")}
-          testID="about_button">
-          about
-        </Button>
-        <Button
-          icon="cog-outline"
-          onPress={() => navigation.navigate("Options")}>
-          options
-        </Button>
-      </View>
+      </ScrollView>
     </View>
   )
 }

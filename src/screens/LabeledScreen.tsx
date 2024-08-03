@@ -17,7 +17,7 @@ import {SORT_ICONS} from "../modules/tagLists"
 /**
  * Lists of labeled tags
  */
-export const LabelScreen = () => {
+export const LabeledScreen = () => {
   const haptics = useHaptics()
   const [fabOpen, setFabOpen] = useState(false)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)

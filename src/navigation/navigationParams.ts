@@ -3,9 +3,7 @@ import Tag from "@app/lib/models/Tag"
 export type StackParamList = {
   Welcome: undefined
   Tabs: undefined
-  Popular: undefined
   Favorites: undefined
-  Label: {label: string}
   History: undefined
   Tag: undefined
   About: undefined
@@ -24,8 +22,15 @@ export type TabsParamList = {
   Favorites: {
     label?: string
   }
-  Home: undefined
+  HomeNavigator: undefined
   History: undefined
 }
 
-export type RootStackParamList = TabsParamList & StackParamList
+export type HomeParamList = {
+  Home: undefined
+  Popular: undefined
+  Labeled: {label: string}
+  Options: undefined
+}
+
+export type RootStackParamList = TabsParamList & StackParamList & HomeParamList

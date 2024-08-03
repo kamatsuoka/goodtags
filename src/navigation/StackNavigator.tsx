@@ -5,10 +5,7 @@ import {MainTheme, SansSerifTheme} from "@app/lib/theme"
 import AboutScreen from "@app/screens/AboutScreen"
 import {FavoritesScreen} from "@app/screens/FavoritesScreen"
 import HistoryScreen from "@app/screens/HistoryScreen"
-import {LabelScreen} from "@app/screens/LabelScreen"
 import LandscapeTransition from "@app/screens/LandscapeTransition"
-import OptionsScreen from "@app/screens/OptionsScreen"
-import PopularScreen from "@app/screens/PopularScreen"
 import PortraitTransition from "@app/screens/PortraitTransition"
 import {NavigationContainer, useNavigation} from "@react-navigation/native"
 import {
@@ -114,18 +111,8 @@ export default function StackNavigator() {
             options={{animation: "none", ...tagOrientation}}
           />
           <Stack.Screen
-            name="Popular"
-            component={PopularScreen}
-            options={{headerLeft: BackButton, ...homeOrientation}}
-          />
-          <Stack.Screen
             name="Favorites"
             component={FavoritesScreen}
-            options={homeOrientation}
-          />
-          <Stack.Screen
-            name="Label"
-            component={LabelScreen}
             options={homeOrientation}
           />
           <Stack.Screen
@@ -158,15 +145,6 @@ export default function StackNavigator() {
                   paddingLeft: 0,
                   paddingRight: 0,
                 },
-                ...homeOrientation,
-              }}
-            />
-            <Stack.Screen
-              name="Options"
-              component={OptionsScreen}
-              options={{
-                title: "options",
-                headerLeft: BackButton,
                 ...homeOrientation,
               }}
             />

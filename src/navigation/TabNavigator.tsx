@@ -10,8 +10,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {TabBarBackground} from "../lib/theme"
 import {FavoritesScreen} from "../screens/FavoritesScreen"
 import HistoryScreen from "../screens/HistoryScreen"
-import HomeScreen from "../screens/HomeScreen"
 import SearchScreen from "../screens/SearchScreen"
+import HomeNavigator from "./HomeNavigator"
 import {TabsParamList} from "./navigationParams"
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
@@ -69,8 +69,8 @@ export default function TabNavigator() {
         paddingRight: insets.right,
       }}>
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="HomeNavigator"
+        component={HomeNavigator}
         options={{
           title: "home",
           tabBarIcon: HomeIcon,
