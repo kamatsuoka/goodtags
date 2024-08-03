@@ -1,4 +1,4 @@
-// import {StackParamList} from "@app/navigation/navigationParams"
+import homeIcon from "@app/components/homeIcon"
 import Logo from "@app/components/Logo"
 import {HomeParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
@@ -6,7 +6,6 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import {Button, Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
 /**
  * About goodtags
@@ -87,7 +86,7 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate("Popular")}>
               <List.Item
                 title="classic tags"
-                left={PopularIcon}
+                left={ClassicIcon}
                 right={RightIcon}
                 style={styles.listItem}
               />
@@ -98,7 +97,7 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate("Popular")}>
               <List.Item
                 title="easy tags"
-                left={PopularIcon}
+                left={EasyIcon}
                 right={RightIcon}
                 style={styles.listItem}
               />
@@ -141,10 +140,8 @@ export default function HomeScreen() {
   )
 }
 
-function homeIcon(name: string, size: number = 20) {
-  return () => <Icon name={name} size={size} />
-}
-
-const PopularIcon = homeIcon("download")
+const PopularIcon = homeIcon("star-outline")
+const ClassicIcon = homeIcon("pillar")
+const EasyIcon = homeIcon("teddy-bear")
 const RightIcon = homeIcon("chevron-right")
 const LabelIcon = homeIcon("label")

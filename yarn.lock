@@ -8106,7 +8106,7 @@ __metadata:
     react-native-screens: "npm:^3.33.0"
     react-native-sound: "npm:^0.11.2"
     react-native-sound-player: "npm:^0.13.2"
-    react-native-vector-icons: "npm:^10.0.2"
+    react-native-vector-icons: "npm:^10.1.0"
     react-native-webview: "npm:13.2.2"
     react-native-youtube-iframe: "npm:^2.2.2"
     react-redux: "npm:^8.0.5"
@@ -12503,9 +12503,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vector-icons@npm:^10.0.2":
-  version: 10.0.2
-  resolution: "react-native-vector-icons@npm:10.0.2"
+"react-native-vector-icons@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "react-native-vector-icons@npm:10.1.0"
   dependencies:
     prop-types: "npm:^15.7.2"
     yargs: "npm:^16.1.1"
@@ -12514,7 +12514,7 @@ __metadata:
     fa5-upgrade: bin/fa5-upgrade.sh
     fa6-upgrade: bin/fa6-upgrade.sh
     generate-icon: bin/generate-icon.js
-  checksum: 10/f0d0beb78403c5452d6ed0ec6f3eab259e253906bc0afd70c8c8a0da07068f517a2d774c6fe883af062465a64ffb5ee74f40bb2b916098f7dd83e6c1236d114a
+  checksum: 10/99877f36aeb61435d2f3dc18adaa08af9be9e88e4770efe47d733bd164b2c02ae332babecdcfcee9e3c7b1d80b5b107034e245733091638295eb3050f389f798
   languageName: node
   linkType: hard
 
