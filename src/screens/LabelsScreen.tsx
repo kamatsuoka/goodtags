@@ -6,7 +6,7 @@ import {HomeParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import {Button, Divider, List, useTheme} from "react-native-paper"
+import {Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 /**
@@ -33,6 +33,7 @@ export default function LabelsScreen() {
       backgroundColor: theme.colors.surface,
       paddingHorizontal: 5,
       borderRadius: 10,
+      marginVertical: 5,
     },
     listItem: {
       height: 50,
@@ -53,9 +54,8 @@ export default function LabelsScreen() {
         <ScrollView>
           <View style={styles.listHolder}>
             {labels.map((label, index) => (
-              <View style={styles.listHolder} key={`label_${index}`}>
+              <View key={`label_${index}`}>
                 <TouchableOpacity
-                  style={styles.listHolder}
                   onPress={() => {
                     dispatch(FavoritesActions.selectLabel(label))
                     navigation.navigate("Labeled", {label})
@@ -71,12 +71,16 @@ export default function LabelsScreen() {
               </View>
             ))}
           </View>
-          <View style={styles.buttonHolder}>
-            <Button
-              icon="label-multiple-outline"
+          <View style={styles.listHolder}>
+            <TouchableOpacity
               onPress={() => navigation.navigate("LabelEditor")}>
-              edit labels
-            </Button>
+              <List.Item
+                title="edit labels"
+                left={EditLabelsIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </List.Section>
@@ -86,3 +90,4 @@ export default function LabelsScreen() {
 
 const RightIcon = homeIcon("chevron-right")
 const LabelIcon = homeIcon("label")
+const EditLabelsIcon = homeIcon("label-multiple-outline")
