@@ -4,7 +4,7 @@ import {HomeParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import {Button, Divider, List, useTheme} from "react-native-paper"
+import {Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 /**
@@ -22,7 +22,7 @@ export default function HomeScreen() {
       alignItems: "flex-start",
       backgroundColor: theme.colors.secondaryContainer,
       paddingTop: insets.top,
-      paddingBottom: Math.max(insets.bottom, 20),
+      paddingBottom: Math.max(insets.bottom, 10),
       paddingHorizontal: 15,
     },
     buttonHolder: {
@@ -50,6 +50,7 @@ export default function HomeScreen() {
       backgroundColor: theme.colors.surface,
       paddingHorizontal: 5,
       borderRadius: 10,
+      marginVertical: 5,
     },
     listItem: {
       // borderColor: "red",
@@ -66,74 +67,73 @@ export default function HomeScreen() {
       <View style={styles.logoHolder}>
         <Logo size={30} dark />
       </View>
-      <ScrollView>
-        <List.Section>
-          <List.Subheader style={styles.subheader}>COLLECTIONS</List.Subheader>
-          <View style={styles.listHolder}>
-            <TouchableOpacity
-              style={styles.listHolder}
-              onPress={() => navigation.navigate("Popular")}>
-              <List.Item
-                title="popular tags"
-                left={PopularIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity
-              style={styles.listHolder}
-              onPress={() => navigation.navigate("Popular")}>
-              <List.Item
-                title="classic tags"
-                left={ClassicIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity
-              style={styles.listHolder}
-              onPress={() => navigation.navigate("Popular")}>
-              <List.Item
-                title="easy tags"
-                left={EasyIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-          </View>
-        </List.Section>
-        <List.Section>
-          <View style={styles.listHolder}>
-            <View style={styles.listHolder}>
-              <TouchableOpacity
-                style={styles.listHolder}
-                onPress={() => {
-                  navigation.navigate("Labels")
-                }}>
-                <List.Item
-                  title="labels"
-                  left={LabelIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </List.Section>
-        <View style={styles.buttonHolder}>
-          <Button
-            icon="information-outline"
-            onPress={() => navigation.navigate("About")}
-            testID="about_button">
-            about
-          </Button>
-          <Button
-            icon="cog-outline"
-            onPress={() => navigation.navigate("Options")}>
-            options
-          </Button>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.listHolder}>
+          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+            <List.Item
+              title="popular tags"
+              left={PopularIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+            <List.Item
+              title="classic tags"
+              left={ClassicIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+            <List.Item
+              title="easy tags"
+              left={EasyIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.listHolder}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Labels")
+            }}>
+            <List.Item
+              title="labels"
+              left={LabelIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.listHolder}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("About")
+            }}>
+            <List.Item
+              title="about"
+              left={AboutIcon}
+              testID="about_button"
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Options")
+            }}>
+            <List.Item
+              title="options"
+              left={OptionsIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -145,3 +145,5 @@ const ClassicIcon = homeIcon("pillar")
 const EasyIcon = homeIcon("teddy-bear")
 const RightIcon = homeIcon("chevron-right")
 const LabelIcon = homeIcon("label")
+const AboutIcon = homeIcon("information-outline")
+const OptionsIcon = homeIcon("cog-outline")
