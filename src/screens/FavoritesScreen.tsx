@@ -55,7 +55,7 @@ export const FavoritesScreen = () => {
   const emptyMessage = "tap the heart icon in sheet music to add favorites"
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="faves" titleIcon="heart" />
+      <ListHeader listRef={listRef} title="faves" titleIcon="heart-outline" />
       <TagList
         listRef={listRef}
         title="favorites"

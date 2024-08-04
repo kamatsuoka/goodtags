@@ -112,5 +112,5 @@ function tabIcon(name: string) {
 
 const HomeIcon = tabIcon("home")
 const SearchIcon = tabIcon("magnify")
-const FavoritesIcon = tabIcon("heart")
+const FavoritesIcon = tabIcon("heart-outline")
 const HistoryIcon = tabIcon("history")
