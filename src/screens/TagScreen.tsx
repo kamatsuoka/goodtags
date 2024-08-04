@@ -16,7 +16,6 @@ import useSelectedTag from "@app/hooks/useSelectedTag"
 import useTagListState from "@app/hooks/useTagListState"
 import {setTagState, TagState} from "@app/modules/visitSlice"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {isTablet} from "react-native-device-info"
 import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
 import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
@@ -314,14 +313,10 @@ const TagScreen = ({navigation}: Props) => {
   }
 
   async function toggleFavorite(id: number) {
-    await haptics.selectionAsync()
-    brightenThenFade()
     if (favoritesById[id]) {
       dispatch(FavoritesActions.removeFavorite(id))
-      if (tagListType === TagListEnum.Favorites && !selectedLabel) {
-        // if on regular favorites list (not label), go back to list
-        await haptics.impactAsync(ImpactFeedbackStyle.Light)
-        return goBack()
+      if (tagListType === TagListEnum.Favorites) {
+        goBack() // go back to favorites list
       }
     } else {
       dispatch(FavoritesActions.addFavorite(tag))
