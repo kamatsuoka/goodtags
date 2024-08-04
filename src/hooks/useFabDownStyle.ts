@@ -8,7 +8,7 @@ export default function useFabDownStyle() {
   const headerHeight = useHeaderHeight()
   return StyleSheet.create({
     fabGroup: {
-      paddingTop: headerHeight - 50,
+      paddingTop: headerHeight - 45,
     },
   })
 }

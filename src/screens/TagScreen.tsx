@@ -93,11 +93,9 @@ const TagScreen = ({navigation}: Props) => {
     idHolder: {
       alignItems: "baseline",
       backgroundColor: IdBackground,
-      borderBottomLeftRadius: 7,
-      borderBottomRightRadius: 7,
+      borderRadius: 7,
       borderColor: theme.colors.secondaryContainer,
       borderWidth: 2,
-      borderTopWidth: 0,
       flexDirection: "row",
       paddingHorizontal: 7,
       paddingBottom: 4,
@@ -125,7 +123,7 @@ const TagScreen = ({navigation}: Props) => {
   // avoid split screen controls interfering with favorite button on iPad
   const topBarStyle = {
     ...styles.topBar,
-    paddingTop: ios ? Math.min(insets.top, 33) : insets.top,
+    paddingTop: insets.top, // ios ? Math.min(insets.top, 33) : insets.top,
     ...(iPad ? {left: 120} : {left: 0, right: 0}),
   }
 

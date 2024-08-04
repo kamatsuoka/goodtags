@@ -46,7 +46,6 @@ export default function ListHeader({
     },
   })
 
-  // don't show header on shallow screens
   const backButton = showBackButton ? (
     <>
       <TouchableWithoutFeedback
@@ -74,20 +73,20 @@ export default function ListHeader({
 
   const titleComponent =
     typeof title === "string" ? (
-      <Text variant="titleMedium" style={styles.title}>
-        {title}
-      </Text>
+      <View style={styles.titleHolder}>
+        {titleIcon ? homeIcon(titleIcon)() : null}
+        <Text variant="titleMedium" style={styles.title}>
+          {title}
+        </Text>
+      </View>
     ) : (
       title
     )
 
   return (
-    <View style={styles.header}>
+    <View style={themedStyles.header}>
       {backButton}
-      <View style={styles.titleHolder}>
-        {titleIcon ? homeIcon(titleIcon)() : null}
-        {titleComponent}
-      </View>
+      {titleComponent}
       <View style={styles.spacer} />
     </View>
   )
@@ -95,21 +94,21 @@ export default function ListHeader({
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: "center",
+    alignItems: "flex-end",
     backgroundColor: TabBarBackground,
     flexDirection: "row",
     justifyContent: "space-between",
     opacity: 0.9,
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    height: 65,
+    height: 55,
   },
   spacer: {
-    width: 30,
+    width: 50,
   },
   titleHolder: {
     flexDirection: "row",
     alignItems: "center",
+    height: 50,
   },
   title: {
     marginLeft: 5,
