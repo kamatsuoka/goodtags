@@ -120,10 +120,10 @@ const TagScreen = ({navigation}: Props) => {
     },
   })
 
-  // avoid split screen controls interfering with favorite button on iPad
   const topBarStyle = {
     ...styles.topBar,
-    paddingTop: insets.top, // ios ? Math.min(insets.top, 33) : insets.top,
+    paddingTop: insets.top,
+    // avoid split screen controls interfering with favorite button on iPad
     ...(iPad ? {left: 120} : {left: 0, right: 0}),
   }
 
