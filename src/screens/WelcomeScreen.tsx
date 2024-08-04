@@ -3,14 +3,14 @@ import {useAppDispatch} from "@app/hooks"
 import useHaptics from "@app/hooks/useHaptics"
 import {getPopularTags} from "@app/modules/popularSlice"
 import {setLastVisited} from "@app/modules/visitSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useEffect} from "react"
 import {StyleSheet, View} from "react-native"
 import {IconButton, Text, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
-type Props = NativeStackScreenProps<StackParamList, "Welcome">
+type Props = NativeStackScreenProps<RootStackParamList, "Welcome">
 /**
  * Welcome screen
  */

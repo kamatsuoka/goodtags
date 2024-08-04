@@ -1,10 +1,10 @@
 import AboutWithCredits from "@app/components/AboutWithCredits"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {StyleSheet, View} from "react-native"
 import {IconButton, useTheme} from "react-native-paper"
 
-type Props = NativeStackScreenProps<StackParamList, "About">
+type Props = NativeStackScreenProps<RootStackParamList, "About">
 /**
  * About goodtags
  */

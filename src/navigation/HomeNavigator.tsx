@@ -3,7 +3,6 @@ import HomeScreen from "@app/screens/HomeScreen"
 import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
-import PopularScreen from "@app/screens/PopularScreen"
 import {useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
@@ -16,7 +15,7 @@ import {useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {useAppSelector} from "../hooks"
-import {HomeParamList} from "./navigationParams"
+import {HomeNavigatorParamList} from "./navigationParams"
 
 const BACK_ICON = "chevron-left"
 const BACK_ICON_SIZE = 36
@@ -37,11 +36,12 @@ export const BackButton = (_props: HeaderBackButtonProps) => {
   )
 }
 
+const Stack = createNativeStackNavigator<HomeNavigatorParamList>()
+
 /**
  * navigator for home screen, which links to collections, labeled lists, etc
  */
 export default function HomeNavigator() {
-  const Stack = createNativeStackNavigator<HomeParamList>()
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const theme = useTheme()
   const insets = useSafeAreaInsets()
@@ -65,11 +65,6 @@ export default function HomeNavigator() {
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen
-        name="Popular"
-        component={PopularScreen}
-        options={{headerLeft: BackButton, ...homeOrientation}}
-      />
       <Stack.Screen
         name="Labeled"
         component={LabeledScreen}

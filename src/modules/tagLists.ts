@@ -8,6 +8,7 @@ export enum TagListEnum {
   SearchResults = "SearchResults",
   Favorites = "Favorites",
   Popular = "Popular",
+  Classic = "Classic",
   History = "History",
 }
 

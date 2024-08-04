@@ -2,9 +2,11 @@ import CreateLabel from "@app/components/CreateLabel"
 import TagLabels from "@app/components/TagLabels"
 import {MainTheme, SansSerifTheme} from "@app/lib/theme"
 import AboutScreen from "@app/screens/AboutScreen"
+import ClassicScreen from "@app/screens/ClassicScreen"
 import {FavoritesScreen} from "@app/screens/FavoritesScreen"
 import HistoryScreen from "@app/screens/HistoryScreen"
 import LandscapeTransition from "@app/screens/LandscapeTransition"
+import PopularScreen from "@app/screens/PopularScreen"
 import PortraitTransition from "@app/screens/PortraitTransition"
 import {NavigationContainer, useNavigation} from "@react-navigation/native"
 import {
@@ -21,7 +23,7 @@ import {useAppSelector} from "../hooks"
 import TagScreen from "../screens/TagScreen"
 import WelcomeScreen from "../screens/WelcomeScreen"
 import TabNavigator from "./TabNavigator"
-import {StackParamList} from "./navigationParams"
+import {RootStackParamList} from "./navigationParams"
 
 const BACK_ICON = "chevron-left"
 const BACK_ICON_SIZE = 36
@@ -50,8 +52,8 @@ export const BackButton = (_props: HeaderBackButtonProps) => {
 /**
  * Navigator stack.
  */
-export default function StackNavigator() {
-  const Stack = createNativeStackNavigator<StackParamList>()
+export default function RootStackNavigator() {
+  const Stack = createNativeStackNavigator<RootStackParamList>()
   const lastVisited = useAppSelector(state => state.visit.lastVisited)
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const serifs = useAppSelector(state => state.options.serifs)
@@ -108,6 +110,16 @@ export default function StackNavigator() {
             name="LandscapeTransition"
             component={LandscapeTransition}
             options={{animation: "none", ...tagOrientation}}
+          />
+          <Stack.Screen
+            name="Popular"
+            component={PopularScreen}
+            options={homeOrientation}
+          />
+          <Stack.Screen
+            name="Classic"
+            component={ClassicScreen}
+            options={homeOrientation}
           />
           <Stack.Screen
             name="Favorites"

@@ -1,18 +1,17 @@
 import homeIcon from "@app/components/homeIcon"
 import Logo from "@app/components/Logo"
-import {HomeParamList} from "@app/navigation/navigationParams"
-import {useNavigation} from "@react-navigation/native"
-import {NativeStackNavigationProp} from "@react-navigation/native-stack"
+import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import {Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 /**
- * About goodtags
+ * Home screen
  */
-export default function HomeScreen() {
+export default function HomeScreen({
+  navigation,
+}: HomeNavigatorScreenProps<"Home">) {
   const theme = useTheme()
-  const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()
 
   const styles = StyleSheet.create({
@@ -67,7 +66,7 @@ export default function HomeScreen() {
       <View style={styles.logoHolder}>
         <Logo size={30} dark />
       </View>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView>
         <View style={styles.listHolder}>
           <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
             <List.Item
@@ -78,7 +77,7 @@ export default function HomeScreen() {
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Classic")}>
             <List.Item
               title="classic tags"
               left={ClassicIcon}
@@ -103,7 +102,7 @@ export default function HomeScreen() {
             }}>
             <List.Item
               title="labels"
-              left={LabelIcon}
+              left={LabelsIcon}
               right={RightIcon}
               style={styles.listItem}
             />
@@ -144,6 +143,6 @@ const PopularIcon = homeIcon("star")
 const ClassicIcon = homeIcon("pillar")
 const EasyIcon = homeIcon("teddy-bear")
 const RightIcon = homeIcon("chevron-right")
-const LabelIcon = homeIcon("tag-outline")
+const LabelsIcon = homeIcon("tag-multiple-outline")
 const AboutIcon = homeIcon("information-outline")
 const OptionsIcon = homeIcon("cog-outline")

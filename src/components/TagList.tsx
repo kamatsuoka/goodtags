@@ -1,6 +1,6 @@
 import useTagListState from "@app/hooks/useTagListState"
 import {setTagListType, setTagState, TagState} from "@app/modules/visitSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {useFocusEffect, useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {FlashList} from "@shopify/flash-list"
@@ -26,7 +26,8 @@ export type TagListProps = {
  * List of tags
  */
 const TagList = (props: TagListProps) => {
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const visibleIndex = useRef({
     max: 0,
     min: 0,

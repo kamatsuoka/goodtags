@@ -47,9 +47,9 @@ import {
   setTagTracks,
   stopTrack,
 } from "../modules/tracksSlice"
-import {StackParamList} from "../navigation/navigationParams"
+import {RootStackParamList} from "../navigation/navigationParams"
 
-type Props = NativeStackScreenProps<StackParamList, "Tag">
+type Props = NativeStackScreenProps<RootStackParamList, "Tag">
 
 /**
  * Sheet music screen

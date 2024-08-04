@@ -1,5 +1,5 @@
 import CommonStyles from "@app/constants/CommonStyles"
-import StackNavigator from "@app/navigation/StackNavigator"
+import RootStackNavigator from "@app/navigation/RootStackNavigator"
 import {persistor, store} from "@app/store"
 import {LogBox, Platform, StatusBar} from "react-native"
 import ErrorBoundary from "react-native-error-boundary"
@@ -23,7 +23,7 @@ const App = () => {
           <ReactReduxProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               {Platform.OS !== "android" && <StatusBar hidden={true} />}
-              <StackNavigator />
+              <RootStackNavigator />
             </PersistGate>
           </ReactReduxProvider>
         </ErrorBoundary>

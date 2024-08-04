@@ -2,23 +2,17 @@
 import homeIcon from "@app/components/homeIcon"
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {HomeParamList, TabsParamList} from "@app/navigation/navigationParams"
-import {BottomTabNavigationProp} from "@react-navigation/bottom-tabs"
-import {CompositeNavigationProp} from "@react-navigation/native"
-import {NativeStackNavigationProp} from "@react-navigation/native-stack"
+import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import {Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
-type Prop = CompositeNavigationProp<
-  NativeStackNavigationProp<HomeParamList>,
-  BottomTabNavigationProp<TabsParamList>
->
-
 /**
  * List of labels for navigating to labeled tags
  */
-export default function LabelsScreen({navigation}: Prop) {
+export default function LabelsScreen({
+  navigation,
+}: HomeNavigatorScreenProps<"Labels">) {
   const theme = useTheme()
   // const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()

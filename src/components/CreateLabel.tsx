@@ -1,13 +1,13 @@
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useState} from "react"
 import {StyleSheet, View} from "react-native"
 import {Text, TextInput, useTheme} from "react-native-paper"
 
-type Props = NativeStackScreenProps<StackParamList, "CreateLabel">
+type Props = NativeStackScreenProps<RootStackParamList, "CreateLabel">
 
 export default function CreateLabel({route}: Props) {
   const {tag} = route.params

@@ -2,8 +2,8 @@ export const MAX_TAGS = 99
 
 export enum Collection {
   ALL = "All",
-  CLASSIC = "Classic",
-  EASY = "Easy",
+  CLASSIC = "classic",
+  EASY = "easytags",
 }
 
 export const Search = {

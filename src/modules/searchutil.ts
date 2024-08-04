@@ -132,6 +132,10 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const {whereVariables, whereClause, suffixClauses, suffixVariables} =
     buildSqlParts(searchParams)
+  console.log("whereVariables", whereVariables)
+  console.log("whereClause", whereClause)
+  console.log("suffixClauses", suffixClauses)
+  console.log("suffixVariables", suffixVariables)
   const db = await getDbConnection()
   debugDbPerfLogging("Got db", overallStart)
 

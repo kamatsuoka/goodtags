@@ -5,6 +5,7 @@ import {combineReducers} from "redux"
 import type {MigrationManifest} from "redux-persist"
 import {createMigrate, persistReducer, persistStore} from "redux-persist"
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2"
+import classicReducer from "./modules/classicSlice"
 import favoritesReducer from "./modules/favoritesSlice"
 import historyReducer from "./modules/historySlice"
 import optionsReducer from "./modules/optionsSlice"
@@ -16,6 +17,7 @@ import visitReducer from "./modules/visitSlice"
 const rootReducer = combineReducers({
   search: searchReducer,
   popular: popularReducer,
+  classic: classicReducer,
   visit: visitReducer,
   favorites: favoritesReducer,
   history: historyReducer,
