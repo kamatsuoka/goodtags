@@ -205,7 +205,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label,
-        tagListType: TagListEnum.Favorites,
+        tagListType: "organic",
       }),
     )
     expect(state4).toEqual({
