@@ -61,7 +61,7 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeNavigator"
       screenOptions={screenOptions}
       sceneContainerStyle={{
         // Paddings to handle safe area
@@ -110,7 +110,7 @@ function tabIcon(name: string) {
   )
 }
 
-const HomeIcon = tabIcon("home")
+const HomeIcon = tabIcon("home-outline")
 const SearchIcon = tabIcon("magnify")
 const FavoritesIcon = tabIcon("heart-outline")
 const HistoryIcon = tabIcon("history")

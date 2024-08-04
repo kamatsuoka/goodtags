@@ -7,12 +7,14 @@ import React from "react"
 import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
 import {IconButton, Text, useTheme} from "react-native-paper"
 import useHeaderHeight from "../hooks/useHeaderHeight"
+import homeIcon from "./homeIcon"
 
 type ListHeaderProps = {
   // reference to FlashList with tags
   listRef: React.RefObject<FlashList<number>>
   showBackButton?: boolean
   title?: string
+  titleIcon?: string
 }
 
 const LOGO_SIZE = 30
@@ -25,6 +27,7 @@ export default function ListHeader({
   listRef,
   showBackButton = false,
   title = "",
+  titleIcon = "",
 }: ListHeaderProps) {
   const theme = useTheme()
   const headerHeight = useHeaderHeight()
@@ -71,7 +74,12 @@ export default function ListHeader({
   return (
     <View style={styles.header}>
       {backButton}
-      <Text variant="titleMedium">{title}</Text>
+      <View style={styles.titleHolder}>
+        {titleIcon ? homeIcon(titleIcon)() : null}
+        <Text variant="titleMedium" style={styles.title}>
+          {title}
+        </Text>
+      </View>
       <View style={styles.spacer} />
     </View>
   )
@@ -90,5 +98,12 @@ const styles = StyleSheet.create({
   },
   spacer: {
     width: 30,
+  },
+  titleHolder: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  title: {
+    marginLeft: 5,
   },
 })

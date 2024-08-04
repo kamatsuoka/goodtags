@@ -89,5 +89,5 @@ export default function LabelsScreen() {
 }
 
 const RightIcon = homeIcon("chevron-right")
-const LabelIcon = homeIcon("label")
+const LabelIcon = homeIcon("label-outline")
 const EditLabelsIcon = homeIcon("label-multiple-outline")

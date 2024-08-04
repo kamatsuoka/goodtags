@@ -60,6 +60,7 @@ export const LabeledScreen = () => {
       <ListHeader
         listRef={listRef}
         title={selectedLabel}
+        titleIcon="label-outline"
         showBackButton={true}
       />
       <TagList
