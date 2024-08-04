@@ -86,7 +86,7 @@ export default function HomeScreen({
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Easy")}>
             <List.Item
               title="easy tags"
               left={EasyIcon}

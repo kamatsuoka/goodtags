@@ -30,6 +30,7 @@ export type SearchParams = {
 export enum SortOrder {
   alpha = "alpha",
   downloads = "downloads",
+  id = "id",
   newest = "newest",
 }
 

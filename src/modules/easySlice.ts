@@ -9,7 +9,7 @@ import {SelectedTag} from "./tagListUtil"
 import {ThunkApiConfig} from "./thunkApiConfig"
 
 // Define a type for the slice state
-export interface ClassicState {
+export interface EasyState {
   tagsById: SearchResultsById
   allTagIds: Array<number>
   selectedTag?: SelectedTag
@@ -19,7 +19,7 @@ export interface ClassicState {
 }
 
 // Define the initial state using that type
-export const initialState: ClassicState = {
+export const initialState: EasyState = {
   loadingState: LoadingState.idle,
   tagsById: {},
   allTagIds: [],
@@ -27,14 +27,14 @@ export const initialState: ClassicState = {
 }
 
 /**
- * Sorts classic list by id
+ * Sorts easy list by id
  */
-function sortById(state: ClassicState) {
+function sortById(state: EasyState) {
   state.allTagIds.sort((id1, id2) => id1 - id2)
 }
 
-export const classicSlice = createSlice({
-  name: "classic",
+export const easySlice = createSlice({
+  name: "easy",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -60,11 +60,11 @@ export const classicSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder.addCase(getClassicTags.pending, (state, _) => {
+    builder.addCase(getEasyTags.pending, (state, _) => {
       state.loadingState = LoadingState.pending
       state.error = undefined
     })
-    builder.addCase(getClassicTags.fulfilled, (state, action) => {
+    builder.addCase(getEasyTags.fulfilled, (state, action) => {
       if (action.payload !== undefined) {
         const {tagsById, allTagIds} = buildTagIds(action.payload)
         state.tagsById = tagsById
@@ -72,39 +72,39 @@ export const classicSlice = createSlice({
       }
       state.loadingState = LoadingState.succeeded
     })
-    builder.addCase(getClassicTags.rejected, (state, action) => {
+    builder.addCase(getEasyTags.rejected, (state, action) => {
       state.loadingState = LoadingState.failed
       state.error = action.payload
     })
   },
 })
 
-export const ClassicSearchParams: SearchParams = {
-  collection: Collection.CLASSIC,
+export const EasySearchParams: SearchParams = {
+  collection: Collection.EASY,
   requireSheetMusic: true,
   limit: 125,
 }
 
 /**
- * Fetch most classic tags from API
+ * Fetch most easy tags from API
  *
  * @param refresh fetch tags even if already loaded
  */
-export const getClassicTags = createAsyncThunk<
+export const getEasyTags = createAsyncThunk<
   SearchResult[] | undefined,
   boolean,
   ThunkApiConfig
->("classic/getClassicTags", async (refresh: boolean, thunkAPI) => {
-  const state = thunkAPI.getState().classic
+>("easy/getEasyTags", async (refresh: boolean, thunkAPI) => {
+  const state = thunkAPI.getState().easy
   if (refresh || state.allTagIds.length === 0) {
     try {
       const fetchResult = await fetchAndConvertTags(
-        {...ClassicSearchParams, sortBy: state.sortOrder},
+        {...EasySearchParams, sortBy: state.sortOrder},
         false /* useApi */,
       )
       return fetchResult.tags
     } catch (error) {
-      const payload = await handleError(error, `getClassicTags`)
+      const payload = await handleError(error, `getEasyTags`)
       return thunkAPI.rejectWithValue(payload)
     }
   } else {
@@ -113,16 +113,16 @@ export const getClassicTags = createAsyncThunk<
   }
 })
 
-export const selectClassic = (state: RootState): TagListState => {
+export const selectEasy = (state: RootState): TagListState => {
   return {
-    allTagIds: state.classic.allTagIds,
-    error: state.classic.error,
-    loadingState: state.classic.loadingState,
-    selectedTag: state.classic.selectedTag,
-    sortOrder: state.classic.sortOrder,
-    tagsById: state.classic.tagsById,
+    allTagIds: state.easy.allTagIds,
+    error: state.easy.error,
+    loadingState: state.easy.loadingState,
+    selectedTag: state.easy.selectedTag,
+    sortOrder: state.easy.sortOrder,
+    tagsById: state.easy.tagsById,
   }
 }
 
-export const ClassicActions = classicSlice.actions
-export default classicSlice.reducer
+export const EasyActions = easySlice.actions
+export default easySlice.reducer

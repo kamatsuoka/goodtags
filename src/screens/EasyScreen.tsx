@@ -13,11 +13,7 @@ import CommonStyles from "../constants/CommonStyles"
 import {SortOrder} from "../constants/Search"
 import {AppDispatch, useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
-import {
-  ClassicActions,
-  getClassicTags,
-  selectClassic,
-} from "../modules/classicSlice"
+import {EasyActions, getEasyTags, selectEasy} from "../modules/easySlice"
 import {
   LoadingState,
   SORT_ICONS,
@@ -26,17 +22,15 @@ import {
 } from "../modules/tagLists"
 
 /**
- * Classic tags
+ * Easy tags
  */
-const ClassicScreen = () => {
+const EasyScreen = () => {
   const haptics = useHaptics()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
-  const loadingState = useAppSelector(
-    state => selectClassic(state).loadingState,
-  )
-  const error = useAppSelector(state => selectClassic(state).error)
-  const sortOrder = useAppSelector(state => selectClassic(state).sortOrder)
+  const loadingState = useAppSelector(state => selectEasy(state).loadingState)
+  const error = useAppSelector(state => selectEasy(state).error)
+  const sortOrder = useAppSelector(state => selectEasy(state).sortOrder)
   const listRef = useRef<FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 
@@ -49,7 +43,7 @@ const ClassicScreen = () => {
   )
 
   useEffect(() => {
-    dispatch(getClassicTags(false))
+    dispatch(getEasyTags(false))
   }, [dispatch])
 
   const otherOrder =
@@ -61,45 +55,44 @@ const ClassicScreen = () => {
       label: SORT_LABELS[otherOrder],
       onPress: async () => {
         await haptics.selectionAsync()
-        return dispatch(ClassicActions.toggleSortOrder())
+        return dispatch(EasyActions.toggleSortOrder())
       },
     },
     {
       icon: "reload",
-      label: "reload classic tags",
+      label: "reload easy tags",
       onPress: async () => {
         await haptics.impactAsync(ImpactFeedbackStyle.Medium)
-        return dispatch(getClassicTags(true))
+        return dispatch(getEasyTags(true))
       },
     },
     {
       icon: "broom",
-      label: "clear classic tags",
+      label: "clear easy tags",
       onPress: async () => {
         await haptics.impactAsync(ImpactFeedbackStyle.Medium)
-        return dispatch(ClassicActions.reset())
+        return dispatch(EasyActions.reset())
       },
     },
   ]
 
-  const setIdle = () =>
-    dispatch(ClassicActions.setLoadingState(LoadingState.idle))
+  const setIdle = () => dispatch(EasyActions.setLoadingState(LoadingState.idle))
 
   return (
     <View style={CommonStyles.container}>
       <ListHeader
         listRef={listRef}
         showBackButton={true}
-        title="classic tags"
-        titleIcon="pillar"
+        title="easy tags"
+        titleIcon="teddy-bear"
       />
       <TagList
-        tagListType={TagListEnum.Classic}
+        tagListType={TagListEnum.Easy}
         emptyMessage={
           loadingState === LoadingState.succeeded ? "no tags found" : ""
         }
         listRef={listRef}
-        title="Classic Tags"
+        title="Easy Tags"
       />
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>
@@ -126,4 +119,4 @@ const ClassicScreen = () => {
   )
 }
 
-export default ClassicScreen
+export default EasyScreen

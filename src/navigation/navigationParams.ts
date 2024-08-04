@@ -6,9 +6,6 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack"
 export type RootStackParamList = {
   Welcome: undefined
   Tabs: undefined
-  Popular: undefined
-  Classic: undefined
-  Easy: undefined
   Favorites: undefined
   History: undefined
   Tag: undefined
@@ -41,7 +38,9 @@ export type TabsScreenProps<T extends keyof TabsParamList> =
 
 export type HomeNavigatorParamList = {
   Home: undefined
+  Popular: undefined
   Classic: undefined
+  Easy: undefined
   Labels: undefined
   Labeled: {label: string}
   LabelEditor: undefined

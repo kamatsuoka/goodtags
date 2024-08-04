@@ -3,7 +3,8 @@
  */
 import {ActionCreatorWithPayload, createSelector} from "@reduxjs/toolkit"
 import {RootState} from "../store"
-import {selectClassic} from "./classicSlice"
+import {ClassicActions, selectClassic} from "./classicSlice"
+import {EasyActions, selectEasy} from "./easySlice"
 import {
   FavoritesActions,
   selectFavorites,
@@ -24,6 +25,8 @@ export function getTagListSelector(
       return selectPopular
     case TagListEnum.Classic:
       return selectClassic
+    case TagListEnum.Easy:
+      return selectEasy
     case TagListEnum.History:
       return selectHistory
     case TagListEnum.SearchResults:
@@ -71,6 +74,10 @@ export function getSelectedTagSetter(
       return FavoritesActions.setSelectedFavoriteTag
     case TagListEnum.Popular:
       return PopularActions.setSelectedTag
+    case TagListEnum.Classic:
+      return ClassicActions.setSelectedTag
+    case TagListEnum.Easy:
+      return EasyActions.setSelectedTag
     case TagListEnum.History:
       return HistoryActions.setSelectedTag
     case TagListEnum.SearchResults:

@@ -1,8 +1,11 @@
 import LabelEditor from "@app/components/LabelEditor"
+import ClassicScreen from "@app/screens/ClassicScreen"
+import EasyScreen from "@app/screens/EasyScreen"
 import HomeScreen from "@app/screens/HomeScreen"
 import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
+import PopularScreen from "@app/screens/PopularScreen"
 import {useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
@@ -69,6 +72,21 @@ export default function HomeNavigator() {
         name="Labeled"
         component={LabeledScreen}
         options={{headerLeft: BackButton, ...homeOrientation}}
+      />
+      <Stack.Screen
+        name="Popular"
+        component={PopularScreen}
+        options={homeOrientation}
+      />
+      <Stack.Screen
+        name="Classic"
+        component={ClassicScreen}
+        options={homeOrientation}
+      />
+      <Stack.Screen
+        name="Easy"
+        component={EasyScreen}
+        options={homeOrientation}
       />
       <Stack.Group
         screenOptions={{
