@@ -28,6 +28,7 @@ export const SORTBY_PARAMS = {
   [SortOrder.alpha]: "Title",
   [SortOrder.downloads]: "Downloaded",
   [SortOrder.newest]: "Posted",
+  [SortOrder.id]: "id",
 }
 
 export const PARTS_PARAMS = {
