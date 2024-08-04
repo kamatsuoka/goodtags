@@ -38,7 +38,7 @@ export default function ListHeader({
     logoButton: {
       width: BUTTON_SIZE,
       height: BUTTON_SIZE,
-      backgroundColor: theme.colors.onPrimary,
+      backgroundColor: "transparent",
     },
     header: {
       ...styles.header,

@@ -66,7 +66,7 @@ const HistoryScreen = () => {
 
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="history" />
+      <ListHeader listRef={listRef} title="history" titleIcon="history" />
       <TagList
         listRef={listRef}
         title="History"
