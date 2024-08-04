@@ -1,4 +1,3 @@
-import CreateLabel from "@app/components/CreateLabel"
 import LabelEditor from "@app/components/LabelEditor"
 import HomeScreen from "@app/screens/HomeScreen"
 import {LabeledScreen} from "@app/screens/LabeledScreen"
@@ -13,7 +12,7 @@ import {
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/lib/typescript/src/types"
 import {useMemo} from "react"
 import {Platform} from "react-native"
-import {Text, useTheme} from "react-native-paper"
+import {useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {useAppSelector} from "../hooks"
@@ -36,11 +35,6 @@ export const BackButton = (_props: HeaderBackButtonProps) => {
       onPress={navigation.goBack}
     />
   )
-}
-
-function HeaderCancel() {
-  const navigation = useNavigation()
-  return <Text onPress={navigation.goBack}>cancel</Text>
 }
 
 /**
@@ -114,17 +108,6 @@ export default function HomeNavigator() {
             title: "edit labels",
             headerLeft: BackButton,
             ...homeOrientation,
-          }}
-        />
-        <Stack.Screen
-          name="CreateLabel"
-          component={CreateLabel}
-          options={{
-            title: "new label",
-            headerLeft: HeaderCancel,
-            headerBackVisible: false,
-            headerTitleAlign: "center",
-            orientation: "all",
           }}
         />
         <Stack.Screen

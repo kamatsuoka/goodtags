@@ -60,17 +60,17 @@ export const LabeledScreen = () => {
       <ListHeader
         listRef={listRef}
         title={selectedLabel}
-        titleIcon="label-outline"
+        titleIcon="tag-outline"
         showBackButton={true}
       />
       <TagList
         listRef={listRef}
-        title="label"
+        title="tag-outline"
         emptyMessage={emptyMessage}
         tagListType={selectedLabel || ""}
       />
       <FABDown
-        icon={fabOpen ? "minus" : "cog"}
+        icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

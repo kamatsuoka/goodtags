@@ -225,7 +225,7 @@ const SearchScreen = () => {
         {getErrorMessage()}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "cog"}
+        icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

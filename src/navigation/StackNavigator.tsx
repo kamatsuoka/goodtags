@@ -1,3 +1,4 @@
+import CreateLabel from "@app/components/CreateLabel"
 import TagLabels from "@app/components/TagLabels"
 import {MainTheme, SansSerifTheme} from "@app/lib/theme"
 import AboutScreen from "@app/screens/AboutScreen"
@@ -13,7 +14,7 @@ import {
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/lib/typescript/src/types"
 import {useMemo} from "react"
 import {Platform} from "react-native"
-import {Provider as PaperProvider} from "react-native-paper"
+import {Provider as PaperProvider, Text} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {useAppSelector} from "../hooks"
@@ -24,6 +25,11 @@ import {StackParamList} from "./navigationParams"
 
 const BACK_ICON = "chevron-left"
 const BACK_ICON_SIZE = 36
+
+function HeaderCancel() {
+  const navigation = useNavigation()
+  return <Text onPress={navigation.goBack}>cancel</Text>
+}
 
 export const BackButton = (_props: HeaderBackButtonProps) => {
   const navigation = useNavigation()
@@ -148,6 +154,17 @@ export default function StackNavigator() {
                 title: "labels",
                 headerLeft: BackButton,
                 ...tagOrientation,
+              }}
+            />
+            <Stack.Screen
+              name="CreateLabel"
+              component={CreateLabel}
+              options={{
+                title: "new label",
+                headerLeft: HeaderCancel,
+                headerBackVisible: false,
+                headerTitleAlign: "center",
+                orientation: "all",
               }}
             />
           </Stack.Group>

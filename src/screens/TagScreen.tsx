@@ -469,7 +469,7 @@ const TagScreen = ({navigation}: Props) => {
           </Animated.View>
         )}
         <FABDown
-          icon={fabOpen ? "minus" : "plus"}
+          icon={fabOpen ? "minus" : "cog-outline"}
           open={fabOpen}
           actions={fabActions}
           onStateChange={({open}) => {

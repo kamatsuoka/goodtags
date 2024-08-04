@@ -140,10 +140,10 @@ export default function HomeScreen() {
   )
 }
 
-const PopularIcon = homeIcon("star-outline")
+const PopularIcon = homeIcon("star")
 const ClassicIcon = homeIcon("pillar")
 const EasyIcon = homeIcon("teddy-bear")
 const RightIcon = homeIcon("chevron-right")
-const LabelIcon = homeIcon("label")
+const LabelIcon = homeIcon("tag-outline")
 const AboutIcon = homeIcon("information-outline")
 const OptionsIcon = homeIcon("cog-outline")

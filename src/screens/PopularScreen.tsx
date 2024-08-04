@@ -91,6 +91,7 @@ const PopularScreen = () => {
         listRef={listRef}
         showBackButton={true}
         title="popular tags"
+        titleIcon="star"
       />
       <TagList
         tagListType={TagListType.Popular}
@@ -112,7 +113,7 @@ const PopularScreen = () => {
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "cog"}
+        icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

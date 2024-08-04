@@ -32,7 +32,6 @@ export type HomeParamList = {
   Labels: undefined
   Labeled: {label: string}
   LabelEditor: undefined
-  CreateLabel: undefined
   Options: undefined
 }
 
