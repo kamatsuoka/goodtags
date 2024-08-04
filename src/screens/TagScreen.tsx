@@ -40,7 +40,7 @@ import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {HistoryActions} from "../modules/historySlice"
 import {TagListEnum} from "../modules/tagLists"
-import {getSelectedTagSetter} from "../modules/tagListUtil"
+import {getSelectedTagSetter, isLabelType} from "../modules/tagListUtil"
 import {
   PlayingState,
   playTrack,
@@ -222,13 +222,13 @@ const TagScreen = ({navigation}: Props) => {
   }, [dispatch, selectedTag])
 
   /**
-   * Go back to the Home screen (includes all tag lists).
-   * Set TagState to closing so that when we return to the Home screen,
+   * Go back to list.
+   * Set TagState to closing so that when we return list,
    * we can scroll to the selected tag.
    */
   function goBack() {
     if (
-      tagListType === TagListEnum.Favorites &&
+      isLabelType(tagListType) &&
       delabeledSelectedTag?.label === selectedLabel &&
       delabeledSelectedTag?.tag.id === selectedTag?.id
     ) {
