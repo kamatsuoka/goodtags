@@ -31,7 +31,7 @@ import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
-  TagListType,
+  TagListEnum,
 } from "../modules/tagLists"
 
 /**
@@ -182,7 +182,7 @@ const SearchScreen = () => {
         title="Search"
         loadMore={(numTags: number) => loadMore(numTags)}
         emptyMessage={statusMessage()}
-        tagListType={TagListType.SearchResults}
+        tagListType={TagListEnum.SearchResults}
       />
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>

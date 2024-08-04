@@ -1,9 +1,6 @@
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import useHaptics from "@app/hooks/useHaptics"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
-import {useNavigation} from "@react-navigation/native"
-import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {useState} from "react"
 import {Platform, StyleSheet, TouchableOpacity, View} from "react-native"
 import {
@@ -33,7 +30,6 @@ export default function LabelEditor() {
   const [labelToEdit, setLabelToEdit] = useState("")
   const [labelToDelete, setLabelToDelete] = useState("")
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const insets = useSafeAreaInsets()
@@ -167,18 +163,6 @@ export default function LabelEditor() {
           <Button onPress={deleteLabel}>ok</Button>
         </Dialog.Actions>
       </Dialog>
-      {labelToDelete ? null : (
-        <Button
-          icon="plus"
-          mode="contained-tonal"
-          onPress={() => {
-            stopEditing()
-            navigation.navigate("CreateLabel", {})
-          }}
-          style={styles.createButton}>
-          new label
-        </Button>
-      )}
     </View>
   )
 }

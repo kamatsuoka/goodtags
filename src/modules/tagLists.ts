@@ -2,7 +2,9 @@ import {SortOrder} from "../constants/Search"
 import {TagsById} from "../lib/models/Tag"
 import {SelectedTag} from "./tagListUtil"
 
-export enum TagListType {
+export type TagListType = TagListEnum | string // support named labels
+
+export enum TagListEnum {
   SearchResults = "SearchResults",
   Favorites = "Favorites",
   Popular = "Popular",

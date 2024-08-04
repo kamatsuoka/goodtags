@@ -11,19 +11,19 @@ import {
 import {HistoryActions, selectHistory} from "./historySlice"
 import {PopularActions, selectPopular} from "./popularSlice"
 import {SearchActions, selectSearchResults} from "./searchSlice"
-import {TagListState, TagListType} from "./tagLists"
+import {TagListEnum, TagListState, TagListType} from "./tagLists"
 
 export function getTagListSelector(
-  tagListType: TagListType | string,
+  tagListType: TagListType,
 ): (state: RootState) => TagListState {
   switch (tagListType) {
-    case TagListType.Favorites:
+    case TagListEnum.Favorites:
       return selectFavorites
-    case TagListType.Popular:
+    case TagListEnum.Popular:
       return selectPopular
-    case TagListType.History:
+    case TagListEnum.History:
       return selectHistory
-    case TagListType.SearchResults:
+    case TagListEnum.SearchResults:
       return selectSearchResults
     default:
       if (isLabelType(tagListType)) {
@@ -33,11 +33,11 @@ export function getTagListSelector(
   }
 }
 
-export function isFavoriteOrLabel(tagListType: TagListType | string) {
-  return tagListType === TagListType.Favorites || isLabelType(tagListType)
+export function isFavoriteOrLabel(tagListType: TagListType) {
+  return tagListType === TagListEnum.Favorites || isLabelType(tagListType)
 }
 
-export function isLabelType(tagListType: TagListType | string) {
+export function isLabelType(tagListType: TagListType) {
   return typeof tagListType === "string"
 }
 
@@ -49,9 +49,9 @@ export const makeSelectTagState = () =>
   createSelector(
     [
       (state: RootState) => state,
-      (_: RootState, tagListType: TagListType | string) => tagListType,
+      (_: RootState, tagListType: TagListType) => tagListType,
     ],
-    (state: RootState, tagListType: TagListType | string) =>
+    (state: RootState, tagListType: TagListType) =>
       getTagListSelector(tagListType)(state),
   )
 
@@ -61,16 +61,16 @@ export type SelectedTag = {
 }
 
 export function getSelectedTagSetter(
-  tagListType: TagListType | string,
+  tagListType: TagListType,
 ): ActionCreatorWithPayload<SelectedTag> {
   switch (tagListType) {
-    case TagListType.Favorites:
+    case TagListEnum.Favorites:
       return FavoritesActions.setSelectedFavoriteTag
-    case TagListType.Popular:
+    case TagListEnum.Popular:
       return PopularActions.setSelectedTag
-    case TagListType.History:
+    case TagListEnum.History:
       return HistoryActions.setSelectedTag
-    case TagListType.SearchResults:
+    case TagListEnum.SearchResults:
       return SearchActions.setSelectedTag
     default:
       if (isLabelType(tagListType)) {

@@ -19,9 +19,7 @@ export type StackParamList = {
 
 export type TabsParamList = {
   Search: undefined
-  Favorites: {
-    label?: string
-  }
+  Favorites: undefined
   HomeNavigator: undefined
   History: undefined
 }
@@ -36,3 +34,9 @@ export type HomeParamList = {
 }
 
 export type RootStackParamList = TabsParamList & StackParamList & HomeParamList
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}

@@ -7895,7 +7895,7 @@ __metadata:
     react-native-blob-util: "npm:^0.17.0"
     react-native-clean-project: "npm:^4.0.1"
     react-native-device-info: "npm:^10.12.0"
-    react-native-draggable-flatlist: "npm:^4.0.1"
+    react-native-draggable-flatlist: "patch:react-native-draggable-flatlist@npm%3A4.0.1#~/.yarn/patches/react-native-draggable-flatlist-npm-4.0.1-4a95e98e27.patch"
     react-native-error-boundary: "npm:^1.1.16"
     react-native-gesture-handler: "npm:~2.12.0"
     react-native-gradle-plugin: "npm:^0.71.19"
@@ -12146,7 +12146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-draggable-flatlist@npm:^4.0.1":
+"react-native-draggable-flatlist@npm:4.0.1":
   version: 4.0.1
   resolution: "react-native-draggable-flatlist@npm:4.0.1"
   dependencies:
@@ -12156,6 +12156,19 @@ __metadata:
     react-native-gesture-handler: ">=2.0.0"
     react-native-reanimated: ">=2.8.0"
   checksum: 10/4d9c8bfef6185ab51ebef8d00a0a06f8fd57c96a5a9e60cb6e7cd56ec6222d37643c53fc998cc93efcb8be88d32c2e5e43788f1816d8cded4eb2b60076001749
+  languageName: node
+  linkType: hard
+
+"react-native-draggable-flatlist@patch:react-native-draggable-flatlist@npm%3A4.0.1#~/.yarn/patches/react-native-draggable-flatlist-npm-4.0.1-4a95e98e27.patch":
+  version: 4.0.1
+  resolution: "react-native-draggable-flatlist@patch:react-native-draggable-flatlist@npm%3A4.0.1#~/.yarn/patches/react-native-draggable-flatlist-npm-4.0.1-4a95e98e27.patch::version=4.0.1&hash=f02695"
+  dependencies:
+    "@babel/preset-typescript": "npm:^7.17.12"
+  peerDependencies:
+    react-native: ">=0.64.0"
+    react-native-gesture-handler: ">=2.0.0"
+    react-native-reanimated: ">=2.8.0"
+  checksum: 10/dfab0ebba062840638264a081b71b3f62796f763b33b0e6a4d31279ce9ef928c1f556364a1a184588f7323b2d27fb2812cabc226925f4f7765c2a7f55334b990
   languageName: node
   linkType: hard
 

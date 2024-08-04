@@ -22,7 +22,7 @@ import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
-  TagListType,
+  TagListEnum,
 } from "../modules/tagLists"
 
 /**
@@ -94,7 +94,7 @@ const PopularScreen = () => {
         titleIcon="star"
       />
       <TagList
-        tagListType={TagListType.Popular}
+        tagListType={TagListEnum.Popular}
         emptyMessage={
           loadingState === LoadingState.succeeded ? "no tags found" : ""
         }

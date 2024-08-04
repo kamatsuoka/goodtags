@@ -10,7 +10,7 @@ import {Text} from "react-native-paper"
 import CommonStyles from "../constants/CommonStyles"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import Tag from "../lib/models/Tag"
-import {LoadingState, TagListType} from "../modules/tagLists"
+import {LoadingState, TagListEnum, TagListType} from "../modules/tagLists"
 import {getSelectedTagSetter} from "../modules/tagListUtil"
 import TagListItem, {ITEM_HEIGHT} from "./TagListItem"
 
@@ -18,7 +18,7 @@ export type TagListProps = {
   title: string
   emptyMessage: string
   loadMore?: (numTags: number) => Promise<boolean>
-  tagListType: TagListType | string
+  tagListType: TagListType
   listRef: RefObject<FlashList<number>>
 }
 
@@ -160,7 +160,7 @@ const TagList = (props: TagListProps) => {
             selected={
               tagData.index === selectedTag?.index &&
               tag.id === selectedTag.id &&
-              props.tagListType !== TagListType.History
+              props.tagListType !== TagListEnum.History
             }
           />
         </TouchableOpacity>

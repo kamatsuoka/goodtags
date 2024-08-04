@@ -5,7 +5,7 @@ import reducer, {
   FavoritesState,
   InitialState,
 } from "../favoritesSlice"
-import {TagListType} from "../tagLists"
+import {TagListEnum} from "../tagLists"
 const {
   addFavorite,
   removeFavorite,
@@ -186,7 +186,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state3).toEqual(labelsOnlyState(label))
@@ -205,7 +205,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label,
-        tagListType: TagListType.Favorites,
+        tagListType: TagListEnum.Favorites,
       }),
     )
     expect(state4).toEqual({
@@ -231,7 +231,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label1,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state4).toEqual(singleLabeledState(fav12, label2, [label1]))
@@ -240,7 +240,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label1,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state5).toEqual(singleLabeledState(fav12, label2, [label1]))

@@ -8,7 +8,7 @@ import {refreshFavorite} from "../modules/favoritesSlice"
 import {TagListType} from "../modules/tagLists"
 import {arranger, posted} from "./tagInfo"
 
-const TagInfoView = (props: {tag: Tag; tagListType: TagListType | string}) => {
+const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
   const {tag, tagListType} = props
   const theme = useTheme()
   const dispatch = useAppDispatch()

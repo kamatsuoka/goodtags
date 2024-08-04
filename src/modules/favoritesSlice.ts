@@ -167,7 +167,7 @@ const favoritesSlice = createSlice({
       action: PayloadAction<{
         id: number
         label: string
-        tagListType: TagListType | string
+        tagListType: TagListType
       }>,
     ) => {
       const {id, label, tagListType} = action.payload

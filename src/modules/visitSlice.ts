@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {TagListType} from "./tagLists"
+import {TagListEnum, TagListType} from "./tagLists"
 
 export enum TagState {
   opening = "opening",
@@ -11,11 +11,11 @@ export interface VisitState {
   // Used to decide whether to show welcome screen
   lastVisited?: string
   tagState?: TagState
-  tagListType: TagListType | string
+  tagListType: TagListType
 }
 
 const initialState: VisitState = {
-  tagListType: TagListType.Popular,
+  tagListType: TagListEnum.Popular,
 }
 
 export const visitSlice = createSlice({
@@ -32,7 +32,7 @@ export const visitSlice = createSlice({
     setTagState: (state, action: PayloadAction<TagState | undefined>) => {
       state.tagState = action.payload
     },
-    setTagListType: (state, action: PayloadAction<TagListType | string>) => {
+    setTagListType: (state, action: PayloadAction<TagListType>) => {
       state.tagListType = action.payload
     },
   },

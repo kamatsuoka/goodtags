@@ -12,7 +12,7 @@ import {SortOrder} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {FavoritesActions} from "../modules/favoritesSlice"
-import {SORT_ICONS, TagListType} from "../modules/tagLists"
+import {SORT_ICONS, TagListEnum} from "../modules/tagLists"
 
 /**
  * Favorites list
@@ -55,12 +55,12 @@ export const FavoritesScreen = () => {
   const emptyMessage = "tap the heart icon in sheet music to add favorites"
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="faves" titleIcon="heart-outline" />
+      <ListHeader listRef={listRef} title="faves" titleIcon="heart" />
       <TagList
         listRef={listRef}
         title="favorites"
         emptyMessage={emptyMessage}
-        tagListType={TagListType.Favorites}
+        tagListType={TagListEnum.Favorites}
       />
       <FABDown
         icon={fabOpen ? "minus" : "cog-outline"}

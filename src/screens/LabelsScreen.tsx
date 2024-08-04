@@ -2,19 +2,25 @@
 import homeIcon from "@app/components/homeIcon"
 import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {HomeParamList} from "@app/navigation/navigationParams"
-import {useNavigation} from "@react-navigation/native"
+import {HomeParamList, TabsParamList} from "@app/navigation/navigationParams"
+import {BottomTabNavigationProp} from "@react-navigation/bottom-tabs"
+import {CompositeNavigationProp} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import {Divider, List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
+type Prop = CompositeNavigationProp<
+  NativeStackNavigationProp<HomeParamList>,
+  BottomTabNavigationProp<TabsParamList>
+>
+
 /**
  * List of labels for navigating to labeled tags
  */
-export default function LabelsScreen() {
+export default function LabelsScreen({navigation}: Prop) {
   const theme = useTheme()
-  const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
+  // const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   // const tagIdsByLabel = useAppSelector(state => state.favorites.tagIdsByLabel)
@@ -73,6 +79,17 @@ export default function LabelsScreen() {
           </View>
           <View style={styles.listHolder}>
             <TouchableOpacity
+              onPress={() => navigation.navigate("CreateLabel", {})}>
+              <List.Item
+                title="new label"
+                left={AddLabelIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.listHolder}>
+            <TouchableOpacity
               onPress={() => navigation.navigate("LabelEditor")}>
               <List.Item
                 title="edit labels"
@@ -89,5 +106,6 @@ export default function LabelsScreen() {
 }
 
 const RightIcon = homeIcon("chevron-right")
+const AddLabelIcon = homeIcon("tag-plus-outline")
 const LabelIcon = homeIcon("tag-outline")
 const EditLabelsIcon = homeIcon("tag-multiple-outline")

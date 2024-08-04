@@ -10,7 +10,7 @@ import {arranger} from "./tagInfo"
 
 export type ComponentProps = {
   tag: Tag
-  tagListType: TagListType | string
+  tagListType: TagListType
   index: number
   selected: boolean
 }

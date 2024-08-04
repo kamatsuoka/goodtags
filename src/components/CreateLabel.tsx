@@ -48,7 +48,7 @@ export default function CreateLabel({route}: Props) {
           autoCapitalize="none"
           onChangeText={setDraft}
           onSubmitEditing={() => createLabel(draft.trim())}
-          placeholder="new label"
+          placeholder="label"
           maxLength={32}
           dense
           style={[styles.textInput]}

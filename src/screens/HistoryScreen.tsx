@@ -13,7 +13,7 @@ import {SortOrder} from "../constants/Search"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {HistoryActions} from "../modules/historySlice"
-import {SORT_ICONS, SORT_LABELS, TagListType} from "../modules/tagLists"
+import {SORT_ICONS, SORT_LABELS, TagListEnum} from "../modules/tagLists"
 
 /**
  * Recently viewed tags.
@@ -71,7 +71,7 @@ const HistoryScreen = () => {
         listRef={listRef}
         title="History"
         emptyMessage="Tags you have viewed will show up here"
-        tagListType={TagListType.History}
+        tagListType={TagListEnum.History}
       />
       <FABDown
         icon={fabOpen ? "minus" : "cog-outline"}

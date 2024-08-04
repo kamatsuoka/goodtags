@@ -39,7 +39,7 @@ import {noteForKey} from "../lib/NotePlayer"
 import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {HistoryActions} from "../modules/historySlice"
-import {TagListType} from "../modules/tagLists"
+import {TagListEnum} from "../modules/tagLists"
 import {getSelectedTagSetter} from "../modules/tagListUtil"
 import {
   PlayingState,
@@ -228,7 +228,7 @@ const TagScreen = ({navigation}: Props) => {
    */
   function goBack() {
     if (
-      tagListType === TagListType.Favorites &&
+      tagListType === TagListEnum.Favorites &&
       delabeledSelectedTag?.label === selectedLabel &&
       delabeledSelectedTag?.tag.id === selectedTag?.id
     ) {
@@ -318,7 +318,7 @@ const TagScreen = ({navigation}: Props) => {
     brightenThenFade()
     if (favoritesById[id]) {
       dispatch(FavoritesActions.removeFavorite(id))
-      if (tagListType === TagListType.Favorites && !selectedLabel) {
+      if (tagListType === TagListEnum.Favorites && !selectedLabel) {
         // if on regular favorites list (not label), go back to list
         await haptics.impactAsync(ImpactFeedbackStyle.Light)
         return goBack()
