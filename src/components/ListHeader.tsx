@@ -13,7 +13,7 @@ type ListHeaderProps = {
   // reference to FlashList with tags
   listRef: React.RefObject<FlashList<number>>
   showBackButton?: boolean
-  title?: string
+  title?: string | React.ReactNode
   titleIcon?: string
 }
 
@@ -71,14 +71,22 @@ export default function ListHeader({
   ) : (
     <View style={styles.spacer} />
   )
+
+  const titleComponent =
+    typeof title === "string" ? (
+      <Text variant="titleMedium" style={styles.title}>
+        {title}
+      </Text>
+    ) : (
+      title
+    )
+
   return (
     <View style={styles.header}>
       {backButton}
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleMedium" style={styles.title}>
-          {title}
-        </Text>
+        {titleComponent}
       </View>
       <View style={styles.spacer} />
     </View>

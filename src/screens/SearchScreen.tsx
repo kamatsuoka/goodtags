@@ -149,6 +149,20 @@ const SearchScreen = () => {
     setSearchMenuVisible(false)
   }
 
+  const queryButton = (
+    <Button
+      icon="magnify"
+      mode="elevated"
+      contentStyle={styles.compactSearchContent}
+      onPress={() => {
+        return setSearchMenuVisible(true)
+      }}
+      style={styles.compactSearchBar}
+      labelStyle={styles.compactSearchLabel}>
+      {query}
+    </Button>
+  )
+
   return searchMenuVisible ? (
     <SearchDialog
       query={query}
@@ -157,7 +171,7 @@ const SearchScreen = () => {
     />
   ) : (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="search results" />
+      <ListHeader listRef={listRef} title={queryButton} />
       {filters !== InitialFilters ? (
         <View style={styles.filterHolder}>
           {filterChip(
@@ -205,18 +219,6 @@ const SearchScreen = () => {
           labelStyle={themedStyles.compactSearchLabelEmpty}>
           {"new search"}
         </Button>
-        {query ? (
-          <Button
-            mode="elevated"
-            contentStyle={styles.compactSearchContent}
-            onPress={() => {
-              return setSearchMenuVisible(true)
-            }}
-            style={styles.compactSearchBar}
-            labelStyle={styles.compactSearchLabel}>
-            {query}
-          </Button>
-        ) : null}
       </View>
       <Snackbar
         visible={loadingState === LoadingState.failed}
@@ -256,7 +258,6 @@ const styles = StyleSheet.create({
     maxWidth: 200,
   },
   compactSearchContent: {
-    flexDirection: "row-reverse",
     height: 40,
   },
   compactSearchLabel: {
