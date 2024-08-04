@@ -1,5 +1,6 @@
 import homeIcon from "@app/components/homeIcon"
 import Logo from "@app/components/Logo"
+import useShallowScreen from "@app/hooks/useShallowScreen"
 import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import {Divider, List, useTheme} from "react-native-paper"
@@ -13,6 +14,7 @@ export default function HomeScreen({
 }: HomeNavigatorScreenProps<"Home">) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const shallow = useShallowScreen()
 
   const styles = StyleSheet.create({
     container: {
@@ -63,10 +65,12 @@ export default function HomeScreen({
 
   return (
     <View style={styles.container} testID="home_container">
-      <View style={styles.logoHolder}>
-        <Logo size={30} dark />
-      </View>
-      <ScrollView>
+      {shallow ? null : (
+        <View style={styles.logoHolder}>
+          <Logo size={30} dark />
+        </View>
+      )}
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.listHolder}>
           <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
             <List.Item
