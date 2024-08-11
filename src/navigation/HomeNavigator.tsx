@@ -6,6 +6,7 @@ import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
 import PopularScreen from "@app/screens/PopularScreen"
+import ShareScreen from "@app/screens/ShareScreen"
 import {useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
@@ -128,6 +129,14 @@ export default function HomeNavigator() {
           component={OptionsScreen}
           options={{
             title: "options",
+            ...homeOrientation,
+          }}
+        />
+        <Stack.Screen
+          name="Share"
+          component={ShareScreen}
+          options={{
+            title: "share",
             ...homeOrientation,
           }}
         />

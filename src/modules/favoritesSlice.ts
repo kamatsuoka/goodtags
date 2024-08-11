@@ -9,6 +9,8 @@ import Tag, {
 import {RootState} from "@app/store"
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
 import _ from "lodash"
+import ReactNativeBlobUtil from "react-native-blob-util"
+import Share from "react-native-share"
 import {fetchAndConvertTags} from "./searchutil"
 import {
   LoadingState,
@@ -23,7 +25,7 @@ import {ThunkApiConfig} from "./thunkApiConfig"
 type LabelsState = {
   labelsByTagId: StringsByNumber
   tagIdsByLabel: IdsByString
-  // kludgy, needed since labeled tags are no longer automatically favorites
+  // needed since labeled tags are no longer automatically favorites
   labeledById: TagsById
   labels: Array<string>
   selectedLabel?: string
@@ -354,6 +356,100 @@ export const selectLabel = (state: RootState, label: string): TagListState => {
       sortOrder: SortOrder.alpha,
     }
   }
+}
+
+export const shareFavorites = async (favorites: FavoritesState) => {
+  try {
+    const subject = `favorites and labels`
+    const title = `Share ${subject}`
+    const path: string = await writeFavoritesToFile(favorites)
+    await Share.open({
+      url: `file://${path}`,
+      type: "application/json",
+      title,
+      subject,
+    })
+      .then(res => console.log(res))
+      .catch(e => e && console.log(e))
+  } catch (e) {
+    console.info("error sharing favorites", e)
+  }
+}
+
+export interface SharedFavorite {
+  id: number
+  title: string
+}
+
+export interface SharedLabel {
+  label: string
+  tags: SharedFavorite[]
+}
+
+export interface SharedData {
+  favorites: SharedFavorite[]
+  labels: SharedLabel[]
+  date: string
+}
+
+const buildLabeledTags = (
+  label: string,
+  tagIds: number[],
+  tagsById: TagsById,
+) => {
+  const tags = tagIds.map(id => {
+    const tag = tagsById[id]
+    return {id, title: tag.title}
+  })
+  return {label, tags}
+}
+
+/**
+ * Builds a data structure for sharing favorites
+ *
+ * @param favoritesById Map of tag id to favorite
+ */
+const buildSharedData = (favorites: FavoritesState): SharedData => {
+  const sharedFavorites = Object.entries(favorites.tagsById).map(
+    ([id, tag]) => ({
+      id: Number(id),
+      title: tag.title,
+    }),
+  )
+
+  const labels = Object.entries(favorites.tagIdsByLabel).map(([label, ids]) =>
+    buildLabeledTags(label, ids, favorites.labeledById),
+  )
+  return {
+    favorites: sharedFavorites,
+    labels,
+    date: new Date().toISOString(),
+  }
+}
+
+const writeFavoritesToString = (favorites: FavoritesState): string => {
+  const filedata = buildSharedData(favorites)
+  return JSON.stringify(filedata, null, 2)
+}
+
+const writeFavoritesToFile = async (
+  favorites: FavoritesState,
+): Promise<string> => {
+  const fs = ReactNativeBlobUtil.fs
+  const dir = fs.dirs.CacheDir + "/goodtags"
+  const dirExists = await fs.isDir(dir)
+  if (dirExists) {
+    console.info(`directory ${dir} already exists`)
+  } else {
+    await fs.mkdir(dir)
+    console.info(`created directory ${dir}`)
+  }
+  const filename = `favorites-labels.json`
+  const path = `${dir}/${filename}`
+  console.info(`path: ${path}`)
+  const favString = writeFavoritesToString(favorites)
+  await fs.writeFile(path, favString, "utf8")
+  return path
 }
 
 export const FavoritesActions = favoritesSlice.actions

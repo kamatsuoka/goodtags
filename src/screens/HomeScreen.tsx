@@ -137,6 +137,18 @@ export default function HomeScreen({
               style={styles.listItem}
             />
           </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Share")
+            }}>
+            <List.Item
+              title="share"
+              left={ShareIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -150,3 +162,4 @@ const RightIcon = homeIcon("chevron-right")
 const LabelsIcon = homeIcon("tag-multiple-outline")
 const AboutIcon = homeIcon("information-outline")
 const OptionsIcon = homeIcon("cog-outline")
+const ShareIcon = homeIcon("share")
