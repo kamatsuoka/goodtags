@@ -214,6 +214,9 @@ function buildSqlParts(searchParams: SearchParams) {
     whereClauseParts.push("tags.id = ?")
     whereVariables.push(searchParams.id)
   }
+  if (searchParams.ids !== undefined) {
+    whereClauseParts.push(`tags.id in (${searchParams.ids.toString()})`)
+  }
   if (searchParams.query !== undefined && searchParams.query !== "") {
     whereClauseParts.push(
       "(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)",

@@ -7911,6 +7911,7 @@ __metadata:
     react-native-blob-util: "npm:^0.19.11"
     react-native-clean-project: "npm:^4.0.1"
     react-native-device-info: "npm:^10.12.0"
+    react-native-document-picker: "npm:^9.3.0"
     react-native-draggable-flatlist: "patch:react-native-draggable-flatlist@npm%3A4.0.1#~/.yarn/patches/react-native-draggable-flatlist-npm-4.0.1-4a95e98e27.patch"
     react-native-error-boundary: "npm:^1.1.16"
     react-native-gesture-handler: "npm:~2.12.0"
@@ -12213,6 +12214,22 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: 10/0b2ba3d204f346dbb66369b810fbf55ed0310ed9e4679876fc9eed5ca4ceaf1cc9e8761d957cc0e880e898dc638a29fd48ab1dcbb54f6e5fd2f4aa43c1fabe2f
+  languageName: node
+  linkType: hard
+
+"react-native-document-picker@npm:^9.3.0":
+  version: 9.3.0
+  resolution: "react-native-document-picker@npm:9.3.0"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 10/173fbce533622b47426a481811bef7431b133ff93d59ab01102b94d161d8f7901a75413aff881ffd19586ecc9cdb196b26e6254c7dc08a3aaac3dce74b53dadd
   languageName: node
   linkType: hard
 

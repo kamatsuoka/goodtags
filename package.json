@@ -43,6 +43,7 @@
     "react-native": "0.72.6",
     "react-native-blob-util": "^0.19.11",
     "react-native-device-info": "^10.12.0",
+    "react-native-document-picker": "^9.3.0",
     "react-native-draggable-flatlist": "patch:react-native-draggable-flatlist@npm%3A4.0.1#~/.yarn/patches/react-native-draggable-flatlist-npm-4.0.1-4a95e98e27.patch",
     "react-native-error-boundary": "^1.1.16",
     "react-native-gesture-handler": "~2.12.0",

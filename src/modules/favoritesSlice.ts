@@ -89,6 +89,24 @@ const favoritesSlice = createSlice({
         }
       }
     },
+    addFavorites: (state, action: PayloadAction<Tag[]>) => {
+      const tags = action.payload
+      tags.forEach(tag => {
+        const id = tag.id
+        state.tagsById[id] = buildFavorite(tag)
+        if (!state.allTagIds.includes(id)) {
+          if (state.sortOrder === SortOrder.newest) {
+            // just put fav at the head of the list, since it's newest
+            state.allTagIds.unshift(id)
+          } else {
+            state.allTagIds.push(id)
+          }
+        }
+        if (state.sortOrder === SortOrder.alpha) {
+          sortAlpha(state)
+        }
+      })
+    },
     removeFavorite: (state, action: PayloadAction<number>) => {
       const tagId: number = action.payload
       delete state.tagsById[tagId]
@@ -264,6 +282,25 @@ const favoritesSlice = createSlice({
       state.loadingState = LoadingState.failed
       state.error = action.payload
     })
+    builder.addCase(receiveSharedFile.pending, state => {
+      state.loadingState = LoadingState.pending
+    })
+    builder.addCase(
+      receiveSharedFile.fulfilled,
+      (state, action: PayloadAction<Tag[] | undefined>) => {
+        if (action.payload) {
+          favoritesSlice.caseReducers.addFavorites(
+            state,
+            action as PayloadAction<Tag[]>,
+          )
+        }
+        state.loadingState = LoadingState.succeeded
+      },
+    )
+    builder.addCase(receiveSharedFile.rejected, (state, action) => {
+      state.loadingState = LoadingState.failed
+      state.error = action.payload
+    })
   },
 })
 
@@ -281,7 +318,7 @@ export const refreshFavorite = createAsyncThunk<
       convertedTags = await fetchAndConvertTags({id}, false /* useApi */)
     } catch (e) {
       console.log(e)
-      const baseUrl = `https://kenjimatsuoka.net/goodtags/xml/${id}.xml` // TODO
+      const baseUrl = `https://goodtags.net/goodtags/xml/${id}.xml` // TODO
       convertedTags = await fetchAndConvertTags({}, false /* useApi */, baseUrl)
     }
     const {tags} = convertedTags
@@ -455,3 +492,61 @@ const writeFavoritesToFile = async (
 export const FavoritesActions = favoritesSlice.actions
 
 export default favoritesSlice.reducer
+
+export const receiveSharedFile = createAsyncThunk<
+  Tag[],
+  string,
+  ThunkApiConfig
+>("favorites/import", async (url, thunkAPI) => {
+  async function receiveData(data: string) {
+    try {
+      const sharedObj = JSON.parse(data)
+      const sharedData = sharedObj as SharedData
+      if (sharedData.favorites === undefined && sharedData.labels === undefined)
+        throw `No favorites or labels found`
+      const favoriteIds = sharedData.favorites.map(f => f.id) || []
+      const {tags} = await fetchAndConvertTags(
+        {ids: favoriteIds},
+        false /* useApi */,
+      )
+      return tags
+    } catch (e) {
+      return thunkAPI.rejectWithValue(`Unable to import favorites from ${url}`)
+    }
+  }
+
+  console.info(`importing favorites from ${url}`)
+  try {
+    const fs = ReactNativeBlobUtil.fs
+    // TODO: support reading stream
+    // if (url.startsWith("content://")) {
+    //   const stream = await fs.readStream(url, "utf8")
+    //   let data = ""
+    //   stream.onData(chunk => (data += chunk))
+    //   stream.onEnd(() => {
+    //     try {
+    //       return await receiveData(data)
+    //     } catch (e) {
+    //       console.error(e) // TODO: show error in app
+    //     }
+    //   })
+    //   stream.onError(e => {
+    //     throw e
+    //   })
+    //   stream.open()
+    // } else
+    if (url.startsWith("/") || url.startsWith("file://")) {
+      const path = url.startsWith("file://") ? url.slice(7) : url
+      if (!(await fs.exists(path))) {
+        throw `unable to find file ${path}`
+      }
+      const data = await fs.readFile(path, "utf8")
+      return await receiveData(data)
+    } else {
+      throw `unknown url type: ${url}`
+    }
+  } catch (e) {
+    console.error(e) // TODO: show error in app
+    return thunkAPI.rejectWithValue(`Unable to import favorites from ${url}`)
+  }
+})

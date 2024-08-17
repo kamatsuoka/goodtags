@@ -16,6 +16,7 @@ export const Search = {
 export type SearchParams = {
   // Filter what we're looking for
   id?: number
+  ids?: number[]
   query?: string
   collection?: Collection
   parts?: number

@@ -339,6 +339,8 @@ PODS:
     - glog
   - react-native-blob-util (0.19.11):
     - React-Core
+  - react-native-document-picker (9.3.0):
+    - React-Core
   - react-native-pdf (6.7.3):
     - React-Core
   - react-native-restart (0.0.24):
@@ -524,6 +526,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -628,6 +631,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-pdf:
     :path: "../node_modules/react-native-pdf"
   react-native-restart:
@@ -729,6 +734,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 194e32c6aab382d88713ad3dd0025c5f5c4ee072
   React-logger: cebf22b6cf43434e471dc561e5911b40ac01d289
   react-native-blob-util: 39a20f2ef11556d958dc4beb0aa07d1ef2690745
+  react-native-document-picker: 5b97e24a7f1a1e4a50a72c540a043f32d29a70a2
   react-native-pdf: b4ca3d37a9a86d9165287741c8b2ef4d8940c00e
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
