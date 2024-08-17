@@ -1,9 +1,18 @@
 import homeIcon from "@app/components/homeIcon"
 import Logo from "@app/components/Logo"
+import {useAppDispatch} from "@app/hooks"
 import useShallowScreen from "@app/hooks/useShallowScreen"
+import {receiveSharedFile} from "@app/modules/favoritesSlice"
 import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
-import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import {Divider, List, useTheme} from "react-native-paper"
+import {useEffect, useState} from "react"
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import {Divider, List, Portal, Snackbar, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 /**
@@ -15,6 +24,9 @@ export default function HomeScreen({
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const shallow = useShallowScreen()
+  const dispatch = useAppDispatch()
+  const [snackBarVisible, setSnackBarVisible] = useState(false)
+  const [snackBarMessage, setSnackBarMessage] = useState("")
 
   const styles = StyleSheet.create({
     container: {
@@ -62,6 +74,36 @@ export default function HomeScreen({
       paddingRight: 0,
     },
   })
+
+  useEffect(() => {
+    const handleOpenUrl = async (event: {url: string}) => {
+      try {
+        if (
+          event.url.startsWith("file://")
+          // TODO: support reading stream content
+          // || event.url.startsWith("content://")
+        ) {
+          dispatch(receiveSharedFile(event.url))
+        } else {
+          throw `Unknown url type ${event.url}`
+        }
+      } catch (e) {
+        console.error("An error occurred in handleOpenUrl", e)
+        setSnackBarMessage(`handleOpenUrl error: ${e}`)
+        setSnackBarVisible(true)
+      }
+    }
+
+    Linking.getInitialURL().then(url => {
+      if (url) handleOpenUrl({url})
+    })
+
+    Linking.addEventListener("url", handleOpenUrl)
+
+    return () => {
+      Linking.removeAllListeners("url")
+    }
+  }, [dispatch])
 
   return (
     <View style={styles.container} testID="home_container">
@@ -151,6 +193,16 @@ export default function HomeScreen({
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <Portal>
+        <Snackbar
+          visible={snackBarVisible}
+          onDismiss={() => setSnackBarVisible(false)}
+          action={{
+            label: "close",
+          }}>
+          {snackBarMessage}
+        </Snackbar>
+      </Portal>
     </View>
   )
 }

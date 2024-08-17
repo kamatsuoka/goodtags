@@ -1,7 +1,8 @@
 import homeIcon from "@app/components/homeIcon"
-import {useAppSelector} from "@app/hooks"
-import {shareFavorites} from "@app/modules/favoritesSlice"
+import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {receiveSharedFile, shareFavorites} from "@app/modules/favoritesSlice"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
+import DocumentPicker from "react-native-document-picker"
 import {List, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
@@ -11,6 +12,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context"
 export default function ShareScreen() {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const dispatch = useAppDispatch()
   const favorites = useAppSelector(state => state.favorites)
 
   const styles = StyleSheet.create({
@@ -54,6 +56,29 @@ export default function ShareScreen() {
                 style={styles.listItem}
               />
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pickSingle({
+                    presentationStyle: "fullScreen",
+                  })
+                  console.log(
+                    `result from DocumentPicker.pickSingle: ${pickerResult}`,
+                  )
+                  if (pickerResult?.uri) {
+                    dispatch(receiveSharedFile(pickerResult.uri))
+                  }
+                } catch (e) {
+                  console.error(e)
+                }
+              }}>
+              <List.Item
+                title="import favorites and labels"
+                left={ImportIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </List.Section>
@@ -63,3 +88,4 @@ export default function ShareScreen() {
 
 const RightIcon = homeIcon("chevron-right")
 const ExportIcon = homeIcon("export")
+const ImportIcon = homeIcon("import")
