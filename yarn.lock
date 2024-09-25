@@ -7921,7 +7921,7 @@ __metadata:
     react-native-promise-rejection-utils: "npm:^0.0.1"
     react-native-reanimated: "npm:^3.14.0"
     react-native-restart: "npm:^0.0.24"
-    react-native-safe-area-context: "npm:^4.8.2"
+    react-native-safe-area-context: "npm:^4.11.0"
     react-native-screens: "npm:^3.33.0"
     react-native-share: "npm:^11.0.3"
     react-native-sound: "npm:^0.11.2"
@@ -12366,13 +12366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:^4.8.2":
-  version: 4.8.2
-  resolution: "react-native-safe-area-context@npm:4.8.2"
+"react-native-safe-area-context@npm:^4.11.0":
+  version: 4.11.0
+  resolution: "react-native-safe-area-context@npm:4.11.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/ea01a7e3bceec23273a7b2807816b917fae48030431c1d966ee912c5ef12b131620c10b909f2604a2f296fc84ab1a3bdd9e536701401bdca6452441e2a825b60
+  checksum: 10/f2e616ad3087ebf1ad34f90f4eadc2d6865d3d56bba83bcfb9d04020b4344d892e347b7f55dcd996c4d2edf21b589a5ce710a52e62a7bd86597ed34d130599b2
   languageName: node
   linkType: hard
 

@@ -14,10 +14,8 @@ export default function LabelsScreen({
   navigation,
 }: HomeNavigatorScreenProps<"Labels">) {
   const theme = useTheme()
-  // const navigation = useNavigation<NativeStackNavigationProp<HomeParamList>>()
   const insets = useSafeAreaInsets()
   const labels = useAppSelector(state => state.favorites.labels)
-  // const tagIdsByLabel = useAppSelector(state => state.favorites.tagIdsByLabel)
   const dispatch = useAppDispatch()
 
   const styles = StyleSheet.create({
@@ -25,13 +23,11 @@ export default function LabelsScreen({
       flex: 1,
       alignItems: "flex-start",
       backgroundColor: theme.colors.secondaryContainer,
-      paddingTop: insets.top,
       paddingBottom: Math.max(insets.bottom, 20),
       paddingHorizontal: 15,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
-      paddingHorizontal: 5,
       borderRadius: 10,
       marginVertical: 5,
     },
@@ -43,7 +39,7 @@ export default function LabelsScreen({
     },
     buttonHolder: {
       paddingVertical: 10,
-      paddingLeft: insets.left,
+      // paddingLeft: insets.left,
       alignItems: "flex-start",
     },
   })

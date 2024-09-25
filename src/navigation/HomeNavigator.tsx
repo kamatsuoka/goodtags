@@ -48,7 +48,7 @@ const Stack = createNativeStackNavigator<HomeNavigatorParamList>()
 export default function HomeNavigator() {
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
+  //  const insets = useSafeAreaInsets()
   const homeOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
       orientation: autoRotate ? "portrait_up" : "all",
@@ -101,8 +101,8 @@ export default function HomeNavigator() {
             fontFamily: theme.fonts.titleSmall.fontFamily,
           },
           contentStyle: {
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
+            // paddingLeft: insets.left,
+            // paddingRight: insets.right,
           },
           headerTitleAlign: "center",
         }}>
