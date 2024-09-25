@@ -85,10 +85,10 @@ export default function HomeScreen({
         ) {
           dispatch(receiveSharedFile(event.url))
         } else {
-          throw `Unknown url type ${event.url}`
+          throw `unknown url type ${event.url}`
         }
       } catch (e) {
-        console.error("An error occurred in handleOpenUrl", e)
+        console.error("an error occurred in handleOpenUrl", e)
         setSnackBarMessage(`handleOpenUrl error: ${e}`)
         setSnackBarVisible(true)
       }

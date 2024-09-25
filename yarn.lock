@@ -7923,7 +7923,7 @@ __metadata:
     react-native-restart: "npm:^0.0.24"
     react-native-safe-area-context: "npm:^4.8.2"
     react-native-screens: "npm:^3.33.0"
-    react-native-share: "npm:^10.2.1"
+    react-native-share: "npm:^11.0.3"
     react-native-sound: "npm:^0.11.2"
     react-native-sound-player: "npm:^0.13.2"
     react-native-vector-icons: "npm:^10.1.0"
@@ -12389,10 +12389,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-share@npm:^10.2.1":
-  version: 10.2.1
-  resolution: "react-native-share@npm:10.2.1"
-  checksum: 10/6b579233f521a9c2e47181b80992f5e8da730b7711b7108111b2be13f202b6ce2845799fba2a44e15810c12e0240fc540772e16b3e98aafe3f7baa17130d3c06
+"react-native-share@npm:^11.0.3":
+  version: 11.0.3
+  resolution: "react-native-share@npm:11.0.3"
+  checksum: 10/bf746ac9d470e9e3f97eaf5a786ea4e858baa4bf21bd03890d64941362f7400341c818e74438bdc8e7505881e2ffcd127854ce89bfd56892e350a387486f0374
   languageName: node
   linkType: hard
 

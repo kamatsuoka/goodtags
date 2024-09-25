@@ -477,7 +477,8 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
-  - RNShare (10.2.1):
+  - RNShare (11.0.3):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNSound (0.11.2):
     - React-Core
@@ -763,7 +764,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNReanimated: 158b2f80fdb043ab5a645ba047209badbd7eb9a9
   RNScreens: 03acbdcf84e1bf6832ba83dbe3601eae20c55de0
-  RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
+  RNShare: d2c6199782e17ad63a600858ccca63e4a380bbc0
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSoundPlayer: 369105c565b8fe6ea0a43fc882dc81eba444e842
   RNVectorIcons: bfb663f3f7b37340cd90120151b720641523dc84

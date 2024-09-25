@@ -287,12 +287,25 @@ const favoritesSlice = createSlice({
     })
     builder.addCase(
       receiveSharedFile.fulfilled,
-      (state, action: PayloadAction<Tag[] | undefined>) => {
+      (state, action: PayloadAction<ReceivedData | undefined>) => {
+        // receive shared favorites and labels
         if (action.payload) {
-          favoritesSlice.caseReducers.addFavorites(
-            state,
-            action as PayloadAction<Tag[]>,
-          )
+          if (action.payload.favorites?.length > 0) {
+            favoritesSlice.caseReducers.addFavorites(state, {
+              payload: action.payload.favorites,
+              type: "addFavorites",
+            })
+          }
+          if (action.payload.receivedLabels?.length > 0) {
+            action.payload.receivedLabels.forEach(receivedLabel => {
+              receivedLabel.tags.forEach(tag => {
+                favoritesSlice.caseReducers.addLabel(state, {
+                  payload: {tag: tag, label: receivedLabel.label},
+                  type: "addLabel",
+                })
+              })
+            })
+          }
         }
         state.loadingState = LoadingState.succeeded
       },
@@ -400,16 +413,16 @@ export const shareFavorites = async (favorites: FavoritesState) => {
     const subject = `favorites and labels`
     const title = `Share ${subject}`
     const path: string = await writeFavoritesToFile(favorites)
-    await Share.open({
+    console.info(`wrote favorites to ${path}`)
+    const response = await Share.open({
       url: `file://${path}`,
       type: "application/json",
       title,
       subject,
     })
-      .then(res => console.log(res))
-      .catch(e => e && console.log(e))
+    console.info(response)
   } catch (e) {
-    console.info("error sharing favorites", e)
+    console.info(`error sharing favorites: ${e}`)
   }
 }
 
@@ -493,8 +506,24 @@ export const FavoritesActions = favoritesSlice.actions
 
 export default favoritesSlice.reducer
 
+interface ReceivedLabel {
+  label: string
+  tags: Tag[]
+}
+
+interface ReceivedData {
+  favorites: Tag[]
+  receivedLabels: ReceivedLabel[]
+}
+
+/**
+ * Import favorites/labels from file (or stream: tbd).
+ *
+ * @see builder.addCase(receiveSharedFile.fulfilled, ...) above
+ * for code that actually processes imported data
+ */
 export const receiveSharedFile = createAsyncThunk<
-  Tag[],
+  ReceivedData,
   string,
   ThunkApiConfig
 >("favorites/import", async (url, thunkAPI) => {
@@ -503,15 +532,25 @@ export const receiveSharedFile = createAsyncThunk<
       const sharedObj = JSON.parse(data)
       const sharedData = sharedObj as SharedData
       if (sharedData.favorites === undefined && sharedData.labels === undefined)
-        throw `No favorites or labels found`
+        throw `no favorites or labels found`
       const favoriteIds = sharedData.favorites.map(f => f.id) || []
-      const {tags} = await fetchAndConvertTags(
+      const {tags: favorites} = await fetchAndConvertTags(
         {ids: favoriteIds},
-        false /* useApi */,
+        false,
       )
-      return tags
+      const receivedLabels = await Promise.all(
+        sharedData.labels.map(async sharedLabel => {
+          const tagIds = sharedLabel.tags.map(t => t.id)
+          const {tags} = await fetchAndConvertTags({ids: tagIds}, false)
+          return {label: sharedLabel.label, tags}
+        }),
+      )
+      return {
+        favorites,
+        receivedLabels,
+      }
     } catch (e) {
-      return thunkAPI.rejectWithValue(`Unable to import favorites from ${url}`)
+      return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
     }
   }
 
@@ -546,7 +585,7 @@ export const receiveSharedFile = createAsyncThunk<
       throw `unknown url type: ${url}`
     }
   } catch (e) {
-    console.error(e) // TODO: show error in app
-    return thunkAPI.rejectWithValue(`Unable to import favorites from ${url}`)
+    console.error(e)
+    return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
   }
 })
