@@ -3,14 +3,15 @@ import {useAppDispatch, useAppSelector} from "@app/hooks"
 import {receiveSharedFile, shareFavorites} from "@app/modules/favoritesSlice"
 import {useState} from "react"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
+import ReactNativeBlobUtil from "react-native-blob-util"
 import DocumentPicker from "react-native-document-picker"
-import {List, Portal, Snackbar, useTheme} from "react-native-paper"
+import {List, Portal, Snackbar, Text, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 /**
- * Share screen
+ * Data (i/o) screen
  */
-export default function ShareScreen() {
+export default function DataScreen() {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
@@ -50,27 +51,33 @@ export default function ShareScreen() {
     <View style={styles.container}>
       <List.Section>
         <ScrollView>
+          <Text variant="titleLarge">faves + labels</Text>
           <View style={styles.listHolder}>
-            <TouchableOpacity onPress={() => shareFavorites(favorites)}>
-              <List.Item
-                title="export favorites and labels"
-                left={ExportIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={async () => {
                 try {
                   const pickerResult = await DocumentPicker.pickSingle({
                     presentationStyle: "fullScreen",
+                    copyTo: "documentDirectory",
+                    // copyTo: "cachesDirectory",
                   })
                   console.log(
                     `result from DocumentPicker.pickSingle: ${pickerResult}`,
                   )
-                  if (pickerResult?.uri) {
+                  if (pickerResult?.copyError) {
+                    console.error(
+                      `error copying file: ${pickerResult.copyError}`,
+                    )
+                  }
+                  if (pickerResult?.fileCopyUri) {
+                    const fs = ReactNativeBlobUtil.fs
+                    const data = await fs.readFile(
+                      pickerResult.fileCopyUri,
+                      "utf8",
+                    )
+                    console.log(`data: ${data}`)
                     const importPayload = await dispatch(
-                      receiveSharedFile(pickerResult.uri),
+                      receiveSharedFile(pickerResult.fileCopyUri),
                     )
                     const importResult = importPayload.payload
                     console.log(`importResult: ${importResult}`)
@@ -99,8 +106,16 @@ export default function ShareScreen() {
                 }
               }}>
               <List.Item
-                title="import favorites and labels"
+                title="import"
                 left={ImportIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => shareFavorites(favorites)}>
+              <List.Item
+                title="export"
+                left={ExportIcon}
                 right={RightIcon}
                 style={styles.listItem}
               />
@@ -123,5 +138,5 @@ export default function ShareScreen() {
 }
 
 const RightIcon = homeIcon("chevron-right")
-const ExportIcon = homeIcon("export")
-const ImportIcon = homeIcon("import")
+const ExportIcon = homeIcon("database-export")
+const ImportIcon = homeIcon("database-import")

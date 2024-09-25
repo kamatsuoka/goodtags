@@ -182,11 +182,11 @@ export default function HomeScreen({
           <Divider />
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Share")
+              navigation.navigate("Data")
             }}>
             <List.Item
-              title="share"
-              left={ShareIcon}
+              title="my data"
+              left={DataIcon}
               right={RightIcon}
               style={styles.listItem}
             />
@@ -214,4 +214,4 @@ const RightIcon = homeIcon("chevron-right")
 const LabelsIcon = homeIcon("tag-multiple-outline")
 const AboutIcon = homeIcon("information-outline")
 const OptionsIcon = homeIcon("cog-outline")
-const ShareIcon = homeIcon("share")
+const DataIcon = homeIcon("database")

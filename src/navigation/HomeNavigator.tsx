@@ -1,12 +1,12 @@
 import LabelEditor from "@app/components/LabelEditor"
 import ClassicScreen from "@app/screens/ClassicScreen"
+import DataScreen from "@app/screens/DataScreen"
 import EasyScreen from "@app/screens/EasyScreen"
 import HomeScreen from "@app/screens/HomeScreen"
 import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
 import PopularScreen from "@app/screens/PopularScreen"
-import ShareScreen from "@app/screens/ShareScreen"
 import {useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
@@ -133,10 +133,10 @@ export default function HomeNavigator() {
           }}
         />
         <Stack.Screen
-          name="Share"
-          component={ShareScreen}
+          name="Data"
+          component={DataScreen}
           options={{
-            title: "share",
+            title: "my data",
             ...homeOrientation,
           }}
         />

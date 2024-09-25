@@ -410,15 +410,11 @@ export const selectLabel = (state: RootState, label: string): TagListState => {
 
 export const shareFavorites = async (favorites: FavoritesState) => {
   try {
-    const subject = `favorites and labels`
-    const title = `Share ${subject}`
     const path: string = await writeFavoritesToFile(favorites)
     console.info(`wrote favorites to ${path}`)
     const response = await Share.open({
       url: `file://${path}`,
       type: "application/json",
-      title,
-      subject,
     })
     console.info(response)
   } catch (e) {
@@ -494,7 +490,13 @@ const writeFavoritesToFile = async (
     await fs.mkdir(dir)
     console.info(`created directory ${dir}`)
   }
-  const filename = `favorites-labels.json`
+  // format date string as yyyy-mm-ddThh-mm (hack since js doesn't have strftime)
+  const dateString = new Date()
+    .toLocaleString("sv-SE")
+    .slice(0, 16)
+    .replace(" ", "T")
+    .replace(":", "-")
+  const filename = `faves-labels-${dateString}.json`
   const path = `${dir}/${filename}`
   console.info(`path: ${path}`)
   const favString = writeFavoritesToString(favorites)

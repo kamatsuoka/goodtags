@@ -45,7 +45,7 @@ export type HomeNavigatorParamList = {
   Labeled: {label: string}
   LabelEditor: undefined
   Options: undefined
-  Share: undefined
+  Data: undefined
 }
 
 export type HomeNavigatorScreenProps<T extends keyof HomeNavigatorParamList> =
