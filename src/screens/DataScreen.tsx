@@ -70,12 +70,6 @@ export default function DataScreen() {
                     )
                   }
                   if (pickerResult?.fileCopyUri) {
-                    const fs = ReactNativeBlobUtil.fs
-                    const data = await fs.readFile(
-                      pickerResult.fileCopyUri,
-                      "utf8",
-                    )
-                    console.log(`data: ${data}`)
                     const importPayload = await dispatch(
                       receiveSharedFile(pickerResult.fileCopyUri),
                     )

@@ -490,18 +490,22 @@ const writeFavoritesToFile = async (
     await fs.mkdir(dir)
     console.info(`created directory ${dir}`)
   }
-  // format date string as yyyy-mm-ddThh-mm (hack since js doesn't have strftime)
-  const dateString = new Date()
-    .toLocaleString("sv-SE")
-    .slice(0, 16)
-    .replace(" ", "T")
-    .replace(":", "-")
-  const filename = `faves-labels-${dateString}.json`
+  const filename = `faves-labels-${getDateString(new Date())}.json`
   const path = `${dir}/${filename}`
   console.info(`path: ${path}`)
   const favString = writeFavoritesToString(favorites)
   await fs.writeFile(path, favString, "utf8")
   return path
+}
+
+export const getDateString = (date: Date) => {
+  const zeroPad = (num: number): string => num.toString().padStart(2, "0")
+  const year = date.getFullYear()
+  const month = zeroPad(date.getMonth() + 1)
+  const day = zeroPad(date.getDate())
+  const hours = zeroPad(date.getHours())
+  const minutes = zeroPad(date.getMinutes())
+  return `${year}-${month}-${day}T${hours}-${minutes}`
 }
 
 export const FavoritesActions = favoritesSlice.actions
