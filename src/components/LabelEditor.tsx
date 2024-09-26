@@ -1,4 +1,4 @@
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
 import useHaptics from "@app/hooks/useHaptics"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {useState} from "react"
@@ -23,6 +23,7 @@ const ITEM_HEIGHT = 60
 
 export default function LabelEditor() {
   const haptics = useHaptics()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const setLabels = (items: string[]) =>
     dispatch(FavoritesActions.setLabels(items))
@@ -33,6 +34,18 @@ export default function LabelEditor() {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+
+  const themedStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "space-between",
+      height: "100%",
+      paddingTop: 7,
+      paddingBottom: Platform.OS === "android" ? 7 + insets.bottom : 7,
+      paddingLeft,
+      paddingRight,
+    },
+  })
 
   // start editing
   const startEditing = (label: string) => {
@@ -128,13 +141,8 @@ export default function LabelEditor() {
     )
   }
 
-  const containerStyle = {...styles.container}
-  if (Platform.OS === "android") {
-    containerStyle.paddingBottom += insets.bottom
-  }
-
   return (
-    <View style={containerStyle}>
+    <View style={themedStyles.container}>
       <NestableScrollContainer keyboardShouldPersistTaps="handled">
         <NestableDraggableFlatList
           keyboardShouldPersistTaps="handled"
@@ -150,10 +158,7 @@ export default function LabelEditor() {
           renderItem={renderItem}
         />
       </NestableScrollContainer>
-      <Dialog
-        visible={deleteDialogVisible}
-        onDismiss={stopDeleting}
-        style={styles.dialog}>
+      <Dialog visible={deleteDialogVisible} onDismiss={stopDeleting}>
         <Dialog.Title>delete label</Dialog.Title>
         <Dialog.Content>
           <Text variant="bodyLarge">{labelToDelete}</Text>
@@ -168,16 +173,6 @@ export default function LabelEditor() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "space-between",
-    height: "100%",
-    // Keeping separate so we can change the bottom padding
-    paddingTop: 7,
-    paddingRight: 7,
-    paddingBottom: 7,
-    paddingLeft: 7,
-  },
   header: {
     height: 35,
   },
@@ -215,8 +210,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     height: 40,
-  },
-  dialog: {
-    borderRadius: 10,
   },
 })

@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   Animated,
   GestureResponderEvent,
+  ScrollView,
   StyleProp,
   StyleSheet,
   TextStyle,
@@ -13,7 +14,7 @@ import {
 import {Card, FAB, Text} from "react-native-paper"
 import {getFABGroupColors} from "react-native-paper/lib/module/components/FAB/utils"
 import {IconSource} from "react-native-paper/lib/module/components/Icon"
-import {InternalTheme} from "react-native-paper/lib/typescript/types"
+import {MD3Theme} from "react-native-paper/lib/typescript/types"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 export type Props = {
@@ -99,7 +100,7 @@ export type Props = {
   /**
    * @optional
    */
-  theme: InternalTheme
+  theme: MD3Theme
   /**
    * Optional label for `FAB`.
    */
@@ -162,7 +163,6 @@ export const FABDown = ({
   >(null)
 
   const {scale} = theme.animation
-  const {isV3} = theme
 
   React.useEffect(() => {
     if (open) {
@@ -173,7 +173,7 @@ export const FABDown = ({
           useNativeDriver: true,
         }),
         Animated.stagger(
-          isV3 ? 15 : 50 * scale,
+          15,
           animations.current
             .map(animation =>
               Animated.timing(animation, {
@@ -201,7 +201,7 @@ export const FABDown = ({
         ),
       ]).start()
     }
-  }, [open, actions, backdrop, scale, isV3])
+  }, [open, actions, backdrop, scale])
 
   const close = () => onStateChange({open: false})
 
@@ -248,12 +248,14 @@ export const FABDown = ({
   )
 
   const {top, bottom, right, left} = useSafeAreaInsets()
-  const containerPaddings = {
-    paddingBottom: bottom,
-    paddingRight: right,
-    paddingLeft: left,
-    paddingTop: top,
-  }
+  const themedStyles = StyleSheet.create({
+    containerPaddings: {
+      paddingTop: top,
+      paddingBottom: bottom,
+      paddingRight: right,
+      paddingLeft: left,
+    },
+  })
 
   if (actions.length !== prevActions?.length) {
     animations.current = actions.map(
@@ -265,7 +267,7 @@ export const FABDown = ({
   return (
     <View
       pointerEvents="box-none"
-      style={[styles.container, containerPaddings, style]}>
+      style={[styles.container, themedStyles.containerPaddings, style]}>
       <TouchableWithoutFeedback accessibilityRole="button" onPress={close}>
         <Animated.View
           pointerEvents={open ? "auto" : "none"}
@@ -300,11 +302,11 @@ export const FABDown = ({
           size={size}
           mode={mode}
         />
-        <View pointerEvents={open ? "box-none" : "none"}>
+        <ScrollView pointerEvents={open ? "box-none" : "none"}>
           {actions.map((it, i) => {
             const labelTextStyle = {
               color: it.labelTextColor ?? labelColor,
-              ...(isV3 ? theme.fonts.titleMedium : {}),
+              ...theme.fonts.titleMedium,
             }
             const marginHorizontal =
               typeof it.size === "undefined" || it.size === "small" ? 24 : 16
@@ -325,7 +327,7 @@ export const FABDown = ({
                 {it.label && (
                   <View>
                     <Card
-                      mode={isV3 ? "contained" : "elevated"}
+                      mode="contained"
                       onPress={e => {
                         it.onPress(e)
                         close()
@@ -336,14 +338,10 @@ export const FABDown = ({
                         [
                           styles.containerStyle,
                           {
-                            transform: [
-                              isV3
-                                ? {translateY: labelTranslations[i]}
-                                : {scale: scales[i]},
-                            ],
+                            transform: [{translateY: labelTranslations[i]}],
                             opacity: opacities[i],
                           },
-                          isV3 && styles.v3ContainerStyle,
+                          styles.v3ContainerStyle,
                           it.containerStyle,
                         ] as StyleProp<ViewStyle>
                       }>
@@ -366,7 +364,7 @@ export const FABDown = ({
                         opacity: opacities[i],
                         backgroundColor: stackedFABBackgroundColor,
                       },
-                      isV3 && {transform: [{translateY: translations[i]}]},
+                      {transform: [{translateY: translations[i]}]},
                       it.style,
                     ] as StyleProp<ViewStyle>
                   }
@@ -382,7 +380,7 @@ export const FABDown = ({
               </View>
             )
           })}
-        </View>
+        </ScrollView>
       </View>
     </View>
   )
@@ -400,7 +398,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 0,
     marginTop: 0,
   },
   backdrop: {

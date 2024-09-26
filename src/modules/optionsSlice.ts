@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import {Platform} from "react-native"
-import {isTablet} from "react-native-device-info"
 
 // Define a type for the slice state
 export interface OptionsState {
@@ -14,7 +13,7 @@ export interface OptionsState {
 export const initialState: OptionsState = {
   haptics: Platform.OS === "ios",
   serifs: true,
-  autoRotate: !isTablet() && Platform.OS === "ios",
+  autoRotate: false,
   autoRotateDelay: 200,
 }
 export const optionsSlice = createSlice({

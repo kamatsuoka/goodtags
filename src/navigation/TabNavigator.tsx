@@ -27,6 +27,8 @@ export default function TabNavigator() {
 
   const ios = Platform.OS === "ios"
 
+  const androidHorizPadding = Math.max(insets.left, insets.right)
+
   const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -37,8 +39,11 @@ export default function TabNavigator() {
       height: (ios ? 90 : 75 + insets.bottom) - (shallowScreen ? 30 : 0),
       paddingTop: 5,
       paddingBottom: ios ? 25 : 15 + insets.bottom,
-      paddingLeft: ios ? 0 : insets.left,
-      paddingRight: ios ? 0 : insets.right,
+      marginHorizontal: ios ? 0 : androidHorizPadding,
+      shadowColor: "white",
+    },
+    sceneContainer: {
+      paddingHorizontal: ios ? 0 : androidHorizPadding,
     },
     tabBarLabel: {
       fontFamily: theme.fonts.labelSmall.fontFamily,
@@ -63,11 +68,7 @@ export default function TabNavigator() {
     <Tab.Navigator
       initialRouteName="HomeNavigator"
       screenOptions={screenOptions}
-      sceneContainerStyle={{
-        // Paddings to handle safe area
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-      }}>
+      sceneContainerStyle={styles.sceneContainer}>
       <Tab.Screen
         name="HomeNavigator"
         component={HomeNavigator}

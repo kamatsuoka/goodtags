@@ -4,14 +4,19 @@ import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useEffect, useRef, useState} from "react"
-import {View} from "react-native"
+import {StyleSheet, View} from "react-native"
 import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
 import {SortOrder} from "../constants/Search"
-import {AppDispatch, useAppDispatch, useAppSelector} from "../hooks"
+import {
+  AppDispatch,
+  useAppDispatch,
+  useAppSelector,
+  useBodyInsets,
+} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {EasyActions, getEasyTags, selectEasy} from "../modules/easySlice"
 import {
@@ -26,6 +31,7 @@ import {
  */
 const EasyScreen = () => {
   const haptics = useHaptics()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const loadingState = useAppSelector(state => selectEasy(state).loadingState)
@@ -78,6 +84,14 @@ const EasyScreen = () => {
 
   const setIdle = () => dispatch(EasyActions.setLoadingState(LoadingState.idle))
 
+  const themedStyles = StyleSheet.create({
+    listContainer: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
+  })
+
   return (
     <View style={CommonStyles.container}>
       <ListHeader
@@ -86,14 +100,16 @@ const EasyScreen = () => {
         title="easy tags"
         titleIcon="teddy-bear"
       />
-      <TagList
-        tagListType={TagListEnum.Easy}
-        emptyMessage={
-          loadingState === LoadingState.succeeded ? "no tags found" : ""
-        }
-        listRef={listRef}
-        title="Easy Tags"
-      />
+      <View style={themedStyles.listContainer}>
+        <TagList
+          tagListType={TagListEnum.Easy}
+          emptyMessage={
+            loadingState === LoadingState.succeeded ? "no tags found" : ""
+          }
+          listRef={listRef}
+          title="Easy Tags"
+        />
+      </View>
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>
           <ActivityIndicator size="large" />

@@ -56,6 +56,7 @@ const TagLabels = () => {
       margin: 10,
       borderRadius: 15,
       justifyContent: "space-between",
+      paddingHorizontal: 40,
       paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
     },
     divider: {

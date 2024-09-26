@@ -1,6 +1,6 @@
 // import {StackParamList} from "@app/navigation/navigationParams"
 import homeIcon from "@app/components/homeIcon"
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
@@ -15,6 +15,7 @@ export default function LabelsScreen({
 }: HomeNavigatorScreenProps<"Labels">) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const dispatch = useAppDispatch()
 
@@ -25,6 +26,8 @@ export default function LabelsScreen({
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 20),
       paddingHorizontal: 15,
+      paddingLeft,
+      paddingRight,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,

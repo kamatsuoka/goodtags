@@ -3,14 +3,14 @@ import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useRef, useState} from "react"
-import {View} from "react-native"
+import {StyleSheet, View} from "react-native"
 import {useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
 import {SortOrder} from "../constants/Search"
-import {useAppDispatch, useAppSelector} from "../hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {HistoryActions} from "../modules/historySlice"
 import {SORT_ICONS, SORT_LABELS, TagListEnum} from "../modules/tagLists"
@@ -20,6 +20,7 @@ import {SORT_ICONS, SORT_LABELS, TagListEnum} from "../modules/tagLists"
  */
 const HistoryScreen = () => {
   const haptics = useHaptics()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.history.sortOrder)
   const lastModified = useAppSelector(state => state.history.lastModified)
@@ -64,15 +65,25 @@ const HistoryScreen = () => {
     },
   ]
 
+  const styles = StyleSheet.create({
+    listContainer: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
+  })
+
   return (
     <View style={CommonStyles.container}>
       <ListHeader listRef={listRef} title="history" titleIcon="history" />
-      <TagList
-        listRef={listRef}
-        title="History"
-        emptyMessage="Tags you have viewed will show up here"
-        tagListType={TagListEnum.History}
-      />
+      <View style={styles.listContainer}>
+        <TagList
+          listRef={listRef}
+          title="History"
+          emptyMessage="Tags you have viewed will show up here"
+          tagListType={TagListEnum.History}
+        />
+      </View>
       <FABDown
         icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}

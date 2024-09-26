@@ -1,6 +1,6 @@
 import homeIcon from "@app/components/homeIcon"
 import Logo from "@app/components/Logo"
-import {useAppDispatch} from "@app/hooks"
+import {useAppDispatch, useBodyInsets} from "@app/hooks"
 import useShallowScreen from "@app/hooks/useShallowScreen"
 import {receiveSharedFile} from "@app/modules/favoritesSlice"
 import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
@@ -23,6 +23,7 @@ export default function HomeScreen({
 }: HomeNavigatorScreenProps<"Home">) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const shallow = useShallowScreen()
   const dispatch = useAppDispatch()
   const [snackBarVisible, setSnackBarVisible] = useState(false)
@@ -105,6 +106,14 @@ export default function HomeScreen({
     }
   }, [dispatch])
 
+  const themedStyles = StyleSheet.create({
+    listContainer: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
+  })
+
   return (
     <View style={styles.container} testID="home_container">
       {shallow ? null : (
@@ -112,7 +121,9 @@ export default function HomeScreen({
           <Logo size={30} dark />
         </View>
       )}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={themedStyles.listContainer}>
         <View style={styles.listHolder}>
           <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
             <List.Item

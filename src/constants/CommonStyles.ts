@@ -26,7 +26,7 @@ const CommonStyles = StyleSheet.create({
   },
   fabDown: {
     backgroundColor: "transparent", // MainTheme.colors.inversePrimary,
-    marginBottom: 40,
+    marginBottom: 15,
   },
   sheetMusicLeft: {
     left: 25,

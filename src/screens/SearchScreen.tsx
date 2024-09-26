@@ -17,7 +17,7 @@ import SearchDialog from "../components/SearchDialog"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
 import {Collection, MAX_TAGS, SortOrder} from "../constants/Search"
-import {useAppDispatch, useAppSelector} from "../hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {
   InitialFilters,
@@ -40,6 +40,7 @@ import {
 const SearchScreen = () => {
   const haptics = useHaptics()
   const theme = useTheme()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const [searchMenuVisible, setSearchMenuVisible] = useState(true)
   const loadingState = useAppSelector(
     state => selectSearchResults(state).loadingState,
@@ -63,6 +64,11 @@ const SearchScreen = () => {
   const themedStyles = StyleSheet.create({
     compactSearchLabelEmpty: {
       color: theme.colors.secondary,
+    },
+    listHolder: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
     },
   })
 
@@ -191,13 +197,15 @@ const SearchScreen = () => {
           )}
         </View>
       ) : null}
-      <TagList
-        listRef={listRef}
-        title="Search"
-        loadMore={(numTags: number) => loadMore(numTags)}
-        emptyMessage={statusMessage()}
-        tagListType={TagListEnum.SearchResults}
-      />
+      <View style={themedStyles.listHolder}>
+        <TagList
+          listRef={listRef}
+          title="Search"
+          loadMore={(numTags: number) => loadMore(numTags)}
+          emptyMessage={statusMessage()}
+          tagListType={TagListEnum.SearchResults}
+        />
+      </View>
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>
           <ActivityIndicator size="large" />

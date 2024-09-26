@@ -14,7 +14,7 @@ import {
 } from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 import {Collection, Parts} from "../constants/Search"
-import {useAppDispatch, useAppSelector} from "../hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
 import {
   SearchFilters,
   newSearch,
@@ -35,6 +35,7 @@ export default function SearchDialog(props: Props) {
   const [draftFilters, setDraftFilters] = useState(filters)
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const allTagIds = useAppSelector(
     state => selectSearchResults(state).allTagIds,
   )
@@ -45,6 +46,8 @@ export default function SearchDialog(props: Props) {
     container: {
       // Paddings to handle safe area
       paddingTop: insets.top,
+      paddingLeft,
+      paddingRight,
     },
     searchOptions: {
       flexDirection: "row",
