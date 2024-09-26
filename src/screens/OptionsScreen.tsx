@@ -1,8 +1,7 @@
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
 import {TabBarBackground} from "@app/lib/theme"
 import {OptionsActions} from "@app/modules/optionsSlice"
 import Slider from "@react-native-community/slider"
-import * as Haptics from "expo-haptics"
 import {useState} from "react"
 import {ScrollView, StyleSheet, View} from "react-native"
 import {Checkbox, List, Text} from "react-native-paper"
@@ -20,7 +19,7 @@ function checkBox(selected: boolean, onPress: Function) {
  * Screen for setting ui options
  */
 export default function OptionsScreen() {
-  const hapticsSelected = useAppSelector(state => state.options.haptics)
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const serifsSelected = useAppSelector(state => state.options.serifs)
   const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
   const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
@@ -50,25 +49,24 @@ export default function OptionsScreen() {
     </View>
   )
 
+  const themedStyles = StyleSheet.create({
+    listContainer: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
+  })
+
   return (
-    <ScrollView>
+    <ScrollView style={themedStyles.listContainer}>
       <View style={styles.container}>
-        <List.Item
-          left={checkBox(hapticsSelected, async () => {
-            await Haptics.selectionAsync()
-            return dispatch(OptionsActions.setHaptics(!hapticsSelected))
-          })}
-          title="haptics"
-          titleStyle={styles.listItemTitle}
-          description="enable tactile feedback (buzz)"
-        />
         <List.Item
           left={checkBox(serifsSelected, () =>
             dispatch(OptionsActions.setSerifs(!serifsSelected)),
           )}
           title="serifs"
           titleStyle={styles.listItemTitle}
-          description="use stylish serif fonts"
+          description="use serif fonts"
         />
         <List.Item
           left={checkBox(autoRotateSelected, () =>

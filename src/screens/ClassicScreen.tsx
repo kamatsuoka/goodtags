@@ -1,8 +1,6 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {clearLastVisited} from "@app/modules/visitSlice"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useEffect, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
 import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
@@ -34,7 +32,6 @@ import {
  * Classic tags
  */
 const ClassicScreen = () => {
-  const haptics = useHaptics()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
@@ -66,7 +63,6 @@ const ClassicScreen = () => {
       icon: SORT_ICONS[otherOrder],
       label: SORT_LABELS[otherOrder],
       onPress: async () => {
-        await haptics.selectionAsync()
         return dispatch(ClassicActions.toggleSortOrder())
       },
     },
@@ -74,7 +70,6 @@ const ClassicScreen = () => {
       icon: "reload",
       label: "reload classic tags",
       onPress: async () => {
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(getClassicTags(true))
       },
     },
@@ -82,7 +77,6 @@ const ClassicScreen = () => {
       icon: "broom",
       label: "clear classic tags",
       onPress: async () => {
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(ClassicActions.reset())
       },
     },

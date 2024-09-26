@@ -1,9 +1,8 @@
 import homeIcon from "@app/components/homeIcon"
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
 import {receiveSharedFile, shareFavorites} from "@app/modules/favoritesSlice"
 import {useState} from "react"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import ReactNativeBlobUtil from "react-native-blob-util"
 import DocumentPicker from "react-native-document-picker"
 import {List, Portal, Snackbar, Text, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
@@ -14,6 +13,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context"
 export default function DataScreen() {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const dispatch = useAppDispatch()
   const favorites = useAppSelector(state => state.favorites)
   const [snackBarVisible, setSnackBarVisible] = useState(false)
@@ -24,9 +24,12 @@ export default function DataScreen() {
       flex: 1,
       alignItems: "flex-start",
       backgroundColor: theme.colors.secondaryContainer,
-      paddingTop: insets.top,
       paddingBottom: Math.max(insets.bottom, 20),
-      paddingHorizontal: 15,
+      paddingLeft,
+      paddingRight,
+    },
+    section: {
+      paddingHorizontal: 10,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
@@ -49,7 +52,7 @@ export default function DataScreen() {
 
   return (
     <View style={styles.container}>
-      <List.Section>
+      <List.Section style={styles.section}>
         <ScrollView>
           <Text variant="titleLarge">faves + labels</Text>
           <View style={styles.listHolder}>

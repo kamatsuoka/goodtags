@@ -1,7 +1,5 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
 import {useTheme} from "react-native-paper"
@@ -19,7 +17,6 @@ import {SORT_ICONS, SORT_LABELS, TagListEnum} from "../modules/tagLists"
  * Recently viewed tags.
  */
 const HistoryScreen = () => {
-  const haptics = useHaptics()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.history.sortOrder)
@@ -51,7 +48,6 @@ const HistoryScreen = () => {
       icon: SORT_ICONS[otherOrder],
       label: SORT_LABELS[otherOrder],
       onPress: async () => {
-        await haptics.selectionAsync()
         dispatch(HistoryActions.toggleSortOrder())
       },
     },
@@ -59,7 +55,6 @@ const HistoryScreen = () => {
       icon: "broom",
       label: "clear history",
       onPress: async () => {
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         dispatch(HistoryActions.clearHistory())
       },
     },

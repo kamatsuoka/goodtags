@@ -1,4 +1,3 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {useCallback, useRef, useState} from "react"
@@ -18,7 +17,6 @@ import {SORT_ICONS, TagListEnum} from "../modules/tagLists"
  * Favorites list
  */
 export const FavoritesScreen = () => {
-  const haptics = useHaptics()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
@@ -47,7 +45,6 @@ export const FavoritesScreen = () => {
       icon: SORT_ICONS[otherOrder],
       label: iconLabel,
       onPress: async () => {
-        await haptics.selectionAsync()
         dispatch(FavoritesActions.toggleSortOrder())
       },
     },

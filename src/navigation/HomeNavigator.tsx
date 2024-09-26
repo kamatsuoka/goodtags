@@ -1,3 +1,5 @@
+import BackButton from "@app/components/BackButton"
+import {navHeader} from "@app/components/CommonHeader"
 import LabelEditor from "@app/components/LabelEditor"
 import ClassicScreen from "@app/screens/ClassicScreen"
 import DataScreen from "@app/screens/DataScreen"
@@ -7,38 +9,14 @@ import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
 import PopularScreen from "@app/screens/PopularScreen"
-import {useNavigation} from "@react-navigation/native"
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack"
-import {HeaderBackButtonProps} from "@react-navigation/native-stack/lib/typescript/src/types"
 import {useMemo} from "react"
-import {Platform} from "react-native"
 import {useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {useAppSelector} from "../hooks"
 import {HomeNavigatorParamList} from "./navigationParams"
-
-const BACK_ICON = "chevron-left"
-const BACK_ICON_SIZE = 36
-
-export const BackButton = (_props: HeaderBackButtonProps) => {
-  const navigation = useNavigation()
-  const insets = useSafeAreaInsets()
-
-  const style = {paddingLeft: Platform.OS === "android" ? insets.left : 0}
-
-  return (
-    <Icon
-      name={BACK_ICON}
-      size={BACK_ICON_SIZE}
-      style={style}
-      onPress={navigation.goBack}
-    />
-  )
-}
 
 const Stack = createNativeStackNavigator<HomeNavigatorParamList>()
 
@@ -100,10 +78,6 @@ export default function HomeNavigator() {
           headerTitleStyle: {
             fontFamily: theme.fonts.titleSmall.fontFamily,
           },
-          contentStyle: {
-            // paddingLeft: insets.left,
-            // paddingRight: insets.right,
-          },
           headerTitleAlign: "center",
         }}>
         <Stack.Screen
@@ -111,7 +85,7 @@ export default function HomeNavigator() {
           component={LabelsScreen}
           options={{
             title: "labels",
-            headerLeft: BackButton,
+            header: navHeader(false),
             ...homeOrientation,
           }}
         />
@@ -120,7 +94,7 @@ export default function HomeNavigator() {
           component={LabelEditor}
           options={{
             title: "edit labels",
-            headerLeft: BackButton,
+            header: navHeader(false),
             ...homeOrientation,
           }}
         />
@@ -129,6 +103,7 @@ export default function HomeNavigator() {
           component={OptionsScreen}
           options={{
             title: "options",
+            header: navHeader(false),
             ...homeOrientation,
           }}
         />
@@ -137,6 +112,7 @@ export default function HomeNavigator() {
           component={DataScreen}
           options={{
             title: "my data",
+            header: navHeader(false),
             ...homeOrientation,
           }}
         />

@@ -1,6 +1,5 @@
 import AboutBase from "@app/components/AboutBase"
 import {useAppDispatch} from "@app/hooks"
-import useHaptics from "@app/hooks/useHaptics"
 import {getPopularTags} from "@app/modules/popularSlice"
 import {setLastVisited} from "@app/modules/visitSlice"
 import {RootStackParamList} from "@app/navigation/navigationParams"
@@ -15,7 +14,6 @@ type Props = NativeStackScreenProps<RootStackParamList, "Welcome">
  * Welcome screen
  */
 export default function WelcomeScreen(props: Props) {
-  const haptics = useHaptics()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = props.navigation
@@ -49,7 +47,6 @@ export default function WelcomeScreen(props: Props) {
       <View style={styles.iconHolder}>
         <IconButton
           onPress={async () => {
-            await haptics.selectionAsync()
             dispatch(setLastVisited())
             navigation.navigate("Tabs")
           }}

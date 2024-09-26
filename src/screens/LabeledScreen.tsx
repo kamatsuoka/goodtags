@@ -1,4 +1,3 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
 import {useCallback, useRef, useState} from "react"
@@ -18,7 +17,6 @@ import {SORT_ICONS} from "../modules/tagLists"
  * Lists of labeled tags
  */
 export const LabeledScreen = () => {
-  const haptics = useHaptics()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
@@ -49,7 +47,6 @@ export const LabeledScreen = () => {
       icon: SORT_ICONS[otherOrder],
       label: iconLabel,
       onPress: async () => {
-        await haptics.selectionAsync()
         dispatch(FavoritesActions.toggleLabeledSortOrder())
       },
     },

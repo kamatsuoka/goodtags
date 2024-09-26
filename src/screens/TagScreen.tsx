@@ -1,6 +1,10 @@
 /**
  * Screen for displaying tag sheet music
  */
+import useSelectedTag from "@app/hooks/useSelectedTag"
+import useTagListState from "@app/hooks/useTagListState"
+import {TagState, setTagState} from "@app/modules/visitSlice"
+import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useCallback, useEffect, useMemo, useRef, useState} from "react"
 import {
   ColorValue,
@@ -9,13 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native"
-import CommonStyles from "../constants/CommonStyles"
-// @ts-ignore
-import useHaptics from "@app/hooks/useHaptics"
-import useSelectedTag from "@app/hooks/useSelectedTag"
-import useTagListState from "@app/hooks/useTagListState"
-import {setTagState, TagState} from "@app/modules/visitSlice"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {isTablet} from "react-native-device-info"
 import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
 import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
@@ -32,14 +29,15 @@ import SheetMusic from "../components/SheetMusic"
 import TagInfoView from "../components/TagInfoView"
 import TrackMenu from "../components/TrackMenu"
 import VideoView from "../components/VideoView"
+import CommonStyles from "../constants/CommonStyles"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import {NoteHandler} from "../lib/NoteHandler"
 import {noteForKey} from "../lib/NotePlayer"
 import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {HistoryActions} from "../modules/historySlice"
-import {TagListEnum} from "../modules/tagLists"
 import {getSelectedTagSetter, isLabelType} from "../modules/tagListUtil"
+import {TagListEnum} from "../modules/tagLists"
 import {
   PlayingState,
   playTrack,
@@ -55,7 +53,6 @@ type Props = NativeStackScreenProps<RootStackParamList, "Tag">
  * Sheet music screen
  */
 const TagScreen = ({navigation}: Props) => {
-  const haptics = useHaptics()
   const theme = useTheme()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
   const [tracksVisible, setTracksVisible] = useState(false)
@@ -421,12 +418,10 @@ const TagScreen = ({navigation}: Props) => {
                 // handler required for onPressIn to be handled
               }}
               onPressIn={async () => {
-                await haptics.selectionAsync()
                 noteHandler.onPressIn()
                 brightenButtons()
               }}
               onPressOut={async () => {
-                await haptics.selectionAsync()
                 noteHandler.onPressOut()
                 brightenThenFade()
               }}
@@ -437,7 +432,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon={playingState === PlayingState.playing ? "pause" : "play"}
               onPress={async () => {
-                await haptics.selectionAsync()
                 dispatch(playOrPause)
               }}
               disabled={!hasTracks()}
@@ -446,7 +440,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon="arrow-up"
               onPress={async () => {
-                await haptics.selectionAsync()
                 selectPrevTag()
               }}
               disabled={!hasPrevTag()}
@@ -454,7 +447,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon="arrow-down"
               onPress={async () => {
-                await haptics.selectionAsync()
                 selectNextTag()
               }}
               disabled={!hasNextTag()}

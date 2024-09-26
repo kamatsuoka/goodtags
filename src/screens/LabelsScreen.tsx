@@ -29,10 +29,14 @@ export default function LabelsScreen({
       paddingLeft,
       paddingRight,
     },
+    section: {
+      paddingHorizontal: 10,
+    },
     listHolder: {
       backgroundColor: theme.colors.surface,
       borderRadius: 10,
       marginVertical: 5,
+      paddingHorizontal: 10,
     },
     listItem: {
       height: 50,
@@ -42,14 +46,13 @@ export default function LabelsScreen({
     },
     buttonHolder: {
       paddingVertical: 10,
-      // paddingLeft: insets.left,
       alignItems: "flex-start",
     },
   })
 
   return (
     <View style={styles.container}>
-      <List.Section>
+      <List.Section style={styles.section}>
         <ScrollView>
           <View style={styles.listHolder}>
             {labels.map((label, index) => (

@@ -1,9 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {Platform} from "react-native"
 
 // Define a type for the slice state
 export interface OptionsState {
-  haptics: boolean
   serifs: boolean
   autoRotate: boolean
   autoRotateDelay: number
@@ -11,7 +9,6 @@ export interface OptionsState {
 
 // Define the initial state using that type
 export const initialState: OptionsState = {
-  haptics: Platform.OS === "ios",
   serifs: true,
   autoRotate: false,
   autoRotateDelay: 200,
@@ -21,9 +18,6 @@ export const optionsSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setHaptics: (state, action: PayloadAction<boolean>) => {
-      state.haptics = action.payload
-    },
     setSerifs: (state, action: PayloadAction<boolean>) => {
       state.serifs = action.payload
     },

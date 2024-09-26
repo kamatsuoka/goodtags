@@ -1,4 +1,4 @@
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets, useHorizontalInset} from "@app/hooks"
 import useSelectedTag from "@app/hooks/useSelectedTag"
 import Tag from "@app/lib/models/Tag"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
@@ -49,6 +49,7 @@ const TagLabels = () => {
   )
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const paddingHorizontal = useHorizontalInset()
 
   const themedStyles = StyleSheet.create({
     container: {
@@ -56,7 +57,7 @@ const TagLabels = () => {
       margin: 10,
       borderRadius: 15,
       justifyContent: "space-between",
-      paddingHorizontal: 40,
+      paddingHorizontal,
       paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
     },
     divider: {

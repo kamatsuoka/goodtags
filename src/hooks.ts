@@ -14,3 +14,8 @@ export const useBodyInsets = () => {
   const paddingRight = Platform.OS === "ios" ? insets.right : 0
   return {paddingLeft, paddingRight}
 }
+export const useHorizontalInset = () => {
+  const insets = useSafeAreaInsets()
+  const paddingHorizontal = Math.max(insets.left, insets.right)
+  return paddingHorizontal
+}

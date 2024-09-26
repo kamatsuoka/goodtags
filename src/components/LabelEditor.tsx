@@ -1,5 +1,4 @@
 import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import useHaptics from "@app/hooks/useHaptics"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {useState} from "react"
 import {Platform, StyleSheet, TouchableOpacity, View} from "react-native"
@@ -22,7 +21,6 @@ import {useSafeAreaInsets} from "react-native-safe-area-context"
 const ITEM_HEIGHT = 60
 
 export default function LabelEditor() {
-  const haptics = useHaptics()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const setLabels = (items: string[]) =>
@@ -69,7 +67,6 @@ export default function LabelEditor() {
     setDeleteDialogVisible(false)
   }
   const deleteLabel = async () => {
-    await haptics.selectionAsync()
     dispatch(FavoritesActions.deleteLabel(labelToDelete))
     setLabelToDelete("")
     setDeleteDialogVisible(false)
@@ -147,11 +144,7 @@ export default function LabelEditor() {
         <NestableDraggableFlatList
           keyboardShouldPersistTaps="handled"
           data={labels}
-          onDragBegin={() => {
-            haptics.selectionAsync()
-          }}
           onDragEnd={({data}) => {
-            haptics.selectionAsync()
             return setLabels(data)
           }}
           keyExtractor={item => item}

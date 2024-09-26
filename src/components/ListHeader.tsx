@@ -1,12 +1,11 @@
-import useHaptics from "@app/hooks/useHaptics"
+import {useBodyInsets} from "@app/hooks"
 import {TabBarBackground} from "@app/lib/theme"
-import {useNavigation} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import React from "react"
 import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
-import {IconButton, Text, useTheme} from "react-native-paper"
+import {Text} from "react-native-paper"
 import useHeaderHeight from "../hooks/useHeaderHeight"
+import BackButton from "./BackButton"
 import homeIcon from "./homeIcon"
 
 type ListHeaderProps = {
@@ -29,10 +28,8 @@ export default function ListHeader({
   title = "",
   titleIcon = "",
 }: ListHeaderProps) {
-  const theme = useTheme()
+  const {paddingLeft} = useBodyInsets()
   const headerHeight = useHeaderHeight()
-  const haptics = useHaptics()
-  const navigation = useNavigation()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -43,6 +40,7 @@ export default function ListHeader({
     header: {
       ...styles.header,
       height: headerHeight,
+      paddingLeft,
     },
   })
 
@@ -50,21 +48,12 @@ export default function ListHeader({
     <>
       <TouchableWithoutFeedback
         onPress={async () => {
-          await haptics.impactAsync(ImpactFeedbackStyle.Light)
           listRef.current!.scrollToIndex({
             index: 0,
             animated: true,
           })
         }}>
-        <IconButton
-          icon="chevron-left"
-          iconColor={theme.colors.onPrimaryContainer}
-          size={LOGO_SIZE}
-          style={themedStyles.logoButton}
-          mode="contained"
-          onPress={() => navigation.goBack()}
-          testID="logo_button"
-        />
+        <BackButton />
       </TouchableWithoutFeedback>
     </>
   ) : (

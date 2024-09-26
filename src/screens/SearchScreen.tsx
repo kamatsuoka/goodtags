@@ -1,7 +1,5 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
 import {
@@ -38,7 +36,6 @@ import {
  * List of search results.
  */
 const SearchScreen = () => {
-  const haptics = useHaptics()
   const theme = useTheme()
   const {paddingLeft, paddingRight} = useBodyInsets()
   const [searchMenuVisible, setSearchMenuVisible] = useState(true)
@@ -89,7 +86,6 @@ const SearchScreen = () => {
       moreAvailable &&
       loadingState !== LoadingState.pending
     if (shouldLoadMore) {
-      await haptics.selectionAsync()
       const morePayload = await dispatch(moreSearch())
       if (
         morePayload.type.endsWith("/fulfilled") &&
@@ -119,7 +115,6 @@ const SearchScreen = () => {
           icon: SORT_ICONS[order],
           label: SORT_LABELS[order],
           onPress: async () => {
-            await haptics.selectionAsync()
             dispatch(newSearch({sortOrder: order}))
           },
         }
@@ -129,7 +124,6 @@ const SearchScreen = () => {
       label: "clear search",
       onPress: async () => {
         dispatch(SearchActions.setLoadingState(LoadingState.idle))
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(SearchActions.clearSearch())
       },
     },

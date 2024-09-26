@@ -168,7 +168,6 @@ async function fetchTags(
     searchParams,
     useApi,
   )
-  // await haptics.impactAsync(ImpactFeedbackStyle.Light) // TODO
   const available = fetchResult.available
   const tags = fetchResult.tags
   const highestIndex = fetchResult.highestIndex
