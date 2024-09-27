@@ -145,7 +145,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn run tsc --noEmit",
-      "yarn run eslint --cached --fix"
+      "yarn run eslint src"
     ],
     "*.{css,md}": "prettier --write"
   }
