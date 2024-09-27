@@ -64,7 +64,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
 
 function InfoItems(props: {items: [string, string | number | undefined][]}) {
   const {items} = props
-  return (
+  return items ? (
     <>
       {items.map(([key, value], id) =>
         value ? (
@@ -72,7 +72,7 @@ function InfoItems(props: {items: [string, string | number | undefined][]}) {
         ) : null,
       )}
     </>
-  )
+  ) : null
 }
 
 function TracksInfo(props: {tag: Tag}) {
