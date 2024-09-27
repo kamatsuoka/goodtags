@@ -18,7 +18,7 @@
     "download-search-db": "ts-node ./scripts/downloadLatestSearchDb.ts",
     "preandroid": "yarn run download-search-db",
     "preios": "yarn run download-search-db",
-    "prepare": "husky",
+    "prepare": "husky && husky install",
     "prestart": "yarn run download-search-db"
   },
   "dependencies": {
@@ -146,7 +146,7 @@
     "hooks": {
       "pre-commit": "npx lint-staged"
     }
-  },  
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn run tsc --noEmit",
