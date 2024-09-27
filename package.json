@@ -141,19 +141,5 @@
       "<rootDir>/e2e"
     ]
   },
-  "packageManager": "yarn@4.4.0",
-  "husky": {
-    "hooks": {
-      "pre-commit": "npx lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "yarn run tsc --noEmit",
-      "yarn run eslint src"
-    ],
-    "*.{css,md}": [
-      "prettier --write"
-    ]
-  }
+  "packageManager": "yarn@4.4.0"
 }

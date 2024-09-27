@@ -1,3 +1,4 @@
+import {navHeader} from "@app/components/CommonHeader"
 import CreateLabel from "@app/components/CreateLabel"
 import TagLabels from "@app/components/TagLabels"
 import {MainTheme, SansSerifTheme} from "@app/lib/theme"
@@ -19,7 +20,6 @@ import TagScreen from "../screens/TagScreen"
 import WelcomeScreen from "../screens/WelcomeScreen"
 import TabNavigator from "./TabNavigator"
 import {RootStackParamList} from "./navigationParams"
-import { navHeader } from "@app/components/CommonHeader"
 
 /**
  * Navigator stack.

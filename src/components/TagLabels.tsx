@@ -1,4 +1,4 @@
-import {useAppDispatch, useAppSelector, useBodyInsets, useHorizontalInset} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useHorizontalInset} from "@app/hooks"
 import useSelectedTag from "@app/hooks/useSelectedTag"
 import Tag from "@app/lib/models/Tag"
 import {FavoritesActions} from "@app/modules/favoritesSlice"

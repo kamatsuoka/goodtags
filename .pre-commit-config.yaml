@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: tsc
+        name: tsc
+        entry: yarn run tsc --noEmit --project .
+        language: system
+        pass_filenames: false
+        verbose: true
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: yarn run eslint src
+        language: system
+        pass_filenames: false
+        verbose: true
+        
