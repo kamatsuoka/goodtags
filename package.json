@@ -29,7 +29,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^1.9.0",
-    "@shopify/flash-list": "^1.6.3",
+    "@shopify/flash-list": "^1.7.1",
     "axios": "^1.6.2",
     "expo": "^49.0.0",
     "expo-asset": "~8.10.1",

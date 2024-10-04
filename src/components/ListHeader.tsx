@@ -45,22 +45,12 @@ export default function ListHeader({
   })
 
   const backButton = showBackButton ? (
-    <>
-      <TouchableWithoutFeedback
-        onPress={async () => {
-          listRef.current!.scrollToIndex({
-            index: 0,
-            animated: true,
-          })
-        }}>
-        <BackButton />
-      </TouchableWithoutFeedback>
-    </>
+    <BackButton />
   ) : (
     <View style={styles.spacer} />
   )
 
-  const titleComponent =
+  const maybeWrappedTitle: React.ReactNode =
     typeof title === "string" ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
@@ -71,6 +61,18 @@ export default function ListHeader({
     ) : (
       title
     )
+
+  const titleComponent = (
+    <TouchableWithoutFeedback
+      onPress={async () => {
+        listRef.current!.scrollToIndex({
+          index: 0,
+          animated: true,
+        })
+      }}>
+      {maybeWrappedTitle}
+    </TouchableWithoutFeedback>
+  )
 
   return (
     <View style={themedStyles.header}>
