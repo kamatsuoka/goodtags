@@ -68,3 +68,18 @@ export function sortTagsAlpha(tagsById: TagsById, allTagIds: number[]) {
     tagsById[id]?.title ? `${tagsById[id].title}` : "ZZ"
   allTagIds.sort((id1, id2) => title(id1).localeCompare(title(id2)))
 }
+
+/**
+ * Sort allTagIds by date posted, descending
+ */
+export function sortPosted(state: {tagsById: TagsById; allTagIds: number[]}) {
+  sortTagsPosted(state.tagsById, state.allTagIds)
+}
+
+/**
+ * Sort allTagIds by date posted, descending
+ */
+export function sortTagsPosted(tagsById: TagsById, allTagIds: number[]) {
+  const posted = (id: number) => tagsById[id]?.posted ?? "1970-01-01"
+  allTagIds.sort((id1, id2) => posted(id2).localeCompare(posted(id1)))
+}

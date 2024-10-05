@@ -260,7 +260,7 @@ function buildSqlParts(searchParams: SearchParams) {
       suffixClauses += " ORDER BY tags.downloaded DESC"
       break
     case SortOrder.newest:
-      suffixClauses += " ORDER BY tags.posted DESC"
+      suffixClauses += " ORDER BY tags.posted DESC, tags.id DESC"
       break
   }
   if (searchParams.limit !== undefined) {

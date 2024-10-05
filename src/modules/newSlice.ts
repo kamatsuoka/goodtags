@@ -4,7 +4,7 @@ import {buildTagIds, SearchResult, SearchResultsById} from "../lib/models/Tag"
 import {RootState} from "../store"
 import {handleError} from "./handleError"
 import {fetchAndConvertTags} from "./searchutil"
-import {LoadingState, sortAlpha, TagListState} from "./tagLists"
+import {LoadingState, sortAlpha, sortPosted, TagListState} from "./tagLists"
 import {SelectedTag} from "./tagListUtil"
 import {ThunkApiConfig} from "./thunkApiConfig"
 
@@ -26,13 +26,6 @@ export const initialState: NewState = {
   sortOrder: SortOrder.alpha,
 }
 
-/**
- * Sorts new list by id
- */
-function sortById(state: NewState) {
-  state.allTagIds.sort((id1, id2) => id1 - id2)
-}
-
 export const newSlice = createSlice({
   name: "new",
   // `createSlice` will infer the state type from the `initialState` argument
@@ -41,6 +34,7 @@ export const newSlice = createSlice({
     reset: state => {
       state.tagsById = {}
       state.allTagIds = []
+      state.sortOrder = SortOrder.newest
     },
     setLoadingState: (state, action: PayloadAction<LoadingState>) => {
       state.loadingState = action.payload
@@ -50,12 +44,12 @@ export const newSlice = createSlice({
     },
     toggleSortOrder: state => {
       state.selectedTag = undefined
-      if (state.sortOrder === SortOrder.id) {
+      if (state.sortOrder === SortOrder.newest) {
         sortAlpha(state)
         state.sortOrder = SortOrder.alpha
       } else {
-        sortById(state)
-        state.sortOrder = SortOrder.id
+        sortPosted(state)
+        state.sortOrder = SortOrder.newest
       }
     },
   },
@@ -80,9 +74,9 @@ export const newSlice = createSlice({
 })
 
 export const NewSearchParams: SearchParams = {
-  sortBy: SortOrder.id,
+  sortBy: SortOrder.newest,
   requireSheetMusic: true,
-  limit: 20,
+  limit: 100,
 }
 
 /**

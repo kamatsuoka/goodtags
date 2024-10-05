@@ -50,7 +50,7 @@ const NewScreen = () => {
   }, [dispatch])
 
   const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
+    sortOrder === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
 
   const fabActions = [
     {
