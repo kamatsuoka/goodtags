@@ -6,7 +6,7 @@ import {useAppDispatch} from "../hooks"
 import Tag from "../lib/models/Tag"
 import {refreshFavorite} from "../modules/favoritesSlice"
 import {TagListType} from "../modules/tagLists"
-import {arranger, posted} from "./tagInfo"
+import {arranger} from "./tagInfo"
 
 const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
   const {tag, tagListType} = props
@@ -32,7 +32,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
       ["aka", tag.aka],
       ["id", tag.id],
       ["arranger", arranger(tag)],
-      ["posted", posted(tag)],
+      ["posted", tag.posted],
       ["parts", tag.parts],
       ["lyrics", tag.lyrics],
     ]

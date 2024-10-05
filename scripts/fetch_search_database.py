@@ -30,15 +30,14 @@ LATEST_SCHEMA_VERSION = 1
 # PREVIOUS_SCHEMA_VERSION = 0
 
 
-
 type Tag = MutableMapping[str, Any]
 
 
-def fetch_xml_batches() -> Sequence[Tag]:
+def fetch_xml_batches(max_batches: int | None = None) -> Sequence[Tag]:
     print("About to start fetching batches")
     batches = []
     i = 0
-    while True:
+    while not max_batches or i < max_batches:
         response = requests.get(
             API_URL,
             params={
@@ -340,7 +339,7 @@ def deploy_to_gh_pages(out_dir: Path) -> None:
 def normalize(t: Tag) -> Tag:
     """normalize a tag before storage""" 
     if posted := t.get("Posted"):
-        # convert localized format like "Sat, 5 Oct 2024" to ISO (yyyy-mm-dd)
+        # convert localized format (like "Sat, 5 Oct 2024") to ISO (yyyy-mm-dd)
         try:
             if dt := dateparser.parse(posted):
                 t["Posted"] = dt.date().isoformat()
@@ -365,10 +364,9 @@ def main() -> None:
     the remote. In particular this was done because the `checkout` step for the `out/` dir in the workflow sets up auth,
     so we're relying on the `.git` directory it creates to be able to push our changes.
     """
+    prepare_out_dir(OUT_DIR)
     batches = fetch_xml_batches()
     tags = [normalize(t) for t in parse_batches_to_tags(batches)]
-
-    prepare_out_dir(OUT_DIR)
     current_sql_name = generate_sql_db(tags, OUT_DIR)
     generate_manifest(OUT_DIR, {LATEST_SCHEMA_VERSION: current_sql_name})
     deploy_to_gh_pages(OUT_DIR)

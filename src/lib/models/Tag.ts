@@ -211,6 +211,7 @@ export function tagFromApiXml(t: XmlTag): SearchResult {
   ) as SearchResult
   tag.searchResultIndex = parseInt(t.attr.index, 10) - 1 // Convert 1-based index from API to 0-based
   tag.downloaded = t.Downloaded
+  tag.posted = new Date(tag.posted).toISOString().split("T")[0]
   return tag
 }
 
