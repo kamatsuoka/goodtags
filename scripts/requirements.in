@@ -2,10 +2,11 @@
 click
 requests
 xmltodict
+dateparser
 
 # Tools for development
-black
-mypy
+ruff
+pyright
 pip-tools
 types-requests
 types-xmltodict

@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native"
-import {InversePrimaryHighAlpha, MainTheme} from "../lib/theme"
+import {InversePrimaryHighAlpha} from "../lib/theme"
 
 export const FAB_GROUP_PADDING_BOTTOM = 35
 
@@ -25,8 +25,8 @@ const CommonStyles = StyleSheet.create({
     opacity: 0.85,
   },
   fabDown: {
-    backgroundColor: MainTheme.colors.inversePrimary,
-    marginBottom: 40,
+    backgroundColor: "transparent", // MainTheme.colors.inversePrimary,
+    marginBottom: 15,
   },
   sheetMusicLeft: {
     left: 25,

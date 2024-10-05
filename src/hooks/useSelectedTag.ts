@@ -1,21 +1,16 @@
-import {useAppSelector} from "@app/hooks"
 import {EmptyTag} from "@app/lib/models/Tag"
 import {TagListType} from "@app/modules/tagLists"
-import {getTagListSelector} from "@app/modules/tagListUtil"
+import useTagListState from "./useTagListState"
 
 /**
  * Get selected tag
  */
 export default function useSelectedTag(tagListType: TagListType) {
-  const allTagIds = useAppSelector(
-    state => getTagListSelector(tagListType)(state).allTagIds,
-  )
-  const tagsById = useAppSelector(
-    state => getTagListSelector(tagListType)(state).tagsById,
-  )
-  const selectedTag = useAppSelector(
-    state => getTagListSelector(tagListType)(state).selectedTag,
-  )
+  const tagListState = useTagListState(tagListType)
+
+  const allTagIds = tagListState.allTagIds
+  const tagsById = tagListState.tagsById
+  const selectedTag = tagListState.selectedTag
 
   function indexValid(index: number) {
     return index >= 0 && index < allTagIds.length

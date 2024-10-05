@@ -1,7 +1,5 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useRef, useState} from "react"
 import {StyleSheet, View} from "react-native"
 import {
@@ -17,7 +15,7 @@ import SearchDialog from "../components/SearchDialog"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
 import {Collection, MAX_TAGS, SortOrder} from "../constants/Search"
-import {useAppDispatch, useAppSelector} from "../hooks"
+import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {
   InitialFilters,
@@ -31,15 +29,15 @@ import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
-  TagListType,
+  TagListEnum,
 } from "../modules/tagLists"
 
 /**
  * List of search results.
  */
 const SearchScreen = () => {
-  const haptics = useHaptics()
   const theme = useTheme()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const [searchMenuVisible, setSearchMenuVisible] = useState(true)
   const loadingState = useAppSelector(
     state => selectSearchResults(state).loadingState,
@@ -64,6 +62,11 @@ const SearchScreen = () => {
     compactSearchLabelEmpty: {
       color: theme.colors.secondary,
     },
+    listHolder: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
   })
 
   useFocusEffect(
@@ -83,7 +86,6 @@ const SearchScreen = () => {
       moreAvailable &&
       loadingState !== LoadingState.pending
     if (shouldLoadMore) {
-      await haptics.selectionAsync()
       const morePayload = await dispatch(moreSearch())
       if (
         morePayload.type.endsWith("/fulfilled") &&
@@ -113,7 +115,6 @@ const SearchScreen = () => {
           icon: SORT_ICONS[order],
           label: SORT_LABELS[order],
           onPress: async () => {
-            await haptics.selectionAsync()
             dispatch(newSearch({sortOrder: order}))
           },
         }
@@ -123,7 +124,6 @@ const SearchScreen = () => {
       label: "clear search",
       onPress: async () => {
         dispatch(SearchActions.setLoadingState(LoadingState.idle))
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(SearchActions.clearSearch())
       },
     },
@@ -149,6 +149,20 @@ const SearchScreen = () => {
     setSearchMenuVisible(false)
   }
 
+  const queryButton = (
+    <Button
+      icon="magnify"
+      mode="elevated"
+      contentStyle={styles.compactSearchContent}
+      onPress={() => {
+        return setSearchMenuVisible(true)
+      }}
+      style={styles.compactSearchBar}
+      labelStyle={styles.compactSearchLabel}>
+      {query}
+    </Button>
+  )
+
   return searchMenuVisible ? (
     <SearchDialog
       query={query}
@@ -157,7 +171,7 @@ const SearchScreen = () => {
     />
   ) : (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} />
+      <ListHeader listRef={listRef} title={queryButton} />
       {filters !== InitialFilters ? (
         <View style={styles.filterHolder}>
           {filterChip(
@@ -177,13 +191,15 @@ const SearchScreen = () => {
           )}
         </View>
       ) : null}
-      <TagList
-        listRef={listRef}
-        title="Search"
-        loadMore={(numTags: number) => loadMore(numTags)}
-        emptyMessage={statusMessage()}
-        tagListType={TagListType.SearchResults}
-      />
+      <View style={themedStyles.listHolder}>
+        <TagList
+          listRef={listRef}
+          title="Search"
+          loadMore={(numTags: number) => loadMore(numTags)}
+          emptyMessage={statusMessage()}
+          tagListType={TagListEnum.SearchResults}
+        />
+      </View>
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>
           <ActivityIndicator size="large" />
@@ -205,18 +221,6 @@ const SearchScreen = () => {
           labelStyle={themedStyles.compactSearchLabelEmpty}>
           {"new search"}
         </Button>
-        {query ? (
-          <Button
-            mode="elevated"
-            contentStyle={styles.compactSearchContent}
-            onPress={() => {
-              return setSearchMenuVisible(true)
-            }}
-            style={styles.compactSearchBar}
-            labelStyle={styles.compactSearchLabel}>
-            {query}
-          </Button>
-        ) : null}
       </View>
       <Snackbar
         visible={loadingState === LoadingState.failed}
@@ -225,7 +229,7 @@ const SearchScreen = () => {
         {getErrorMessage()}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "plus"}
+        icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}
@@ -256,7 +260,6 @@ const styles = StyleSheet.create({
     maxWidth: 200,
   },
   compactSearchContent: {
-    flexDirection: "row-reverse",
     height: 40,
   },
   compactSearchLabel: {

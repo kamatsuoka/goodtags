@@ -1,6 +1,10 @@
 /**
  * Screen for displaying tag sheet music
  */
+import useSelectedTag from "@app/hooks/useSelectedTag"
+import useTagListState from "@app/hooks/useTagListState"
+import {TagState, setTagState} from "@app/modules/visitSlice"
+import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useCallback, useEffect, useMemo, useRef, useState} from "react"
 import {
   ColorValue,
@@ -9,13 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native"
-import CommonStyles from "../constants/CommonStyles"
-// @ts-ignore
-import useHaptics from "@app/hooks/useHaptics"
-import useSelectedTag from "@app/hooks/useSelectedTag"
-import {setTagState, TagState} from "@app/modules/visitSlice"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {isTablet} from "react-native-device-info"
 import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
 import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
@@ -32,14 +29,15 @@ import SheetMusic from "../components/SheetMusic"
 import TagInfoView from "../components/TagInfoView"
 import TrackMenu from "../components/TrackMenu"
 import VideoView from "../components/VideoView"
+import CommonStyles from "../constants/CommonStyles"
 import {useAppDispatch, useAppSelector} from "../hooks"
 import {NoteHandler} from "../lib/NoteHandler"
 import {noteForKey} from "../lib/NotePlayer"
 import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
 import {FavoritesActions} from "../modules/favoritesSlice"
 import {HistoryActions} from "../modules/historySlice"
-import {TagListType} from "../modules/tagLists"
-import {getSelectedTagSetter, getTagListSelector} from "../modules/tagListUtil"
+import {getSelectedTagSetter, isLabelType} from "../modules/tagListUtil"
+import {TagListEnum} from "../modules/tagLists"
 import {
   PlayingState,
   playTrack,
@@ -47,15 +45,14 @@ import {
   setTagTracks,
   stopTrack,
 } from "../modules/tracksSlice"
-import {StackParamList} from "../navigation/navigationParams"
+import {RootStackParamList} from "../navigation/navigationParams"
 
-type Props = NativeStackScreenProps<StackParamList, "Tag">
+type Props = NativeStackScreenProps<RootStackParamList, "Tag">
 
 /**
  * Sheet music screen
  */
 const TagScreen = ({navigation}: Props) => {
-  const haptics = useHaptics()
   const theme = useTheme()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
   const [tracksVisible, setTracksVisible] = useState(false)
@@ -66,12 +63,9 @@ const TagScreen = ({navigation}: Props) => {
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
-  const allTagIds = useAppSelector(
-    state => getTagListSelector(tagListType)(state).allTagIds,
-  )
-  const selectedTag = useAppSelector(
-    state => getTagListSelector(tagListType)(state).selectedTag,
-  )
+  const tagListState = useTagListState(tagListType)
+  const allTagIds = tagListState.allTagIds
+  const selectedTag = tagListState.selectedTag
   const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useSelectedTag(tagListType)
   const keyNote = noteForKey(tag.key)
@@ -96,11 +90,9 @@ const TagScreen = ({navigation}: Props) => {
     idHolder: {
       alignItems: "baseline",
       backgroundColor: IdBackground,
-      borderBottomLeftRadius: 7,
-      borderBottomRightRadius: 7,
+      borderRadius: 7,
       borderColor: theme.colors.secondaryContainer,
       borderWidth: 2,
-      borderTopWidth: 0,
       flexDirection: "row",
       paddingHorizontal: 7,
       paddingBottom: 4,
@@ -125,10 +117,10 @@ const TagScreen = ({navigation}: Props) => {
     },
   })
 
-  // avoid split screen controls interfering with favorite button on iPad
   const topBarStyle = {
     ...styles.topBar,
-    paddingTop: ios ? Math.min(insets.top, 33) : insets.top,
+    paddingTop: insets.top,
+    // avoid split screen controls interfering with favorite button on iPad
     ...(iPad ? {left: 120} : {left: 0, right: 0}),
   }
 
@@ -224,13 +216,13 @@ const TagScreen = ({navigation}: Props) => {
   }, [dispatch, selectedTag])
 
   /**
-   * Go back to the Home screen (includes all tag lists).
-   * Set TagState to closing so that when we return to the Home screen,
+   * Go back to list.
+   * Set TagState to closing so that when we return list,
    * we can scroll to the selected tag.
    */
   function goBack() {
     if (
-      tagListType === TagListType.Favorites &&
+      isLabelType(tagListType) &&
       delabeledSelectedTag?.label === selectedLabel &&
       delabeledSelectedTag?.tag.id === selectedTag?.id
     ) {
@@ -316,14 +308,10 @@ const TagScreen = ({navigation}: Props) => {
   }
 
   async function toggleFavorite(id: number) {
-    await haptics.selectionAsync()
-    brightenThenFade()
     if (favoritesById[id]) {
       dispatch(FavoritesActions.removeFavorite(id))
-      if (tagListType === TagListType.Favorites && !selectedLabel) {
-        // if on regular favorites list (not label), go back to list
-        await haptics.impactAsync(ImpactFeedbackStyle.Light)
-        return goBack()
+      if (tagListType === TagListEnum.Favorites) {
+        goBack() // go back to favorites list
       }
     } else {
       dispatch(FavoritesActions.addFavorite(tag))
@@ -430,12 +418,10 @@ const TagScreen = ({navigation}: Props) => {
                 // handler required for onPressIn to be handled
               }}
               onPressIn={async () => {
-                await haptics.selectionAsync()
                 noteHandler.onPressIn()
                 brightenButtons()
               }}
               onPressOut={async () => {
-                await haptics.selectionAsync()
                 noteHandler.onPressOut()
                 brightenThenFade()
               }}
@@ -446,7 +432,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon={playingState === PlayingState.playing ? "pause" : "play"}
               onPress={async () => {
-                await haptics.selectionAsync()
                 dispatch(playOrPause)
               }}
               disabled={!hasTracks()}
@@ -455,7 +440,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon="arrow-up"
               onPress={async () => {
-                await haptics.selectionAsync()
                 selectPrevTag()
               }}
               disabled={!hasPrevTag()}
@@ -463,7 +447,6 @@ const TagScreen = ({navigation}: Props) => {
             <AppAction
               icon="arrow-down"
               onPress={async () => {
-                await haptics.selectionAsync()
                 selectNextTag()
               }}
               disabled={!hasNextTag()}
@@ -471,7 +454,7 @@ const TagScreen = ({navigation}: Props) => {
           </Animated.View>
         )}
         <FABDown
-          icon={fabOpen ? "minus" : "plus"}
+          icon={fabOpen ? "minus" : "cog-outline"}
           open={fabOpen}
           actions={fabActions}
           onStateChange={({open}) => {

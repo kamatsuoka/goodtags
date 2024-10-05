@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {TagListType} from "./tagLists"
+import {TagListEnum, TagListType} from "./tagLists"
 
 export enum TagState {
   opening = "opening",
@@ -15,7 +15,7 @@ export interface VisitState {
 }
 
 const initialState: VisitState = {
-  tagListType: TagListType.Popular,
+  tagListType: TagListEnum.Popular,
 }
 
 export const visitSlice = createSlice({

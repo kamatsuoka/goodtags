@@ -1,4 +1,4 @@
-import {TagListType} from "@app/modules/tagLists"
+import {TagListEnum} from "@app/modules/tagLists"
 import {cleanup} from "@testing-library/react-native"
 import Tag from "../../../lib/models/Tag"
 import {render, store} from "../../../modules/test-utils"
@@ -31,7 +31,7 @@ describe("TagListItem", () => {
     const rendered = render(
       <TagListItem
         tag={tag}
-        tagListType={TagListType.SearchResults}
+        tagListType={TagListEnum.SearchResults}
         index={3}
         selected={true}
       />,

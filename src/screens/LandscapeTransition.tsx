@@ -1,12 +1,12 @@
 import {useAppSelector} from "@app/hooks"
 import {TagState} from "@app/modules/visitSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useEffect} from "react"
 import {StyleSheet, View} from "react-native"
 import {useTheme} from "react-native-paper"
 
-type Props = NativeStackScreenProps<StackParamList, "LandscapeTransition">
+type Props = NativeStackScreenProps<RootStackParamList, "LandscapeTransition">
 
 /**
  * Transition screen between tag lists and tag screen to avoid glitches

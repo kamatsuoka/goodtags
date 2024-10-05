@@ -28,6 +28,7 @@ export const SORTBY_PARAMS = {
   [SortOrder.alpha]: "Title",
   [SortOrder.downloads]: "Downloaded",
   [SortOrder.newest]: "Posted",
+  [SortOrder.id]: "id",
 }
 
 export const PARTS_PARAMS = {
@@ -132,6 +133,10 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const {whereVariables, whereClause, suffixClauses, suffixVariables} =
     buildSqlParts(searchParams)
+  console.log("whereVariables", whereVariables)
+  console.log("whereClause", whereClause)
+  console.log("suffixClauses", suffixClauses)
+  console.log("suffixVariables", suffixVariables)
   const db = await getDbConnection()
   debugDbPerfLogging("Got db", overallStart)
 
@@ -145,12 +150,12 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   await db.runTransactionAsync(async txn => {
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging("Txn start", overallStart)
+    const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
+    console.log("tagSql", tagSql)
     tagRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM tags${whereClause}${suffixClauses}`,
-        [...whereVariables, ...suffixVariables],
-      )
+      await txn.executeSqlAsync(tagSql, [...whereVariables, ...suffixVariables])
     ).rows
+    console.log("got tagRows.length = ", tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
     trackRows = (
@@ -185,6 +190,7 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
       )
     }
     count = count_raw.rows[0].count
+    console.log("raw count", count)
   }, true /* readOnly txn */)
 
   debugDbPerfLogging("Db done, parsing rows", overallStart)
@@ -208,6 +214,9 @@ function buildSqlParts(searchParams: SearchParams) {
   if (searchParams.id !== undefined) {
     whereClauseParts.push("tags.id = ?")
     whereVariables.push(searchParams.id)
+  }
+  if (searchParams.ids !== undefined) {
+    whereClauseParts.push(`tags.id in (${searchParams.ids.toString()})`)
   }
   if (searchParams.query !== undefined && searchParams.query !== "") {
     whereClauseParts.push(

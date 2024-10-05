@@ -1,21 +1,19 @@
 import AboutBase from "@app/components/AboutBase"
 import {useAppDispatch} from "@app/hooks"
-import useHaptics from "@app/hooks/useHaptics"
 import {getPopularTags} from "@app/modules/popularSlice"
 import {setLastVisited} from "@app/modules/visitSlice"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {useEffect} from "react"
 import {StyleSheet, View} from "react-native"
 import {IconButton, Text, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
-type Props = NativeStackScreenProps<StackParamList, "Welcome">
+type Props = NativeStackScreenProps<RootStackParamList, "Welcome">
 /**
  * Welcome screen
  */
 export default function WelcomeScreen(props: Props) {
-  const haptics = useHaptics()
   const theme = useTheme()
   const dispatch = useAppDispatch()
   const navigation = props.navigation
@@ -49,11 +47,8 @@ export default function WelcomeScreen(props: Props) {
       <View style={styles.iconHolder}>
         <IconButton
           onPress={async () => {
-            await haptics.selectionAsync()
             dispatch(setLastVisited())
-            navigation.navigate("Drawer", {
-              screen: "Tabs",
-            })
+            navigation.navigate("Tabs")
           }}
           icon="arrow-right"
           iconColor={theme.colors.onPrimary}

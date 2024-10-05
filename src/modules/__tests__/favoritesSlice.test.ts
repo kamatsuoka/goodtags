@@ -3,9 +3,10 @@ import Tag from "@app/lib/models/Tag"
 import reducer, {
   FavoritesActions,
   FavoritesState,
+  getDateString,
   InitialState,
 } from "../favoritesSlice"
-import {TagListType} from "../tagLists"
+import {TagListEnum} from "../tagLists"
 const {
   addFavorite,
   removeFavorite,
@@ -186,7 +187,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state3).toEqual(labelsOnlyState(label))
@@ -205,7 +206,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label,
-        tagListType: TagListType.Favorites,
+        tagListType: "organic",
       }),
     )
     expect(state4).toEqual({
@@ -231,7 +232,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label1,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state4).toEqual(singleLabeledState(fav12, label2, [label1]))
@@ -240,7 +241,7 @@ describe("favorites reducer", () => {
       removeLabel({
         id: fav12.id,
         label: label1,
-        tagListType: TagListType.History,
+        tagListType: TagListEnum.History,
       }),
     )
     expect(state5).toEqual(singleLabeledState(fav12, label2, [label1]))
@@ -276,5 +277,18 @@ describe("favorites reducer", () => {
     const state2 = reducer(state1, addLabel({tag: fav12, label: label1}))
     const state3 = reducer(state2, clearLabels())
     expect(state3).toEqual(singleFavState(fav12))
+  })
+})
+
+describe("getDateString", () => {
+  it("should return a date string in am", () => {
+    const date = new Date("Wed, 29 Sep 2024 3:02:32 AM")
+    const dateString = getDateString(date)
+    expect(dateString).toEqual("2024-09-29T03-02")
+  })
+  it("should return a date string in pm", () => {
+    const date = new Date("Wed, 7 Jan 2024 4:31:32 PM")
+    const dateString = getDateString(date)
+    expect(dateString).toEqual("2024-01-07T16-31")
   })
 })

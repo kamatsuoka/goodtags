@@ -1,17 +1,20 @@
-import useHaptics from "@app/hooks/useHaptics"
 import {clearLastVisited} from "@app/modules/visitSlice"
 import {useFocusEffect} from "@react-navigation/native"
 import {FlashList} from "@shopify/flash-list"
-import {ImpactFeedbackStyle} from "expo-haptics"
 import {useCallback, useEffect, useRef, useState} from "react"
-import {View} from "react-native"
+import {StyleSheet, View} from "react-native"
 import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
 import {FABDown} from "../components/FABDown"
 import ListHeader from "../components/ListHeader"
 import TagList from "../components/TagList"
 import CommonStyles from "../constants/CommonStyles"
 import {SortOrder} from "../constants/Search"
-import {AppDispatch, useAppDispatch, useAppSelector} from "../hooks"
+import {
+  AppDispatch,
+  useAppDispatch,
+  useAppSelector,
+  useBodyInsets,
+} from "../hooks"
 import useFabDownStyle from "../hooks/useFabDownStyle"
 import {
   PopularActions,
@@ -22,14 +25,14 @@ import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
-  TagListType,
+  TagListEnum,
 } from "../modules/tagLists"
 
 /**
  * Popular tags
  */
 const PopularScreen = () => {
-  const haptics = useHaptics()
+  const {paddingLeft, paddingRight} = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const loadingState = useAppSelector(
@@ -60,7 +63,6 @@ const PopularScreen = () => {
       icon: SORT_ICONS[otherOrder],
       label: SORT_LABELS[otherOrder],
       onPress: async () => {
-        await haptics.selectionAsync()
         return dispatch(PopularActions.toggleSortOrder())
       },
     },
@@ -68,7 +70,6 @@ const PopularScreen = () => {
       icon: "reload",
       label: "reload popular tags",
       onPress: async () => {
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(getPopularTags(true))
       },
     },
@@ -76,7 +77,6 @@ const PopularScreen = () => {
       icon: "broom",
       label: "clear popular tags",
       onPress: async () => {
-        await haptics.impactAsync(ImpactFeedbackStyle.Medium)
         return dispatch(PopularActions.reset())
       },
     },
@@ -85,17 +85,32 @@ const PopularScreen = () => {
   const setIdle = () =>
     dispatch(PopularActions.setLoadingState(LoadingState.idle))
 
+  const themedStyles = StyleSheet.create({
+    listContainer: {
+      flex: 1,
+      paddingLeft,
+      paddingRight,
+    },
+  })
+
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} />
-      <TagList
-        tagListType={TagListType.Popular}
-        emptyMessage={
-          loadingState === LoadingState.succeeded ? "no tags found" : ""
-        }
+      <ListHeader
         listRef={listRef}
-        title="Popular Tags"
+        showBackButton={true}
+        title="popular tags"
+        titleIcon="star"
       />
+      <View style={themedStyles.listContainer}>
+        <TagList
+          tagListType={TagListEnum.Popular}
+          emptyMessage={
+            loadingState === LoadingState.succeeded ? "no tags found" : ""
+          }
+          listRef={listRef}
+          title="Popular Tags"
+        />
+      </View>
       {loadingState === LoadingState.pending ? (
         <View style={CommonStyles.spinnerHolder}>
           <ActivityIndicator size="large" />
@@ -108,7 +123,7 @@ const PopularScreen = () => {
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "plus"}
+        icon={fabOpen ? "minus" : "cog-outline"}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({open}) => setFabOpen(open)}

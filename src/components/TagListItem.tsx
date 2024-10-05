@@ -1,3 +1,4 @@
+import {isFavoriteOrLabel} from "@app/modules/tagListUtil"
 import React from "react"
 import {StyleSheet, View} from "react-native"
 import {Text, useTheme} from "react-native-paper"
@@ -66,15 +67,14 @@ function TagListItem(props: Props) {
   })
 
   const renderDownloads = (tag: Tag) => {
-    return props.tagListType !== TagListType.Favorites ? (
+    return isFavoriteOrLabel(props.tagListType) ? null : (
       <>
-        &nbsp;
         <Text style={themedStyles.downloads}>
           <Icon name="download" size={14} style={themedStyles.downloadIcon} />
           {(tag as SearchResult).downloaded}
         </Text>
       </>
-    ) : null
+    )
   }
 
   const tag = props.tag

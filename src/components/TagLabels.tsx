@@ -1,9 +1,9 @@
-import {useAppDispatch, useAppSelector} from "@app/hooks"
+import {useAppDispatch, useAppSelector, useHorizontalInset} from "@app/hooks"
 import useSelectedTag from "@app/hooks/useSelectedTag"
 import Tag from "@app/lib/models/Tag"
 import {FavoritesActions} from "@app/modules/favoritesSlice"
 import {TagListType} from "@app/modules/tagLists"
-import {StackParamList} from "@app/navigation/navigationParams"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {useNavigation} from "@react-navigation/native"
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"
 import {Platform, ScrollView, StyleSheet, View} from "react-native"
@@ -42,12 +42,14 @@ const TagLabels = () => {
   const tagListType = useAppSelector(state => state.visit.tagListType)
   const tag = useSelectedTag(tagListType)
   const labels = useAppSelector(state => state.favorites.labels)
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const selectedLabels = useAppSelector(
     state => state.favorites.labelsByTagId[tag.id],
   )
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const paddingHorizontal = useHorizontalInset()
 
   const themedStyles = StyleSheet.create({
     container: {
@@ -55,6 +57,7 @@ const TagLabels = () => {
       margin: 10,
       borderRadius: 15,
       justifyContent: "space-between",
+      paddingHorizontal,
       paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
     },
     divider: {

@@ -1,3 +1,4 @@
+import {isFavoriteOrLabel} from "@app/modules/tagListUtil"
 import {useMemo} from "react"
 import {Linking, StyleSheet, View} from "react-native"
 import {Divider, IconButton, Text, useTheme} from "react-native-paper"
@@ -5,7 +6,7 @@ import {useAppDispatch} from "../hooks"
 import Tag from "../lib/models/Tag"
 import {refreshFavorite} from "../modules/favoritesSlice"
 import {TagListType} from "../modules/tagLists"
-import {arranger, posted} from "./tagInfo"
+import {arranger} from "./tagInfo"
 
 const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
   const {tag, tagListType} = props
@@ -31,7 +32,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
       ["aka", tag.aka],
       ["id", tag.id],
       ["arranger", arranger(tag)],
-      ["posted", posted(tag)],
+      ["posted", tag.posted],
       ["parts", tag.parts],
       ["lyrics", tag.lyrics],
     ]
@@ -44,7 +45,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
           <Text style={styles.infoTitle} variant="titleMedium">
             {tag.title}
           </Text>
-          {tagListType === TagListType.Favorites ? (
+          {isFavoriteOrLabel(tagListType) ? (
             <IconButton
               icon="refresh"
               onPress={() => dispatch(refreshFavorite(tag.id))}
@@ -63,7 +64,7 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
 
 function InfoItems(props: {items: [string, string | number | undefined][]}) {
   const {items} = props
-  return (
+  return items ? (
     <>
       {items.map(([key, value], id) =>
         value ? (
@@ -71,7 +72,7 @@ function InfoItems(props: {items: [string, string | number | undefined][]}) {
         ) : null,
       )}
     </>
-  )
+  ) : null
 }
 
 function TracksInfo(props: {tag: Tag}) {

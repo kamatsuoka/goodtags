@@ -10,8 +10,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {TabBarBackground} from "../lib/theme"
 import {FavoritesScreen} from "../screens/FavoritesScreen"
 import HistoryScreen from "../screens/HistoryScreen"
-import PopularScreen from "../screens/PopularScreen"
 import SearchScreen from "../screens/SearchScreen"
+import HomeNavigator from "./HomeNavigator"
 import {TabsParamList} from "./navigationParams"
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
@@ -27,6 +27,8 @@ export default function TabNavigator() {
 
   const ios = Platform.OS === "ios"
 
+  const androidHorizPadding = Math.max(insets.left, insets.right)
+
   const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -37,8 +39,11 @@ export default function TabNavigator() {
       height: (ios ? 90 : 75 + insets.bottom) - (shallowScreen ? 30 : 0),
       paddingTop: 5,
       paddingBottom: ios ? 25 : 15 + insets.bottom,
-      paddingLeft: ios ? 0 : insets.left,
-      paddingRight: ios ? 0 : insets.right,
+      marginHorizontal: ios ? 0 : androidHorizPadding,
+      shadowColor: "white",
+    },
+    sceneContainer: {
+      paddingHorizontal: ios ? 0 : androidHorizPadding,
     },
     tabBarLabel: {
       fontFamily: theme.fonts.labelSmall.fontFamily,
@@ -61,19 +66,15 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Popular"
+      initialRouteName="HomeNavigator"
       screenOptions={screenOptions}
-      sceneContainerStyle={{
-        // Paddings to handle safe area
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-      }}>
+      sceneContainerStyle={styles.sceneContainer}>
       <Tab.Screen
-        name="Popular"
-        component={PopularScreen}
+        name="HomeNavigator"
+        component={HomeNavigator}
         options={{
-          title: "popular",
-          tabBarIcon: PopularIcon,
+          title: "home",
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tab.Screen
@@ -110,7 +111,7 @@ function tabIcon(name: string) {
   )
 }
 
-const PopularIcon = tabIcon("download")
+const HomeIcon = tabIcon("home")
 const SearchIcon = tabIcon("magnify")
 const FavoritesIcon = tabIcon("heart-outline")
 const HistoryIcon = tabIcon("history")

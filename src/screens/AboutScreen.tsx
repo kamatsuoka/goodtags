@@ -1,11 +1,10 @@
 import AboutWithCredits from "@app/components/AboutWithCredits"
-import {StackParamList} from "@app/navigation/navigationParams"
-import {DrawerActions} from "@react-navigation/native"
+import {RootStackParamList} from "@app/navigation/navigationParams"
 import {NativeStackScreenProps} from "@react-navigation/native-stack"
 import {StyleSheet, View} from "react-native"
 import {IconButton, useTheme} from "react-native-paper"
 
-type Props = NativeStackScreenProps<StackParamList, "About">
+type Props = NativeStackScreenProps<RootStackParamList, "About">
 /**
  * About goodtags
  */
@@ -28,10 +27,7 @@ export default function AboutScreen({navigation}: Props) {
       <AboutWithCredits />
       <View style={styles.iconHolder}>
         <IconButton
-          onPress={() => {
-            navigation.dispatch(DrawerActions.closeDrawer())
-            navigation.goBack()
-          }}
+          onPress={navigation.goBack}
           icon="arrow-left"
           iconColor={theme.colors.onPrimary}
         />

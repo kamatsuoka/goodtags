@@ -14,7 +14,7 @@ type Props = {
 }
 
 /**
- * Sheet musics viewer. Supports pdfs, pdfs, gifs, etc.
+ * Sheet musics viewer. Supports pdfs, gifs, etc.
  */
 export default function SheetMusic(props: Props) {
   const {uri, onPress} = props

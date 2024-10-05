@@ -1,4 +1,4 @@
-import {TagListType} from "@app/modules/tagLists"
+import {TagListEnum} from "@app/modules/tagLists"
 import TestRenderer from "react-test-renderer"
 import Tag from "../../../lib/models/Tag"
 import TagListItem from "../../TagListItem"
@@ -21,7 +21,7 @@ describe("TagListItem", () => {
     const testRenderer = TestRenderer.create(
       <TagListItem
         tag={tag}
-        tagListType={TagListType.SearchResults}
+        tagListType={TagListEnum.SearchResults}
         index={3}
         selected={true}
       />,

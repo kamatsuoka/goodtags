@@ -2,8 +2,8 @@ export const MAX_TAGS = 99
 
 export enum Collection {
   ALL = "All",
-  CLASSIC = "Classic",
-  EASY = "Easy",
+  CLASSIC = "classic",
+  EASY = "easytags",
 }
 
 export const Search = {
@@ -16,6 +16,7 @@ export const Search = {
 export type SearchParams = {
   // Filter what we're looking for
   id?: number
+  ids?: number[]
   query?: string
   collection?: Collection
   parts?: number
@@ -30,6 +31,7 @@ export type SearchParams = {
 export enum SortOrder {
   alpha = "alpha",
   downloads = "downloads",
+  id = "id",
   newest = "newest",
 }
 
