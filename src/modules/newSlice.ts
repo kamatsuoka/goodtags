@@ -23,7 +23,7 @@ export const initialState: NewState = {
   loadingState: LoadingState.idle,
   tagsById: {},
   allTagIds: [],
-  sortOrder: SortOrder.alpha,
+  sortOrder: SortOrder.newest,
 }
 
 export const newSlice = createSlice({
