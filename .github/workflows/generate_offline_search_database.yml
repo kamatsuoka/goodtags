@@ -2,10 +2,10 @@ name: 'Generate offline search database'
 
 on:
   schedule:
-    # 09:25 UTC (2:25 am PDT / 1:25am PST) on Wednesdays
-    # Running in the middle of the night (in the US) on Wednesdays to try to minimize DB load
+    # 09:25 UTC (2:25 am PDT / 1:25am PST) daily
+    # Running in the middle of the night (in the US) to try to minimize DB load
     # Running 25 minutes into the hour to avoid peak GitHub Actions usage time
-    - cron: '25 9 * * 3'
+    - cron: '25 9 * * *'
   workflow_dispatch:
     # Allows manually triggering, for testing; might want to be removed once this is stable.
 
