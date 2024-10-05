@@ -74,7 +74,7 @@ describe("tagFromApiXml", () => {
       lyrics:
         "And I will wait to face the skies,\never roaming in your eyes.\nThere I go lost in your eyes.",
       parts: 4,
-      posted: "Mon, 26 Dec 2011",
+      posted: "2011-12-26",
       uri: "https://www.barbershoptags.com/tags/Lost.jpg",
       tracks: [
         {
