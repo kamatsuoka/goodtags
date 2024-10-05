@@ -7,6 +7,7 @@ import EasyScreen from "@app/screens/EasyScreen"
 import HomeScreen from "@app/screens/HomeScreen"
 import {LabeledScreen} from "@app/screens/LabeledScreen"
 import LabelsScreen from "@app/screens/LabelsScreen"
+import NewScreen from "@app/screens/NewScreen"
 import OptionsScreen from "@app/screens/OptionsScreen"
 import PopularScreen from "@app/screens/PopularScreen"
 import {
@@ -65,6 +66,11 @@ export default function HomeNavigator() {
       <Stack.Screen
         name="Easy"
         component={EasyScreen}
+        options={homeOrientation}
+      />
+      <Stack.Screen
+        name="New"
+        component={NewScreen}
         options={homeOrientation}
       />
       <Stack.Group

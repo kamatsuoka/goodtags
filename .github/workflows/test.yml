@@ -52,7 +52,7 @@ jobs:
           pip install -r scripts/requirements.txt
       - name: 'check types'
         run: |
-          python -m mypy --strict scripts/fetch_search_database.py
+          python -m pyright scripts/fetch_search_database.py
       - name: 'check formatting'
         run: |
-          python -m black --check --diff scripts/fetch_search_database.py
+          python -m ruff check --diff scripts/fetch_search_database.py

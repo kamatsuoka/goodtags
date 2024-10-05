@@ -9,6 +9,7 @@ import classicReducer from "./modules/classicSlice"
 import easyReducer from "./modules/easySlice"
 import favoritesReducer from "./modules/favoritesSlice"
 import historyReducer from "./modules/historySlice"
+import newReducer from "./modules/newSlice"
 import optionsReducer from "./modules/optionsSlice"
 import popularReducer from "./modules/popularSlice"
 import searchReducer from "./modules/searchSlice"
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   popular: popularReducer,
   classic: classicReducer,
   easy: easyReducer,
+  new: newReducer,
   visit: visitReducer,
   favorites: favoritesReducer,
   history: historyReducer,

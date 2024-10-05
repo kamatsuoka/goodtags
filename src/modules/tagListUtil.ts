@@ -11,6 +11,7 @@ import {
   selectLabelState,
 } from "./favoritesSlice"
 import {HistoryActions, selectHistory} from "./historySlice"
+import {NewActions, selectNew} from "./newSlice"
 import {PopularActions, selectPopular} from "./popularSlice"
 import {SearchActions, selectSearchResults} from "./searchSlice"
 import {TagListEnum, TagListState, TagListType} from "./tagLists"
@@ -27,6 +28,8 @@ export function getTagListSelector(
       return selectClassic
     case TagListEnum.Easy:
       return selectEasy
+    case TagListEnum.New:
+      return selectNew
     case TagListEnum.History:
       return selectHistory
     case TagListEnum.SearchResults:
@@ -78,6 +81,8 @@ export function getSelectedTagSetter(
       return ClassicActions.setSelectedTag
     case TagListEnum.Easy:
       return EasyActions.setSelectedTag
+    case TagListEnum.New:
+      return NewActions.setSelectedTag
     case TagListEnum.History:
       return HistoryActions.setSelectedTag
     case TagListEnum.SearchResults:

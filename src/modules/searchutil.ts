@@ -150,12 +150,12 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   await db.runTransactionAsync(async txn => {
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging("Txn start", overallStart)
+    const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
+    console.log("tagSql", tagSql)
     tagRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM tags${whereClause}${suffixClauses}`,
-        [...whereVariables, ...suffixVariables],
-      )
+      await txn.executeSqlAsync(tagSql, [...whereVariables, ...suffixVariables])
     ).rows
+    console.log("got tagRows.length = ", tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
     trackRows = (
@@ -190,6 +190,7 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
       )
     }
     count = count_raw.rows[0].count
+    console.log("raw count", count)
   }, true /* readOnly txn */)
 
   debugDbPerfLogging("Db done, parsing rows", overallStart)

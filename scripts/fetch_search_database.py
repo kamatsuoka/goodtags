@@ -4,9 +4,10 @@ import sqlite3
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, TypeVar, Sequence, Mapping
+from typing import Any, MutableMapping, TypeVar, Sequence
 
 import click
+import dateparser
 import requests
 import xmltodict
 
@@ -29,7 +30,11 @@ LATEST_SCHEMA_VERSION = 1
 # PREVIOUS_SCHEMA_VERSION = 0
 
 
-def fetch_xml_batches() -> Sequence[Mapping[str, Any]]:
+
+type Tag = MutableMapping[str, Any]
+
+
+def fetch_xml_batches() -> Sequence[Tag]:
     print("About to start fetching batches")
     batches = []
     i = 0
@@ -81,8 +86,8 @@ ROW_DEFAULTS = {
 
 
 def parse_batches_to_tags(
-    batches: Sequence[Mapping[str, Any]]
-) -> Sequence[Mapping[str, Any]]:
+    batches: Sequence[Tag]
+) -> Sequence[Tag]:
     return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
 
 
@@ -114,7 +119,7 @@ PART_NAMES = [
 ]
 
 
-def generate_sql_db(tags: Sequence[Mapping[str, Any]], out_dir: Path) -> str:
+def generate_sql_db(tags: Sequence[Tag], out_dir: Path) -> str:
     sql_name = SQL_NAME_TEMPLATE.format(LATEST_SCHEMA_VERSION)
     sql_path = out_dir / sql_name
     sql_path.unlink(missing_ok=True)
@@ -332,6 +337,18 @@ def deploy_to_gh_pages(out_dir: Path) -> None:
     )
 
 
+def normalize(t: Tag) -> Tag:
+    """normalize a tag before storage""" 
+    if posted := t.get("Posted"):
+        # convert localized format like "Sat, 5 Oct 2024" to ISO (yyyy-mm-dd)
+        try:
+            if dt := dateparser.parse(posted):
+                t["Posted"] = dt.date().isoformat()
+        except Exception as e:
+            print(f"Error parsing date {posted}: {e}")
+    return t
+
+
 # Note - If we need them, we can add options for whether to deploy, where to store output
 @click.command()
 def main() -> None:
@@ -349,7 +366,7 @@ def main() -> None:
     so we're relying on the `.git` directory it creates to be able to push our changes.
     """
     batches = fetch_xml_batches()
-    tags = parse_batches_to_tags(batches)
+    tags = [normalize(t) for t in parse_batches_to_tags(batches)]
 
     prepare_out_dir(OUT_DIR)
     current_sql_name = generate_sql_db(tags, OUT_DIR)

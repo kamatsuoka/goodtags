@@ -41,6 +41,7 @@ export type HomeNavigatorParamList = {
   Popular: undefined
   Classic: undefined
   Easy: undefined
+  New: undefined
   Labels: undefined
   Labeled: {label: string}
   LabelEditor: undefined

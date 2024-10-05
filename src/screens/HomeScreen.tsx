@@ -151,6 +151,15 @@ export default function HomeScreen({
               style={styles.listItem}
             />
           </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity onPress={() => navigation.navigate("New")}>
+            <List.Item
+              title="new tags"
+              left={NewIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.listHolder}>
           <TouchableOpacity
@@ -221,6 +230,7 @@ export default function HomeScreen({
 const PopularIcon = homeIcon("star")
 const ClassicIcon = homeIcon("pillar")
 const EasyIcon = homeIcon("teddy-bear")
+const NewIcon = homeIcon("leaf")
 const RightIcon = homeIcon("chevron-right")
 const LabelsIcon = homeIcon("tag-multiple-outline")
 const AboutIcon = homeIcon("information-outline")

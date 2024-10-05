@@ -10,6 +10,7 @@ export enum TagListEnum {
   Popular = "Popular",
   Classic = "Classic",
   Easy = "Easy",
+  New = "New",
   History = "History",
 }
 
