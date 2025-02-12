@@ -125,8 +125,8 @@ android {
         applicationId "com.fogcitysingers.goodtags"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 98
-        versionName "3.0.4"
+        versionCode 99
+        versionName "3.0.5"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }

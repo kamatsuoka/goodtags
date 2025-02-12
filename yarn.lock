@@ -7910,7 +7910,7 @@ __metadata:
     react-native-screens: "npm:^3.33.0"
     react-native-share: "npm:^11.0.3"
     react-native-sound: "npm:^0.11.2"
-    react-native-sound-player: "npm:^0.13.2"
+    react-native-sound-player: "npm:^0.14.5"
     react-native-vector-icons: "npm:^10.1.0"
     react-native-webview: "npm:13.2.2"
     react-native-youtube-iframe: "npm:^2.2.2"
@@ -12344,10 +12344,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-sound-player@npm:^0.13.2":
-  version: 0.13.2
-  resolution: "react-native-sound-player@npm:0.13.2"
-  checksum: 10/68c9f05eec66010329add234be70e0d0e884770aab14e65e07e90565d52bd4e35f13b651dd7acb073c9658b795356740998f4dd335e37ca6ebbe0f0684163c41
+"react-native-sound-player@npm:^0.14.5":
+  version: 0.14.5
+  resolution: "react-native-sound-player@npm:0.14.5"
+  checksum: 10/8b137310277f1926dce829c256b138ba3d10b3de5dc5222e0bfe948c58cea721ceb5eca9ce535a6d13b445a319eb33f732f0f62b14478ef5b2f96476f533fb3a
   languageName: node
   linkType: hard
 
