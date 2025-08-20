@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Include user data in backups -->
+    <include domain="sharedpref" />
+    <include domain="database" />
+    <include domain="file" />
+    
+    <!-- Exclude cache and temporary files -->
+    <exclude domain="file" path="cache/" />
+    <exclude domain="file" path="code_cache/" />
+</full-backup-content>

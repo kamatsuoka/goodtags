@@ -1,9 +1,11 @@
 import homeIcon from "@app/components/homeIcon"
 import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
 import {receiveSharedFile, shareFavorites} from "@app/modules/favoritesSlice"
+import {shareBackup, restoreFromBackup} from "@app/modules/dataMigration"
 import {useState} from "react"
 import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
 import DocumentPicker from "react-native-document-picker"
+import ReactNativeBlobUtil from "react-native-blob-util"
 import {List, Portal, Snackbar, Text, useTheme} from "react-native-paper"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
@@ -30,6 +32,9 @@ export default function DataScreen() {
     },
     section: {
       paddingHorizontal: 10,
+    },
+    sectionTitle: {
+      marginTop: 20,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
@@ -62,7 +67,7 @@ export default function DataScreen() {
                   const pickerResult = await DocumentPicker.pickSingle({
                     presentationStyle: "fullScreen",
                     copyTo: "documentDirectory",
-                    // copyTo: "cachesDirectory",
+                    type: [DocumentPicker.types.json, DocumentPicker.types.allFiles],
                   })
                   console.log(
                     `result from DocumentPicker.pickSingle: ${pickerResult}`,
@@ -73,22 +78,41 @@ export default function DataScreen() {
                     )
                   }
                   if (pickerResult?.fileCopyUri) {
-                    const importPayload = await dispatch(
-                      receiveSharedFile(pickerResult.fileCopyUri),
-                    )
-                    const importResult = importPayload.payload
-                    console.log(`importResult: ${importResult}`)
-                    // if importResult is a string, it's an error message
-                    if (typeof importResult === "string") {
-                      setSnackBarMessage(importResult)
-                      // or if it's a list of tags, just report how many were imported
-                    } else if (importResult?.favorites) {
-                      setSnackBarMessage(
-                        `imported ${importResult.favorites.length} tags` +
-                          ` and ${importResult.receivedLabels.length} labels`,
-                      )
-                    } else {
-                      setSnackBarMessage("import failed")
+                    // Check if this is a full backup file or just favorites
+                    const fs = ReactNativeBlobUtil.fs
+                    const fileContent = await fs.readFile(pickerResult.fileCopyUri, "utf8")
+                    
+                    try {
+                      const parsedContent = JSON.parse(fileContent)
+                      
+                      // Check if this is a full app backup
+                      if (parsedContent.version && parsedContent.reduxState) {
+                        const restored = await restoreFromBackup(fileContent)
+                        if (restored) {
+                          setSnackBarMessage("App data restored successfully! Please restart the app.")
+                        } else {
+                          setSnackBarMessage("Restore cancelled or failed")
+                        }
+                      } else {
+                        // Handle as legacy favorites import
+                        const importPayload = await dispatch(
+                          receiveSharedFile(pickerResult.fileCopyUri),
+                        )
+                        const importResult = importPayload.payload
+                        console.log(`importResult: ${importResult}`)
+                        if (typeof importResult === "string") {
+                          setSnackBarMessage(importResult)
+                        } else if (importResult?.favorites) {
+                          setSnackBarMessage(
+                            `imported ${importResult.favorites.length} tags` +
+                              ` and ${importResult.receivedLabels.length} labels`,
+                          )
+                        } else {
+                          setSnackBarMessage("import failed")
+                        }
+                      }
+                    } catch (parseError) {
+                      setSnackBarMessage("Invalid file format")
                     }
                     setSnackBarVisible(true)
                   }
@@ -103,7 +127,8 @@ export default function DataScreen() {
                 }
               }}>
               <List.Item
-                title="import"
+                title="import data"
+                description="Import favorites, labels, or full app backup"
                 left={ImportIcon}
                 right={RightIcon}
                 style={styles.listItem}
@@ -111,8 +136,32 @@ export default function DataScreen() {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => shareFavorites(favorites)}>
               <List.Item
-                title="export"
+                title="export favorites"
+                description="Export just favorites and labels"
                 left={ExportIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+          </View>
+          
+          <Text variant="titleLarge" style={styles.sectionTitle}>full app backup</Text>
+          <View style={styles.listHolder}>
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  await shareBackup()
+                  setSnackBarMessage("Backup created and shared successfully!")
+                  setSnackBarVisible(true)
+                } catch (error) {
+                  setSnackBarMessage("Failed to create backup")
+                  setSnackBarVisible(true)
+                }
+              }}>
+              <List.Item
+                title="create full backup"
+                description="Backup all app data for device migration"
+                left={BackupIcon}
                 right={RightIcon}
                 style={styles.listItem}
               />
@@ -137,3 +186,4 @@ export default function DataScreen() {
 const RightIcon = homeIcon("chevron-right")
 const ExportIcon = homeIcon("database-export")
 const ImportIcon = homeIcon("database-import")
+const BackupIcon = homeIcon("backup-restore")

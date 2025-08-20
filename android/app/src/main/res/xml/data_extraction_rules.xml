@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Include user data in cloud backups for Android 12+ -->
+        <include domain="sharedpref" />
+        <include domain="database" />
+        <include domain="file" />
+        
+        <!-- Exclude cache and temporary files -->
+        <exclude domain="file" path="cache/" />
+        <exclude domain="file" path="code_cache/" />
+    </cloud-backup>
+    
+    <device-transfer>
+        <!-- Include user data in device-to-device transfers -->
+        <include domain="sharedpref" />
+        <include domain="database" />
+        <include domain="file" />
+        
+        <!-- Exclude cache and temporary files -->
+        <exclude domain="file" path="cache/" />
+        <exclude domain="file" path="code_cache/" />
+    </device-transfer>
+</data-extraction-rules>
