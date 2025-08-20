@@ -1,20 +1,20 @@
 /**
  * Keeps track of playing learning tracks.
  */
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import SoundPlayer from "react-native-sound-player"
-import Tag, {Track, TrackPart} from "../lib/models/Tag"
-import {AppDispatch, RootState} from "../store"
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import SoundPlayer from 'react-native-sound-player'
+import Tag, { Track, TrackPart } from '../lib/models/Tag'
+import { AppDispatch, RootState } from '../store'
 
 type TagTracks = {
   [key in TrackPart]?: Track
 }
 
 export enum PlayingState {
-  idle = "idle",
-  playing = "playing",
-  paused = "paused",
-  ended = "ended",
+  idle = 'idle',
+  playing = 'playing',
+  paused = 'paused',
+  ended = 'ended',
 }
 
 export interface TracksState {
@@ -48,7 +48,7 @@ export function getSelectedTrack(
 }
 
 export const tracksSlice = createSlice({
-  name: "tracks",
+  name: 'tracks',
   initialState,
   reducers: {
     setTagTracks: (state, action: PayloadAction<Tag>) => {
@@ -83,7 +83,7 @@ export const playTrack = createAsyncThunk<
     state: RootState
     rejectValue: string
   }
->("tracks/playTrack", async (fromStart: boolean, thunkAPI) => {
+>('tracks/playTrack', async (fromStart: boolean, thunkAPI) => {
   const state = thunkAPI.getState()
   const track = state.tracks.selectedTrack
   if (track) {
@@ -104,7 +104,7 @@ export const playOrPause = createAsyncThunk<
     state: RootState
     rejectValue: string
   }
->("tracks/playOrPause", async (_, thunkAPI) => {
+>('tracks/playOrPause', async (_, thunkAPI) => {
   const state = thunkAPI.getState()
   const track = state.tracks.selectedTrack
   if (track) {
@@ -125,12 +125,12 @@ export const stopTrack = createAsyncThunk<
     state: RootState
     rejectValue: string
   }
->("tracks/stopTrack", async (_, thunkAPI) => {
+>('tracks/stopTrack', async (_, thunkAPI) => {
   SoundPlayer.stop()
   thunkAPI.dispatch(setPlayingState(PlayingState.ended))
 })
 
-export const {setTagTracks, setSelectedPart, setPlayingState} =
+export const { setTagTracks, setSelectedPart, setPlayingState } =
   tracksSlice.actions
 
 export default tracksSlice.reducer

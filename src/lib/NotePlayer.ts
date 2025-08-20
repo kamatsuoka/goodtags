@@ -1,7 +1,7 @@
-import Sound from "react-native-sound"
+import Sound from 'react-native-sound'
 
 // enable playback in silent mode
-Sound.setCategory("Playback")
+Sound.setCategory('Playback')
 
 class RampDownParams {
   delay: number
@@ -60,7 +60,7 @@ export class NotePlayer {
       clearTimeout(this.timeoutId)
     }
     this.sound.setVolume(1.0)
-    console.log("NotePlayer.playSound")
+    console.log('NotePlayer.playSound')
     this.sound.play(() => {
       // we got to the end
       this.stopSound()
@@ -70,7 +70,7 @@ export class NotePlayer {
   }
 
   stopSound = () => {
-    console.log("NotePlayer.stopSound")
+    console.log('NotePlayer.stopSound')
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
       this.timeoutId = undefined
@@ -92,11 +92,11 @@ const NotePlayers = new Map<string, NotePlayer>()
 
 // canonical names have flats
 const Aliases = new Map<string, string>([
-  ["csharp", "dflat"],
-  ["dsharp", "eflat"],
-  ["fsharp", "gflat"],
-  ["gsharp", "aflat"],
-  ["asharp", "bflat"],
+  ['csharp', 'dflat'],
+  ['dsharp', 'eflat'],
+  ['fsharp', 'gflat'],
+  ['gsharp', 'aflat'],
+  ['asharp', 'bflat'],
 ])
 
 function getNoteName(note: string): string | undefined {
@@ -108,15 +108,15 @@ function getNoteName(note: string): string | undefined {
     case 0:
       return undefined
     case 1:
-      return n + "natural"
+      return n + 'natural'
     case 2:
-      let sharpFlat = ""
+      let sharpFlat = ''
       switch (n[1]) {
-        case "b":
-          sharpFlat = n[0] + "flat"
+        case 'b':
+          sharpFlat = n[0] + 'flat'
           break
-        case "#":
-          sharpFlat = n[0] + "sharp"
+        case '#':
+          sharpFlat = n[0] + 'sharp'
           break
         default:
           return undefined
@@ -138,7 +138,7 @@ export function getNotePlayer(note: string): NotePlayer | undefined {
 
 function createSound(noteName: string) {
   const sound = new Sound(
-    noteName + ".mp3",
+    noteName + '.mp3',
     Sound.MAIN_BUNDLE,
     (error: any) => {
       if (error) {
@@ -151,5 +151,5 @@ function createSound(noteName: string) {
 }
 
 export function noteForKey(key: string) {
-  return key ? key.split(":")[1] : "F"
+  return key ? key.split(':')[1] : 'F'
 }

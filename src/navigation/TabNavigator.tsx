@@ -1,18 +1,18 @@
-import useShallowScreen from "@app/hooks/useShallowScreen"
+import useShallowScreen from '@app/hooks/useShallowScreen'
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs"
-import {Platform, StyleSheet} from "react-native"
-import {useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import {TabBarBackground} from "../lib/theme"
-import {FavoritesScreen} from "../screens/FavoritesScreen"
-import HistoryScreen from "../screens/HistoryScreen"
-import SearchScreen from "../screens/SearchScreen"
-import HomeNavigator from "./HomeNavigator"
-import {TabsParamList} from "./navigationParams"
+} from '@react-navigation/bottom-tabs'
+import { Platform, StyleSheet } from 'react-native'
+import { useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { TabBarBackground } from '../lib/theme'
+import { FavoritesScreen } from '../screens/FavoritesScreen'
+import HistoryScreen from '../screens/HistoryScreen'
+import SearchScreen from '../screens/SearchScreen'
+import HomeNavigator from './HomeNavigator'
+import { TabsParamList } from './navigationParams'
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
 
@@ -25,7 +25,7 @@ export default function TabNavigator() {
   const shallowScreen = useShallowScreen()
   const insets = useSafeAreaInsets()
 
-  const ios = Platform.OS === "ios"
+  const ios = Platform.OS === 'ios'
 
   const androidHorizPadding = Math.max(insets.left, insets.right)
 
@@ -40,7 +40,7 @@ export default function TabNavigator() {
       paddingTop: 5,
       paddingBottom: ios ? 25 : 15 + insets.bottom,
       marginHorizontal: ios ? 0 : androidHorizPadding,
-      shadowColor: "white",
+      shadowColor: 'white',
     },
     sceneContainer: {
       paddingHorizontal: ios ? 0 : androidHorizPadding,
@@ -61,19 +61,20 @@ export default function TabNavigator() {
     tabBarInactiveTintColor: theme.colors.outline,
     tabBarLabelStyle: styles.tabBarLabel,
     tabBarStyle: styles.tabBar,
-    tabBarLabelPosition: shallowScreen ? "beside-icon" : "below-icon",
+    tabBarLabelPosition: shallowScreen ? 'beside-icon' : 'below-icon',
   }
 
   return (
     <Tab.Navigator
       initialRouteName="HomeNavigator"
       screenOptions={screenOptions}
-      sceneContainerStyle={styles.sceneContainer}>
+      sceneContainerStyle={styles.sceneContainer}
+    >
       <Tab.Screen
         name="HomeNavigator"
         component={HomeNavigator}
         options={{
-          title: "home",
+          title: 'home',
           tabBarIcon: HomeIcon,
         }}
       />
@@ -81,7 +82,7 @@ export default function TabNavigator() {
         name="Search"
         component={SearchScreen}
         options={{
-          title: "search",
+          title: 'search',
           tabBarIcon: SearchIcon,
         }}
       />
@@ -89,7 +90,7 @@ export default function TabNavigator() {
         name="Favorites"
         component={FavoritesScreen}
         options={{
-          title: "faves",
+          title: 'faves',
           tabBarIcon: FavoritesIcon,
         }}
       />
@@ -97,7 +98,7 @@ export default function TabNavigator() {
         name="History"
         component={HistoryScreen}
         options={{
-          title: "history",
+          title: 'history',
           tabBarIcon: HistoryIcon,
         }}
       />
@@ -106,12 +107,12 @@ export default function TabNavigator() {
 }
 
 function tabIcon(name: string) {
-  return (props: {focused: boolean; color: string; size: number}) => (
+  return (props: { focused: boolean; color: string; size: number }) => (
     <Icon name={name} size={props.size} color={props.color} />
   )
 }
 
-const HomeIcon = tabIcon("home")
-const SearchIcon = tabIcon("magnify")
-const FavoritesIcon = tabIcon("heart-outline")
-const HistoryIcon = tabIcon("history")
+const HomeIcon = tabIcon('home')
+const SearchIcon = tabIcon('magnify')
+const FavoritesIcon = tabIcon('heart-outline')
+const HistoryIcon = tabIcon('history')

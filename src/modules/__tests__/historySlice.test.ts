@@ -1,17 +1,17 @@
-import {SortOrder} from "@app/constants/Search"
-import Tag, {EmptyTag} from "../../lib/models/Tag"
+import { SortOrder } from '@app/constants/Search'
+import Tag, { EmptyTag } from '../../lib/models/Tag'
 import historyReducer, {
   HistoryActions,
   HistoryState,
   InitialState,
   MAX_HISTORY,
-} from "../historySlice"
-import {LoadingState, sortAlpha} from "../tagLists"
+} from '../historySlice'
+import { LoadingState, sortAlpha } from '../tagLists'
 
 function buildTag(id: number): Tag {
-  const tag: Tag = {...EmptyTag}
+  const tag: Tag = { ...EmptyTag }
   Object.keys(tag).forEach(key => {
-    if (!(key in ["id", "parts", "tracks", "videos"])) {
+    if (!(key in ['id', 'parts', 'tracks', 'videos'])) {
       // @ts-ignore
       tag[key] = `${key}${id}`
     }
@@ -71,7 +71,7 @@ function addTagsToHistory(
   initialState: HistoryState = InitialState,
 ) {
   let reducedState = initialState
-  let timestamp = ""
+  let timestamp = ''
   const date = new Date()
   tags.forEach(tag => {
     timestamp = date.setFullYear(date.getFullYear() + 1).toString()
@@ -87,8 +87,8 @@ function addTagsToHistory(
   }
 }
 
-describe("history reducer", () => {
-  it("should add a tag to the history", () => {
+describe('history reducer', () => {
+  it('should add a tag to the history', () => {
     const timestamp = new Date().toISOString()
     const action = HistoryActions.addHistory({
       tag: tag12,
@@ -101,9 +101,9 @@ describe("history reducer", () => {
     )
     expect(reducedState).toEqual(expectedState)
   })
-  it("should add several tags to the history", () => {
+  it('should add several tags to the history', () => {
     const tags = Array.from(Array(5).keys()).map(i => buildTag(i))
-    const {reducedState, timestamp} = addTagsToHistory(tags)
+    const { reducedState, timestamp } = addTagsToHistory(tags)
     // expect history to show tags in reverse order (starting with last tag added)
     const expectedState: HistoryState = unincorporatedHistoryState(
       tags,
@@ -111,9 +111,9 @@ describe("history reducer", () => {
     )
     expect(reducedState).toEqual(expectedState)
   })
-  it("should incorporate tags to displayed tag list", () => {
+  it('should incorporate tags to displayed tag list', () => {
     const tags = Array.from(Array(5).keys()).map(i => buildTag(i))
-    const {reducedState, timestamp} = addTagsToHistory(tags)
+    const { reducedState, timestamp } = addTagsToHistory(tags)
     const incorporateAction = HistoryActions.incorporateHistory()
     const incorporatedState = historyReducer(reducedState, incorporateAction)
     // expect history to show tags in reverse order (starting with last tag added)
@@ -122,13 +122,13 @@ describe("history reducer", () => {
     expectedState.allTagIds = expectedState.history
     expect(incorporatedState).toEqual(expectedState)
   })
-  it("should incorporate tags to displayed tag list when sorting by title", () => {
+  it('should incorporate tags to displayed tag list when sorting by title', () => {
     const initialState = {
       ...InitialState,
       sortOrder: SortOrder.alpha,
     }
     const tags = Array.from(Array(5).keys()).map(i => buildTag(i))
-    const {reducedState, timestamp} = addTagsToHistory(tags, initialState)
+    const { reducedState, timestamp } = addTagsToHistory(tags, initialState)
     const incorporatedState = historyReducer(
       reducedState,
       HistoryActions.incorporateHistory(),
@@ -140,12 +140,12 @@ describe("history reducer", () => {
     )
     expect(incorporatedState).toEqual(expectedState)
   })
-  it("should kick out old history when adding more than MAX_HISTORY", () => {
+  it('should kick out old history when adding more than MAX_HISTORY', () => {
     const historyOverMax = 10
     const numTags = MAX_HISTORY + historyOverMax
     const allIds = Array.from(Array(numTags).keys()) // [0, 1, 2, ... , MAX_HISTORY - 1]
     const tags = allIds.map(i => buildTag(i))
-    const {reducedState} = addTagsToHistory(tags, InitialState)
+    const { reducedState } = addTagsToHistory(tags, InitialState)
     expect(reducedState.history.length).toEqual(MAX_HISTORY)
     expect(Object.keys(reducedState.tagsById).length).toEqual(MAX_HISTORY)
     // expected ids in history are highest MAX_HISTORY elements

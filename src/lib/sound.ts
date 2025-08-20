@@ -2,36 +2,36 @@
  * Canonical note names
  */
 export enum NOTE {
-  aflat = "aflat",
-  anatural = "anatural",
-  bflat = "bflat",
-  bnatural = "bnatural",
-  cnatural = "cnatural",
-  dflat = "dflat",
-  dnatural = "dnatural",
-  eflat = "eflat",
-  enatural = "enatural",
-  fnatural = "fnatural",
-  gflat = "gflat",
-  gnatural = "gnatural",
+  aflat = 'aflat',
+  anatural = 'anatural',
+  bflat = 'bflat',
+  bnatural = 'bnatural',
+  cnatural = 'cnatural',
+  dflat = 'dflat',
+  dnatural = 'dnatural',
+  eflat = 'eflat',
+  enatural = 'enatural',
+  fnatural = 'fnatural',
+  gflat = 'gflat',
+  gnatural = 'gnatural',
 }
 
 const Aliases = new Map<string, string>([
-  ["csharp", "dflat"],
-  ["dsharp", "eflat"],
-  ["fsharp", "gflat"],
-  ["gsharp", "aflat"],
-  ["asharp", "bflat"],
+  ['csharp', 'dflat'],
+  ['dsharp', 'eflat'],
+  ['fsharp', 'gflat'],
+  ['gsharp', 'aflat'],
+  ['asharp', 'bflat'],
 ])
 
 function getNoteWithSharpFlat(keyWithSharpFlat: string): string {
-  let note = ""
+  let note = ''
   switch (keyWithSharpFlat[1]) {
-    case "b":
-      note = keyWithSharpFlat[0] + "flat"
+    case 'b':
+      note = keyWithSharpFlat[0] + 'flat'
       break
-    case "#":
-      note = keyWithSharpFlat[0] + "sharp"
+    case '#':
+      note = keyWithSharpFlat[0] + 'sharp'
       break
   }
   return Aliases.get(note) || note
@@ -54,11 +54,11 @@ function getNoteWithSharpFlat(keyWithSharpFlat: string): string {
 export function getCanonicalNote(keyNote: string): NOTE {
   const defaultNote = NOTE.fnatural
   if (keyNote) {
-    let noteName = "fnatural" // default, since F is most common key
+    let noteName = 'fnatural' // default, since F is most common key
     const n = keyNote.toLowerCase()
     switch (n.length) {
       case 1:
-        noteName = n + "natural"
+        noteName = n + 'natural'
         break
       case 2:
         noteName = getNoteWithSharpFlat(n)
@@ -79,5 +79,5 @@ export function getCanonicalNote(keyNote: string): NOTE {
  * @return key with mode (Major/Minor) removed, defaulting to F
  */
 export function getKey(writKey: string) {
-  return writKey ? writKey.split(":")[1] : "F"
+  return writKey ? writKey.split(':')[1] : 'F'
 }

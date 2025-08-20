@@ -1,4 +1,4 @@
-import parseXml from "../xmlparser"
+import parseXml from '../xmlparser'
 
 const text = `<?xml version="1.0" encoding="iso-8859-1" ?>
 <tags available="5451" count="3" stamp="2022-11-25 20:25:19">
@@ -167,30 +167,30 @@ a star, the unreachable star</Lyrics>
    </tag>
 </tags>`
 
-describe("parseXml", () => {
-  it("should parse xml", () => {
+describe('parseXml', () => {
+  it('should parse xml', () => {
     const parsed = parseXml(text)
     expect(parseInt(parsed.tags.attr.available, 10)).toEqual(5451)
     expect(parsed.tags.tag.length).toEqual(3)
-    expect(parsed.tags.tag[0].Arranger).toEqual("Soren Wohlers")
+    expect(parsed.tags.tag[0].Arranger).toEqual('Soren Wohlers')
     expect(parsed.tags.tag[1].Title).toEqual(
-      "Last Night was the End of the World",
+      'Last Night was the End of the World',
     )
     expect(parsed.tags.tag[2].videos.video.length).toEqual(2)
   })
-  it("should convert xml entities", () => {
+  it('should convert xml entities', () => {
     const xml =
       '<?xml version="1.0" encoding="iso-8859-1" ?>' +
       '<tags available="161" count="20" stamp="2022-11-29 20:58:32">' +
       '   <tag index="50">' +
-      "      <id>5567</id>" +
-      "      <Title>I&#039;ve Got Sunshine in My Life</Title>" +
-      "      <WritKey>Major:C</WritKey>" +
-      "      <Parts>5</Parts>" +
-      "      <Lyrics>I&#039;ve got sunshine in my life (my life)" +
-      "I&#039;ve got sunshine in my life</Lyrics>" +
-      "    </tag>" +
-      "</tags>"
+      '      <id>5567</id>' +
+      '      <Title>I&#039;ve Got Sunshine in My Life</Title>' +
+      '      <WritKey>Major:C</WritKey>' +
+      '      <Parts>5</Parts>' +
+      '      <Lyrics>I&#039;ve got sunshine in my life (my life)' +
+      'I&#039;ve got sunshine in my life</Lyrics>' +
+      '    </tag>' +
+      '</tags>'
     const parsed = parseXml(xml)
     expect(parsed.tags.tag.Title).toEqual("I've Got Sunshine in My Life")
   })

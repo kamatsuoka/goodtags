@@ -6,14 +6,14 @@ import {
   REMOTE_ASSET_BASE_URL,
   TAGS_DB_NAME,
   VALID_SCHEMA_VERSION,
-} from "@app/constants/sql"
-import getUrl from "@app/modules/getUrl"
-import {Buffer} from "buffer"
-import {Asset} from "expo-asset"
-import * as FileSystem from "expo-file-system"
-import {EncodingType} from "expo-file-system"
-import * as SQLite from "expo-sqlite"
-import {SQLTransactionAsyncCallback} from "expo-sqlite"
+} from '@app/constants/sql'
+import getUrl from '@app/modules/getUrl'
+import { Buffer } from 'buffer'
+import { Asset } from 'expo-asset'
+import * as FileSystem from 'expo-file-system'
+import { EncodingType } from 'expo-file-system'
+import * as SQLite from 'expo-sqlite'
+import { SQLTransactionAsyncCallback } from 'expo-sqlite'
 
 // These are the parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
 export interface InnerDb {
@@ -119,17 +119,17 @@ export async function getDbConnection(): Promise<DbWrapper> {
   if (existing == null) {
     // Initialize the database. We *must* immediately set dbConnectionPromise (before, eg, awaiting anything)
     // to avoid race conditions.
-    console.debug("Initializing new DB wrapper")
+    console.debug('Initializing new DB wrapper')
     const nonNullPromise = initializeDbConnection()
     dbConnectionPromise[0] = nonNullPromise
     return await nonNullPromise
   } else {
-    console.debug("Using existing DB wrapper")
+    console.debug('Using existing DB wrapper')
     return await existing
   }
 }
 
-const SQLITE_DIR = "SQLite"
+const SQLITE_DIR = 'SQLite'
 
 /**
  * Create the DB wrapper. Copies from the app storage if needed before creating the wrapper and kicks off a check of
@@ -157,7 +157,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
       appManifestObject,
     )
   ) {
-    console.debug("Copying DB from app storage")
+    console.debug('Copying DB from app storage')
     // To avoid getting into a bad state if the app dies mid-copy, we write to temp files and then move the files into
     // place. There's still potential for a race condition where we've moved one file but not the other, but the
     // consequences should be much less bad (eg unlikely to brick the app).
@@ -165,17 +165,20 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     if (__DEV__) {
       await FileSystem.downloadAsync(appSqlUri, tmpSqlPath)
     } else {
-      await FileSystem.copyAsync({from: appSqlUri, to: tmpSqlPath})
+      await FileSystem.copyAsync({ from: appSqlUri, to: tmpSqlPath })
     }
     await FileSystem.writeAsStringAsync(
       tmpManifestPath,
       JSON.stringify(appManifestObject),
     )
-    await FileSystem.moveAsync({from: tmpSqlPath, to: currentSqlPath})
-    await FileSystem.moveAsync({from: tmpManifestPath, to: currentManifestPath})
+    await FileSystem.moveAsync({ from: tmpSqlPath, to: currentSqlPath })
+    await FileSystem.moveAsync({
+      from: tmpManifestPath,
+      to: currentManifestPath,
+    })
   } else {
     console.debug(
-      "Not copying DB from app storage, current DB already new enough",
+      'Not copying DB from app storage, current DB already new enough',
     )
   }
 
@@ -217,7 +220,7 @@ async function shouldCopyFromApp(
 
 async function generatedAtFromPath(manifestPath: string): Promise<number> {
   const contents = await FileSystem.readAsStringAsync(manifestPath, {
-    encoding: "utf8",
+    encoding: 'utf8',
   })
   const manifest: DbManifest = JSON.parse(contents)
   return manifest.generated_at_epoch_seconds
@@ -243,7 +246,7 @@ async function backgroundCheckForRemoteUpdates(
 
   if (remoteGeneratedAt <= currentGeneratedAt) {
     // It's not newer, bail
-    console.debug("Remote DB not newer, done checking for updates")
+    console.debug('Remote DB not newer, done checking for updates')
     return
   }
 
@@ -262,15 +265,15 @@ async function backgroundCheckForRemoteUpdates(
   // To avoid race conditions, first write out to temp files then move into place, as when copying from the app files.
   // It's important to set the Accept-Encoding header since that should result in over-the-wire transfer sizes
   // being reduced by ~4x
-  console.debug("Downloading remote DB")
+  console.debug('Downloading remote DB')
   const responseBuffer = await getUrl<ArrayBuffer>(remoteSqlUrl, {
     // "stream" isn't a valid type in React Native apparently so we need to save it all to an in-memory buffer.
-    responseType: "arraybuffer",
-    headers: {"Accept-Encoding": "gzip"},
+    responseType: 'arraybuffer',
+    headers: { 'Accept-Encoding': 'gzip' },
   })
   // This is *wild*, the API has no way to write binary content to a file, have to b64 encode it first and write
   // as a string >.>
-  const responseBase64 = Buffer.from(responseBuffer).toString("base64")
+  const responseBase64 = Buffer.from(responseBuffer).toString('base64')
   await FileSystem.writeAsStringAsync(tmpSqlPath, responseBase64, {
     encoding: EncodingType.Base64,
   })
@@ -282,12 +285,12 @@ async function backgroundCheckForRemoteUpdates(
   // Actually queue up the replacement
   dbWrapper
     .queueDbReplacement(async () => {
-      await FileSystem.moveAsync({from: tmpSqlPath, to: currentSqlPath})
+      await FileSystem.moveAsync({ from: tmpSqlPath, to: currentSqlPath })
       await FileSystem.moveAsync({
         from: tmpManifestPath,
         to: currentManifestPath,
       })
-      console.debug("Done updating DB from remote")
+      console.debug('Done updating DB from remote')
       return SQLite.openDatabase(TAGS_DB_NAME)
     })
     .then(/* ignore promise */)

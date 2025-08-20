@@ -3,20 +3,20 @@ import {
   createAsyncThunk,
   createSlice,
   PayloadAction,
-} from "@reduxjs/toolkit"
-import {Collection, Parts, SortOrder} from "../constants/Search"
+} from '@reduxjs/toolkit'
+import { Collection, Parts, SortOrder } from '../constants/Search'
 import {
   buildTagIds,
   ConvertedTags,
   SearchResult,
   SearchResultsById,
-} from "../lib/models/Tag"
-import {RootState} from "../store"
-import {handleError} from "./handleError"
-import {fetchAndConvertTags, getSearchParams} from "./searchutil"
-import {LoadingState, TagListState} from "./tagLists"
-import {SelectedTag} from "./tagListUtil"
-import {ThunkApiConfig} from "./thunkApiConfig"
+} from '../lib/models/Tag'
+import { RootState } from '../store'
+import { handleError } from './handleError'
+import { fetchAndConvertTags, getSearchParams } from './searchutil'
+import { LoadingState, TagListState } from './tagLists'
+import { SelectedTag } from './tagListUtil'
+import { ThunkApiConfig } from './thunkApiConfig'
 
 /**
  * Search params. All are optional: leave unset to keep existing values.
@@ -57,11 +57,11 @@ export interface SearchPayload {
   highestIndex: number
   available: number
   queryTagId: number
-  type: "SearchPayload"
+  type: 'SearchPayload'
 }
 
 export function isASearchPayload(obj: any): obj is SearchPayload {
-  return "type" in obj && obj.type === "SearchPayload"
+  return 'type' in obj && obj.type === 'SearchPayload'
 }
 
 export const InitialFilters: SearchFilters = {
@@ -80,17 +80,17 @@ const initialResults: Results = {
 
 // Define the initial state using that type
 export const initialState: SearchState = {
-  query: "",
+  query: '',
   loadingState: LoadingState.idle,
   firstTimeUser: true,
   filters: InitialFilters,
   sortOrder: SortOrder.downloads,
   results: initialResults,
-  error: "",
+  error: '',
 }
 
 export const searchSlice = createSlice({
-  name: "search",
+  name: 'search',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -105,8 +105,8 @@ export const searchSlice = createSlice({
     },
     clearSearch: state => {
       state.results = initialResults
-      state.query = ""
-      state.error = ""
+      state.query = ''
+      state.error = ''
       state.loadingState = LoadingState.idle
     },
     resetResults: state => {
@@ -122,7 +122,7 @@ export const searchSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(newSearch.fulfilled, (state, action) => {
-        const {tagsById, allTagIds} = buildTagIds(action.payload.tags)
+        const { tagsById, allTagIds } = buildTagIds(action.payload.tags)
         state.results.tagsById = tagsById
         state.results.allTagIds = allTagIds
         state.results.moreAvailable =
@@ -131,8 +131,8 @@ export const searchSlice = createSlice({
         state.selectedTag = undefined
       })
       .addCase(moreSearch.fulfilled, (state, action) => {
-        const {tagsById, allTagIds} = buildTagIds(action.payload.tags)
-        state.results.tagsById = {...state.results.tagsById, ...tagsById}
+        const { tagsById, allTagIds } = buildTagIds(action.payload.tags)
+        state.results.tagsById = { ...state.results.tagsById, ...tagsById }
         state.results.allTagIds = state.results.allTagIds.concat(allTagIds)
         state.results.moreAvailable =
           action.payload.highestIndex < action.payload.available - 1
@@ -146,7 +146,7 @@ export const searchSlice = createSlice({
         state.loadingState = LoadingState.morePending
         state.error = undefined
       })
-      .addMatcher(isSearchAction("/rejected"), (state, action) => {
+      .addMatcher(isSearchAction('/rejected'), (state, action) => {
         state.loadingState = LoadingState.failed
         state.error = action.payload
       })
@@ -155,7 +155,7 @@ export const searchSlice = createSlice({
 
 function isSearchAction(actionType: string) {
   return (action: AnyAction) =>
-    action.type.startsWith("search/") && action.type.endsWith(actionType)
+    action.type.startsWith('search/') && action.type.endsWith(actionType)
 }
 
 async function fetchTags(
@@ -176,7 +176,7 @@ async function fetchTags(
     highestIndex,
     available,
     queryTagId: searchParams.id || 0,
-    type: "SearchPayload",
+    type: 'SearchPayload',
   }
 }
 
@@ -187,9 +187,9 @@ export const newSearch = createAsyncThunk<
   SearchPayload,
   SearchParams,
   ThunkApiConfig
->("search/newSearch", async (params: SearchParams, thunkAPI) => {
+>('search/newSearch', async (params: SearchParams, thunkAPI) => {
   thunkAPI.dispatch(SearchActions.resetResults())
-  console.log("newSearch", thunkAPI.getState().search.results)
+  console.log('newSearch', thunkAPI.getState().search.results)
   if (params.sortOrder) {
     // just change sort with existing query and filters
     thunkAPI.dispatch(SearchActions.setSortOrder(params.sortOrder))
@@ -215,7 +215,7 @@ export const moreSearch = createAsyncThunk<
   SearchPayload,
   undefined,
   ThunkApiConfig
->("search/moreSearch", async (_, thunkAPI) => {
+>('search/moreSearch', async (_, thunkAPI) => {
   try {
     const searchState = thunkAPI.getState().search
     const start = searchState.results.allTagIds.length

@@ -1,20 +1,20 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import {AnyAction, configureStore} from "@reduxjs/toolkit"
-import _ from "lodash"
-import {combineReducers} from "redux"
-import type {MigrationManifest} from "redux-persist"
-import {createMigrate, persistReducer, persistStore} from "redux-persist"
-import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2"
-import classicReducer from "./modules/classicSlice"
-import easyReducer from "./modules/easySlice"
-import favoritesReducer from "./modules/favoritesSlice"
-import historyReducer from "./modules/historySlice"
-import newReducer from "./modules/newSlice"
-import optionsReducer from "./modules/optionsSlice"
-import popularReducer from "./modules/popularSlice"
-import searchReducer from "./modules/searchSlice"
-import tracksReducer from "./modules/tracksSlice"
-import visitReducer from "./modules/visitSlice"
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { AnyAction, configureStore } from '@reduxjs/toolkit'
+import _ from 'lodash'
+import { combineReducers } from 'redux'
+import type { MigrationManifest } from 'redux-persist'
+import { createMigrate, persistReducer, persistStore } from 'redux-persist'
+import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2'
+import classicReducer from './modules/classicSlice'
+import easyReducer from './modules/easySlice'
+import favoritesReducer from './modules/favoritesSlice'
+import historyReducer from './modules/historySlice'
+import newReducer from './modules/newSlice'
+import optionsReducer from './modules/optionsSlice'
+import popularReducer from './modules/popularSlice'
+import searchReducer from './modules/searchSlice'
+import tracksReducer from './modules/tracksSlice'
+import visitReducer from './modules/visitSlice'
 
 const rootReducer = combineReducers({
   search: searchReducer,
@@ -44,7 +44,7 @@ const MIGRATIONS = {
 
 const persistConfig = {
   timeout: 10000,
-  key: "root",
+  key: 'root',
   storage: AsyncStorage,
   stateReconciler: autoMergeLevel2,
   version: _.max(Object.keys(MIGRATIONS).map(key => parseInt(key, 10))) ?? -1,
@@ -72,4 +72,4 @@ const persistor = persistStore(store)
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
-export {persistor, store}
+export { persistor, store }

@@ -1,12 +1,12 @@
-import {StyleProp, StyleSheet, View, ViewStyle} from "react-native"
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
 import {
   Divider,
   MD3TypescaleKey,
   Surface,
   Text,
   useTheme,
-} from "react-native-paper"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+} from 'react-native-paper'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 type Props = {
   title: string
@@ -28,7 +28,7 @@ const SearchOptions = ({
   icon,
   iconColor,
   iconSize,
-  titleVariant = "bodyLarge",
+  titleVariant = 'bodyLarge',
   rightStyle,
   children,
   infoButton,
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     minHeight: 40,
   },

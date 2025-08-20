@@ -1,12 +1,12 @@
-import {X2jOptionsOptional, XMLParser} from "fast-xml-parser"
-import {decode} from "html-entities"
+import { X2jOptionsOptional, XMLParser } from 'fast-xml-parser'
+import { decode } from 'html-entities'
 
 const xmlParseOptions: X2jOptionsOptional = {
   ignoreDeclaration: true,
   ignoreAttributes: false,
-  attributeNamePrefix: "",
-  attributesGroupName: "attr",
-  textNodeName: "text",
+  attributeNamePrefix: '',
+  attributesGroupName: 'attr',
+  textNodeName: 'text',
   tagValueProcessor: (tagName, tagValue) => decode(tagValue),
 }
 

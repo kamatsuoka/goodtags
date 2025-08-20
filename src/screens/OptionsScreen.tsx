@@ -1,15 +1,15 @@
-import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import {TabBarBackground} from "@app/lib/theme"
-import {OptionsActions} from "@app/modules/optionsSlice"
-import Slider from "@react-native-community/slider"
-import {useState} from "react"
-import {ScrollView, StyleSheet, View} from "react-native"
-import {Checkbox, List, Text} from "react-native-paper"
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { TabBarBackground } from '@app/lib/theme'
+import { OptionsActions } from '@app/modules/optionsSlice'
+import Slider from '@react-native-community/slider'
+import { useState } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { Checkbox, List, Text } from 'react-native-paper'
 
 function checkBox(selected: boolean, onPress: Function) {
   return () => (
     <Checkbox.Android
-      status={selected ? "checked" : "unchecked"}
+      status={selected ? 'checked' : 'unchecked'}
       onPress={() => onPress()}
     />
   )
@@ -19,7 +19,7 @@ function checkBox(selected: boolean, onPress: Function) {
  * Screen for setting ui options
  */
 export default function OptionsScreen() {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const serifsSelected = useAppSelector(state => state.options.serifs)
   const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
   const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   headerRight: {
     width: 10,
@@ -117,10 +117,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 50,
     marginRight: 40,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   delayText: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   sliderHolder: {
     marginLeft: 10,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   sliderValue: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     margin: 0,
   },
 })

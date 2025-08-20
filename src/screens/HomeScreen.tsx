@@ -1,39 +1,39 @@
-import homeIcon from "@app/components/homeIcon"
-import Logo from "@app/components/Logo"
-import {useAppDispatch, useBodyInsets} from "@app/hooks"
-import useShallowScreen from "@app/hooks/useShallowScreen"
-import {receiveSharedFile} from "@app/modules/favoritesSlice"
-import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
-import {useEffect, useState} from "react"
+import homeIcon from '@app/components/homeIcon'
+import Logo from '@app/components/Logo'
+import { useAppDispatch, useBodyInsets } from '@app/hooks'
+import useShallowScreen from '@app/hooks/useShallowScreen'
+import { receiveSharedFile } from '@app/modules/favoritesSlice'
+import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
+import { useEffect, useState } from 'react'
 import {
   Linking,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-} from "react-native"
-import {Divider, List, Portal, Snackbar, useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+} from 'react-native'
+import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
  * Home screen
  */
 export default function HomeScreen({
   navigation,
-}: HomeNavigatorScreenProps<"Home">) {
+}: HomeNavigatorScreenProps<'Home'>) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const shallow = useShallowScreen()
   const dispatch = useAppDispatch()
   const [snackBarVisible, setSnackBarVisible] = useState(false)
-  const [snackBarMessage, setSnackBarMessage] = useState("")
+  const [snackBarMessage, setSnackBarMessage] = useState('')
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingVertical: 5,
-      alignItems: "flex-start",
+      alignItems: 'flex-start',
       backgroundColor: theme.colors.secondaryContainer,
       paddingTop: insets.top,
       paddingBottom: Math.max(insets.bottom, 10),
@@ -41,17 +41,17 @@ export default function HomeScreen({
     },
     buttonHolder: {
       paddingLeft: insets.left,
-      alignItems: "flex-start",
+      alignItems: 'flex-start',
     },
     logoHolder: {
-      justifyContent: "center",
+      justifyContent: 'center',
       paddingLeft: insets.left,
       flexBasis: 50,
       marginBottom: 5,
     },
     navHolder: {
       flex: 1,
-      width: "100%",
+      width: '100%',
       marginVertical: 5,
       paddingVertical: 5,
     },
@@ -70,17 +70,17 @@ export default function HomeScreen({
       // borderColor: "red",
       // borderWidth: 1,
       height: 50,
-      flexDirection: "row",
+      flexDirection: 'row',
       paddingLeft: 5,
       paddingRight: 0,
     },
   })
 
   useEffect(() => {
-    const handleOpenUrl = async (event: {url: string}) => {
+    const handleOpenUrl = async (event: { url: string }) => {
       try {
         if (
-          event.url.startsWith("file://")
+          event.url.startsWith('file://')
           // TODO: support reading stream content
           // || event.url.startsWith("content://")
         ) {
@@ -89,20 +89,20 @@ export default function HomeScreen({
           throw `unknown url type ${event.url}`
         }
       } catch (e) {
-        console.error("an error occurred in handleOpenUrl", e)
+        console.error('an error occurred in handleOpenUrl', e)
         setSnackBarMessage(`handleOpenUrl error: ${e}`)
         setSnackBarVisible(true)
       }
     }
 
     Linking.getInitialURL().then(url => {
-      if (url) handleOpenUrl({url})
+      if (url) handleOpenUrl({ url })
     })
 
-    Linking.addEventListener("url", handleOpenUrl)
+    Linking.addEventListener('url', handleOpenUrl)
 
     return () => {
-      Linking.removeAllListeners("url")
+      Linking.removeAllListeners('url')
     }
   }, [dispatch])
 
@@ -123,9 +123,10 @@ export default function HomeScreen({
       )}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={themedStyles.listContainer}>
+        style={themedStyles.listContainer}
+      >
         <View style={styles.listHolder}>
-          <TouchableOpacity onPress={() => navigation.navigate("Popular")}>
+          <TouchableOpacity onPress={() => navigation.navigate('Popular')}>
             <List.Item
               title="popular tags"
               left={PopularIcon}
@@ -134,7 +135,7 @@ export default function HomeScreen({
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity onPress={() => navigation.navigate("Classic")}>
+          <TouchableOpacity onPress={() => navigation.navigate('Classic')}>
             <List.Item
               title="classic tags"
               left={ClassicIcon}
@@ -143,7 +144,7 @@ export default function HomeScreen({
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity onPress={() => navigation.navigate("Easy")}>
+          <TouchableOpacity onPress={() => navigation.navigate('Easy')}>
             <List.Item
               title="easy tags"
               left={EasyIcon}
@@ -152,7 +153,7 @@ export default function HomeScreen({
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity onPress={() => navigation.navigate("New")}>
+          <TouchableOpacity onPress={() => navigation.navigate('New')}>
             <List.Item
               title="new tags"
               left={NewIcon}
@@ -164,8 +165,9 @@ export default function HomeScreen({
         <View style={styles.listHolder}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Labels")
-            }}>
+              navigation.navigate('Labels')
+            }}
+          >
             <List.Item
               title="labels"
               left={LabelsIcon}
@@ -177,8 +179,9 @@ export default function HomeScreen({
         <View style={styles.listHolder}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("About")
-            }}>
+              navigation.navigate('About')
+            }}
+          >
             <List.Item
               title="about"
               left={AboutIcon}
@@ -190,8 +193,9 @@ export default function HomeScreen({
           <Divider />
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Options")
-            }}>
+              navigation.navigate('Options')
+            }}
+          >
             <List.Item
               title="options"
               left={OptionsIcon}
@@ -202,8 +206,9 @@ export default function HomeScreen({
           <Divider />
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Data")
-            }}>
+              navigation.navigate('Data')
+            }}
+          >
             <List.Item
               title="my data"
               left={DataIcon}
@@ -218,8 +223,9 @@ export default function HomeScreen({
           visible={snackBarVisible}
           onDismiss={() => setSnackBarVisible(false)}
           action={{
-            label: "close",
-          }}>
+            label: 'close',
+          }}
+        >
           {snackBarMessage}
         </Snackbar>
       </Portal>
@@ -227,12 +233,12 @@ export default function HomeScreen({
   )
 }
 
-const PopularIcon = homeIcon("star")
-const ClassicIcon = homeIcon("pillar")
-const EasyIcon = homeIcon("teddy-bear")
-const NewIcon = homeIcon("leaf")
-const RightIcon = homeIcon("chevron-right")
-const LabelsIcon = homeIcon("tag-multiple-outline")
-const AboutIcon = homeIcon("information-outline")
-const OptionsIcon = homeIcon("cog-outline")
-const DataIcon = homeIcon("database")
+const PopularIcon = homeIcon('star')
+const ClassicIcon = homeIcon('pillar')
+const EasyIcon = homeIcon('teddy-bear')
+const NewIcon = homeIcon('leaf')
+const RightIcon = homeIcon('chevron-right')
+const LabelsIcon = homeIcon('tag-multiple-outline')
+const AboutIcon = homeIcon('information-outline')
+const OptionsIcon = homeIcon('cog-outline')
+const DataIcon = homeIcon('database')

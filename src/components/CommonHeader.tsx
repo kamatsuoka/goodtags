@@ -1,19 +1,19 @@
-import {useBodyInsets, useHorizontalInset} from "@app/hooks"
-import {TabBarBackground} from "@app/lib/theme"
-import {getHeaderTitle} from "@react-navigation/elements"
-import {useNavigation} from "@react-navigation/native"
-import {NativeStackHeaderProps} from "@react-navigation/native-stack"
-import React from "react"
+import { useBodyInsets, useHorizontalInset } from '@app/hooks'
+import { TabBarBackground } from '@app/lib/theme'
+import { getHeaderTitle } from '@react-navigation/elements'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackHeaderProps } from '@react-navigation/native-stack'
+import React from 'react'
 import {
   Platform,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
-} from "react-native"
-import {Text} from "react-native-paper"
-import useHeaderHeight from "../hooks/useHeaderHeight"
-import BackButton from "./BackButton"
-import homeIcon from "./homeIcon"
+} from 'react-native'
+import { Text } from 'react-native-paper'
+import useHeaderHeight from '../hooks/useHeaderHeight'
+import BackButton from './BackButton'
+import homeIcon from './homeIcon'
 
 type CommonHeaderProps = {
   backType?: BackType
@@ -34,7 +34,7 @@ export const navHeader =
   (insetHeader: boolean) => (props: NativeStackHeaderProps) => {
     const title = getHeaderTitle(props.options, props.route.name)
     const backType =
-      props.options.headerBackTitle === "cancel"
+      props.options.headerBackTitle === 'cancel'
         ? BackType.Cancel
         : BackType.Back
     return (
@@ -51,21 +51,21 @@ export const navHeader =
  */
 export default function CommonHeader({
   backType = BackType.Back,
-  title = "",
-  titleIcon = "",
+  title = '',
+  titleIcon = '',
   insetHeader = false,
 }: CommonHeaderProps) {
-  const {paddingLeft} = useBodyInsets()
+  const { paddingLeft } = useBodyInsets()
   const headerInset = useHorizontalInset()
   const navigation = useNavigation()
   const headerHeight = useHeaderHeight()
-  const ios = Platform.OS === "ios"
+  const ios = Platform.OS === 'ios'
 
   const themedStyles = StyleSheet.create({
     logoButton: {
       width: BUTTON_SIZE,
       height: BUTTON_SIZE,
-      backgroundColor: "transparent",
+      backgroundColor: 'transparent',
     },
     header: {
       ...styles.header,
@@ -94,7 +94,7 @@ export default function CommonHeader({
   }
 
   const titleComponent =
-    typeof title === "string" ? (
+    typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
         <Text variant="titleMedium" style={styles.title}>
@@ -116,10 +116,10 @@ export default function CommonHeader({
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
     backgroundColor: TabBarBackground,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   cancel: {
     marginLeft: 10,
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
     width: 50,
   },
   titleHolder: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   title: {

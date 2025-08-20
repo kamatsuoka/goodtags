@@ -1,18 +1,18 @@
-import useTagListState from "@app/hooks/useTagListState"
-import {setTagListType, setTagState, TagState} from "@app/modules/visitSlice"
-import {RootStackParamList} from "@app/navigation/navigationParams"
-import {useFocusEffect, useNavigation} from "@react-navigation/native"
-import {NativeStackNavigationProp} from "@react-navigation/native-stack"
-import {FlashList} from "@shopify/flash-list"
-import {RefObject, useCallback, useRef} from "react"
-import {Platform, StyleSheet, TouchableOpacity, View} from "react-native"
-import {Text} from "react-native-paper"
-import CommonStyles from "../constants/CommonStyles"
-import {useAppDispatch, useAppSelector} from "../hooks"
-import Tag from "../lib/models/Tag"
-import {LoadingState, TagListEnum, TagListType} from "../modules/tagLists"
-import {getSelectedTagSetter} from "../modules/tagListUtil"
-import TagListItem, {ITEM_HEIGHT} from "./TagListItem"
+import useTagListState from '@app/hooks/useTagListState'
+import { setTagListType, setTagState, TagState } from '@app/modules/visitSlice'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { FlashList } from '@shopify/flash-list'
+import { RefObject, useCallback, useRef } from 'react'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Text } from 'react-native-paper'
+import CommonStyles from '../constants/CommonStyles'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import Tag from '../lib/models/Tag'
+import { LoadingState, TagListEnum, TagListType } from '../modules/tagLists'
+import { getSelectedTagSetter } from '../modules/tagListUtil'
+import TagListItem, { ITEM_HEIGHT } from './TagListItem'
 
 export type TagListProps = {
   title: string
@@ -45,7 +45,7 @@ const TagList = (props: TagListProps) => {
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const tagState = useAppSelector(state => state.visit.tagState)
 
-  const {listRef} = props
+  const { listRef } = props
 
   const scrollToSelectedTag = useCallback(() => {
     // scroll to selected index when user pages through list inside sheet music view
@@ -87,7 +87,7 @@ const TagList = (props: TagListProps) => {
     }, [dispatch, scrollToSelectedTag, tagState]),
   )
 
-  const onViewableItemsChanged = (items: {viewableItems: Array<any>}) => {
+  const onViewableItemsChanged = (items: { viewableItems: Array<any> }) => {
     if (items.viewableItems?.length > 0) {
       visibleIndex.current = {
         min: items.viewableItems[0].index,
@@ -139,21 +139,22 @@ const TagList = (props: TagListProps) => {
    * Renders a single tag in the FlatList
    */
   const renderItem = useCallback(
-    (tagData: {item: number; index: number}) => {
+    (tagData: { item: number; index: number }) => {
       const tag: Tag = tagsById[tagData.item]
       return (
         <TouchableOpacity
           style={styles.listItemHolder}
           onPress={() => {
-            dispatch(setSelectedTag({index: tagData.index, id: tag.id}))
+            dispatch(setSelectedTag({ index: tagData.index, id: tag.id }))
             dispatch(setTagListType(props.tagListType))
             dispatch(setTagState(TagState.opening))
-            if (autoRotate && Platform.OS === "ios") {
-              navigation.navigate("PortraitTransition")
+            if (autoRotate && Platform.OS === 'ios') {
+              navigation.navigate('PortraitTransition')
             } else {
-              navigation.navigate("Tag")
+              navigation.navigate('Tag')
             }
-          }}>
+          }}
+        >
           <TagListItem
             tag={tag}
             tagListType={props.tagListType}
@@ -185,7 +186,7 @@ const TagList = (props: TagListProps) => {
         data={allTagIds}
         estimatedItemSize={ITEM_HEIGHT}
         extraData={selectedTag}
-        keyExtractor={(item, index) => "key" + index}
+        keyExtractor={(item, index) => 'key' + index}
         ListEmptyComponent={listEmptyComponent}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
@@ -199,17 +200,17 @@ const TagList = (props: TagListProps) => {
 const styles = StyleSheet.create({
   statusView: {
     opacity: 1.0,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     height: 25,
   },
   emptyMessage: {
     fontSize: 14,
     paddingTop: 55,
-    textAlign: "center",
+    textAlign: 'center',
   },
   listItemHolder: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
 })
 

@@ -1,5 +1,5 @@
-import {StyleSheet} from "react-native"
-import useHeaderHeight from "./useHeaderHeight"
+import { StyleSheet } from 'react-native'
+import useHeaderHeight from './useHeaderHeight'
 
 /**
  * Get os-dependent fab group style

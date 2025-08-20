@@ -1,4 +1,4 @@
-import {getNotePlayer, NotePlayer} from "./NotePlayer"
+import { getNotePlayer, NotePlayer } from './NotePlayer'
 
 /**
  * Action handlers for note button

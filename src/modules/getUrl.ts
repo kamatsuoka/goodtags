@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig} from "axios"
+import axios, { AxiosRequestConfig } from 'axios'
 
 export default async function getUrl<T = string>(
   baseUrl: string,

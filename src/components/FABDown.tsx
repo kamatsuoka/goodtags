@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react'
 import {
   Animated,
   GestureResponderEvent,
@@ -9,13 +9,13 @@ import {
   TouchableWithoutFeedback,
   View,
   ViewStyle,
-} from "react-native"
+} from 'react-native'
 
-import {Card, FAB, Text} from "react-native-paper"
-import {getFABGroupColors} from "react-native-paper/lib/module/components/FAB/utils"
-import {IconSource} from "react-native-paper/lib/module/components/Icon"
-import {MD3Theme} from "react-native-paper/lib/typescript/types"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import { Card, FAB, Text } from 'react-native-paper'
+import { getFABGroupColors } from 'react-native-paper/lib/module/components/FAB/utils'
+import { IconSource } from 'react-native-paper/lib/module/components/Icon'
+import { MD3Theme } from 'react-native-paper/lib/typescript/types'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export type Props = {
   /**
@@ -41,7 +41,7 @@ export type Props = {
     containerStyle?: StyleProp<ViewStyle>
     labelStyle?: StyleProp<TextStyle>
     onPress: (e: GestureResponderEvent) => void
-    size?: "small" | "medium"
+    size?: 'small' | 'medium'
     testID?: string
   }>
   /**
@@ -77,7 +77,7 @@ export type Props = {
    * Callback which is called on opening and closing the speed dial.
    * The open state needs to be updated when it's called, otherwise the change is dropped.
    */
-  onStateChange: (state: {open: boolean}) => void
+  onStateChange: (state: { open: boolean }) => void
   /**
    * Whether `FAB` is currently visible.
    */
@@ -96,7 +96,7 @@ export type Props = {
    *
    * Color mappings variant for combinations of container and icon colors.
    */
-  variant?: "primary" | "secondary" | "tertiary" | "surface"
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'surface'
   /**
    * @optional
    */
@@ -108,11 +108,11 @@ export type Props = {
   /**
    * Size of main button
    */
-  size?: "small" | "medium" | "large"
+  size?: 'small' | 'medium' | 'large'
   /**
    * Mode of main button
    */
-  mode?: "flat" | "elevated"
+  mode?: 'flat' | 'elevated'
   /**
    * Pass down testID from Group props to FAB.
    */
@@ -137,12 +137,12 @@ export const FABDown = ({
   testID,
   onStateChange,
   color: colorProp,
-  variant = "primary",
+  variant = 'primary',
   backdropColor: customBackdropColor,
-  size = "small",
-  mode = "flat",
+  size = 'small',
+  mode = 'flat',
 }: Props) => {
-  const {current: backdrop} = React.useRef<Animated.Value>(
+  const { current: backdrop } = React.useRef<Animated.Value>(
     new Animated.Value(0),
   )
   const animations = React.useRef<Animated.Value[]>(
@@ -162,7 +162,7 @@ export const FABDown = ({
     | null
   >(null)
 
-  const {scale} = theme.animation
+  const { scale } = theme.animation
 
   React.useEffect(() => {
     if (open) {
@@ -203,11 +203,11 @@ export const FABDown = ({
     }
   }, [open, actions, backdrop, scale])
 
-  const close = () => onStateChange({open: false})
+  const close = () => onStateChange({ open: false })
 
-  const toggle = () => onStateChange({open: !open})
+  const toggle = () => onStateChange({ open: !open })
 
-  const {labelColor, backdropColor, stackedFABBackgroundColor} =
+  const { labelColor, backdropColor, stackedFABBackgroundColor } =
     getFABGroupColors({
       theme,
       customBackdropColor,
@@ -247,7 +247,7 @@ export const FABDown = ({
       : 8,
   )
 
-  const {top, bottom, right, left} = useSafeAreaInsets()
+  const { top, bottom, right, left } = useSafeAreaInsets()
   const themedStyles = StyleSheet.create({
     containerPaddings: {
       paddingTop: top,
@@ -267,10 +267,11 @@ export const FABDown = ({
   return (
     <View
       pointerEvents="box-none"
-      style={[styles.container, themedStyles.containerPaddings, style]}>
+      style={[styles.container, themedStyles.containerPaddings, style]}
+    >
       <TouchableWithoutFeedback accessibilityRole="button" onPress={close}>
         <Animated.View
-          pointerEvents={open ? "auto" : "none"}
+          pointerEvents={open ? 'auto' : 'none'}
           style={[
             styles.backdrop,
             {
@@ -293,7 +294,7 @@ export const FABDown = ({
           color={colorProp}
           accessibilityLabel={accessibilityLabel}
           accessibilityRole="button"
-          accessibilityState={{expanded: open}}
+          accessibilityState={{ expanded: open }}
           style={[styles.fab, fabStyle]}
           visible={visible}
           label={label}
@@ -302,17 +303,17 @@ export const FABDown = ({
           size={size}
           mode={mode}
         />
-        <ScrollView pointerEvents={open ? "box-none" : "none"}>
+        <ScrollView pointerEvents={open ? 'box-none' : 'none'}>
           {actions.map((it, i) => {
             const labelTextStyle = {
               color: it.labelTextColor ?? labelColor,
               ...theme.fonts.titleMedium,
             }
             const marginHorizontal =
-              typeof it.size === "undefined" || it.size === "small" ? 24 : 16
+              typeof it.size === 'undefined' || it.size === 'small' ? 24 : 16
             const accessLabel = it.label
             const actionSize =
-              typeof it.size !== "undefined" ? it.size : "small"
+              typeof it.size !== 'undefined' ? it.size : 'small'
 
             return (
               <View
@@ -323,7 +324,8 @@ export const FABDown = ({
                     marginHorizontal,
                   },
                 ]}
-                pointerEvents={open ? "box-none" : "none"}>
+                pointerEvents={open ? 'box-none' : 'none'}
+              >
                 {it.label && (
                   <View>
                     <Card
@@ -338,16 +340,18 @@ export const FABDown = ({
                         [
                           styles.containerStyle,
                           {
-                            transform: [{translateY: labelTranslations[i]}],
+                            transform: [{ translateY: labelTranslations[i] }],
                             opacity: opacities[i],
                           },
                           styles.v3ContainerStyle,
                           it.containerStyle,
                         ] as StyleProp<ViewStyle>
-                      }>
+                      }
+                    >
                       <Text
                         variant="titleMedium"
-                        style={[labelTextStyle, it.labelStyle]}>
+                        style={[labelTextStyle, it.labelStyle]}
+                      >
                         {it.label}
                       </Text>
                     </Card>
@@ -360,11 +364,11 @@ export const FABDown = ({
                   style={
                     [
                       {
-                        transform: [{scale: scales[i]}],
+                        transform: [{ scale: scales[i] }],
                         opacity: opacities[i],
                         backgroundColor: stackedFABBackgroundColor,
                       },
-                      {transform: [{translateY: translations[i]}]},
+                      { transform: [{ translateY: translations[i] }] },
                       it.style,
                     ] as StyleProp<ViewStyle>
                   }
@@ -386,15 +390,15 @@ export const FABDown = ({
   )
 }
 
-FABDown.displayName = "FAB.GroupDown"
+FABDown.displayName = 'FAB.GroupDown'
 
 const styles = StyleSheet.create({
   safeArea: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
   },
   container: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
   },
   fab: {
     marginHorizontal: 16,
@@ -414,12 +418,12 @@ const styles = StyleSheet.create({
   },
   item: {
     marginBottom: 16,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   v3ContainerStyle: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     elevation: 0,
   },
 })

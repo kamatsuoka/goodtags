@@ -1,24 +1,24 @@
-import AboutWithCredits from "@app/components/AboutWithCredits"
-import {RootStackParamList} from "@app/navigation/navigationParams"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {StyleSheet, View} from "react-native"
-import {IconButton, useTheme} from "react-native-paper"
+import AboutWithCredits from '@app/components/AboutWithCredits'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { StyleSheet, View } from 'react-native'
+import { IconButton, useTheme } from 'react-native-paper'
 
-type Props = NativeStackScreenProps<RootStackParamList, "About">
+type Props = NativeStackScreenProps<RootStackParamList, 'About'>
 /**
  * About goodtags
  */
-export default function AboutScreen({navigation}: Props) {
+export default function AboutScreen({ navigation }: Props) {
   const theme = useTheme()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.colors.primary,
     },
     iconHolder: {
-      justifyContent: "flex-start",
+      justifyContent: 'flex-start',
     },
   })
 

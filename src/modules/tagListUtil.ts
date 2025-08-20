@@ -1,20 +1,20 @@
 /**
  * utilities for working with tag lists
  */
-import {ActionCreatorWithPayload, createSelector} from "@reduxjs/toolkit"
-import {RootState} from "../store"
-import {ClassicActions, selectClassic} from "./classicSlice"
-import {EasyActions, selectEasy} from "./easySlice"
+import { ActionCreatorWithPayload, createSelector } from '@reduxjs/toolkit'
+import { RootState } from '../store'
+import { ClassicActions, selectClassic } from './classicSlice'
+import { EasyActions, selectEasy } from './easySlice'
 import {
   FavoritesActions,
   selectFavorites,
   selectLabelState,
-} from "./favoritesSlice"
-import {HistoryActions, selectHistory} from "./historySlice"
-import {NewActions, selectNew} from "./newSlice"
-import {PopularActions, selectPopular} from "./popularSlice"
-import {SearchActions, selectSearchResults} from "./searchSlice"
-import {TagListEnum, TagListState, TagListType} from "./tagLists"
+} from './favoritesSlice'
+import { HistoryActions, selectHistory } from './historySlice'
+import { NewActions, selectNew } from './newSlice'
+import { PopularActions, selectPopular } from './popularSlice'
+import { SearchActions, selectSearchResults } from './searchSlice'
+import { TagListEnum, TagListState, TagListType } from './tagLists'
 
 export function getTagListSelector(
   tagListType: TagListType,
@@ -47,7 +47,7 @@ export function isFavoriteOrLabel(tagListType: TagListType) {
 }
 
 export function isLabelType(tagListType: TagListType) {
-  return typeof tagListType === "string"
+  return typeof tagListType === 'string'
 }
 
 function getLabeledTagListSelector(label: string) {

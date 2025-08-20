@@ -1,8 +1,8 @@
-import {StyleSheet, View} from "react-native"
-import {Text, useTheme} from "react-native-paper"
-import Logo from "../components/Logo"
+import { StyleSheet, View } from 'react-native'
+import { Text, useTheme } from 'react-native-paper'
+import Logo from '../components/Logo'
 
-const packageJson = require("../../package.json")
+const packageJson = require('../../package.json')
 
 /**
  * About view
@@ -11,8 +11,8 @@ export default function AboutBase() {
   const theme = useTheme()
   const styles = StyleSheet.create({
     body: {
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     text: {
       color: theme.colors.onPrimary,
@@ -25,7 +25,7 @@ export default function AboutBase() {
     <View style={styles.body}>
       <Logo size={48} dark={false} />
       {logoText(packageJson.version)}
-      {logoText("by Kenji Matsuoka")}
+      {logoText('by Kenji Matsuoka')}
     </View>
   )
 }

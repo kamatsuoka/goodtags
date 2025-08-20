@@ -1,22 +1,22 @@
-import {useFocusEffect} from "@react-navigation/native"
-import {FlashList} from "@shopify/flash-list"
-import {useCallback, useRef, useState} from "react"
-import {StyleSheet, View} from "react-native"
+import { useFocusEffect } from '@react-navigation/native'
+import { FlashList } from '@shopify/flash-list'
+import { useCallback, useRef, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import {
   ActivityIndicator,
   Button,
   Chip,
   Snackbar,
   useTheme,
-} from "react-native-paper"
-import {FABDown} from "../components/FABDown"
-import ListHeader from "../components/ListHeader"
-import SearchDialog from "../components/SearchDialog"
-import TagList from "../components/TagList"
-import CommonStyles from "../constants/CommonStyles"
-import {Collection, MAX_TAGS, SortOrder} from "../constants/Search"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
-import useFabDownStyle from "../hooks/useFabDownStyle"
+} from 'react-native-paper'
+import { FABDown } from '../components/FABDown'
+import ListHeader from '../components/ListHeader'
+import SearchDialog from '../components/SearchDialog'
+import TagList from '../components/TagList'
+import CommonStyles from '../constants/CommonStyles'
+import { Collection, MAX_TAGS, SortOrder } from '../constants/Search'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
+import useFabDownStyle from '../hooks/useFabDownStyle'
 import {
   InitialFilters,
   SearchActions,
@@ -24,20 +24,20 @@ import {
   moreSearch,
   newSearch,
   selectSearchResults,
-} from "../modules/searchSlice"
+} from '../modules/searchSlice'
 import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
   TagListEnum,
-} from "../modules/tagLists"
+} from '../modules/tagLists'
 
 /**
  * List of search results.
  */
 const SearchScreen = () => {
   const theme = useTheme()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const [searchMenuVisible, setSearchMenuVisible] = useState(true)
   const loadingState = useAppSelector(
     state => selectSearchResults(state).loadingState,
@@ -88,7 +88,7 @@ const SearchScreen = () => {
     if (shouldLoadMore) {
       const morePayload = await dispatch(moreSearch())
       if (
-        morePayload.type.endsWith("/fulfilled") &&
+        morePayload.type.endsWith('/fulfilled') &&
         morePayload.payload &&
         isASearchPayload(morePayload.payload)
       ) {
@@ -100,11 +100,11 @@ const SearchScreen = () => {
   const statusMessage = () => {
     switch (loadingState) {
       case LoadingState.succeeded:
-        return "no matching tags found"
+        return 'no matching tags found'
       case LoadingState.idle:
-        return "tap the search button below to find tags"
+        return 'tap the search button below to find tags'
     }
-    return ""
+    return ''
   }
 
   const fabActions = [
@@ -115,13 +115,13 @@ const SearchScreen = () => {
           icon: SORT_ICONS[order],
           label: SORT_LABELS[order],
           onPress: async () => {
-            dispatch(newSearch({sortOrder: order}))
+            dispatch(newSearch({ sortOrder: order }))
           },
         }
       }),
     {
-      icon: "broom",
-      label: "clear search",
+      icon: 'broom',
+      label: 'clear search',
       onPress: async () => {
         dispatch(SearchActions.setLoadingState(LoadingState.idle))
         return dispatch(SearchActions.clearSearch())
@@ -139,8 +139,9 @@ const SearchScreen = () => {
         icon={icon}
         // elevated={true}
         onPress={() => setSearchMenuVisible(true)}
-        textStyle={{color: theme.colors.primary}}
-        style={styles.filterButton}>
+        textStyle={{ color: theme.colors.primary }}
+        style={styles.filterButton}
+      >
         {label.toLowerCase()}
       </Chip>
     ) : null
@@ -158,7 +159,8 @@ const SearchScreen = () => {
         return setSearchMenuVisible(true)
       }}
       style={styles.compactSearchBar}
-      labelStyle={styles.compactSearchLabel}>
+      labelStyle={styles.compactSearchLabel}
+    >
       {query}
     </Button>
   )
@@ -176,17 +178,17 @@ const SearchScreen = () => {
         <View style={styles.filterHolder}>
           {filterChip(
             filters.collection !== Collection.ALL,
-            "playlist-check",
+            'playlist-check',
             filters.collection.toString(),
           )}
           {filterChip(
             filters.learningTracks !== InitialFilters.learningTracks,
-            "filter-check-outline",
-            "tracks",
+            'filter-check-outline',
+            'tracks',
           )}
           {filterChip(
             filters.parts && filters.parts !== InitialFilters.parts,
-            "account-multiple-check-outline",
+            'account-multiple-check-outline',
             `${filters.parts} parts`,
           )}
         </View>
@@ -218,21 +220,23 @@ const SearchScreen = () => {
             return setSearchMenuVisible(true)
           }}
           style={styles.compactSearchBar}
-          labelStyle={themedStyles.compactSearchLabelEmpty}>
-          {"new search"}
+          labelStyle={themedStyles.compactSearchLabelEmpty}
+        >
+          {'new search'}
         </Button>
       </View>
       <Snackbar
         visible={loadingState === LoadingState.failed}
         onDismiss={setIdle}
-        onIconPress={setIdle}>
+        onIconPress={setIdle}
+      >
         {getErrorMessage()}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "cog-outline"}
+        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
-        onStateChange={({open}) => setFabOpen(open)}
+        onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
         theme={theme}
@@ -243,16 +247,16 @@ const SearchScreen = () => {
 
 const styles = StyleSheet.create({
   filterHolder: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 3,
   },
   filterButton: {
     borderRadius: 0,
     margin: 3,
     paddingTop: 0,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   compactSearchBar: {
     marginHorizontal: 5,
@@ -266,18 +270,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   container: {
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
     paddingBottom: 0,
     marginBottom: 0,
   },
   buttonHolder: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   statusText: {
     paddingTop: 2,
     fontSize: 15,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   spinner: {
     height: 60,

@@ -1,5 +1,5 @@
-import {useState} from "react"
-import {Keyboard, Pressable, StyleSheet, View} from "react-native"
+import { useState } from 'react'
+import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
 import {
   Button,
   Checkbox,
@@ -10,16 +10,16 @@ import {
   Searchbar,
   Text,
   useTheme,
-} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
-import {Collection, Parts} from "../constants/Search"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
+} from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Collection, Parts } from '../constants/Search'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
 import {
   SearchFilters,
   newSearch,
   selectSearchResults,
-} from "../modules/searchSlice"
-import SearchOptions from "./SearchOptions"
+} from '../modules/searchSlice'
+import SearchOptions from './SearchOptions'
 
 type Props = {
   query: string
@@ -29,11 +29,11 @@ type Props = {
 export default function SearchDialog(props: Props) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const {query, filters, dismiss} = props
+  const { query, filters, dismiss } = props
   const [draftFilters, setDraftFilters] = useState(filters)
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const allTagIds = useAppSelector(
     state => selectSearchResults(state).allTagIds,
   )
@@ -48,20 +48,20 @@ export default function SearchDialog(props: Props) {
       paddingRight,
     },
     searchOptions: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      flexWrap: "wrap",
-      alignItems: "flex-start",
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      flexWrap: 'wrap',
+      alignItems: 'flex-start',
       paddingLeft: 20,
     },
     searchInput: {
       borderWidth: 0,
       borderBottomWidth: 0,
-      borderBottomColor: "transparent",
+      borderBottomColor: 'transparent',
     },
     optionsContainer: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginHorizontal: 5,
     },
     optionText: {
@@ -94,7 +94,7 @@ export default function SearchDialog(props: Props) {
         autoComplete="off"
         autoCorrect={false}
         autoFocus={true}
-        icon={existingSearchResults ? "chevron-left" : () => null}
+        icon={existingSearchResults ? 'chevron-left' : () => null}
         inputStyle={styles.searchInput}
         multiline={false}
         numberOfLines={1}
@@ -125,12 +125,14 @@ export default function SearchDialog(props: Props) {
                   collection: value as Collection,
                 })
               }
-              value={draftFilters.collection}>
+              value={draftFilters.collection}
+            >
               {Object.values(Collection).map(value => {
                 return (
                   <View
                     key={`collection_${value}`}
-                    style={styles.optionsContainer}>
+                    style={styles.optionsContainer}
+                  >
                     <RadioButton.Item
                       label={value.toLowerCase()}
                       labelStyle={styles.optionText}
@@ -150,7 +152,7 @@ export default function SearchDialog(props: Props) {
                 labelStyle={styles.optionText}
                 style={styles.checkboxItem}
                 position="leading"
-                status={draftFilters.sheetMusic ? "checked" : "unchecked"}
+                status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -165,7 +167,7 @@ export default function SearchDialog(props: Props) {
                 labelStyle={styles.optionText}
                 style={styles.checkboxItem}
                 position="leading"
-                status={draftFilters.learningTracks ? "checked" : "unchecked"}
+                status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -183,7 +185,8 @@ export default function SearchDialog(props: Props) {
                   parts: value as Parts,
                 })
               }
-              value={draftFilters.parts || "any"}>
+              value={draftFilters.parts || 'any'}
+            >
               {Object.values(Parts).map(value => {
                 return (
                   <View key={`parts_${value}`} style={styles.optionsContainer}>
@@ -210,14 +213,15 @@ export default function SearchDialog(props: Props) {
                 Keyboard.dismiss()
               }}
             />
-            titleStyle={styles.offlineTitle}>
+            titleStyle={styles.offlineTitle}
+          >
             <View style={styles.optionsContainer}>
               <Checkbox.Item
                 label="enabled"
                 labelStyle={styles.optionText}
                 style={styles.checkboxItem}
                 position="leading"
-                status={draftFilters.offline ? "checked" : "unchecked"}
+                status={draftFilters.offline ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -234,7 +238,8 @@ export default function SearchDialog(props: Props) {
           visible={modeExplanationDialogVisible}
           onDismiss={() => setModeExplanationDialogVisible(false)}
           // It's otherwise a *very* round dialog
-          theme={{...theme, roundness: 3}}>
+          theme={{ ...theme, roundness: 3 }}
+        >
           <Dialog.Title>Search mode</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">

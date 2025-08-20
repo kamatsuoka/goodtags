@@ -1,6 +1,6 @@
-import {DbWrapper, InnerDb} from "@app/modules/sqlUtil"
-import {setImmediate} from "@testing-library/react-native/build/helpers/timers"
-import {SQLTransactionAsync, SQLTransactionAsyncCallback} from "expo-sqlite"
+import { DbWrapper, InnerDb } from '@app/modules/sqlUtil'
+import { setImmediate } from '@testing-library/react-native/build/helpers/timers'
+import { SQLTransactionAsync, SQLTransactionAsyncCallback } from 'expo-sqlite'
 
 class TestSqliteDatabase implements InnerDb {
   numTxns: number
@@ -37,12 +37,12 @@ function promiseWithResolvers<T>(): {
     resolve = res
     reject = rej
   })
-  return {promise, resolve: resolve as any, reject: reject as any}
+  return { promise, resolve: resolve as any, reject: reject as any }
 }
 
-describe("DbWrapper class", () => {
-  describe("replacing the underlying DB", () => {
-    it("should direct new transactions to the new DB", async () => {
+describe('DbWrapper class', () => {
+  describe('replacing the underlying DB', () => {
+    it('should direct new transactions to the new DB', async () => {
       const db1 = new TestSqliteDatabase()
       const db2 = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db1)
@@ -59,11 +59,11 @@ describe("DbWrapper class", () => {
       expect(db2.numTxns).toBe(1)
     })
 
-    it("should wait until the last ongoing transaction finishes", async () => {
+    it('should wait until the last ongoing transaction finishes', async () => {
       const db = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db)
 
-      const {promise, resolve} = promiseWithResolvers<void>()
+      const { promise, resolve } = promiseWithResolvers<void>()
       const t1 = wrapper.runTransactionAsync(async _ => await promise, true)
       const t2 = wrapper.runTransactionAsync(async _ => await promise, true)
 
@@ -83,11 +83,11 @@ describe("DbWrapper class", () => {
       expect(hasDoneReplacement).toBe(true)
     })
 
-    it("should queue up subsequent transactions while a replacement is ongoing", async () => {
+    it('should queue up subsequent transactions while a replacement is ongoing', async () => {
       const db = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db)
 
-      const {promise, resolve} = promiseWithResolvers<void>()
+      const { promise, resolve } = promiseWithResolvers<void>()
       await wrapper.queueDbReplacement(async () => {
         await promise
         return db
@@ -108,7 +108,7 @@ describe("DbWrapper class", () => {
       const wrapper = new DbWrapper(db)
 
       // Prevent replacement from starting by having an ongoing txn
-      const {promise, resolve} = promiseWithResolvers<void>()
+      const { promise, resolve } = promiseWithResolvers<void>()
       const t = wrapper.runTransactionAsync(async _ => await promise, true)
       // Submit the two replacements
       let replacedA = false
@@ -130,12 +130,12 @@ describe("DbWrapper class", () => {
       expect(replacedB).toBe(false)
     })
 
-    it("should queue second replacement if first has already started", async () => {
+    it('should queue second replacement if first has already started', async () => {
       const db = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db)
 
       // Prevent replacement from finishing
-      const {promise, resolve} = promiseWithResolvers<void>()
+      const { promise, resolve } = promiseWithResolvers<void>()
       let replacedA = false
       let replacedB = false
       await wrapper.queueDbReplacement(async () => {

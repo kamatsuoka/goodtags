@@ -1,8 +1,8 @@
-import {StyleSheet, View} from "react-native"
-import {Divider, Menu, Text, useTheme} from "react-native-paper"
-import {useAppDispatch, useAppSelector} from "../hooks"
-import {TrackPart} from "../lib/models/Tag"
-import {playTrack, setSelectedPart} from "../modules/tracksSlice"
+import { StyleSheet, View } from 'react-native'
+import { Divider, Menu, Text, useTheme } from 'react-native-paper'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { TrackPart } from '../lib/models/Tag'
+import { playTrack, setSelectedPart } from '../modules/tracksSlice'
 
 type TrackMenuProps = {
   onDismiss: () => void
@@ -10,14 +10,14 @@ type TrackMenuProps = {
 
 export default function TrackMenu(props: TrackMenuProps) {
   const theme = useTheme()
-  const {onDismiss} = props
-  const {selectedPart, tagTracks} = useAppSelector(state => state.tracks)
+  const { onDismiss } = props
+  const { selectedPart, tagTracks } = useAppSelector(state => state.tracks)
   const dispatch = useAppDispatch()
 
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.inversePrimary,
-      justifyContent: "center",
+      justifyContent: 'center',
       paddingVertical: 12,
       paddingLeft: 8,
       paddingRight: 4,
@@ -45,7 +45,7 @@ export default function TrackMenu(props: TrackMenuProps) {
   }
 
   const displayName = (part: string) =>
-    `${part}`.replace("AllParts", "All Parts")
+    `${part}`.replace('AllParts', 'All Parts')
 
   const itemTitle = (part: string) => (
     <Text>

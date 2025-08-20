@@ -1,7 +1,7 @@
-import Tag from "@app/lib/models/Tag"
-import {BottomTabScreenProps} from "@react-navigation/bottom-tabs"
-import {CompositeScreenProps} from "@react-navigation/native"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
+import Tag from '@app/lib/models/Tag'
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
+import { CompositeScreenProps } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 export type RootStackParamList = {
   Welcome: undefined
@@ -43,7 +43,7 @@ export type HomeNavigatorParamList = {
   Easy: undefined
   New: undefined
   Labels: undefined
-  Labeled: {label: string}
+  Labeled: { label: string }
   LabelEditor: undefined
   Options: undefined
   Data: undefined

@@ -1,34 +1,34 @@
-import {clearLastVisited} from "@app/modules/visitSlice"
-import {useFocusEffect} from "@react-navigation/native"
-import {FlashList} from "@shopify/flash-list"
-import {useCallback, useEffect, useRef, useState} from "react"
-import {StyleSheet, View} from "react-native"
-import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
-import {FABDown} from "../components/FABDown"
-import ListHeader from "../components/ListHeader"
-import TagList from "../components/TagList"
-import CommonStyles from "../constants/CommonStyles"
-import {SortOrder} from "../constants/Search"
+import { clearLastVisited } from '@app/modules/visitSlice'
+import { useFocusEffect } from '@react-navigation/native'
+import { FlashList } from '@shopify/flash-list'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
+import { FABDown } from '../components/FABDown'
+import ListHeader from '../components/ListHeader'
+import TagList from '../components/TagList'
+import CommonStyles from '../constants/CommonStyles'
+import { SortOrder } from '../constants/Search'
 import {
   AppDispatch,
   useAppDispatch,
   useAppSelector,
   useBodyInsets,
-} from "../hooks"
-import useFabDownStyle from "../hooks/useFabDownStyle"
-import {NewActions, getNewTags, selectNew} from "../modules/newSlice"
+} from '../hooks'
+import useFabDownStyle from '../hooks/useFabDownStyle'
+import { NewActions, getNewTags, selectNew } from '../modules/newSlice'
 import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
   TagListEnum,
-} from "../modules/tagLists"
+} from '../modules/tagLists'
 
 /**
  * New tags
  */
 const NewScreen = () => {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const loadingState = useAppSelector(state => selectNew(state).loadingState)
@@ -61,15 +61,15 @@ const NewScreen = () => {
       },
     },
     {
-      icon: "reload",
-      label: "reload new tags",
+      icon: 'reload',
+      label: 'reload new tags',
       onPress: async () => {
         return dispatch(getNewTags(true))
       },
     },
     {
-      icon: "broom",
-      label: "clear new tags",
+      icon: 'broom',
+      label: 'clear new tags',
       onPress: async () => {
         return dispatch(NewActions.reset())
       },
@@ -98,7 +98,7 @@ const NewScreen = () => {
         <TagList
           tagListType={TagListEnum.New}
           emptyMessage={
-            loadingState === LoadingState.succeeded ? "no tags found" : ""
+            loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
           title="New Tags"
@@ -112,14 +112,15 @@ const NewScreen = () => {
       <Snackbar
         visible={loadingState === LoadingState.failed}
         onDismiss={setIdle}
-        onIconPress={setIdle}>
+        onIconPress={setIdle}
+      >
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "cog-outline"}
+        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
-        onStateChange={({open}) => setFabOpen(open)}
+        onStateChange={({ open }) => setFabOpen(open)}
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}

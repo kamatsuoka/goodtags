@@ -1,6 +1,6 @@
-import * as fs from "fs"
-import path from "node:path"
-import process from "node:process"
+import * as fs from 'fs'
+import path from 'node:path'
+import process from 'node:process'
 
 // Share app code constants to reduce duplication, reduce drift
 import {
@@ -10,7 +10,7 @@ import {
   SRC_RELATIVE_APP_BUNDLE_DB_DIR,
   TAGS_DB_NAME,
   VALID_SCHEMA_VERSION,
-} from "../src/constants/sql"
+} from '../src/constants/sql'
 
 const OUT_DIR = path.join(__dirname, `../src/${SRC_RELATIVE_APP_BUNDLE_DB_DIR}`)
 const MANIFEST_PATH = path.join(OUT_DIR, MANIFEST_NAME)
@@ -22,7 +22,7 @@ async function downloadLatestSearchDb() {
     // TODO - Should we put the DB md5sum in the manifest and use that to validate the DB (for both checking
     //  existing and downloading new)?
     if (shouldDownload(manifestContents)) {
-      console.log("Downloading remote database...")
+      console.log('Downloading remote database...')
       await downloadDb(manifestContents)
     }
   } catch (e) {
@@ -34,9 +34,9 @@ async function downloadLatestSearchDb() {
 async function assertResponseOk(response: Response): Promise<Response> {
   if (!response.ok) {
     throw new Error(
-      "Request failed. status: " +
+      'Request failed. status: ' +
         response.status +
-        ", body: " +
+        ', body: ' +
         (await response.text()),
     )
   }
@@ -51,7 +51,7 @@ async function fetchRemoteManifest(): Promise<Uint8Array> {
   const response = await fetch(
     `${REMOTE_ASSET_BASE_URL}/${path.basename(MANIFEST_PATH)}`,
     {
-      method: "GET",
+      method: 'GET',
     },
   ).then(assertResponseOk)
 
@@ -79,7 +79,7 @@ function shouldDownload(remoteManifestContents: Uint8Array): boolean {
  * Downloads the DB and writes both the manifest and DB to disk
  */
 async function downloadDb(remoteManifestContents: Uint8Array) {
-  fs.mkdirSync(OUT_DIR, {recursive: true})
+  fs.mkdirSync(OUT_DIR, { recursive: true })
 
   const remoteManifest: DbManifest = JSON.parse(
     new TextDecoder().decode(remoteManifestContents),
@@ -93,18 +93,18 @@ async function downloadDb(remoteManifestContents: Uint8Array) {
   }
 
   const response = await fetch(`${REMOTE_ASSET_BASE_URL}/${remoteSqlName}`, {
-    method: "GET",
+    method: 'GET',
   }).then(assertResponseOk)
 
-  const dbFile = fs.openSync(LOCAL_SQL_PATH, "w")
+  const dbFile = fs.openSync(LOCAL_SQL_PATH, 'w')
   const reader = response.body?.getReader()
   if (reader == null) {
-    throw new Error("Unable to get response reader for DB request!")
+    throw new Error('Unable to get response reader for DB request!')
   }
 
   while (true) {
     const readVal = await reader.read()
-    const {done, value} = readVal
+    const { done, value } = readVal
     // May not be set when done is true
     if (value != null) {
       fs.writeSync(dbFile, value)

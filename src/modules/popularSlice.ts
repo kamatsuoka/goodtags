@@ -1,17 +1,17 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {SearchParams, SortOrder} from "../constants/Search"
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { SearchParams, SortOrder } from '../constants/Search'
 import {
   buildTagIds,
   CurrentTagVersion,
   SearchResult,
   SearchResultsById,
-} from "../lib/models/Tag"
-import {RootState} from "../store"
-import {handleError} from "./handleError"
-import {fetchAndConvertTags} from "./searchutil"
-import {LoadingState, sortAlpha, TagListState} from "./tagLists"
-import {SelectedTag} from "./tagListUtil"
-import {ThunkApiConfig} from "./thunkApiConfig"
+} from '../lib/models/Tag'
+import { RootState } from '../store'
+import { handleError } from './handleError'
+import { fetchAndConvertTags } from './searchutil'
+import { LoadingState, sortAlpha, TagListState } from './tagLists'
+import { SelectedTag } from './tagListUtil'
+import { ThunkApiConfig } from './thunkApiConfig'
 
 const MaxPopular = 50
 
@@ -43,7 +43,7 @@ function sortByDownloads(state: PopularState) {
 }
 
 export const popularSlice = createSlice({
-  name: "popular",
+  name: 'popular',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -77,7 +77,7 @@ export const popularSlice = createSlice({
     })
     builder.addCase(getPopularTags.fulfilled, (state, action) => {
       if (action.payload !== undefined) {
-        const {tagsById, allTagIds} = buildTagIds(action.payload)
+        const { tagsById, allTagIds } = buildTagIds(action.payload)
         state.tagsById = tagsById
         state.allTagIds = allTagIds
         // tags always come from server sorted by downloads
@@ -129,7 +129,7 @@ export const getPopularTags = createAsyncThunk<
   SearchResult[] | undefined,
   boolean,
   ThunkApiConfig
->("popular/getPopularTags", async (refresh: boolean, thunkAPI) => {
+>('popular/getPopularTags', async (refresh: boolean, thunkAPI) => {
   const state = thunkAPI.getState().popular
   if (
     refresh ||

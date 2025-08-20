@@ -1,12 +1,12 @@
-import {useBodyInsets} from "@app/hooks"
-import {TabBarBackground} from "@app/lib/theme"
-import {FlashList} from "@shopify/flash-list"
-import React from "react"
-import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
-import {Text} from "react-native-paper"
-import useHeaderHeight from "../hooks/useHeaderHeight"
-import BackButton from "./BackButton"
-import homeIcon from "./homeIcon"
+import { useBodyInsets } from '@app/hooks'
+import { TabBarBackground } from '@app/lib/theme'
+import { FlashList } from '@shopify/flash-list'
+import React from 'react'
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import { Text } from 'react-native-paper'
+import useHeaderHeight from '../hooks/useHeaderHeight'
+import BackButton from './BackButton'
+import homeIcon from './homeIcon'
 
 type ListHeaderProps = {
   // reference to FlashList with tags
@@ -25,17 +25,17 @@ const BUTTON_SIZE = LOGO_SIZE + 10
 export default function ListHeader({
   listRef,
   showBackButton = false,
-  title = "",
-  titleIcon = "",
+  title = '',
+  titleIcon = '',
 }: ListHeaderProps) {
-  const {paddingLeft} = useBodyInsets()
+  const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
       width: BUTTON_SIZE,
       height: BUTTON_SIZE,
-      backgroundColor: "transparent",
+      backgroundColor: 'transparent',
     },
     header: {
       ...styles.header,
@@ -51,7 +51,7 @@ export default function ListHeader({
   )
 
   const maybeWrappedTitle: React.ReactNode =
-    typeof title === "string" ? (
+    typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
         <Text variant="titleMedium" style={styles.title}>
@@ -69,7 +69,8 @@ export default function ListHeader({
           index: 0,
           animated: true,
         })
-      }}>
+      }}
+    >
       {maybeWrappedTitle}
     </TouchableWithoutFeedback>
   )
@@ -85,10 +86,10 @@ export default function ListHeader({
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
     backgroundColor: TabBarBackground,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     opacity: 0.9,
     paddingHorizontal: 10,
     height: 55,
@@ -97,8 +98,8 @@ const styles = StyleSheet.create({
     width: 50,
   },
   titleHolder: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 50,
   },
   title: {

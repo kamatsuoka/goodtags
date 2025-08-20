@@ -46,6 +46,7 @@ yarn-error.log
 
 *.keystore
 !debug.keystore
+.kotlin/
 
 # fastlane
 #
@@ -63,10 +64,10 @@ yarn-error.log
 *.jsbundle
 
 # Ruby / CocoaPods
-/ios/Pods/
+**/Pods/
 /vendor/bundle/
 
-# yarn 3
+# Yarn
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

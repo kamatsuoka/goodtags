@@ -1,38 +1,38 @@
-import {clearLastVisited} from "@app/modules/visitSlice"
-import {useFocusEffect} from "@react-navigation/native"
-import {FlashList} from "@shopify/flash-list"
-import {useCallback, useEffect, useRef, useState} from "react"
-import {StyleSheet, View} from "react-native"
-import {ActivityIndicator, Snackbar, useTheme} from "react-native-paper"
-import {FABDown} from "../components/FABDown"
-import ListHeader from "../components/ListHeader"
-import TagList from "../components/TagList"
-import CommonStyles from "../constants/CommonStyles"
-import {SortOrder} from "../constants/Search"
+import { clearLastVisited } from '@app/modules/visitSlice'
+import { useFocusEffect } from '@react-navigation/native'
+import { FlashList } from '@shopify/flash-list'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
+import { FABDown } from '../components/FABDown'
+import ListHeader from '../components/ListHeader'
+import TagList from '../components/TagList'
+import CommonStyles from '../constants/CommonStyles'
+import { SortOrder } from '../constants/Search'
 import {
   AppDispatch,
   useAppDispatch,
   useAppSelector,
   useBodyInsets,
-} from "../hooks"
-import useFabDownStyle from "../hooks/useFabDownStyle"
+} from '../hooks'
+import useFabDownStyle from '../hooks/useFabDownStyle'
 import {
   PopularActions,
   getPopularTags,
   selectPopular,
-} from "../modules/popularSlice"
+} from '../modules/popularSlice'
 import {
   LoadingState,
   SORT_ICONS,
   SORT_LABELS,
   TagListEnum,
-} from "../modules/tagLists"
+} from '../modules/tagLists'
 
 /**
  * Popular tags
  */
 const PopularScreen = () => {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const loadingState = useAppSelector(
@@ -67,15 +67,15 @@ const PopularScreen = () => {
       },
     },
     {
-      icon: "reload",
-      label: "reload popular tags",
+      icon: 'reload',
+      label: 'reload popular tags',
       onPress: async () => {
         return dispatch(getPopularTags(true))
       },
     },
     {
-      icon: "broom",
-      label: "clear popular tags",
+      icon: 'broom',
+      label: 'clear popular tags',
       onPress: async () => {
         return dispatch(PopularActions.reset())
       },
@@ -105,7 +105,7 @@ const PopularScreen = () => {
         <TagList
           tagListType={TagListEnum.Popular}
           emptyMessage={
-            loadingState === LoadingState.succeeded ? "no tags found" : ""
+            loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
           title="Popular Tags"
@@ -119,14 +119,15 @@ const PopularScreen = () => {
       <Snackbar
         visible={loadingState === LoadingState.failed}
         onDismiss={setIdle}
-        onIconPress={setIdle}>
+        onIconPress={setIdle}
+      >
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? "minus" : "cog-outline"}
+        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
-        onStateChange={({open}) => setFabOpen(open)}
+        onStateChange={({ open }) => setFabOpen(open)}
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}

@@ -1,23 +1,23 @@
-import {useFocusEffect} from "@react-navigation/native"
-import {FlashList} from "@shopify/flash-list"
-import {useCallback, useRef, useState} from "react"
-import {StyleSheet, View} from "react-native"
-import {useTheme} from "react-native-paper"
-import {FABDown} from "../components/FABDown"
-import ListHeader from "../components/ListHeader"
-import TagList from "../components/TagList"
-import CommonStyles from "../constants/CommonStyles"
-import {SortOrder} from "../constants/Search"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
-import useFabDownStyle from "../hooks/useFabDownStyle"
-import {FavoritesActions} from "../modules/favoritesSlice"
-import {SORT_ICONS, TagListEnum} from "../modules/tagLists"
+import { useFocusEffect } from '@react-navigation/native'
+import { FlashList } from '@shopify/flash-list'
+import { useCallback, useRef, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { useTheme } from 'react-native-paper'
+import { FABDown } from '../components/FABDown'
+import ListHeader from '../components/ListHeader'
+import TagList from '../components/TagList'
+import CommonStyles from '../constants/CommonStyles'
+import { SortOrder } from '../constants/Search'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
+import useFabDownStyle from '../hooks/useFabDownStyle'
+import { FavoritesActions } from '../modules/favoritesSlice'
+import { SORT_ICONS, TagListEnum } from '../modules/tagLists'
 
 /**
  * Favorites list
  */
 export const FavoritesScreen = () => {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
   const dispatch = useAppDispatch()
@@ -37,8 +37,8 @@ export const FavoritesScreen = () => {
 
   const iconLabel =
     sortOrder === SortOrder.newest
-      ? "sort alphabetically"
-      : "sort by recently added"
+      ? 'sort alphabetically'
+      : 'sort by recently added'
 
   const fabActions = [
     {
@@ -58,7 +58,7 @@ export const FavoritesScreen = () => {
     },
   })
 
-  const emptyMessage = "tap the heart icon in sheet music to add favorites"
+  const emptyMessage = 'tap the heart icon in sheet music to add favorites'
   return (
     <View style={CommonStyles.container}>
       <ListHeader listRef={listRef} title="faves" titleIcon="heart-outline" />
@@ -71,10 +71,10 @@ export const FavoritesScreen = () => {
         />
       </View>
       <FABDown
-        icon={fabOpen ? "minus" : "cog-outline"}
+        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
-        onStateChange={({open}) => setFabOpen(open)}
+        onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
         theme={useTheme()}

@@ -1,4 +1,4 @@
-import {AppDispatch, RootState} from "../store"
+import { AppDispatch, RootState } from '../store'
 
 export type ThunkApiConfig = {
   dispatch: AppDispatch

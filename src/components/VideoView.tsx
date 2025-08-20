@@ -1,15 +1,15 @@
-import {useState} from "react"
-import {Dimensions, StyleSheet, View} from "react-native"
-import {IconButton, useTheme} from "react-native-paper"
-import YoutubePlayer from "react-native-youtube-iframe"
-import Tag, {Video} from "../lib/models/Tag"
+import { useState } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
+import { IconButton, useTheme } from 'react-native-paper'
+import YoutubePlayer from 'react-native-youtube-iframe'
+import Tag, { Video } from '../lib/models/Tag'
 
 /**
  * View youtube videos for a tag
  */
-const VideoView = (props: {tag: Tag}) => {
+const VideoView = (props: { tag: Tag }) => {
   const theme = useTheme()
-  const {tag} = props
+  const { tag } = props
   const [videoIndex, setVideoIndex] = useState(0)
   const getSelectedVideo = (): Video => tag.videos[videoIndex]
 
@@ -22,38 +22,38 @@ const VideoView = (props: {tag: Tag}) => {
 
   const hasPrev = videoIndex > 0
   const hasNext = videoIndex < tag.videos.length - 1
-  const screen = Dimensions.get("window")
+  const screen = Dimensions.get('window')
   const deviceAspectRatio = screen.width / screen.height
 
   const styles = StyleSheet.create({
     body: {
       margin: MARGIN,
-      alignItems: "center",
+      alignItems: 'center',
       borderRadius: 20,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
     },
     webView: {
       flex: 1,
       elevation: 0,
       borderTopLeftRadius: 30,
-      width: "100%",
+      width: '100%',
     },
     videoView: {
       aspectRatio: VIDEO_ASPECT_RATIO,
       paddingLeft: 0,
       paddingRight: 0,
-      backgroundColor: "transparent",
+      backgroundColor: 'transparent',
       margin: 0,
-      alignItems: "center",
+      alignItems: 'center',
     },
     videoInner: {
-      alignItems: "center",
-      flexDirection: "row",
-      overflow: "hidden",
+      alignItems: 'center',
+      flexDirection: 'row',
+      overflow: 'hidden',
       padding: 0,
       margin: 0,
     },
-    arrow: {justifyContent: "center"},
+    arrow: { justifyContent: 'center' },
   })
 
   function getVideoSize() {
@@ -61,16 +61,16 @@ const VideoView = (props: {tag: Tag}) => {
       // normally landscape mode
       const height = screen.height - 2 * MARGIN
       const width = height * VIDEO_ASPECT_RATIO
-      return {height, width}
+      return { height, width }
     } else {
       const width = screen.width - 2 * MARGIN
       const height = width / VIDEO_ASPECT_RATIO
-      return {height, width}
+      return { height, width }
     }
   }
 
   const videoSize = getVideoSize()
-  const buttonMode = "contained"
+  const buttonMode = 'contained'
   const bodyStyle = StyleSheet.compose(styles.body, videoSize)
 
   return (

@@ -1,25 +1,25 @@
-import {navHeader} from "@app/components/CommonHeader"
-import CreateLabel from "@app/components/CreateLabel"
-import TagLabels from "@app/components/TagLabels"
-import {MainTheme, SansSerifTheme} from "@app/lib/theme"
-import AboutScreen from "@app/screens/AboutScreen"
-import {FavoritesScreen} from "@app/screens/FavoritesScreen"
-import HistoryScreen from "@app/screens/HistoryScreen"
-import LandscapeTransition from "@app/screens/LandscapeTransition"
-import PortraitTransition from "@app/screens/PortraitTransition"
-import {NavigationContainer} from "@react-navigation/native"
+import { navHeader } from '@app/components/CommonHeader'
+import CreateLabel from '@app/components/CreateLabel'
+import TagLabels from '@app/components/TagLabels'
+import { MainTheme, SansSerifTheme } from '@app/lib/theme'
+import AboutScreen from '@app/screens/AboutScreen'
+import { FavoritesScreen } from '@app/screens/FavoritesScreen'
+import HistoryScreen from '@app/screens/HistoryScreen'
+import LandscapeTransition from '@app/screens/LandscapeTransition'
+import PortraitTransition from '@app/screens/PortraitTransition'
+import { NavigationContainer } from '@react-navigation/native'
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
-} from "@react-navigation/native-stack"
-import {useMemo} from "react"
-import {Platform} from "react-native"
-import {Provider as PaperProvider} from "react-native-paper"
-import {useAppSelector, useBodyInsets, useHorizontalInset} from "../hooks"
-import TagScreen from "../screens/TagScreen"
-import WelcomeScreen from "../screens/WelcomeScreen"
-import TabNavigator from "./TabNavigator"
-import {RootStackParamList} from "./navigationParams"
+} from '@react-navigation/native-stack'
+import { useMemo } from 'react'
+import { Platform } from 'react-native'
+import { Provider as PaperProvider } from 'react-native-paper'
+import { useAppSelector, useBodyInsets, useHorizontalInset } from '../hooks'
+import TagScreen from '../screens/TagScreen'
+import WelcomeScreen from '../screens/WelcomeScreen'
+import TabNavigator from './TabNavigator'
+import { RootStackParamList } from './navigationParams'
 
 /**
  * Navigator stack.
@@ -29,20 +29,20 @@ export default function RootStackNavigator() {
   const lastVisited = useAppSelector(state => state.visit.lastVisited)
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const serifs = useAppSelector(state => state.options.serifs)
-  const {paddingLeft, paddingRight} = useBodyInsets()
-  const ios = Platform.OS === "ios"
+  const { paddingLeft, paddingRight } = useBodyInsets()
+  const ios = Platform.OS === 'ios'
   const paddingHorizontal = useHorizontalInset()
 
   const homeOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
-      orientation: autoRotate ? "portrait_up" : "all",
+      orientation: autoRotate ? 'portrait_up' : 'all',
     }),
     [autoRotate],
   )
 
   const tagOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
-      orientation: autoRotate ? "landscape_right" : "all",
+      orientation: autoRotate ? 'landscape_right' : 'all',
     }),
     [autoRotate],
   )
@@ -54,7 +54,7 @@ export default function RootStackNavigator() {
   const screenOptions: NativeStackNavigationOptions = {
     freezeOnBlur: true,
     headerShown: false,
-    animation: "fade",
+    animation: 'fade',
   }
 
   const theme = serifs ? MainTheme : SansSerifTheme
@@ -63,8 +63,9 @@ export default function RootStackNavigator() {
     <PaperProvider theme={theme}>
       <NavigationContainer theme={theme}>
         <Stack.Navigator
-          initialRouteName={lastVisited ? "Tabs" : "Welcome"}
-          screenOptions={screenOptions}>
+          initialRouteName={lastVisited ? 'Tabs' : 'Welcome'}
+          screenOptions={screenOptions}
+        >
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen
             name="Tabs"
@@ -79,12 +80,12 @@ export default function RootStackNavigator() {
           <Stack.Screen
             name="PortraitTransition"
             component={PortraitTransition}
-            options={{animation: "none", ...homeOrientation}}
+            options={{ animation: 'none', ...homeOrientation }}
           />
           <Stack.Screen
             name="LandscapeTransition"
             component={LandscapeTransition}
-            options={{animation: "none", ...tagOrientation}}
+            options={{ animation: 'none', ...tagOrientation }}
           />
           <Stack.Screen
             name="Favorites"
@@ -110,8 +111,9 @@ export default function RootStackNavigator() {
                 paddingLeft: ios ? paddingLeft : paddingHorizontal,
                 paddingRight: ios ? paddingRight : paddingHorizontal,
               },
-              headerTitleAlign: "center",
-            }}>
+              headerTitleAlign: 'center',
+            }}
+          >
             <Stack.Screen
               name="About"
               component={AboutScreen}
@@ -128,7 +130,7 @@ export default function RootStackNavigator() {
               name="TagLabels"
               component={TagLabels}
               options={{
-                title: "labels",
+                title: 'labels',
                 header: navHeader(true),
                 ...tagOrientation,
               }}
@@ -137,10 +139,10 @@ export default function RootStackNavigator() {
               name="CreateLabel"
               component={CreateLabel}
               options={{
-                title: "new label",
-                headerBackTitle: "cancel",
+                title: 'new label',
+                headerBackTitle: 'cancel',
                 header: navHeader(true),
-                orientation: "all",
+                orientation: 'all',
               }}
             />
           </Stack.Group>

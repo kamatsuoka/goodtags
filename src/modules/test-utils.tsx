@@ -1,8 +1,8 @@
-import {render} from "@testing-library/react-native"
-import {Provider as ReactReduxProvider} from "react-redux"
+import { render } from '@testing-library/react-native'
+import { Provider as ReactReduxProvider } from 'react-redux'
 // @ts-ignore
-import configureStore from "redux-mock-store"
-import thunk from "redux-thunk"
+import configureStore from 'redux-mock-store'
+import thunk from 'redux-thunk'
 
 const INITIAL_STATE = {
   count: 5,
@@ -14,11 +14,11 @@ const store = mockStore(INITIAL_STATE)
 
 const reduxRender = (ui: JSX.Element, options: any = {}) =>
   render(ui, {
-    wrapper: ({children}) => (
+    wrapper: ({ children }) => (
       <ReactReduxProvider store={store}>{children}</ReactReduxProvider>
     ),
     ...options,
   })
 
 // override render method
-export {reduxRender as render, store}
+export { reduxRender as render, store }

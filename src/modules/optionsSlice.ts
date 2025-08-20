@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Define a type for the slice state
 export interface OptionsState {
@@ -14,7 +14,7 @@ export const initialState: OptionsState = {
   autoRotateDelay: 200,
 }
 export const optionsSlice = createSlice({
-  name: "options",
+  name: 'options',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {

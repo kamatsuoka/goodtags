@@ -1,58 +1,58 @@
 /**
  * Screen for displaying tag sheet music
  */
-import useSelectedTag from "@app/hooks/useSelectedTag"
-import useTagListState from "@app/hooks/useTagListState"
-import {TagState, setTagState} from "@app/modules/visitSlice"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {useCallback, useEffect, useMemo, useRef, useState} from "react"
+import useSelectedTag from '@app/hooks/useSelectedTag'
+import useTagListState from '@app/hooks/useTagListState'
+import { TagState, setTagState } from '@app/modules/visitSlice'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ColorValue,
   Platform,
   StyleSheet,
   TouchableOpacity,
   View,
-} from "react-native"
-import {isTablet} from "react-native-device-info"
-import {Appbar, IconButton, Modal, Text, useTheme} from "react-native-paper"
-import {IconSource} from "react-native-paper/lib/typescript/components/Icon"
-import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
+} from 'react-native'
+import { isTablet } from 'react-native-device-info'
+import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
-} from "react-native-safe-area-context"
-import SoundPlayer from "react-native-sound-player"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import {FABDown} from "../components/FABDown"
-import NoteButton from "../components/NoteButton"
-import SheetMusic from "../components/SheetMusic"
-import TagInfoView from "../components/TagInfoView"
-import TrackMenu from "../components/TrackMenu"
-import VideoView from "../components/VideoView"
-import CommonStyles from "../constants/CommonStyles"
-import {useAppDispatch, useAppSelector} from "../hooks"
-import {NoteHandler} from "../lib/NoteHandler"
-import {noteForKey} from "../lib/NotePlayer"
-import {IdBackground, InversePrimaryLowAlpha} from "../lib/theme"
-import {FavoritesActions} from "../modules/favoritesSlice"
-import {HistoryActions} from "../modules/historySlice"
-import {getSelectedTagSetter, isLabelType} from "../modules/tagListUtil"
-import {TagListEnum} from "../modules/tagLists"
+} from 'react-native-safe-area-context'
+import SoundPlayer from 'react-native-sound-player'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { FABDown } from '../components/FABDown'
+import NoteButton from '../components/NoteButton'
+import SheetMusic from '../components/SheetMusic'
+import TagInfoView from '../components/TagInfoView'
+import TrackMenu from '../components/TrackMenu'
+import VideoView from '../components/VideoView'
+import CommonStyles from '../constants/CommonStyles'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { NoteHandler } from '../lib/NoteHandler'
+import { noteForKey } from '../lib/NotePlayer'
+import { IdBackground, InversePrimaryLowAlpha } from '../lib/theme'
+import { FavoritesActions } from '../modules/favoritesSlice'
+import { HistoryActions } from '../modules/historySlice'
+import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
+import { TagListEnum } from '../modules/tagLists'
 import {
   PlayingState,
   playTrack,
   setPlayingState,
   setTagTracks,
   stopTrack,
-} from "../modules/tracksSlice"
-import {RootStackParamList} from "../navigation/navigationParams"
+} from '../modules/tracksSlice'
+import { RootStackParamList } from '../navigation/navigationParams'
 
-type Props = NativeStackScreenProps<RootStackParamList, "Tag">
+type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 
 /**
  * Sheet music screen
  */
-const TagScreen = ({navigation}: Props) => {
+const TagScreen = ({ navigation }: Props) => {
   const theme = useTheme()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
   const [tracksVisible, setTracksVisible] = useState(false)
@@ -78,7 +78,7 @@ const TagScreen = ({navigation}: Props) => {
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
 
-  const ios = Platform.OS === "ios"
+  const ios = Platform.OS === 'ios'
   const iPad = ios && isTablet()
 
   const themedStyles = StyleSheet.create({
@@ -88,12 +88,12 @@ const TagScreen = ({navigation}: Props) => {
       marginRight: 7,
     },
     idHolder: {
-      alignItems: "baseline",
+      alignItems: 'baseline',
       backgroundColor: IdBackground,
       borderRadius: 7,
       borderColor: theme.colors.secondaryContainer,
       borderWidth: 2,
-      flexDirection: "row",
+      flexDirection: 'row',
       paddingHorizontal: 7,
       paddingBottom: 4,
       paddingVertical: ios ? 4 : 0,
@@ -104,7 +104,7 @@ const TagScreen = ({navigation}: Props) => {
       backgroundColor: theme.colors.backdrop,
     },
     videoModal: {
-      flexDirection: "row",
+      flexDirection: 'row',
       backgroundColor: theme.colors.backdrop,
     },
     iconHolderDim: {
@@ -121,18 +121,18 @@ const TagScreen = ({navigation}: Props) => {
     ...styles.topBar,
     paddingTop: insets.top,
     // avoid split screen controls interfering with favorite button on iPad
-    ...(iPad ? {left: 120} : {left: 0, right: 0}),
+    ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
   }
 
-  const fabGroupStyle = {...styles.fabGroup, marginTop: 0, marginRight: 0}
-  const backButtonStyle = {...styles.backButton, marginTop: 0, marginLeft: 0}
+  const fabGroupStyle = { ...styles.fabGroup, marginTop: 0, marginRight: 0 }
+  const backButtonStyle = { ...styles.backButton, marginTop: 0, marginLeft: 0 }
   const bottomActionBarStyle = {
     ...styles.actionBar,
     marginBottom: 0,
     marginLeft: 0,
     marginRight: 0,
   }
-  const modalCloseButtonStyle = {...styles.closeButton}
+  const modalCloseButtonStyle = { ...styles.closeButton }
   if (!ios) {
     fabGroupStyle.marginTop = insets.top - fabGroupStyle.paddingTop
     fabGroupStyle.marginRight = insets.right - fabGroupStyle.paddingRight
@@ -181,7 +181,7 @@ const TagScreen = ({navigation}: Props) => {
   useEffect(() => {
     // after viewing tag for a while, add it to history
     const timeoutId = setTimeout(() => {
-      dispatch(HistoryActions.addHistory({tag}))
+      dispatch(HistoryActions.addHistory({ tag }))
     }, HISTORY_MIN_VIEW_TIME)
     return () => {
       clearTimeout(timeoutId)
@@ -197,12 +197,12 @@ const TagScreen = ({navigation}: Props) => {
     // Subscribe to FinishedPlaying event so we can flip the
     // track control back to 'play'. This may take a few seconds.
     const onFinishedPlayingSubscription = SoundPlayer.addEventListener(
-      "FinishedPlaying",
-      ({success}) => {
-        console.log("got FinishedPlaying")
+      'FinishedPlaying',
+      ({ success }) => {
+        console.log('got FinishedPlaying')
         if (!success) {
           console.log(
-            "got success = false from SoundPlayer FinishedPlaying callback",
+            'got success = false from SoundPlayer FinishedPlaying callback',
           )
         }
         dispatch(setPlayingState(PlayingState.ended))
@@ -254,7 +254,7 @@ const TagScreen = ({navigation}: Props) => {
 
   function selectTag(index: number) {
     const id = allTagIds[index]
-    dispatch(setSelectedTag({index, id}))
+    dispatch(setSelectedTag({ index, id }))
   }
 
   function indexValid(index: number) {
@@ -282,27 +282,27 @@ const TagScreen = ({navigation}: Props) => {
 
   const fabActions = [
     {
-      icon: "file-document-outline",
-      label: "tag info",
+      icon: 'file-document-outline',
+      label: 'tag info',
       onPress: () => setInfoVisible(true),
     },
     {
-      icon: "tag-outline",
-      label: "labels",
-      onPress: () => navigation.navigate("TagLabels"),
+      icon: 'tag-outline',
+      label: 'labels',
+      onPress: () => navigation.navigate('TagLabels'),
     },
   ]
   if (hasTracks()) {
     fabActions.push({
-      icon: "headphones",
-      label: "tracks",
+      icon: 'headphones',
+      label: 'tracks',
       onPress: () => setTracksVisible(true),
     })
   }
   if (hasVideos()) {
     fabActions.push({
-      icon: "video-box",
-      label: "videos",
+      icon: 'video-box',
+      label: 'videos',
       onPress: () => setVideosVisible(true),
     })
   }
@@ -330,7 +330,7 @@ const TagScreen = ({navigation}: Props) => {
   }
 
   const noteIcon = useCallback(
-    (props: {size: number; color: ColorValue}) => (
+    (props: { size: number; color: ColorValue }) => (
       <NoteButton note={keyNote} {...props} />
     ),
     [keyNote],
@@ -385,11 +385,12 @@ const TagScreen = ({navigation}: Props) => {
                 visual feedback matches shape of button */}
         <TouchableOpacity
           onPress={() => toggleFavorite(tag.id)}
-          activeOpacity={0.4}>
+          activeOpacity={0.4}
+        >
           <View style={themedStyles.idHolder}>
             <Text style={themedStyles.id}># {tag.id}</Text>
             <Icon
-              name={favoritesById[tag.id] ? "heart" : "heart-outline"}
+              name={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
               color={theme.colors.primary}
               size={16}
             />
@@ -410,7 +411,8 @@ const TagScreen = ({navigation}: Props) => {
             style={bottomActionBarStyle}
             pointerEvents="box-none"
             entering={FadeIn.duration(100)}
-            exiting={FadeOut.duration(1200)}>
+            exiting={FadeOut.duration(1200)}
+          >
             {/* not using AppAction here b/c onPressOut got lost */}
             <Appbar.Action
               icon={noteIcon}
@@ -430,7 +432,7 @@ const TagScreen = ({navigation}: Props) => {
               style={dimmableIconHolderStyle}
             />
             <AppAction
-              icon={playingState === PlayingState.playing ? "pause" : "play"}
+              icon={playingState === PlayingState.playing ? 'pause' : 'play'}
               onPress={async () => {
                 dispatch(playOrPause)
               }}
@@ -454,10 +456,10 @@ const TagScreen = ({navigation}: Props) => {
           </Animated.View>
         )}
         <FABDown
-          icon={fabOpen ? "minus" : "cog-outline"}
+          icon={fabOpen ? 'minus' : 'cog-outline'}
           open={fabOpen}
           actions={fabActions}
-          onStateChange={({open}) => {
+          onStateChange={({ open }) => {
             dimButtons()
             setFabOpen(open)
           }}
@@ -472,25 +474,29 @@ const TagScreen = ({navigation}: Props) => {
           left: 0,
           right: 0,
           bottom: 0,
-        }}>
+        }}
+      >
         <Modal
           visible={infoVisible}
           onDismiss={() => setInfoVisible(false)}
-          style={themedStyles.modal}>
+          style={themedStyles.modal}
+        >
           <TagInfoView tag={tag} tagListType={tagListType} />
         </Modal>
         {hasVideos() ? (
           <Modal
             visible={videosVisible}
             onDismiss={() => setVideosVisible(false)}
-            style={videoModalStyle}>
+            style={videoModalStyle}
+          >
             <VideoView tag={tag} />
           </Modal>
         ) : null}
         <Modal
           visible={tracksVisible}
           onDismiss={() => setTracksVisible(false)}
-          style={themedStyles.modal}>
+          style={themedStyles.modal}
+        >
           <TrackMenu onDismiss={() => setTracksVisible(false)} />
         </Modal>
         {videosVisible ? (
@@ -513,25 +519,25 @@ const styles = StyleSheet.create({
     ...CommonStyles.container,
   },
   topBar: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: "transparent",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
   buttonHolder: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 3,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     paddingHorizontal: 18,
   },
   actionBar: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     height: 80,
   },
   fabDown: {
@@ -543,13 +549,13 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   noteIcon: {
-    position: "absolute",
+    position: 'absolute',
     margin: 20,
     left: 0,
     bottom: 56,
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 5,
     left: 10,
   },
