@@ -1,4 +1,4 @@
-const presets = ["babel-preset-expo"]
+const presets = ["module:@react-native/babel-preset"]
 const plugins = [
   "react-native-reanimated/plugin",
   [
