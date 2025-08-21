@@ -13,14 +13,11 @@ import { Asset } from 'expo-asset'
 import * as FileSystem from 'expo-file-system'
 import { EncodingType } from 'expo-file-system'
 import * as SQLite from 'expo-sqlite'
-import { SQLTransactionAsyncCallback } from 'expo-sqlite'
 
 // These are the parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
 export interface InnerDb {
-  transactionAsync: (
-    asyncCallback: SQLTransactionAsyncCallback,
-    readOnly?: boolean,
-  ) => Promise<void>
+  withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
+  getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
   closeAsync: () => void
 }
 type ReplaceDbCallback = () => Promise<InnerDb>
@@ -32,10 +29,10 @@ type ReplaceDbCallback = () => Promise<InnerDb>
  * and just moving a new file atomically into place likely wouldn't get used because the underlying DB handle would be
  * pointing at the old file descriptor.
  *
- * This class exposes a single entry point of `transactionAsync` and keeps track of how many active calls there are to
+ * This class exposes a single entry point of `runTransactionAsync` and keeps track of how many active calls there are to
  * that method. When a request comes in to replace the underlying database, it waits for all transactions to end then
  * runs the replacement callback (which presumably changes things on disk). While the replacement callback is running,
- * new calls to `transactionAsync` will wait until the replacement is finished, at which point pending and subsequent
+ * new calls to `runTransactionAsync` will wait until the replacement is finished, at which point pending and subsequent
  * transactions will use the new DB.
  *
  * It is expected that instances of this class act a singleton points of access for a given DB path.
@@ -53,17 +50,21 @@ export class DbWrapper {
     this.replaceDbInProgress = null
   }
 
-  async runTransactionAsync(
-    asyncCallback: SQLTransactionAsyncCallback,
-    readOnly: boolean = false,
-  ): Promise<void> {
+  async runTransactionAsync(asyncCallback: () => Promise<void>): Promise<void> {
     while (this.replaceDbInProgress != null) {
       await this.replaceDbInProgress
     }
     this.txnCount += 1
-    await this.db.transactionAsync(asyncCallback, readOnly)
+    await this.db.withTransactionAsync(asyncCallback)
     this.txnCount -= 1
     this.maybeDoDbReplacement()
+  }
+
+  async getAllAsync<T = any>(source: string, ...params: any[]): Promise<T[]> {
+    while (this.replaceDbInProgress != null) {
+      await this.replaceDbInProgress
+    }
+    return await this.db.getAllAsync<T>(source, ...params)
   }
 
   async queueDbReplacement(replaceDbCallback: ReplaceDbCallback) {
@@ -183,7 +184,8 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   }
 
   // Note we intentionally are just using the basename and not the full path.
-  const dbWrapper = new DbWrapper(SQLite.openDatabase(TAGS_DB_NAME))
+  const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME)
+  const dbWrapper = new DbWrapper(db)
 
   // We've updated based on local data, but we should also check the server for updates. Kick this off once per app
   // open, the first time we load the DB (which should be roughly when the app is opened).
@@ -291,7 +293,7 @@ async function backgroundCheckForRemoteUpdates(
         to: currentManifestPath,
       })
       console.debug('Done updating DB from remote')
-      return SQLite.openDatabase(TAGS_DB_NAME)
+      return await SQLite.openDatabaseAsync(TAGS_DB_NAME)
     })
     .then(/* ignore promise */)
 }

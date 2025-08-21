@@ -147,36 +147,36 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   let videoRows: DbRow[] = []
   let count = '0'
 
-  await db.runTransactionAsync(async txn => {
+  await db.runTransactionAsync(async () => {
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
     console.log('tagSql', tagSql)
-    tagRows = (
-      await txn.executeSqlAsync(tagSql, [...whereVariables, ...suffixVariables])
-    ).rows
+    tagRows = await db.getAllAsync<DbRow>(
+      tagSql,
+      ...whereVariables,
+      ...suffixVariables,
+    )
     console.log('got tagRows.length = ', tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
-    trackRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM tracks WHERE tracks.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
-        [...whereVariables, ...suffixVariables],
-      )
-    ).rows
+    trackRows = await db.getAllAsync<DbRow>(
+      `SELECT * FROM tracks WHERE tracks.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      ...whereVariables,
+      ...suffixVariables,
+    )
     const trackTime = debugDbPerfCurrentTime()
 
-    videoRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM videos WHERE videos.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
-        [...whereVariables, ...suffixVariables],
-      )
-    ).rows
+    videoRows = await db.getAllAsync<DbRow>(
+      `SELECT * FROM videos WHERE videos.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      ...whereVariables,
+      ...suffixVariables,
+    )
     const videoTime = debugDbPerfCurrentTime()
 
-    const count_raw = await txn.executeSqlAsync(
+    const count_raw = await db.getAllAsync<{ count: number }>(
       `SELECT COUNT(*) AS count FROM tags${whereClause}`,
-      whereVariables,
+      ...whereVariables,
     )
     const countTime = debugDbPerfCurrentTime()
     if (DEBUG_DB_PERF) {
@@ -189,9 +189,9 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
           `total=${countTime - start}`,
       )
     }
-    count = count_raw.rows[0].count
+    count = count_raw[0].count.toString()
     console.log('raw count', count)
-  }, true /* readOnly txn */)
+  })
 
   debugDbPerfLogging('Db done, parsing rows', overallStart)
   return tagsFromDbRows(
