@@ -6,7 +6,13 @@ import {
 import RootStackNavigator from '@app/navigation/RootStackNavigator'
 import { persistor, store } from '@app/store'
 import { useEffect } from 'react'
-import { LogBox, Platform, StatusBar } from 'react-native'
+import {
+  LogBox,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+} from 'react-native'
 import ErrorBoundary from 'react-native-error-boundary'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -20,7 +26,9 @@ LogBox.ignoreLogs(['shouldStartLoad']) // react-native-webview for raster (non-p
 /**
  * Top-level component.
  */
-const App = () => {
+function App() {
+  const isDarkMode = useColorScheme() === 'dark'
+
   useEffect(() => {
     // Check if user should be reminded about backup after app loads
     const checkBackupReminder = async () => {
@@ -40,17 +48,33 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={CommonStyles.container}>
-        <ErrorBoundary>
-          <ReactReduxProvider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              {Platform.OS !== 'android' && <StatusBar hidden={true} />}
-              <RootStackNavigator />
-            </PersistGate>
-          </ReactReduxProvider>
-        </ErrorBoundary>
-      </GestureHandlerRootView>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        hidden={Platform.OS !== 'android'}
+      />
+      <AppContent />
     </SafeAreaProvider>
   )
 }
+
+function AppContent() {
+  return (
+    <GestureHandlerRootView style={[styles.container, CommonStyles.container]}>
+      <ErrorBoundary>
+        <ReactReduxProvider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <RootStackNavigator />
+          </PersistGate>
+        </ReactReduxProvider>
+      </ErrorBoundary>
+    </GestureHandlerRootView>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})
+
 export default App

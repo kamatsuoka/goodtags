@@ -2,10 +2,15 @@ import homeIcon from '@app/components/homeIcon'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { restoreFromBackup, shareBackup } from '@app/modules/dataMigration'
 import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
+import {
+  errorCodes,
+  isErrorWithCode,
+  pick as pickDocument,
+  types,
+} from '@react-native-documents/picker'
 import { useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import ReactNativeBlobUtil from 'react-native-blob-util'
-import DocumentPicker from 'react-native-document-picker'
 import { List, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -64,27 +69,21 @@ export default function DataScreen() {
             <TouchableOpacity
               onPress={async () => {
                 try {
-                  const pickerResult = await DocumentPicker.pickSingle({
+                  const pickerResults = await pickDocument({
                     presentationStyle: 'fullScreen',
-                    copyTo: 'documentDirectory',
-                    type: [
-                      DocumentPicker.types.json,
-                      DocumentPicker.types.allFiles,
-                    ],
+                    mode: 'import',
+                    type: [types.json, types.allFiles],
                   })
-                  console.log(
-                    `result from DocumentPicker.pickSingle: ${pickerResult}`,
-                  )
-                  if (pickerResult?.copyError) {
-                    console.error(
-                      `error copying file: ${pickerResult.copyError}`,
-                    )
+                  const pickerResult = pickerResults[0] // Get first file
+                  console.log(`result from pickDocument: ${pickerResult}`)
+                  if (pickerResult?.error) {
+                    console.error(`error with file: ${pickerResult.error}`)
                   }
-                  if (pickerResult?.fileCopyUri) {
+                  if (pickerResult?.uri) {
                     // Check if this is a full backup file or just favorites
                     const fs = ReactNativeBlobUtil.fs
                     const fileContent = await fs.readFile(
-                      pickerResult.fileCopyUri,
+                      pickerResult.uri,
                       'utf8',
                     )
 
@@ -104,7 +103,7 @@ export default function DataScreen() {
                       } else {
                         // Handle as legacy favorites import
                         const importPayload = await dispatch(
-                          receiveSharedFile(pickerResult.fileCopyUri),
+                          receiveSharedFile(pickerResult.uri),
                         )
                         const importResult = importPayload.payload
                         console.log(`importResult: ${importResult}`)
@@ -125,7 +124,10 @@ export default function DataScreen() {
                     setSnackBarVisible(true)
                   }
                 } catch (e) {
-                  if (DocumentPicker.isCancel(e)) {
+                  if (
+                    isErrorWithCode(e) &&
+                    e.code === errorCodes.OPERATION_CANCELED
+                  ) {
                     console.log('document picker cancelled')
                   } else {
                     console.error(JSON.stringify(e))

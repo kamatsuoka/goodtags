@@ -1,6 +1,5 @@
-// prettier-ignore
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "@react-native/typescript-config",
   /* Recommended React Native TSConfig base */
   "compilerOptions": {
     "jsx": "react-jsx",
@@ -21,6 +20,7 @@
   },
   "ts-node": {
     "compilerOptions": {
+      "module": "CommonJS",
       "types": ["node"]
     }
   },

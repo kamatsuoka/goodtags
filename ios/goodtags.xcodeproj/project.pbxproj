@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* goodtagsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* goodtagsTests.m */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		212B5B9D2E568E9900F2F2D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212B5B9C2E568E9900F2F2D0 /* AppDelegate.swift */; };
 		2732625C42AF445DBDB3CE94 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B74FB41D8F8401AB304D74C /* Lato-Regular.ttf */; };
 		5B67A35CA1654C6691F299D4 /* Vollkorn-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F17FAC56F0D04B079899E0E0 /* Vollkorn-Regular.ttf */; };
-		76F15C209052C9BA88C34ECE /* libPods-goodtags-goodtagsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B9BB87970B8D7906FF6533E4 /* libPods-goodtags-goodtagsTests.a */; };
 		83DB75A57A2943AAB61CE373 /* Vollkorn-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 035E1D3F4B1B420FAE652807 /* Vollkorn-Black.ttf */; };
 		844FE9D14F3ED908F5BA81E3 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FBA4D414CE48265321892A1 /* ExpoModulesProvider.swift */; };
 		BA282F83294FA047004E2192 /* goodtagsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA282F82294FA047004E2192 /* goodtagsUITests.swift */; };
@@ -34,8 +32,8 @@
 		BAEF9C4E2946B93700BE394F /* bflat.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BAEF9C412946B93700BE394F /* bflat.mp3 */; };
 		BAEF9C4F2946B93700BE394F /* dnatural.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BAEF9C422946B93700BE394F /* dnatural.mp3 */; };
 		BAEF9C502946B93700BE394F /* dflat.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BAEF9C432946B93700BE394F /* dflat.mp3 */; };
-		C7EDCF8B017F870014B2A966 /* libPods-goodtags.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5B1833B84232F819D34EFE /* libPods-goodtags.a */; };
-		F48F964C43C72C2D20E1B4E7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960023538D189AD82CE4CE00 /* ExpoModulesProvider.swift */; };
+		D9F6773D3BEB704EBD493267 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D8AAFFB08FEC12DA5D3DE042 /* PrivacyInfo.xcprivacy */; };
+		FD07B121566BEDA17A9A60B3 /* libPods-goodtags.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F12447D4BB8B7A431EAA4DFB /* libPods-goodtags.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,18 +66,14 @@
 		00E356F21AD99517003FC87E /* goodtagsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = goodtagsTests.m; sourceTree = "<group>"; };
 		035E1D3F4B1B420FAE652807 /* Vollkorn-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Black.ttf"; path = "../src/assets/fonts/Vollkorn-Black.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* goodtags.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = goodtags.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = goodtags/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = goodtags/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = goodtags/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = goodtags/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = goodtags/main.m; sourceTree = "<group>"; };
-		1F6164C68DF3F0B3EB373C9E /* Pods-goodtags-goodtagsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags-goodtagsTests.release.xcconfig"; path = "Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests.release.xcconfig"; sourceTree = "<group>"; };
+		212B5B9C2E568E9900F2F2D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B74FB41D8F8401AB304D74C /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		2FBA4D414CE48265321892A1 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-goodtags/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		3B5B1833B84232F819D34EFE /* libPods-goodtags.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-goodtags.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		62DAAA88827BEB3E401D1FDB /* Pods-goodtags.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.release.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.release.xcconfig"; sourceTree = "<group>"; };
-		960023538D189AD82CE4CE00 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-goodtags-goodtagsTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		B9BB87970B8D7906FF6533E4 /* libPods-goodtags-goodtagsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-goodtags-goodtagsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		518AA96C73A4405AC77F8800 /* Pods-goodtags.screenshot.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.screenshot.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.screenshot.xcconfig"; sourceTree = "<group>"; };
+		519C9C8BB66B6BC2FC179F4E /* Pods-goodtags.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.release.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.release.xcconfig"; sourceTree = "<group>"; };
+		6C88D0C0168E47253919C2A1 /* Pods-goodtags.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.debug.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.debug.xcconfig"; sourceTree = "<group>"; };
 		BA282F80294FA047004E2192 /* goodtagsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = goodtagsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA282F82294FA047004E2192 /* goodtagsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goodtagsUITests.swift; sourceTree = "<group>"; };
 		BA282F84294FA047004E2192 /* goodtagsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goodtagsUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -100,12 +94,10 @@
 		BAEF9C412946B93700BE394F /* bflat.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bflat.mp3; sourceTree = "<group>"; };
 		BAEF9C422946B93700BE394F /* dnatural.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dnatural.mp3; sourceTree = "<group>"; };
 		BAEF9C432946B93700BE394F /* dflat.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dflat.mp3; sourceTree = "<group>"; };
-		C36E4C7A52AF7F0C4630ED5F /* Pods-goodtags.screenshot.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.screenshot.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.screenshot.xcconfig"; sourceTree = "<group>"; };
-		D9B9BC71ABA065395206AAFD /* Pods-goodtags-goodtagsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags-goodtagsTests.debug.xcconfig"; path = "Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests.debug.xcconfig"; sourceTree = "<group>"; };
-		ECAEA11956D3396B3112BD7D /* Pods-goodtags-goodtagsTests.screenshot.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags-goodtagsTests.screenshot.xcconfig"; path = "Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests.screenshot.xcconfig"; sourceTree = "<group>"; };
+		D8AAFFB08FEC12DA5D3DE042 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = goodtags/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F12447D4BB8B7A431EAA4DFB /* libPods-goodtags.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-goodtags.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F17FAC56F0D04B079899E0E0 /* Vollkorn-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Regular.ttf"; path = "../src/assets/fonts/Vollkorn-Regular.ttf"; sourceTree = "<group>"; };
-		FEE74B9DD0DBBC05EAF2137A /* Pods-goodtags.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.debug.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +105,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76F15C209052C9BA88C34ECE /* libPods-goodtags-goodtagsTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7EDCF8B017F870014B2A966 /* libPods-goodtags.a in Frameworks */,
+				FD07B121566BEDA17A9A60B3 /* libPods-goodtags.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,12 +153,11 @@
 		13B07FAE1A68108700A75B9A /* goodtags */ = {
 			isa = PBXGroup;
 			children = (
+				212B5B9C2E568E9900F2F2D0 /* AppDelegate.swift */,
 				BAD2C327294C4FA600AA1F08 /* LaunchScreen.xib */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB71A68108700A75B9A /* main.m */,
+				D8AAFFB08FEC12DA5D3DE042 /* PrivacyInfo.xcprivacy */,
 			);
 			name = goodtags;
 			sourceTree = "<group>";
@@ -176,8 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				3B5B1833B84232F819D34EFE /* libPods-goodtags.a */,
-				B9BB87970B8D7906FF6533E4 /* libPods-goodtags-goodtagsTests.a */,
+				F12447D4BB8B7A431EAA4DFB /* libPods-goodtags.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -186,7 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				42A3F87FBD6696D9A72A009E /* goodtags */,
-				C2886697EC06AC4647F6E4AF /* goodtagsTests */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -288,22 +276,11 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FEE74B9DD0DBBC05EAF2137A /* Pods-goodtags.debug.xcconfig */,
-				C36E4C7A52AF7F0C4630ED5F /* Pods-goodtags.screenshot.xcconfig */,
-				62DAAA88827BEB3E401D1FDB /* Pods-goodtags.release.xcconfig */,
-				D9B9BC71ABA065395206AAFD /* Pods-goodtags-goodtagsTests.debug.xcconfig */,
-				ECAEA11956D3396B3112BD7D /* Pods-goodtags-goodtagsTests.screenshot.xcconfig */,
-				1F6164C68DF3F0B3EB373C9E /* Pods-goodtags-goodtagsTests.release.xcconfig */,
+				6C88D0C0168E47253919C2A1 /* Pods-goodtags.debug.xcconfig */,
+				518AA96C73A4405AC77F8800 /* Pods-goodtags.screenshot.xcconfig */,
+				519C9C8BB66B6BC2FC179F4E /* Pods-goodtags.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		C2886697EC06AC4647F6E4AF /* goodtagsTests */ = {
-			isa = PBXGroup;
-			children = (
-				960023538D189AD82CE4CE00 /* ExpoModulesProvider.swift */,
-			);
-			name = goodtagsTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -313,13 +290,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "goodtagsTests" */;
 			buildPhases = (
-				35D73AE7D23E743B25BE209E /* [CP] Check Pods Manifest.lock */,
 				F9961F3369B9C565AD7392B5 /* [Expo] Configure project */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				E21F5F842561D6032650D28B /* [CP] Embed Pods Frameworks */,
-				0E081954BF441ADBA3A58890 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -335,7 +309,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "goodtags" */;
 			buildPhases = (
-				743A12DB8A85CC8909793C41 /* [CP] Check Pods Manifest.lock */,
+				7BB6C9CBC09E1A37994AF72E /* [CP] Check Pods Manifest.lock */,
 				368F4735A18E08EAEB68A451 /* Download Search DB */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				9B866312F6A68A0CE51D2DB4 /* [Expo] Configure project */,
@@ -343,8 +317,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				C588E49632806D0DAFE42FC5 /* [CP] Embed Pods Frameworks */,
-				C92B4016B05F39B3E38DC311 /* [CP] Copy Pods Resources */,
+				FCD0A5ED6D41F039707AEEA4 /* [CP] Embed Pods Frameworks */,
+				96B810B512460EA0E798D4E6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -467,6 +441,7 @@
 				BAEF9C482946B93700BE394F /* cnatural.mp3 in Resources */,
 				2732625C42AF445DBDB3CE94 /* Lato-Regular.ttf in Resources */,
 				5B67A35CA1654C6691F299D4 /* Vollkorn-Regular.ttf in Resources */,
+				D9F6773D3BEB704EBD493267 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,45 +478,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios relative | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli')\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n";
 		};
-		0E081954BF441ADBA3A58890 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		35D73AE7D23E743B25BE209E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-goodtags-goodtagsTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		368F4735A18E08EAEB68A451 /* Download Search DB */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -561,7 +497,7 @@
 			shellScript = "PATH=\"$PATH:/opt/homebrew/bin\" yarn run download-search-db\n";
 			showEnvVarsInLog = 0;
 		};
-		743A12DB8A85CC8909793C41 /* [CP] Check Pods Manifest.lock */ = {
+		7BB6C9CBC09E1A37994AF72E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -583,6 +519,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		96B810B512460EA0E798D4E6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9B866312F6A68A0CE51D2DB4 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -602,57 +555,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-goodtags/expo-configure-project.sh\"\n";
 		};
-		C588E49632806D0DAFE42FC5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C92B4016B05F39B3E38DC311 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E21F5F842561D6032650D28B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags-goodtagsTests/Pods-goodtags-goodtagsTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F9961F3369B9C565AD7392B5 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -671,6 +573,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-goodtags-goodtagsTests/expo-configure-project.sh\"\n";
+		};
+		FCD0A5ED6D41F039707AEEA4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -699,7 +618,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* goodtagsTests.m in Sources */,
-				F48F964C43C72C2D20E1B4E7 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,8 +625,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				212B5B9D2E568E9900F2F2D0 /* AppDelegate.swift in Sources */,
 				844FE9D14F3ED908F5BA81E3 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -755,7 +672,6 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D9B9BC71ABA065395206AAFD /* Pods-goodtags-goodtagsTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -766,7 +682,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = goodtagsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -788,12 +704,11 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1F6164C68DF3F0B3EB373C9E /* Pods-goodtags-goodtagsTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = goodtagsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -814,7 +729,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FEE74B9DD0DBBC05EAF2137A /* Pods-goodtags.debug.xcconfig */;
+			baseConfigurationReference = 6C88D0C0168E47253919C2A1 /* Pods-goodtags.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -849,7 +764,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 62DAAA88827BEB3E401D1FDB /* Pods-goodtags.release.xcconfig */;
+			baseConfigurationReference = 519C9C8BB66B6BC2FC179F4E /* Pods-goodtags.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -885,7 +800,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -930,7 +845,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -956,6 +871,8 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -964,7 +881,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1005,7 +922,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1030,6 +947,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1163,7 +1081,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1208,7 +1126,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1234,12 +1152,13 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Screenshot;
 		};
 		BA923FD229B5168F00B09F23 /* Screenshot */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C36E4C7A52AF7F0C4630ED5F /* Pods-goodtags.screenshot.xcconfig */;
+			baseConfigurationReference = 518AA96C73A4405AC77F8800 /* Pods-goodtags.screenshot.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1274,7 +1193,6 @@
 		};
 		BA923FD329B5168F00B09F23 /* Screenshot */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ECAEA11956D3396B3112BD7D /* Pods-goodtags-goodtagsTests.screenshot.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1285,7 +1203,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = goodtagsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
