@@ -39,10 +39,7 @@ export default function HomeScreen({
       paddingBottom: Math.max(insets.bottom, 10),
       paddingHorizontal: 15,
     },
-    buttonHolder: {
-      paddingLeft: insets.left,
-      alignItems: 'flex-start',
-    },
+    buttonHolder: { paddingLeft: insets.left, alignItems: 'flex-start' },
     logoHolder: {
       justifyContent: 'center',
       paddingLeft: insets.left,
@@ -55,11 +52,7 @@ export default function HomeScreen({
       marginVertical: 5,
       paddingVertical: 5,
     },
-    subheader: {
-      marginLeft: 0,
-      paddingBottom: 5,
-      marginBottom: 0,
-    },
+    subheader: { marginLeft: 0, paddingBottom: 5, marginBottom: 0 },
     listHolder: {
       backgroundColor: theme.colors.surface,
       paddingHorizontal: 5,
@@ -86,7 +79,7 @@ export default function HomeScreen({
         ) {
           dispatch(receiveSharedFile(event.url))
         } else {
-          throw `unknown url type ${event.url}`
+          throw new Error(`unknown url type ${event.url}`)
         }
       } catch (e) {
         console.error('an error occurred in handleOpenUrl', e)
@@ -98,20 +91,13 @@ export default function HomeScreen({
     Linking.getInitialURL().then(url => {
       if (url) handleOpenUrl({ url })
     })
-
-    Linking.addEventListener('url', handleOpenUrl)
-
-    return () => {
-      Linking.removeAllListeners('url')
-    }
+    // Modern subscription API (RN >= 0.65) returns a subscription with remove()
+    const subscription = Linking.addEventListener('url', handleOpenUrl)
+    return () => subscription.remove()
   }, [dispatch])
 
   const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
-      paddingLeft,
-      paddingRight,
-    },
+    listContainer: { flex: 1, paddingLeft, paddingRight },
   })
 
   return (
@@ -222,9 +208,7 @@ export default function HomeScreen({
         <Snackbar
           visible={snackBarVisible}
           onDismiss={() => setSnackBarVisible(false)}
-          action={{
-            label: 'close',
-          }}
+          action={{ label: 'close' }}
         >
           {snackBarMessage}
         </Snackbar>

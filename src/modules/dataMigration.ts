@@ -1,3 +1,4 @@
+import { APP_VERSION } from '@app/constants/version'
 import type { AppState } from '@app/store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alert, Platform } from 'react-native'
@@ -38,7 +39,7 @@ export const createFullBackup = async (): Promise<string> => {
       platform: Platform.OS as 'ios' | 'android',
       reduxState: JSON.parse(persistedState),
       metadata: {
-        appVersion: '3.0.5', // TODO: Get this dynamically from package.json
+        appVersion: APP_VERSION,
       },
     }
 

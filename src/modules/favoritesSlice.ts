@@ -538,7 +538,7 @@ export const receiveSharedFile = createAsyncThunk<
       const sharedObj = JSON.parse(data)
       const sharedData = sharedObj as SharedData
       if (sharedData.favorites === undefined && sharedData.labels === undefined)
-        throw `no favorites or labels found`
+        throw new Error('no favorites or labels found')
       const favoriteIds = sharedData.favorites.map(f => f.id) || []
       const { tags: favorites } = await fetchAndConvertTags(
         { ids: favoriteIds },
@@ -583,12 +583,12 @@ export const receiveSharedFile = createAsyncThunk<
     if (url.startsWith('/') || url.startsWith('file://')) {
       const path = url.startsWith('file://') ? url.slice(7) : url
       if (!(await fs.exists(path))) {
-        throw `unable to find file ${path}`
+        throw new Error(`unable to find file ${path}`)
       }
       const data = await fs.readFile(path, 'utf8')
       return await receiveData(data)
     } else {
-      throw `unknown url type: ${url}`
+      throw new Error(`unknown url type: ${url}`)
     }
   } catch (e) {
     console.error(e)
