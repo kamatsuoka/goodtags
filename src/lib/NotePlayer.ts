@@ -132,8 +132,13 @@ function getNoteName(note: string): string | undefined {
 export function getNotePlayer(note: string): NotePlayer | undefined {
   const noteName = getNoteName(note)
   if (noteName) {
-    const player = createNotePlayer(noteName)
-    return new NotePlayer(noteName, player)
+    let player = NotePlayers.get(noteName)
+    if (!player) {
+      const audioPlayer = createNotePlayer(noteName)
+      player = new NotePlayer(noteName, audioPlayer)
+      NotePlayers.set(noteName, player)
+    }
+    return player
   }
   return undefined
 }
@@ -155,6 +160,10 @@ const noteAudioMap: Record<string, any> = {
   'gnatural': require('../../ios/notes/gnatural.mp3'),
 }
 
+export function noteForKey(key: string) {
+  return key ? key.split(':')[1] : 'F'
+}
+
 function createNotePlayer(noteName: string): AudioPlayer {
   // Get audio source from static mapping
   const audioSource = noteAudioMap[noteName]
@@ -163,8 +172,4 @@ function createNotePlayer(noteName: string): AudioPlayer {
   }
   const player = createAudioPlayer(audioSource)
   return player
-}
-
-export function noteForKey(key: string) {
-  return key ? key.split(':')[1] : 'F'
 }
