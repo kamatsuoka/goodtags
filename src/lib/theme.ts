@@ -9,6 +9,9 @@ import {
 } from 'react-native-paper'
 
 import merge from 'deepmerge'
+import { Platform } from 'react-native'
+
+process.env.EXPO_OS = Platform.OS
 
 const { LightTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,

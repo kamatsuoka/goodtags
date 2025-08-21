@@ -214,7 +214,7 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
 
 const styles = StyleSheet.create({
   pdf: { backgroundColor: BACKGROUND_COLOR, flex: 1, elevation: 4 },
-  pdfRenderer: { flex: 1 },
+  pdfRenderer: { flex: 1, backgroundColor: BACKGROUND_COLOR },
   emptyHolder: { padding: 20 },
   emptyText: { textAlign: 'center' },
   centerContent: { justifyContent: 'center', alignItems: 'center' },
