@@ -9,10 +9,7 @@ import WebView from 'react-native-webview'
 const isPdf = (uri: string) => uri.toLowerCase().endsWith('.pdf')
 const BACKGROUND_COLOR = '#fcfcff'
 
-type Props = {
-  uri: string
-  onPress: () => void
-}
+type Props = { uri: string; onPress: () => void }
 
 /**
  * Sheet musics viewer. Supports pdfs, gifs, etc.
@@ -32,6 +29,62 @@ export default function SheetMusic(props: Props) {
 
   // Use the PDF cache hook for handling remote PDF downloads
   const { localPath, isLoading, error } = usePdfCache(uri)
+
+  // Gesture tracking for tap detection
+  let touchStartTime = 0
+  let touchStartPosition = { x: 0, y: 0 }
+  let hasMoved = false
+  let tapTimeout: NodeJS.Timeout | null = null
+
+  const handleTouchStart = (evt: any) => {
+    touchStartTime = Date.now()
+    touchStartPosition = { x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY }
+    hasMoved = false
+
+    // Set a quick timeout to detect very fast taps
+    tapTimeout = setTimeout(() => {
+      // If we reach here and haven't moved, it's likely a tap
+      if (!hasMoved) {
+        onPress()
+      }
+      tapTimeout = null
+    }, 150) // Very short timeout for immediate response
+  }
+
+  const handleTouchMove = (evt: any) => {
+    const currentPosition = {
+      x: evt.nativeEvent.pageX,
+      y: evt.nativeEvent.pageY,
+    }
+    const distance = Math.sqrt(
+      Math.pow(currentPosition.x - touchStartPosition.x, 2) +
+        Math.pow(currentPosition.y - touchStartPosition.y, 2),
+    )
+
+    // If moved more than 5 pixels, consider it movement, not a tap
+    if (distance > 5) {
+      hasMoved = true
+      if (tapTimeout) {
+        clearTimeout(tapTimeout)
+        tapTimeout = null
+      }
+    }
+  }
+
+  const handleTouchEnd = () => {
+    const touchDuration = Date.now() - touchStartTime
+
+    if (tapTimeout) {
+      clearTimeout(tapTimeout)
+      tapTimeout = null
+    }
+
+    // Only trigger onPress if it was a quick tap without much movement
+    // and we haven't already triggered it via timeout
+    if (!hasMoved && touchDuration < 200) {
+      onPress()
+    }
+  }
 
   const pdfStyle = {
     ...styles.pdf,
@@ -67,7 +120,17 @@ export default function SheetMusic(props: Props) {
 
       if (localPath) {
         return (
-          <View style={pdfStyle}>
+          <View
+            style={pdfStyle}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={handleTouchStart}
+            onResponderMove={handleTouchMove}
+            onResponderRelease={handleTouchEnd}
+            onResponderTerminationRequest={() => {
+              // Allow termination if we've detected movement (not a tap)
+              return hasMoved
+            }}
+          >
             <PdfRendererView
               source={localPath}
               onPageChange={(current, total) => {
@@ -77,12 +140,6 @@ export default function SheetMusic(props: Props) {
               maxZoom={2.0}
               distanceBetweenPages={16}
               style={styles.pdfRenderer}
-            />
-            {/* Transparent overlay for tap handling */}
-            <View
-              style={StyleSheet.absoluteFill}
-              onTouchEnd={onPress}
-              pointerEvents="box-none"
             />
           </View>
         )
@@ -156,28 +213,11 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
 }
 
 const styles = StyleSheet.create({
-  pdf: {
-    backgroundColor: BACKGROUND_COLOR,
-    flex: 1,
-    elevation: 4,
-  },
-  pdfRenderer: {
-    flex: 1,
-  },
+  pdf: { backgroundColor: BACKGROUND_COLOR, flex: 1, elevation: 4 },
+  pdfRenderer: { flex: 1 },
   emptyHolder: { padding: 20 },
-  emptyText: {
-    textAlign: 'center',
-  },
-  centerContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    textAlign: 'center',
-  },
-  errorText: {
-    textAlign: 'center',
-    color: 'red',
-  },
+  emptyText: { textAlign: 'center' },
+  centerContent: { justifyContent: 'center', alignItems: 'center' },
+  loadingText: { marginTop: 16, textAlign: 'center' },
+  errorText: { textAlign: 'center', color: 'red' },
 })
