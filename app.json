@@ -1,3 +1,14 @@
 {
-  "name": "goodtags"
+  "name": "goodtags",
+  "expo": {
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      "expo-file-system"
+    ]
+  }
 }

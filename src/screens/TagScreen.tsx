@@ -16,12 +16,11 @@ import {
 import { isTablet } from 'react-native-device-info'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+// import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
-import SoundPlayer from 'react-native-sound-player'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { FABDown } from '../components/FABDown'
 import NoteButton from '../components/NoteButton'
@@ -41,7 +40,6 @@ import { TagListEnum } from '../modules/tagLists'
 import {
   PlayingState,
   playTrack,
-  setPlayingState,
   setTagTracks,
   stopTrack,
 } from '../modules/tracksSlice'
@@ -194,24 +192,10 @@ const TagScreen = ({ navigation }: Props) => {
   }, [dispatch, tag])
 
   useEffect(() => {
-    // Subscribe to FinishedPlaying event so we can flip the
-    // track control back to 'play'. This may take a few seconds.
-    const onFinishedPlayingSubscription = SoundPlayer.addEventListener(
-      'FinishedPlaying',
-      ({ success }) => {
-        console.log('got FinishedPlaying')
-        if (!success) {
-          console.log(
-            'got success = false from SoundPlayer FinishedPlaying callback',
-          )
-        }
-        dispatch(setPlayingState(PlayingState.ended))
-      },
-    )
+    // Clean up when component unmounts
     return () => {
-      // When the conponent unmounts, stop the track and remove the FinishedPlaying subscription
+      // When the component unmounts, stop the track
       dispatch(stopTrack())
-      onFinishedPlayingSubscription.remove()
     }
   }, [dispatch, selectedTag])
 
@@ -321,8 +305,7 @@ const TagScreen = ({ navigation }: Props) => {
   const playOrPause = () => {
     if (tracksState.selectedTrack) {
       if (playingState === PlayingState.playing) {
-        SoundPlayer.pause()
-        dispatch(setPlayingState(PlayingState.paused))
+        dispatch(stopTrack())
       } else {
         dispatch(playTrack(false))
       }
@@ -407,11 +390,11 @@ const TagScreen = ({ navigation }: Props) => {
           />
         </View>
         {buttonsDimmed ? null : (
-          <Animated.View
+          <View
             style={bottomActionBarStyle}
             pointerEvents="box-none"
-            entering={FadeIn.duration(100)}
-            exiting={FadeOut.duration(1200)}
+            // entering={FadeIn.duration(100)}
+            // exiting={FadeOut.duration(1200)}
           >
             {/* not using AppAction here b/c onPressOut got lost */}
             <Appbar.Action
@@ -453,7 +436,7 @@ const TagScreen = ({ navigation }: Props) => {
               }}
               disabled={!hasNextTag()}
             />
-          </Animated.View>
+          </View>
         )}
         <FABDown
           icon={fabOpen ? 'minus' : 'cog-outline'}

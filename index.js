@@ -2,6 +2,10 @@
  * @format
  */
 
+/**
+ * @format
+ */
+
 import { warmupDb } from '@app/modules/sqlUtil'
 import { AppRegistry } from 'react-native'
 import 'react-native-gesture-handler'

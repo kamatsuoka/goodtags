@@ -19,8 +19,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider as ReactReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
-LogBox.ignoreLogs(['new NativeEventEmitter']) // react-native-sound
-LogBox.ignoreLogs(['InvariantState']) // react-native-sound
 LogBox.ignoreLogs(['shouldStartLoad']) // react-native-webview for raster (non-pdf) sheet music
 
 /**

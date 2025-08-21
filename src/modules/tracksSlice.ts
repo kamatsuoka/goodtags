@@ -2,9 +2,19 @@
  * Keeps track of playing learning tracks.
  */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import SoundPlayer from 'react-native-sound-player'
+import { createAudioPlayer, type AudioPlayer } from 'expo-audio'
 import Tag, { Track, TrackPart } from '../lib/models/Tag'
 import { AppDispatch, RootState } from '../store'
+
+// Global audio player for learning tracks
+let trackPlayer: AudioPlayer | null = null
+
+function getTrackPlayer(): AudioPlayer {
+  if (!trackPlayer) {
+    trackPlayer = createAudioPlayer()
+  }
+  return trackPlayer
+}
 
 type TagTracks = {
   [key in TrackPart]?: Track
@@ -87,10 +97,14 @@ export const playTrack = createAsyncThunk<
   const state = thunkAPI.getState()
   const track = state.tracks.selectedTrack
   if (track) {
+    const player = getTrackPlayer()
     if (fromStart || state.tracks.playingState !== PlayingState.paused) {
-      SoundPlayer.playUrl(track.url)
+      // Replace current audio source and play
+      player.replace(track.url)
+      player.play()
     } else {
-      SoundPlayer.resume()
+      // Resume from pause
+      player.play()
     }
     thunkAPI.dispatch(setPlayingState(PlayingState.playing))
   }
@@ -108,8 +122,9 @@ export const playOrPause = createAsyncThunk<
   const state = thunkAPI.getState()
   const track = state.tracks.selectedTrack
   if (track) {
+    const player = getTrackPlayer()
     if (state.tracks.playingState === PlayingState.playing) {
-      SoundPlayer.pause()
+      player.pause()
       thunkAPI.dispatch(setPlayingState(PlayingState.paused))
     } else {
       thunkAPI.dispatch(playTrack(false))
@@ -126,7 +141,9 @@ export const stopTrack = createAsyncThunk<
     rejectValue: string
   }
 >('tracks/stopTrack', async (_, thunkAPI) => {
-  SoundPlayer.stop()
+  if (trackPlayer) {
+    trackPlayer.pause()
+  }
   thunkAPI.dispatch(setPlayingState(PlayingState.ended))
 })
 

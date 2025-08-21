@@ -1,7 +1,11 @@
-import Sound from 'react-native-sound'
+import {
+  createAudioPlayer,
+  setAudioModeAsync,
+  type AudioPlayer,
+} from 'expo-audio'
 
 // enable playback in silent mode
-Sound.setCategory('Playback')
+setAudioModeAsync({ playsInSilentMode: true })
 
 class RampDownParams {
   delay: number
@@ -23,13 +27,13 @@ const RampDown = new RampDownParams(300, 30)
  */
 export class NotePlayer {
   note: string
-  sound: Sound
+  player: AudioPlayer
   playing: boolean = false
   timeoutId: ReturnType<typeof setTimeout> | undefined = undefined
 
-  constructor(note: string, sound: Sound) {
+  constructor(note: string, player: AudioPlayer) {
     this.note = note
-    this.sound = sound
+    this.player = player
   }
 
   startRampDown = () => {
@@ -44,10 +48,10 @@ export class NotePlayer {
 
   private rampDown = () => {
     if (this.playing) {
-      const volume = this.sound.getVolume()
+      const volume = this.player.volume
       if (volume > 0.1) {
         const newVolume = Math.max(0.0, volume * 0.75)
-        this.sound.setVolume(newVolume)
+        this.player.volume = newVolume
         this.timeoutId = setTimeout(this.rampDown, RampDown.delay)
       } else {
         this.stopSound()
@@ -59,12 +63,10 @@ export class NotePlayer {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
     }
-    this.sound.setVolume(1.0)
+    this.player.volume = 1.0
     console.log('NotePlayer.playSound')
-    this.sound.play(() => {
-      // we got to the end
-      this.stopSound()
-    })
+    this.player.seekTo(0) // Reset to beginning
+    this.player.play()
     stopOthers(this.note)
     this.playing = true
   }
@@ -75,7 +77,7 @@ export class NotePlayer {
       clearTimeout(this.timeoutId)
       this.timeoutId = undefined
     }
-    this.sound.stop()
+    this.player.pause()
     this.playing = false
   }
 }
@@ -130,24 +132,37 @@ function getNoteName(note: string): string | undefined {
 export function getNotePlayer(note: string): NotePlayer | undefined {
   const noteName = getNoteName(note)
   if (noteName) {
-    const sound = createSound(noteName)
-    return new NotePlayer(noteName, sound)
+    const player = createNotePlayer(noteName)
+    return new NotePlayer(noteName, player)
   }
   return undefined
 }
 
-function createSound(noteName: string) {
-  const sound = new Sound(
-    noteName + '.mp3',
-    Sound.MAIN_BUNDLE,
-    (error: any) => {
-      if (error) {
-        console.log(`${error}`)
-      }
-    },
-  )
-  sound.setNumberOfLoops(0)
-  return sound
+// Static mapping of note names to their audio files
+// prettier-ignore
+const noteAudioMap: Record<string, any> = {
+  'aflat': require('../../ios/notes/aflat.mp3'),
+  'anatural': require('../../ios/notes/anatural.mp3'),
+  'bflat': require('../../ios/notes/bflat.mp3'),
+  'bnatural': require('../../ios/notes/bnatural.mp3'),
+  'cnatural': require('../../ios/notes/cnatural.mp3'),
+  'dflat': require('../../ios/notes/dflat.mp3'),
+  'dnatural': require('../../ios/notes/dnatural.mp3'),
+  'eflat': require('../../ios/notes/eflat.mp3'),
+  'enatural': require('../../ios/notes/enatural.mp3'),
+  'fnatural': require('../../ios/notes/fnatural.mp3'),
+  'gflat': require('../../ios/notes/gflat.mp3'),
+  'gnatural': require('../../ios/notes/gnatural.mp3'),
+}
+
+function createNotePlayer(noteName: string): AudioPlayer {
+  // Get audio source from static mapping
+  const audioSource = noteAudioMap[noteName]
+  if (!audioSource) {
+    throw new Error(`Audio file not found for note: ${noteName}`)
+  }
+  const player = createAudioPlayer(audioSource)
+  return player
 }
 
 export function noteForKey(key: string) {

@@ -3696,13 +3696,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/normalize-color@npm:*":
-  version: 2.1.0
-  resolution: "@react-native/normalize-color@npm:2.1.0"
-  checksum: 10/a72b98538e6b7e265fb0669b8767d5f788777fb1a0ac1df7b0c82d8b3a804c8122aa7b819688c5e36fcf90b5ba93050b0070e29d3f0d70ab9530c2abd2bb9f9e
-  languageName: node
-  linkType: hard
-
 "@react-native/normalize-colors@npm:0.79.5":
   version: 0.79.5
   resolution: "@react-native/normalize-colors@npm:0.79.5"
@@ -6758,13 +6751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:4.2.0":
-  version: 4.2.0
-  resolution: "crypto-js@npm:4.2.0"
-  checksum: 10/c7bcc56a6e01c3c397e95aa4a74e4241321f04677f9a618a8f48a63b5781617248afb9adb0629824792e7ec20ca0d4241a49b6b2938ae6f973ec4efc5c53c924
-  languageName: node
-  linkType: hard
-
 "crypto-random-string@npm:^2.0.0":
   version: 2.0.0
   resolution: "crypto-random-string@npm:2.0.0"
@@ -7026,17 +7012,6 @@ __metadata:
   version: 2.0.0
   resolution: "depd@npm:2.0.0"
   checksum: 10/c0c8ff36079ce5ada64f46cc9d6fd47ebcf38241105b6e0c98f412e8ad91f084bcf906ff644cc3a4bd876ca27a62accb8b0fff72ea6ed1a414b89d8506f4a5ca
-  languageName: node
-  linkType: hard
-
-"deprecated-react-native-prop-types@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "deprecated-react-native-prop-types@npm:2.3.0"
-  dependencies:
-    "@react-native/normalize-color": "npm:*"
-    invariant: "npm:*"
-    prop-types: "npm:*"
-  checksum: 10/5abbad5b6d6830ca92151167f42611256ada1e8991b5066ed3659f3bbe909ae87949f3e7f075f1b685256138cad81423222220f4c6d5740376db19cb9f793312
   languageName: node
   linkType: hard
 
@@ -8034,6 +8009,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-audio@npm:^0.4.8":
+  version: 0.4.8
+  resolution: "expo-audio@npm:0.4.8"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10/5d722de772ea029e4f7e65b9e57e33a16b299d6c26e8fdc3144fa598e8d8dfc6feb2b3f232e62b26cfd72937b748202d07d4972adfce1277c8633899890f3218
+  languageName: node
+  linkType: hard
+
 "expo-constants@npm:^17.1.7, expo-constants@npm:~17.1.7":
   version: 17.1.7
   resolution: "expo-constants@npm:17.1.7"
@@ -8894,6 +8880,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.4"
     expo: "npm:^53.0.20"
     expo-asset: "npm:^11.1.7"
+    expo-audio: "npm:^0.4.8"
     expo-constants: "npm:^17.1.7"
     expo-file-system: "npm:^18.1.11"
     expo-font: "npm:^13.3.2"
@@ -8910,8 +8897,8 @@ __metadata:
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.6.2"
     prettier-plugin-organize-imports: "npm:^4.2.0"
-    react: "npm:^19.1.1"
-    react-dom: "npm:^19.1.1"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     react-native: "npm:^0.81.0"
     react-native-blob-util: "npm:^0.22.2"
     react-native-clean-project: "npm:^4.0.3"
@@ -8921,21 +8908,19 @@ __metadata:
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-gradle-plugin: "npm:^0.71.19"
     react-native-paper: "npm:^5.14.5"
-    react-native-pdf: "npm:^6.7.7"
+    react-native-pdf-renderer: "npm:^2.3.0"
     react-native-promise-rejection-utils: "npm:^0.0.1"
     react-native-reanimated: "npm:^4.0.2"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:^5.6.1"
     react-native-screens: "npm:^4.15.0"
     react-native-share: "npm:^12.2.0"
-    react-native-sound: "npm:^0.12.0"
-    react-native-sound-player: "npm:^0.14.5"
     react-native-vector-icons: "npm:^10.3.0"
     react-native-webview: "npm:^13.15.0"
     react-native-worklets: "npm:^0.4.1"
     react-native-youtube-iframe: "npm:^2.4.1"
     react-redux: "npm:^9.2.0"
-    react-test-renderer: "npm:^19.1.1"
+    react-test-renderer: "npm:19.1.0"
     redux: "npm:^5.0.1"
     redux-mock-store: "npm:^1.5.5"
     redux-persist: "npm:^6.0.0"
@@ -9383,7 +9368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:*, invariant@npm:2.2.4, invariant@npm:^2.2.4":
+"invariant@npm:2.2.4, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
@@ -12860,7 +12845,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:*, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -13006,14 +12991,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.1.1":
-  version: 19.1.1
-  resolution: "react-dom@npm:19.1.1"
+"react-dom@npm:19.1.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
   dependencies:
     scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^19.1.1
-  checksum: 10/9005415d2175b1f1eb4a544ad04afb29691bb7b6dd43bbdaa09932146b310b73bd4552bc772ad78fa481f409eada1560cf887606c83c1a53a922c1e30f1b3a34
+    react: ^19.1.0
+  checksum: 10/c5b58605862c7b0bb044416b01c73647bb8e89717fb5d7a2c279b11815fb7b49b619fe685c404e59f55eb52c66831236cc565c25ee1c2d042739f4a2cc538aa2
   languageName: node
   linkType: hard
 
@@ -13047,7 +13032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^19.0.0, react-is@npm:^19.1.0, react-is@npm:^19.1.1":
+"react-is@npm:^19.0.0, react-is@npm:^19.1.0":
   version: 19.1.1
   resolution: "react-is@npm:19.1.1"
   checksum: 10/44e0937da1f0da1d5dbd4f01972870768ef207f8a49717f4491f5022454f34c956cb66be560aee5286387169853b0283a81e1f419b51dc62654c8710dc98065a
@@ -13182,17 +13167,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-pdf@npm:^6.7.7":
-  version: 6.7.7
-  resolution: "react-native-pdf@npm:6.7.7"
-  dependencies:
-    crypto-js: "npm:4.2.0"
-    deprecated-react-native-prop-types: "npm:^2.3.0"
+"react-native-pdf-renderer@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "react-native-pdf-renderer@npm:2.3.0"
   peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-blob-util: ">=0.13.7"
-  checksum: 10/b6e24c82103be0b03820ea3239509f369660fb701252e4d9888b1cbf1bcf5895e81f631c8e71e16a6579075080c79c0d311fe5cdf45511099a944893b8239263
+    react-native: ">=0.71"
+  checksum: 10/3d29c5851989243ae9d57f7b2f396cb74a0770c2d2fc042abc1fdce50e6dce7e7eeae3dd06068f4363090c9fe1b41ddcd820e9227b0a5d6bb7d7366319381801
   languageName: node
   linkType: hard
 
@@ -13259,23 +13239,6 @@ __metadata:
   version: 12.2.0
   resolution: "react-native-share@npm:12.2.0"
   checksum: 10/e398825b516ca5b4fe93ab06fe6895edd8f666ffc31c53b96602975a1451339bd57160f2543282adfdd4c1687458f43f54d85acca487a9ce683400431a44811d
-  languageName: node
-  linkType: hard
-
-"react-native-sound-player@npm:^0.14.5":
-  version: 0.14.5
-  resolution: "react-native-sound-player@npm:0.14.5"
-  checksum: 10/8b137310277f1926dce829c256b138ba3d10b3de5dc5222e0bfe948c58cea721ceb5eca9ce535a6d13b445a319eb33f732f0f62b14478ef5b2f96476f533fb3a
-  languageName: node
-  linkType: hard
-
-"react-native-sound@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "react-native-sound@npm:0.12.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/44f1825b0969a21347f827343e2f4a8b7339e86ae0401f6305e9d6394507879d1e42e51c5fb7d5887af5537554b4a5a0792bd36f3112a2ff25ab8584469785c0
   languageName: node
   linkType: hard
 
@@ -13451,22 +13414,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:^19.1.1":
-  version: 19.1.1
-  resolution: "react-test-renderer@npm:19.1.1"
+"react-test-renderer@npm:19.1.0":
+  version: 19.1.0
+  resolution: "react-test-renderer@npm:19.1.0"
   dependencies:
-    react-is: "npm:^19.1.1"
+    react-is: "npm:^19.1.0"
     scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^19.1.1
-  checksum: 10/acdb7bb86d99b55f903c2b0a57240fe1084b9ba443b8a2e9805199c4a780c321801fbf78898b9955710097acf177ab800cc313d2840cb10fc3e24122cddee4ae
+    react: ^19.1.0
+  checksum: 10/73ae0ea779bacd0ff084dd3644b763a4431d68adf9c6acffdaa3d0810aab5322f24c95c60259c23b77f38b5f36d9d614ffaa46d91a33840536f2d4b7188dcc89
   languageName: node
   linkType: hard
 
-"react@npm:^19.1.1":
-  version: 19.1.1
-  resolution: "react@npm:19.1.1"
-  checksum: 10/9801530fdc939e1a7a499422e930515b2400809cb39c2872984e99f832d233f61659a693871183dac3155c2f9b2c9dcf4440a56bd18983277ae92860e38c3a61
+"react@npm:19.1.0":
+  version: 19.1.0
+  resolution: "react@npm:19.1.0"
+  checksum: 10/d0180689826fd9de87e839c365f6f361c561daea397d61d724687cae88f432a307d1c0f53a0ee95ddbe3352c10dac41d7ff1ad85530fb24951b27a39e5398db4
   languageName: node
   linkType: hard
 

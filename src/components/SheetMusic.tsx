@@ -1,7 +1,8 @@
 import { useAppSelector } from '@app/hooks'
+import { usePdfCache } from '@app/hooks/usePdfCache'
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { ActivityIndicator, Text } from 'react-native-paper'
-import Pdf from 'react-native-pdf'
+import PdfRendererView from 'react-native-pdf-renderer'
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 
@@ -29,6 +30,9 @@ export default function SheetMusic(props: Props) {
       ? rawInsets
       : { top: 0, bottom: 0, left: 0, right: 0 }
 
+  // Use the PDF cache hook for handling remote PDF downloads
+  const { localPath, isLoading, error } = usePdfCache(uri)
+
   const pdfStyle = {
     ...styles.pdf,
     elevation: 0,
@@ -40,19 +44,51 @@ export default function SheetMusic(props: Props) {
 
   if (uri) {
     if (isPdf(uri)) {
-      return showPdf ? (
-        <Pdf
-          trustAllCerts={false}
-          source={{ uri }}
-          onPageSingleTap={onPress}
-          onError={error => console.log(error)}
-          fitPolicy={0}
-          minScale={0.5}
-          maxScale={2.0}
-          renderActivityIndicator={() => <ActivityIndicator />}
-          style={pdfStyle}
-        />
-      ) : null
+      if (!showPdf) {
+        return null
+      }
+
+      if (isLoading) {
+        return (
+          <View style={[pdfStyle, styles.centerContent]}>
+            <ActivityIndicator size="large" />
+            <Text style={styles.loadingText}>Loading PDF...</Text>
+          </View>
+        )
+      }
+
+      if (error) {
+        return (
+          <View style={[pdfStyle, styles.centerContent]}>
+            <Text style={styles.errorText}>Error loading PDF: {error}</Text>
+          </View>
+        )
+      }
+
+      if (localPath) {
+        return (
+          <View style={pdfStyle}>
+            <PdfRendererView
+              source={localPath}
+              onPageChange={(current, total) => {
+                console.log(`PDF page ${current} of ${total}`)
+              }}
+              onError={() => console.log('PDF render error')}
+              maxZoom={2.0}
+              distanceBetweenPages={16}
+              style={styles.pdfRenderer}
+            />
+            {/* Transparent overlay for tap handling */}
+            <View
+              style={StyleSheet.absoluteFill}
+              onTouchEnd={onPress}
+              pointerEvents="box-none"
+            />
+          </View>
+        )
+      }
+
+      return null
     } else {
       const source = imageSource(uri, insets)
       return (
@@ -125,8 +161,23 @@ const styles = StyleSheet.create({
     flex: 1,
     elevation: 4,
   },
+  pdfRenderer: {
+    flex: 1,
+  },
   emptyHolder: { padding: 20 },
   emptyText: {
     textAlign: 'center',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
   },
 })

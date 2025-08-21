@@ -15,7 +15,7 @@ import {
   TextInput,
   useTheme,
 } from 'react-native-paper'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+// import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ITEM_HEIGHT = 60
@@ -75,10 +75,10 @@ export default function LabelEditor() {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<string>) => {
     const editingThisItem = item === labelToEdit
     return (
-      <Animated.View
+      <View
         pointerEvents="box-none"
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
+        // entering={FadeIn.duration(300)}
+        // exiting={FadeOut.duration(300)}
         key={item}
         style={[
           styles.itemHolder,
@@ -135,7 +135,7 @@ export default function LabelEditor() {
             </>
           )}
         </View>
-      </Animated.View>
+      </View>
     )
   }
 
