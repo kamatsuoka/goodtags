@@ -17,6 +17,8 @@ jest.mock('redux-persist', () => {
       purge: jest.fn(),
       flush: jest.fn(),
       pause: jest.fn(),
+      subscribe: jest.fn(),
+      getState: jest.fn().mockReturnValue({ bootstrapped: true }),
     }),
   }
 })
