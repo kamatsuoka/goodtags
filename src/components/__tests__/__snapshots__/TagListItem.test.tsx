@@ -1,5 +1,5 @@
 import { TagListEnum } from '@app/modules/tagLists'
-import TestRenderer from 'react-test-renderer'
+import { render } from '@testing-library/react-native'
 import Tag from '../../../lib/models/Tag'
 import TagListItem from '../../TagListItem'
 
@@ -18,7 +18,7 @@ describe('TagListItem', () => {
       posted: 'Mon, 26 Dec 2011',
       uri: 'https://www.barbershoptags.com/tags/Lost.jpg',
     }
-    const testRenderer = TestRenderer.create(
+    const { getByTestId } = render(
       <TagListItem
         tag={tag}
         tagListType={TagListEnum.SearchResults}
@@ -26,8 +26,6 @@ describe('TagListItem', () => {
         selected={true}
       />,
     )
-    const testInstance = testRenderer.root
-    const view = testInstance.findByProps({ testID: 'tagleft_1809' })
-    expect(view.props.children).toEqual('•')
+    expect(getByTestId('tagleft_1809').props.children).toEqual('•')
   })
 })
