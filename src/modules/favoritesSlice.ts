@@ -522,6 +522,18 @@ interface ReceivedData {
   receivedLabels: ReceivedLabel[]
 }
 
+
+function getFilename(url: string): string {
+  const filePart = url.split('/').pop()
+  return filePart ? decodeURI(filePart) : ''
+}
+
+function getImportErrorMessage(url: string): string {
+  const filename = getFilename(url)
+  const message = 'unable to import favorites'
+  return filename ? `${message} from ${filename}` : message
+}
+
 /**
  * Import favorites/labels from file (or stream: tbd).
  *
@@ -556,7 +568,7 @@ export const receiveSharedFile = createAsyncThunk<
         receivedLabels,
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
+      return thunkAPI.rejectWithValue(getImportErrorMessage(url))
     }
   }
 
@@ -592,6 +604,6 @@ export const receiveSharedFile = createAsyncThunk<
     }
   } catch (e) {
     console.error(e)
-    return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
+    return thunkAPI.rejectWithValue(getImportErrorMessage(url))
   }
 })

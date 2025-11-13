@@ -9,7 +9,7 @@ import {
 } from '@react-native-documents/picker'
 import { useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { List, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
+import { Divider, List, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
@@ -50,6 +50,7 @@ export default function DataScreen() {
       flexDirection: 'row',
       paddingLeft: 5,
       paddingRight: 0,
+      marginVertical: 10,
     },
     buttonHolder: {
       paddingVertical: 10,
@@ -73,6 +74,7 @@ export default function DataScreen() {
                 style={styles.listItem}
               />
             </TouchableOpacity>
+            <Divider />
             <TouchableOpacity
               onPress={async () => {
                 try {
