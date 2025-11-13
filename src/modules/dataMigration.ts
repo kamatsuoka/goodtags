@@ -1,166 +1,12 @@
-import { APP_VERSION } from '@app/constants/version'
 import type { AppState } from '@app/store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Alert, Platform } from 'react-native'
-import ReactNativeBlobUtil from 'react-native-blob-util'
-import Share from 'react-native-share'
+import { Alert } from 'react-native'
 
 /**
- * Data migration utility for goodtags app
- * Helps users backup and restore their data when getting new devices
+ * CURRENTLY UNUSED
+ * 
+ * the idea is to remind users periodically to back up their data
  */
-
-export interface BackupData {
-  version: string
-  timestamp: string
-  platform: 'ios' | 'android'
-  reduxState: AppState
-  metadata: {
-    appVersion: string
-    deviceInfo?: string
-  }
-}
-
-/**
- * Creates a complete backup of user data
- */
-export const createFullBackup = async (): Promise<string> => {
-  try {
-    // Get the current Redux state from AsyncStorage
-    const persistedState = await AsyncStorage.getItem('persist:root')
-
-    if (!persistedState) {
-      throw new Error('No user data found to backup')
-    }
-
-    const backupData: BackupData = {
-      version: '1.0',
-      timestamp: new Date().toISOString(),
-      platform: Platform.OS as 'ios' | 'android',
-      reduxState: JSON.parse(persistedState),
-      metadata: {
-        appVersion: APP_VERSION,
-      },
-    }
-
-    const backupString = JSON.stringify(backupData, null, 2)
-
-    // Save to file
-    const fs = ReactNativeBlobUtil.fs
-    const dir =
-      Platform.OS === 'ios'
-        ? fs.dirs.DocumentDir + '/goodtags-backups'
-        : fs.dirs.DownloadDir + '/goodtags-backups'
-
-    const dirExists = await fs.isDir(dir)
-    if (!dirExists) {
-      await fs.mkdir(dir)
-    }
-
-    const filename = `goodtags-backup-${getDateString(new Date())}.json`
-    const filepath = `${dir}/${filename}`
-
-    await fs.writeFile(filepath, backupString, 'utf8')
-
-    return filepath
-  } catch (error) {
-    console.error('Error creating backup:', error)
-    throw error
-  }
-}
-
-/**
- * Restores user data from a backup file
- */
-export const restoreFromBackup = async (
-  backupContent: string,
-): Promise<boolean> => {
-  try {
-    const backupData: BackupData = JSON.parse(backupContent)
-
-    // Validate backup format
-    if (!backupData.version || !backupData.reduxState) {
-      throw new Error('Invalid backup format')
-    }
-
-    // Show confirmation dialog
-    return new Promise(resolve => {
-      Alert.alert(
-        'Restore Backup',
-        `This will restore data from ${new Date(
-          backupData.timestamp,
-        ).toLocaleDateString()}. Your current data will be replaced. Continue?`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-            onPress: () => resolve(false),
-          },
-          {
-            text: 'Restore',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                // Clear existing data
-                await AsyncStorage.clear()
-
-                // Restore the Redux state
-                await AsyncStorage.setItem(
-                  'persist:root',
-                  JSON.stringify(backupData.reduxState),
-                )
-
-                Alert.alert(
-                  'Restore Complete',
-                  'Your data has been restored. Please restart the app to see the changes.',
-                  [{ text: 'OK' }],
-                )
-
-                resolve(true)
-              } catch (error) {
-                console.error('Error restoring backup:', error)
-                Alert.alert(
-                  'Restore Failed',
-                  'There was an error restoring your data. Please try again.',
-                )
-                resolve(false)
-              }
-            },
-          },
-        ],
-      )
-    })
-  } catch (error) {
-    console.error('Error parsing backup:', error)
-    Alert.alert(
-      'Invalid Backup',
-      'The backup file appears to be corrupted or invalid.',
-    )
-    return false
-  }
-}
-
-/**
- * Shares a backup file with other apps
- */
-export const shareBackup = async (): Promise<void> => {
-  try {
-    const backupPath = await createFullBackup()
-
-    const shareOptions = {
-      title: 'goodtags Data Backup',
-      message: "Here's your goodtags app data backup. Keep this file safe!",
-      url: `file://${backupPath}`,
-      type: 'application/json',
-      filename: 'goodtags-backup.json',
-    }
-
-    await Share.open(shareOptions)
-  } catch (error) {
-    console.error('Error sharing backup:', error)
-    Alert.alert('Share Failed', 'Unable to share backup file.')
-  }
-}
 
 /**
  * Checks if user needs to be reminded about backing up data
@@ -216,8 +62,8 @@ export const markBackupCreated = async (): Promise<void> => {
  */
 export const showBackupReminder = (): void => {
   Alert.alert(
-    'Backup Your Data',
-    "To ensure you don't lose your favorites and labels when getting a new device, we recommend creating a backup. Would you like to create one now?",
+    'Backup your data',
+    "We recommend backing up your favorites and labels in the cloud somewhere so you can restore them when you get a new device. Would you like to do that now?",
     [
       {
         text: 'Later',
@@ -228,21 +74,10 @@ export const showBackupReminder = (): void => {
         text: 'Create Backup',
         onPress: async () => {
           await markBackupReminderShown()
-          await shareBackup()
+          // todo: navigate to DataScreen and open share dialog --- IGNORE ---
           await markBackupCreated()
         },
       },
     ],
   )
-}
-
-// Helper function
-const getDateString = (date: Date): string => {
-  const zeroPad = (num: number): string => num.toString().padStart(2, '0')
-  const year = date.getFullYear()
-  const month = zeroPad(date.getMonth() + 1)
-  const day = zeroPad(date.getDate())
-  const hours = zeroPad(date.getHours())
-  const minutes = zeroPad(date.getMinutes())
-  return `${year}-${month}-${day}T${hours}-${minutes}`
 }

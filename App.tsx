@@ -1,11 +1,6 @@
 import CommonStyles from '@app/constants/CommonStyles'
-import {
-  shouldRemindBackup,
-  showBackupReminder,
-} from '@app/modules/dataMigration'
 import RootStackNavigator from '@app/navigation/RootStackNavigator'
 import { persistor, store } from '@app/store'
-import { useEffect } from 'react'
 import {
   LogBox,
   Platform,
@@ -26,23 +21,6 @@ LogBox.ignoreLogs(['shouldStartLoad']) // react-native-webview for raster (non-p
  */
 function App() {
   const isDarkMode = useColorScheme() === 'dark'
-
-  useEffect(() => {
-    // Check if user should be reminded about backup after app loads
-    const checkBackupReminder = async () => {
-      try {
-        const shouldRemind = await shouldRemindBackup()
-        if (shouldRemind) {
-          // Wait a bit to ensure the app is fully loaded
-          setTimeout(showBackupReminder, 3000)
-        }
-      } catch (error) {
-        console.error('Error checking backup reminder:', error)
-      }
-    }
-
-    checkBackupReminder()
-  }, [])
 
   return (
     <SafeAreaProvider>
