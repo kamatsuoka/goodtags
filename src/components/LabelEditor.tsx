@@ -117,7 +117,7 @@ export default function LabelEditor() {
               <IconButton
                 icon="trash-can-outline"
                 disabled={item !== draftLabel}
-                onPress={() => startDeleting(item)} // TODO: confirmation
+                onPress={() => startDeleting(item)}
               />
             </>
           ) : (

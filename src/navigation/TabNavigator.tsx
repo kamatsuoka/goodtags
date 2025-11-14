@@ -9,10 +9,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { TabBarBackground } from '../lib/theme'
 import { FavoritesScreen } from '../screens/FavoritesScreen'
-import HistoryScreen from '../screens/HistoryScreen'
 import SearchScreen from '../screens/SearchScreen'
 import HomeNavigator from './HomeNavigator'
 import { TabsParamList } from './navigationParams'
+import HistoryScreen from '@app/screens/HistoryScreen'
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
 

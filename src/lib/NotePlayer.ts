@@ -150,6 +150,7 @@ const noteAudioMap: Record<string, any> = {
   'anatural': require('../../ios/notes/anatural.mp3'),
   'bflat': require('../../ios/notes/bflat.mp3'),
   'bnatural': require('../../ios/notes/bnatural.mp3'),
+  'cflat': require('../../ios/notes/bnatural.mp3'),
   'cnatural': require('../../ios/notes/cnatural.mp3'),
   'dflat': require('../../ios/notes/dflat.mp3'),
   'dnatural': require('../../ios/notes/dnatural.mp3'),
@@ -160,7 +161,7 @@ const noteAudioMap: Record<string, any> = {
   'gnatural': require('../../ios/notes/gnatural.mp3'),
 }
 
-export function noteForKey(key: string) {
+export function noteForKey(key: string | undefined) {
   return key ? key.split(':')[1] : 'F'
 }
 

@@ -1,9 +1,9 @@
 /**
- * Screen for displaying tag sheet music
+ * Screen for displaying a random tag
  */
-import useSelectedTag from '@app/hooks/useSelectedTag'
-import useTagListState from '@app/hooks/useTagListState'
-import { TagState, setTagState } from '@app/modules/visitSlice'
+import { SearchResult } from '@app/lib/models/Tag'
+import { TagListEnum } from '@app/modules/tagLists'
+import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -16,7 +16,6 @@ import {
 import { isTablet } from 'react-native-device-info'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-// import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
@@ -35,8 +34,7 @@ import { noteForKey } from '../lib/NotePlayer'
 import { IdBackground, InversePrimaryLowAlpha } from '../lib/theme'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { HistoryActions } from '../modules/historySlice'
-import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
-import { TagListEnum } from '../modules/tagLists'
+import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
 import {
   PlayingState,
   playTrack,
@@ -47,11 +45,19 @@ import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 
+// Fallback tag to avoid recreating on every render
+const FALLBACK_TAG: SearchResult = {
+  id: 0,
+  title: 'not found',
+  key: 'F:natural',
+} as SearchResult
+
 /**
- * Sheet music screen
+ * Random tag screen
  */
-const TagScreen = ({ navigation }: Props) => {
+const RandomScreen = () => {
   const theme = useTheme()
+  const navigation = useNavigation()
   const [buttonsDimmed, setButtonsDimmed] = useState(false)
   const [tracksVisible, setTracksVisible] = useState(false)
   const [videosVisible, setVideosVisible] = useState(false)
@@ -60,24 +66,26 @@ const TagScreen = ({ navigation }: Props) => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
-  const tagListType = useAppSelector(state => state.visit.tagListType)
-  const tagListState = useTagListState(tagListType)
-  const allTagIds = tagListState.allTagIds
-  const selectedTag = tagListState.selectedTag
   const playingState = useAppSelector(state => state.tracks.playingState)
-  const tag = useSelectedTag(tagListType)
-  const keyNote = noteForKey(tag.key)
+  const tag = useAppSelector(state => {
+    return selectRandomTag(state) || FALLBACK_TAG
+  })
+  const keyNote = noteForKey(tag?.key)
   const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
   const tracksState = useAppSelector(state => state.tracks)
-  const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
-  const delabeledSelectedTag = useAppSelector(
-    state => state.favorites.strandedTag,
-  )
-
-  const setSelectedTag = getSelectedTagSetter(tagListType)
 
   const ios = Platform.OS === 'ios'
   const iPad = ios && isTablet()
+
+  useEffect(() => {
+    dispatch(getRandomTag())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (tag.id !== 0) {
+      console.log(`RandomScreen: tag id=${tag.id}`)
+    }
+  }, [tag.id])
 
   const themedStyles = StyleSheet.create({
     id: {
@@ -130,7 +138,7 @@ const TagScreen = ({ navigation }: Props) => {
     marginLeft: 0,
     marginRight: 0,
   }
-  const modalCloseButtonStyle = { ...styles.closeButton }
+  const modalCloseButtonStyle = styles.closeButton
   if (!ios) {
     fabGroupStyle.marginTop = insets.top - fabGroupStyle.paddingTop
     fabGroupStyle.marginRight = insets.right - fabGroupStyle.paddingRight
@@ -197,61 +205,7 @@ const TagScreen = ({ navigation }: Props) => {
       // When the component unmounts, stop the track
       dispatch(stopTrack())
     }
-  }, [dispatch, selectedTag])
-
-  /**
-   * Go back to list.
-   * Set TagState to closing so that when we return list,
-   * we can scroll to the selected tag.
-   */
-  function goBack() {
-    if (
-      isLabelType(tagListType) &&
-      delabeledSelectedTag?.label === selectedLabel &&
-      delabeledSelectedTag?.tag.id === selectedTag?.id
-    ) {
-      dispatch(FavoritesActions.removeStrandedTag())
-    }
-    dispatch(setTagState(TagState.closing))
-    navigation.goBack()
-  }
-
-  function selectPrevTag() {
-    // causes previous tag in list to be displayed
-    if (selectedTag) {
-      const i = selectedTag.index
-      if (i > 0) {
-        selectTag(i - 1)
-      }
-    }
-  }
-
-  function selectNextTag() {
-    // causes next tag in list to be displayed
-    if (selectedTag) {
-      const i = selectedTag.index
-      if (i < allTagIds.length - 1) {
-        selectTag(i + 1)
-      }
-    }
-  }
-
-  function selectTag(index: number) {
-    const id = allTagIds[index]
-    dispatch(setSelectedTag({ index, id }))
-  }
-
-  function indexValid(index: number) {
-    return index >= 0 && index < allTagIds.length
-  }
-
-  function getMaxIndex(): number {
-    if (selectedTag !== undefined && indexValid(selectedTag.index)) {
-      return allTagIds.length - 1
-    }
-    // may happen when last favorite is removed
-    return 0 // sus
-  }
+  }, [dispatch])
 
   const hasTracks = (): boolean => {
     const tracks = tag.tracks
@@ -261,8 +215,6 @@ const TagScreen = ({ navigation }: Props) => {
     const videos = tag.videos
     return videos?.length > 0 && videos[0] !== undefined
   }
-  const hasPrevTag = () => selectedTag && selectedTag.index > 0
-  const hasNextTag = () => selectedTag && selectedTag.index < getMaxIndex()
 
   const fabActions = [
     {
@@ -294,9 +246,6 @@ const TagScreen = ({ navigation }: Props) => {
   async function toggleFavorite(id: number) {
     if (favoritesById[id]) {
       dispatch(FavoritesActions.removeFavorite(id))
-      if (tagListType === TagListEnum.Favorites) {
-        goBack() // go back to favorites list
-      }
     } else {
       dispatch(FavoritesActions.addFavorite(tag))
     }
@@ -364,8 +313,6 @@ const TagScreen = ({ navigation }: Props) => {
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
       <View style={topBarStyle} pointerEvents="box-none">
-        {/* using TouchableOpacity instead of button to make sure
-                visual feedback matches shape of button */}
         <TouchableOpacity
           onPress={() => toggleFavorite(tag.id)}
           activeOpacity={0.4}
@@ -384,54 +331,49 @@ const TagScreen = ({ navigation }: Props) => {
         <View style={styles.actionBar} pointerEvents="box-none">
           <Appbar.BackAction
             color={theme.colors.primary}
-            onPress={goBack}
+            onPress={navigation.goBack}
             size={SMALL_BUTTON_SIZE}
             style={backButtonStyle}
           />
         </View>
-        {buttonsDimmed ? null : (
-          <View style={bottomActionBarStyle} pointerEvents="box-none">
-            <Appbar.Action
-              icon={noteIcon}
-              onPress={() => {
-                // handler required for onPressIn to be handled
-              }}
-              onPressIn={async () => {
-                noteHandler.onPressIn()
-                brightenButtons()
-              }}
-              onPressOut={async () => {
-                noteHandler.onPressOut()
-                brightenThenFade()
-              }}
-              color={theme.colors.primary}
-              size={BIG_BUTTON_SIZE}
-              style={dimmableIconHolderStyle}
-            />
-            <AppAction
-              icon={playingState === PlayingState.playing ? 'pause' : 'play'}
-              onPress={async () => {
-                dispatch(playOrPause)
-              }}
-              disabled={!hasTracks()}
-            />
-            <Appbar.Content title=" " pointerEvents="none" />
-            <AppAction
-              icon="arrow-up"
-              onPress={async () => {
-                selectPrevTag()
-              }}
-              disabled={!hasPrevTag()}
-            />
-            <AppAction
-              icon="arrow-down"
-              onPress={async () => {
-                selectNextTag()
-              }}
-              disabled={!hasNextTag()}
-            />
-          </View>
-        )}
+        <View style={bottomActionBarStyle} pointerEvents="box-none">
+          {buttonsDimmed ? null : (
+            <>
+              <Appbar.Action
+                icon={noteIcon}
+                onPress={() => {
+                  // handler required for onPressIn to be handled
+                }}
+                onPressIn={async () => {
+                  noteHandler.onPressIn()
+                  brightenButtons()
+                }}
+                onPressOut={async () => {
+                  noteHandler.onPressOut()
+                  brightenThenFade()
+                }}
+                color={theme.colors.primary}
+                size={BIG_BUTTON_SIZE}
+                style={dimmableIconHolderStyle}
+              />
+              <AppAction
+                icon={playingState === PlayingState.playing ? 'pause' : 'play'}
+                onPress={async () => {
+                  dispatch(playOrPause)
+                }}
+                disabled={!hasTracks()}
+              />
+            </>
+          )}
+          <Appbar.Content title=" " pointerEvents="none" />
+          <AppAction
+            icon="shuffle"
+            onPress={async () => {
+              dispatch(stopTrack())
+              dispatch(getRandomTag())
+            }}
+          />
+        </View>
         <FABDown
           icon={fabOpen ? 'minus' : 'cog-outline'}
           open={fabOpen}
@@ -458,7 +400,7 @@ const TagScreen = ({ navigation }: Props) => {
           onDismiss={() => setInfoVisible(false)}
           style={themedStyles.modal}
         >
-          <TagInfoView tag={tag} tagListType={tagListType} />
+          <TagInfoView tag={tag} tagListType={TagListEnum.SearchResults} />
         </Modal>
         {hasVideos() ? (
           <Modal
@@ -544,4 +486,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default TagScreen
+export default RandomScreen

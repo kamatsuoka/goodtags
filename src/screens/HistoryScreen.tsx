@@ -22,7 +22,7 @@ const HistoryScreen = () => {
   const sortOrder = useAppSelector(state => state.history.sortOrder)
   const lastModified = useAppSelector(state => state.history.lastModified)
   const dispatch = useAppDispatch()
-  const listRef = useRef<FlashList<number>>(null)
+  const listRef = useRef<typeof FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(
@@ -70,7 +70,12 @@ const HistoryScreen = () => {
 
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="history" titleIcon="history" />
+      <ListHeader
+        listRef={listRef}
+        showBackButton={false}
+        title="history"
+        titleIcon="history"
+      />
       <View style={styles.listContainer}>
         <TagList
           listRef={listRef}

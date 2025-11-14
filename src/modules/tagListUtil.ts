@@ -43,7 +43,10 @@ export function getTagListSelector(
 }
 
 export function isFavoriteOrLabel(tagListType: TagListType) {
-  return tagListType === TagListEnum.Favorites || isLabelType(tagListType)
+  if (Object.values(TagListEnum).includes(tagListType as TagListEnum)) {
+    return tagListType === TagListEnum.Favorites
+  }
+  return isLabelType(tagListType)
 }
 
 export function isLabelType(tagListType: TagListType) {

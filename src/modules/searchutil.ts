@@ -129,6 +129,19 @@ function debugDbPerfLogging(label: string, start: number) {
   }
 }
 
+/**
+ * Counts the number of tags in the database
+ * 
+ * @returns number of tags in the db
+ */
+export async function countTags(): Promise<number> {
+  const db = await getDbConnection()
+  const countRaw = await db.getAllAsync<{ count: number }>(
+    `SELECT COUNT(*) AS count FROM tags`,
+  )
+  return countRaw[0].count
+}
+
 async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =

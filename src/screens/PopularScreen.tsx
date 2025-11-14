@@ -40,7 +40,7 @@ const PopularScreen = () => {
   )
   const error = useAppSelector(state => selectPopular(state).error)
   const sortOrder = useAppSelector(state => selectPopular(state).sortOrder)
-  const listRef = useRef<FlashList<number>>(null)
+  const listRef = useRef<typeof FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(

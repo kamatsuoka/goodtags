@@ -8,7 +8,6 @@ export default async function getUrl<T = string>(
   console.debug(`getUrl: baseUrl=${baseUrl}, config = ${configDebugString}`)
   const response = await axios.get(baseUrl, config)
   if (response.status !== 200) {
-    // TODO: store debugging log
     const msg =
       response.statusText ||
       `${response.status}` ||

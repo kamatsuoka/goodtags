@@ -10,6 +10,7 @@ import LabelsScreen from '@app/screens/LabelsScreen'
 import NewScreen from '@app/screens/NewScreen'
 import OptionsScreen from '@app/screens/OptionsScreen'
 import PopularScreen from '@app/screens/PopularScreen'
+import RandomScreen from '@app/screens/RandomScreen'
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
@@ -122,6 +123,11 @@ export default function HomeNavigator() {
             header: navHeader(false),
             ...homeOrientation,
           }}
+        />
+        <Stack.Screen
+          name="Random"
+          component={RandomScreen}
+          options={homeOrientation}
         />
       </Stack.Group>
     </Stack.Navigator>

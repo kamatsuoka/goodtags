@@ -34,7 +34,7 @@ const EasyScreen = () => {
   const loadingState = useAppSelector(state => selectEasy(state).loadingState)
   const error = useAppSelector(state => selectEasy(state).error)
   const sortOrder = useAppSelector(state => selectEasy(state).sortOrder)
-  const listRef = useRef<FlashList<number>>(null)
+  const listRef = useRef<typeof FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(

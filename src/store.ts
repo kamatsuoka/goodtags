@@ -12,6 +12,7 @@ import historyReducer from './modules/historySlice'
 import newReducer from './modules/newSlice'
 import optionsReducer from './modules/optionsSlice'
 import popularReducer from './modules/popularSlice'
+import randomReducer from './modules/randomSlice'
 import searchReducer from './modules/searchSlice'
 import tracksReducer from './modules/tracksSlice'
 import visitReducer from './modules/visitSlice'
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   history: historyReducer,
   tracks: tracksReducer,
   options: optionsReducer,
+  random: randomReducer,
 })
 
 export type AppState = ReturnType<typeof rootReducer>

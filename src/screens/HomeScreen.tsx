@@ -74,8 +74,6 @@ export default function HomeScreen({
       try {
         if (
           event.url.startsWith('file://')
-          // TODO: support reading stream content
-          // || event.url.startsWith("content://")
         ) {
           dispatch(receiveSharedFile(event.url))
         } else {
@@ -203,6 +201,16 @@ export default function HomeScreen({
             />
           </TouchableOpacity>
         </View>
+        <View style={styles.listHolder}>
+          <TouchableOpacity onPress={() => navigation.navigate('Random')}>
+            <List.Item
+              title="random tag"
+              left={RandomIcon}
+              right={RightIcon}
+              style={styles.listItem}
+            />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <Portal>
         <Snackbar
@@ -226,3 +234,4 @@ const LabelsIcon = homeIcon('tag-multiple-outline')
 const AboutIcon = homeIcon('information-outline')
 const OptionsIcon = homeIcon('cog-outline')
 const DataIcon = homeIcon('database')
+const RandomIcon = homeIcon('shuffle')

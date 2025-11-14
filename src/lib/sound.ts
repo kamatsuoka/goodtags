@@ -17,6 +17,7 @@ export enum NOTE {
 }
 
 const Aliases = new Map<string, string>([
+  ['cflat', 'bnatural'],
   ['csharp', 'dflat'],
   ['dsharp', 'eflat'],
   ['fsharp', 'gflat'],

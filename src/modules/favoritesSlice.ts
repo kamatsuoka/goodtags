@@ -1,7 +1,6 @@
 import { SortOrder } from '@app/constants/Search'
 import { buildFavorite, FavoritesById } from '@app/lib/models/Favorite'
 import Tag, {
-  ConvertedTags,
   IdsByString,
   StringsByNumber,
   TagsById,
@@ -326,14 +325,7 @@ export const refreshFavorite = createAsyncThunk<
   ThunkApiConfig
 >('favorites/refresh', async (id, thunkAPI) => {
   try {
-    let convertedTags: ConvertedTags
-    try {
-      convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
-    } catch (e) {
-      console.log(e)
-      const baseUrl = `https://goodtags.net/goodtags/xml/${id}.xml` // TODO
-      convertedTags = await fetchAndConvertTags({}, false /* useApi */, baseUrl)
-    }
+    const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
     const { tags } = convertedTags
     return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
   } catch (e) {

@@ -271,7 +271,6 @@ export function buildTagIds(tags: Array<SearchResult>) {
 
 export interface ConvertedTags {
   available: number
-  rawTags: XmlTag[]
   tags: SearchResult[]
   highestIndex: number
 }
@@ -286,7 +285,6 @@ export function tagsFromApiResponse(responseText: string): ConvertedTags {
     tags.length > 0 ? tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
-    rawTags, // TODO - Unused, delete this field
     tags,
     highestIndex,
   }
@@ -309,7 +307,6 @@ export function tagsFromDbRows(
     tags.length > 0 ? offset + tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
-    rawTags: [], // TODO - Unused, delete this field
     tags,
     highestIndex,
   }

@@ -21,7 +21,7 @@ export const FavoritesScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
   const dispatch = useAppDispatch()
-  const listRef = useRef<FlashList<number>>(null)
+  const listRef = useRef<typeof FlashList<number>>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(

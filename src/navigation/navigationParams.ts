@@ -7,8 +7,8 @@ export type RootStackParamList = {
   Welcome: undefined
   Tabs: undefined
   Favorites: undefined
-  History: undefined
   Tag: undefined
+  History: undefined
   About: undefined
   Options: undefined
   LabelEditor: undefined
@@ -42,6 +42,7 @@ export type HomeNavigatorParamList = {
   Classic: undefined
   Easy: undefined
   New: undefined
+  Random: undefined
   Labels: undefined
   Labeled: { label: string }
   LabelEditor: undefined

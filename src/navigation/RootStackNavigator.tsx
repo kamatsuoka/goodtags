@@ -17,6 +17,7 @@ import { Platform } from 'react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import { useAppSelector, useBodyInsets, useHorizontalInset } from '../hooks'
 import TagScreen from '../screens/TagScreen'
+import RandomScreen from '@app/screens/RandomScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import TabNavigator from './TabNavigator'
 import { RootStackParamList } from './navigationParams'
@@ -93,9 +94,9 @@ export default function RootStackNavigator() {
             options={homeOrientation}
           />
           <Stack.Screen
-            name="History"
-            component={HistoryScreen}
-            options={homeOrientation}
+            name="Random"
+            component={RandomScreen}
+            options={tagOrientation}
           />
           <Stack.Group
             screenOptions={{
