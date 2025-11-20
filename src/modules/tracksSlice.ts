@@ -62,9 +62,8 @@ export const tracksSlice = createSlice({
   initialState,
   reducers: {
     setTagTracks: (state, action: PayloadAction<Tag>) => {
-      const map = new Map(
-        action.payload.tracks.map(track => [track.part, track]),
-      )
+      const tracks = action.payload.tracks || []
+      const map = new Map(tracks.map(track => [track.part, track]))
       state.tagTracks = Object.fromEntries(map)
       state.playingState = PlayingState.idle
       state.selectedTrack = getSelectedTrack(
