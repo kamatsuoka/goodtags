@@ -7,20 +7,16 @@ buildscript {
         compileSdkVersion = 36
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
-        // Align with React Native Gradle plugin libs.versions.toml
         kotlinVersion = "2.1.20"
-        agpVersion = "8.11.0"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:$agpVersion")
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.android.tools.build:gradle")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        // https://github.com/software-mansion/react-native-screens/issues/1369
-        // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.facebook.react:react-native-gradle-plugin")
     }
 }
 
