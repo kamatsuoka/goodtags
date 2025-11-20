@@ -148,7 +148,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
 
   const sqlDirectory = new Directory(sqlDir)
   if (!sqlDirectory.exists) {
-    await sqlDirectory.create()
+    sqlDirectory.create()
   }
 
   // Initialize the DB from local storage if needed
@@ -176,6 +176,16 @@ async function initializeDbConnection(): Promise<DbWrapper> {
 
     const tmpManifestFile = new File(tmpManifestPath)
     tmpManifestFile.write(JSON.stringify(appManifestObject))
+
+    // Delete existing files before moving (move doesn't overwrite)
+    const currentSqlFile = new File(currentSqlPath)
+    if (currentSqlFile.exists) {
+      currentSqlFile.delete()
+    }
+    const currentManifestFile = new File(currentManifestPath)
+    if (currentManifestFile.exists) {
+      currentManifestFile.delete()
+    }
 
     const tmpSqlFile = new File(tmpSqlPath)
     tmpSqlFile.move(new File(currentSqlPath))
@@ -287,6 +297,16 @@ async function backgroundCheckForRemoteUpdates(
   // Actually queue up the replacement
   dbWrapper
     .queueDbReplacement(async () => {
+      // Delete existing files before moving (move doesn't overwrite)
+      const currentSql = new File(currentSqlPath)
+      if (currentSql.exists) {
+        currentSql.delete()
+      }
+      const currentManifest = new File(currentManifestPath)
+      if (currentManifest.exists) {
+        currentManifest.delete()
+      }
+
       const tmpSql = new File(tmpSqlPath)
       tmpSql.move(new File(currentSqlPath))
       const tmpManifest = new File(tmpManifestPath)
