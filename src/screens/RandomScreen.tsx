@@ -113,7 +113,6 @@ const RandomScreen = () => {
       tagListType={TagListEnum.SearchResults}
       favoritesById={favoritesById}
       playingState={playingState}
-      buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
       videosVisible={videosVisible}
       infoVisible={infoVisible}

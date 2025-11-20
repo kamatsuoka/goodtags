@@ -33,7 +33,6 @@ interface TagScreenLayoutProps {
   tagListType: TagListEnum
   favoritesById: Record<number, any>
   playingState: PlayingState
-  buttonsDimmed: boolean
   tracksVisible: boolean
   videosVisible: boolean
   infoVisible: boolean
@@ -60,7 +59,6 @@ export const TagScreenLayout = ({
   tagListType,
   favoritesById,
   playingState,
-  buttonsDimmed,
   tracksVisible,
   videosVisible,
   infoVisible,

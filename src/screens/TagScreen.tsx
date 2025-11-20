@@ -174,7 +174,6 @@ const TagScreen = ({ navigation }: Props) => {
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}
       playingState={playingState}
-      buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
       videosVisible={videosVisible}
       infoVisible={infoVisible}
