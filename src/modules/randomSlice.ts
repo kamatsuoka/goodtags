@@ -68,7 +68,7 @@ export const getRandomTag = createAsyncThunk<
 >('random/getRandomTag', async (_, thunkAPI) => {
   try {
     const tagCount = await countTags()
-    const randomOffset = Math.floor(Math.random() * tagCount)
+    const randomOffset = Math.max(0, Math.floor(Math.random() * tagCount) - 50)
     const fetchResult = await fetchAndConvertTags(
       { ...RandomSearchParams, offset: randomOffset },
       false /* useApi */,
