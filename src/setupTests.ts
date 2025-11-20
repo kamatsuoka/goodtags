@@ -20,16 +20,38 @@ jest.mock('expo-constants', () => ({
   default: { expoConfig: {}, manifest: {}, appOwnership: 'standalone' },
 }))
 
-jest.mock('expo-file-system', () => ({
-  documentDirectory: '/data/',
-  getInfoAsync: jest.fn(async () => ({ exists: true })),
-  makeDirectoryAsync: jest.fn(async () => {}),
-  readAsStringAsync: jest.fn(async () => '{}'),
-  writeAsStringAsync: jest.fn(async () => {}),
-  moveAsync: jest.fn(async () => {}),
-  downloadAsync: jest.fn(async (_from, to) => ({ uri: to })),
-  copyAsync: jest.fn(async () => {}),
-}))
+jest.mock('expo-file-system', () => {
+  const mockFileConstructor: any = jest.fn().mockImplementation(uri => ({
+    exists: true,
+    uri: typeof uri === 'string' ? uri : '/mock-file/',
+    text: jest.fn(async () => '{}'),
+    write: jest.fn(),
+    copy: jest.fn(),
+    move: jest.fn(),
+    delete: jest.fn(),
+  }))
+  mockFileConstructor.downloadFileAsync = jest.fn(
+    async (_url, destination) => ({
+      uri: destination.uri || '/mock-downloaded-file/',
+      exists: true,
+    }),
+  )
+
+  return {
+    documentDirectory: '/data/',
+    Paths: {
+      cache: { uri: '/cache/' },
+      document: { uri: '/data/' },
+    },
+    Directory: jest.fn().mockImplementation(() => ({
+      exists: true,
+      uri: '/mock-dir/',
+      create: jest.fn(async () => {}),
+      delete: jest.fn(),
+    })),
+    File: mockFileConstructor,
+  }
+})
 
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(async () => ({

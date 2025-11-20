@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system'
+import { Directory, File, Paths } from 'expo-file-system'
 import { useCallback, useEffect, useState } from 'react'
 
 interface PdfCacheState {
@@ -15,8 +15,8 @@ const getCacheKey = (uri: string): string => {
 }
 
 const getCachePath = (cacheKey: string): string => {
-  const cacheDir = `${FileSystem.cacheDirectory}pdfs/`
-  return `${cacheDir}${cacheKey}`
+  const cacheDir = new Directory(Paths.cache, 'pdfs')
+  return `${cacheDir.uri}${cacheKey}`
 }
 
 /**
@@ -57,15 +57,13 @@ export const usePdfCache = (uri: string): PdfCacheState => {
       const cachePath = getCachePath(cacheKey)
 
       // Ensure cache directory exists
-      const cacheDir = `${FileSystem.cacheDirectory}pdfs/`
-      const dirInfo = await FileSystem.getInfoAsync(cacheDir)
-      if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(cacheDir, { intermediates: true })
+      const cacheDir = new Directory(Paths.cache, 'pdfs')
+      if (!cacheDir.exists) {
+        await cacheDir.create()
       }
 
       // Check if file is already cached
-      const fileInfo = await FileSystem.getInfoAsync(cachePath)
-      if (fileInfo.exists) {
+      if (new File(cachePath).exists) {
         setState({
           localPath: cachePath,
           isLoading: false,
@@ -75,21 +73,16 @@ export const usePdfCache = (uri: string): PdfCacheState => {
       }
 
       // Download the file
-      const downloadResult = await FileSystem.downloadAsync(pdfUri, cachePath)
+      const downloadedFile = await File.downloadFileAsync(
+        pdfUri,
+        new File(cachePath),
+      )
 
-      if (downloadResult.status === 200) {
-        setState({
-          localPath: downloadResult.uri,
-          isLoading: false,
-          error: null,
-        })
-      } else {
-        setState({
-          localPath: null,
-          isLoading: false,
-          error: `Download failed with status ${downloadResult.status}`,
-        })
-      }
+      setState({
+        localPath: downloadedFile.uri,
+        isLoading: false,
+        error: null,
+      })
     } catch (error) {
       console.error('PDF download error:', error)
       setState({
@@ -120,10 +113,9 @@ export const usePdfCache = (uri: string): PdfCacheState => {
  */
 export const clearPdfCache = async (): Promise<void> => {
   try {
-    const cacheDir = `${FileSystem.cacheDirectory}pdfs/`
-    const dirInfo = await FileSystem.getInfoAsync(cacheDir)
-    if (dirInfo.exists) {
-      await FileSystem.deleteAsync(cacheDir, { idempotent: true })
+    const cacheDir = new Directory(Paths.cache, 'pdfs')
+    if (cacheDir.exists) {
+      cacheDir.delete()
     }
   } catch (error) {
     console.error('Failed to clear PDF cache:', error)

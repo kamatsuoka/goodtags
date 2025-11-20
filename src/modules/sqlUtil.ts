@@ -10,8 +10,8 @@ import {
 import getUrl from '@app/modules/getUrl'
 import { Buffer } from 'buffer'
 import { Asset } from 'expo-asset'
-import * as FileSystem from 'expo-file-system'
-import { EncodingType } from 'expo-file-system'
+import { Directory, File, Paths } from 'expo-file-system'
+import { copyAsync, EncodingType } from 'expo-file-system/legacy'
 import * as SQLite from 'expo-sqlite'
 
 // These are the parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
@@ -138,7 +138,7 @@ const SQLITE_DIR = 'SQLite'
  */
 async function initializeDbConnection(): Promise<DbWrapper> {
   // The "SQLite" directory is required and assumed by SQLite.openDatabase
-  const sqlDir = `${FileSystem.documentDirectory}${SQLITE_DIR}/`
+  const sqlDir = `${Paths.document.uri}${SQLITE_DIR}/`
   const currentSqlPath = sqlDir + TAGS_DB_NAME
   const currentManifestPath = sqlDir + MANIFEST_NAME
   const tmpSqlPath = `${currentSqlPath}.tmp`
@@ -146,8 +146,9 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   const appSqlUri = Asset.fromModule(getReactNativeAppSqlModule()).uri
   const appManifestObject = getReactNativeAppManifestModule()
 
-  if (!(await FileSystem.getInfoAsync(sqlDir)).exists) {
-    await FileSystem.makeDirectoryAsync(sqlDir)
+  const sqlDirectory = new Directory(sqlDir)
+  if (!sqlDirectory.exists) {
+    await sqlDirectory.create()
   }
 
   // Initialize the DB from local storage if needed
@@ -163,20 +164,22 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     // place. There's still potential for a race condition where we've moved one file but not the other, but the
     // consequences should be much less bad (eg unlikely to brick the app).
 
+    // In dev mode, assets are served via HTTP by Metro bundler, so use downloadFileAsync
+    // In prod mode, assets are local asset:// URIs, so use legacy copyAsync which handles asset URIs
     if (__DEV__) {
-      await FileSystem.downloadAsync(appSqlUri, tmpSqlPath)
+      await File.downloadFileAsync(appSqlUri, new File(tmpSqlPath), {
+        idempotent: true,
+      })
     } else {
-      await FileSystem.copyAsync({ from: appSqlUri, to: tmpSqlPath })
+      await copyAsync({ from: appSqlUri, to: tmpSqlPath })
     }
-    await FileSystem.writeAsStringAsync(
-      tmpManifestPath,
-      JSON.stringify(appManifestObject),
-    )
-    await FileSystem.moveAsync({ from: tmpSqlPath, to: currentSqlPath })
-    await FileSystem.moveAsync({
-      from: tmpManifestPath,
-      to: currentManifestPath,
-    })
+
+    const tmpManifestFile = new File(tmpManifestPath)
+    tmpManifestFile.write(JSON.stringify(appManifestObject))
+
+    const tmpSqlFile = new File(tmpSqlPath)
+    tmpSqlFile.move(new File(currentSqlPath))
+    tmpManifestFile.move(new File(currentManifestPath))
   } else {
     console.debug(
       'Not copying DB from app storage, current DB already new enough',
@@ -208,8 +211,8 @@ async function shouldCopyFromApp(
 ): Promise<boolean> {
   // If either are missing, we should obviously copy
   if (
-    !(await FileSystem.getInfoAsync(currentSqlPath)).exists ||
-    !(await FileSystem.getInfoAsync(currentManifestPath)).exists
+    !new File(currentSqlPath).exists ||
+    !new File(currentManifestPath).exists
   ) {
     return true
   }
@@ -221,9 +224,8 @@ async function shouldCopyFromApp(
 }
 
 async function generatedAtFromPath(manifestPath: string): Promise<number> {
-  const contents = await FileSystem.readAsStringAsync(manifestPath, {
-    encoding: 'utf8',
-  })
+  const manifestFile = new File(manifestPath)
+  const contents = await manifestFile.text()
   const manifest: DbManifest = JSON.parse(contents)
   return manifest.generated_at_epoch_seconds
 }
@@ -276,22 +278,19 @@ async function backgroundCheckForRemoteUpdates(
   // This is *wild*, the API has no way to write binary content to a file, have to b64 encode it first and write
   // as a string >.>
   const responseBase64 = Buffer.from(responseBuffer).toString('base64')
-  await FileSystem.writeAsStringAsync(tmpSqlPath, responseBase64, {
-    encoding: EncodingType.Base64,
-  })
-  await FileSystem.writeAsStringAsync(
-    tmpManifestPath,
-    JSON.stringify(remoteManifestContents),
-  )
+  const tmpSqlFile = new File(tmpSqlPath)
+  tmpSqlFile.write(responseBase64, { encoding: EncodingType.Base64 })
+
+  const tmpManifestFile = new File(tmpManifestPath)
+  tmpManifestFile.write(JSON.stringify(remoteManifestContents))
 
   // Actually queue up the replacement
   dbWrapper
     .queueDbReplacement(async () => {
-      await FileSystem.moveAsync({ from: tmpSqlPath, to: currentSqlPath })
-      await FileSystem.moveAsync({
-        from: tmpManifestPath,
-        to: currentManifestPath,
-      })
+      const tmpSql = new File(tmpSqlPath)
+      tmpSql.move(new File(currentSqlPath))
+      const tmpManifest = new File(tmpManifestPath)
+      tmpManifest.move(new File(currentManifestPath))
       console.debug('Done updating DB from remote')
       return await SQLite.openDatabaseAsync(TAGS_DB_NAME)
     })
