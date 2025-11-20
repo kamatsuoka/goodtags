@@ -130,26 +130,29 @@ const RandomScreen = () => {
     ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
   }
 
-  const fabGroupStyle = { ...styles.fabGroup, marginTop: 0, marginRight: 0 }
-  const backButtonStyle = { ...styles.backButton, marginTop: 0, marginLeft: 0 }
+  const fabGroupStyle = {
+    ...styles.fabGroup,
+    marginTop: ios ? 0 : insets.top - styles.fabGroup.paddingTop,
+    marginRight: ios ? 0 : insets.right - styles.fabGroup.paddingRight,
+  }
+  const backButtonStyle = {
+    ...styles.backButton,
+    marginTop: ios ? 0 : insets.top + 15,
+    marginLeft: ios ? 0 : insets.left,
+  }
   const bottomActionBarStyle = {
     ...styles.actionBar,
-    marginBottom: 0,
-    marginLeft: 0,
-    marginRight: 0,
+    marginBottom: ios ? 0 : insets.bottom,
+    marginLeft: ios ? 0 : insets.left,
+    marginRight: ios ? 0 : insets.right,
   }
-  const modalCloseButtonStyle = styles.closeButton
-  if (!ios) {
-    fabGroupStyle.marginTop = insets.top - fabGroupStyle.paddingTop
-    fabGroupStyle.marginRight = insets.right - fabGroupStyle.paddingRight
-    backButtonStyle.marginTop = insets.top + 15
-    backButtonStyle.marginLeft = insets.left
-    bottomActionBarStyle.marginBottom = insets.bottom
-    bottomActionBarStyle.marginLeft = insets.left
-    bottomActionBarStyle.marginRight = insets.right
-    modalCloseButtonStyle.top += insets.top
-    modalCloseButtonStyle.left += insets.left
-  }
+  const modalCloseButtonStyle = ios
+    ? styles.closeButton
+    : {
+        ...styles.closeButton,
+        top: styles.closeButton.top + insets.top,
+        left: styles.closeButton.left + insets.left,
+      }
 
   const videoModalStyle = StyleSheet.compose(
     themedStyles.modal,
