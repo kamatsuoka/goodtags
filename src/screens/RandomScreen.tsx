@@ -5,42 +5,16 @@ import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  ColorValue,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { isTablet } from 'react-native-device-info'
-import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import {
-  SafeAreaInsetsContext,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { FABDown } from '../components/FABDown'
-import NoteButton from '../components/NoteButton'
-import SheetMusic from '../components/SheetMusic'
-import TagInfoView from '../components/TagInfoView'
-import TrackMenu from '../components/TrackMenu'
-import VideoView from '../components/VideoView'
-import CommonStyles from '../constants/CommonStyles'
+import { useEffect, useState } from 'react'
+import { Appbar, useTheme } from 'react-native-paper'
+import { TagScreenLayout } from '../components/TagScreenLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { NoteHandler } from '../lib/NoteHandler'
-import { noteForKey } from '../lib/NotePlayer'
-import { IdBackground, InversePrimaryLowAlpha } from '../lib/theme'
+import { useButtonDimming } from '../hooks/useButtonDimming'
+import { useTagEffects } from '../hooks/useTagEffects'
+import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import { FavoritesActions } from '../modules/favoritesSlice'
-import { HistoryActions } from '../modules/historySlice'
 import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
-import {
-  PlayingState,
-  playTrack,
-  setTagTracks,
-  stopTrack,
-} from '../modules/tracksSlice'
+import { PlayingState, playTrack, stopTrack } from '../modules/tracksSlice'
 import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
@@ -52,30 +26,30 @@ const FALLBACK_TAG: SearchResult = {
   key: 'F:natural',
 } as SearchResult
 
+const BIG_BUTTON_SIZE = 40
+
 /**
  * Random tag screen
  */
 const RandomScreen = () => {
   const theme = useTheme()
   const navigation = useNavigation()
-  const [buttonsDimmed, setButtonsDimmed] = useState(false)
   const [tracksVisible, setTracksVisible] = useState(false)
   const [videosVisible, setVideosVisible] = useState(false)
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
-  const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useAppSelector(state => {
     return selectRandomTag(state) || FALLBACK_TAG
   })
-  const keyNote = noteForKey(tag?.key)
-  const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
   const tracksState = useAppSelector(state => state.tracks)
 
-  const ios = Platform.OS === 'ios'
-  const iPad = ios && isTablet()
+  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
+    useButtonDimming()
+
+  const styles = useTagScreenStyles(buttonsDimmed)
 
   useEffect(() => {
     dispatch(getRandomTag())
@@ -87,128 +61,7 @@ const RandomScreen = () => {
     }
   }, [tag.id])
 
-  const themedStyles = StyleSheet.create({
-    id: {
-      color: theme.colors.primary,
-      fontSize: 18,
-      marginRight: 7,
-    },
-    idHolder: {
-      alignItems: 'baseline',
-      backgroundColor: IdBackground,
-      borderRadius: 7,
-      borderColor: theme.colors.secondaryContainer,
-      borderWidth: 2,
-      flexDirection: 'row',
-      paddingHorizontal: 7,
-      paddingBottom: 4,
-      paddingVertical: ios ? 4 : 0,
-    },
-    modal: {
-      ...CommonStyles.modal,
-      borderWidth: 1,
-      backgroundColor: theme.colors.backdrop,
-    },
-    videoModal: {
-      flexDirection: 'row',
-      backgroundColor: theme.colors.backdrop,
-    },
-    iconHolderDim: {
-      backgroundColor: theme.colors.inverseOnSurface,
-      opacity: BUTTON_DIM_OPACITY,
-    },
-    iconHolderBright: {
-      backgroundColor: theme.colors.inverseOnSurface,
-      opacity: 1.0,
-    },
-  })
-
-  const topBarStyle = {
-    ...styles.topBar,
-    paddingTop: insets.top,
-    // avoid split screen controls interfering with favorite button on iPad
-    ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
-  }
-
-  const fabGroupStyle = {
-    ...styles.fabGroup,
-    marginTop: ios ? 0 : insets.top - styles.fabGroup.paddingTop,
-    marginRight: ios ? 0 : insets.right - styles.fabGroup.paddingRight,
-  }
-  const backButtonStyle = {
-    ...styles.backButton,
-    marginTop: ios ? 0 : insets.top + 15,
-    marginLeft: ios ? 0 : insets.left,
-  }
-  const bottomActionBarStyle = {
-    ...styles.actionBar,
-    marginBottom: ios ? 0 : insets.bottom,
-    marginLeft: ios ? 0 : insets.left,
-    marginRight: ios ? 0 : insets.right,
-  }
-  const modalCloseButtonStyle = ios
-    ? styles.closeButton
-    : {
-        ...styles.closeButton,
-        top: styles.closeButton.top + insets.top,
-        left: styles.closeButton.left + insets.left,
-      }
-
-  const videoModalStyle = StyleSheet.compose(
-    themedStyles.modal,
-    themedStyles.videoModal,
-  )
-
-  const dimmerTimerRef = useRef(0)
-
-  const BUTTON_DIM_TIME = 4000
-
-  const brightenButtons = useCallback(() => {
-    clearTimeout(dimmerTimerRef.current)
-    setButtonsDimmed(false)
-  }, [])
-
-  const dimButtons = useCallback(() => {
-    clearTimeout(dimmerTimerRef.current)
-    setButtonsDimmed(true)
-  }, [])
-
-  const brightenThenFade = useCallback(() => {
-    brightenButtons()
-    // @ts-ignore
-    dimmerTimerRef.current = setTimeout(() => {
-      setButtonsDimmed(true)
-    }, BUTTON_DIM_TIME)
-  }, [brightenButtons])
-
-  useEffect(() => {
-    brightenThenFade()
-    return () => clearTimeout(dimmerTimerRef.current)
-  }, [brightenThenFade])
-
-  const HISTORY_MIN_VIEW_TIME = 7000
-  useEffect(() => {
-    // after viewing tag for a while, add it to history
-    const timeoutId = setTimeout(() => {
-      dispatch(HistoryActions.addHistory({ tag }))
-    }, HISTORY_MIN_VIEW_TIME)
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [dispatch, tag])
-
-  // set track data into store
-  useEffect(() => {
-    dispatch(setTagTracks(tag))
-  }, [dispatch, tag])
-
-  useEffect(() => {
-    // Clean up when component unmounts
-    return () => {
-      // When the component unmounts, stop the track
-      dispatch(stopTrack())
-    }
-  }, [dispatch])
+  useTagEffects(tag)
 
   const hasTracks = (): boolean => {
     const tracks = tag.tracks
@@ -217,33 +70,6 @@ const RandomScreen = () => {
   const hasVideos = (): boolean => {
     const videos = tag.videos
     return videos?.length > 0 && videos[0] !== undefined
-  }
-
-  const fabActions = [
-    {
-      icon: 'file-document-outline',
-      label: 'tag info',
-      onPress: () => setInfoVisible(true),
-    },
-    {
-      icon: 'tag-outline',
-      label: 'labels',
-      onPress: () => navigation.navigate('TagLabels'),
-    },
-  ]
-  if (hasTracks()) {
-    fabActions.push({
-      icon: 'headphones',
-      label: 'tracks',
-      onPress: () => setTracksVisible(true),
-    })
-  }
-  if (hasVideos()) {
-    fabActions.push({
-      icon: 'video-box',
-      label: 'videos',
-      onPress: () => setVideosVisible(true),
-    })
   }
 
   async function toggleFavorite(id: number) {
@@ -264,229 +90,51 @@ const RandomScreen = () => {
     }
   }
 
-  const noteIcon = useCallback(
-    (props: { size: number; color: ColorValue }) => (
-      <NoteButton note={keyNote} {...props} />
-    ),
-    [keyNote],
-  )
-  const memoizedSheetMusic = useMemo(
-    () => <SheetMusic uri={tag.uri} onPress={brightenThenFade} />,
-    [brightenThenFade, tag.uri],
-  )
-
-  const SMALL_BUTTON_SIZE = 26
-  const BIG_BUTTON_SIZE = 40
-
-  const dimmableIconHolderStyle = buttonsDimmed
-    ? themedStyles.iconHolderDim
-    : themedStyles.iconHolderBright
-
-  type AppActionProps = {
-    icon: string | IconSource
-    onPress: () => void
-    disabled?: boolean
-    onPressIn?: () => void
-    onPressOut?: () => void
-  }
-
-  const AppAction = useCallback(
-    (props: AppActionProps) => {
-      return (
-        <Appbar.Action
-          icon={props.icon}
-          color={theme.colors.primary}
-          onPress={() => {
-            brightenThenFade()
-            props.onPress()
-          }}
-          onPressIn={props.onPressIn}
-          onPressOut={props.onPressOut}
-          disabled={props.disabled}
-          size={BIG_BUTTON_SIZE}
-          style={dimmableIconHolderStyle}
-        />
-      )
-    },
-    [brightenThenFade, dimmableIconHolderStyle, theme.colors.primary],
-  )
-
-  // need to zero out insets to make modal cover whole screen in ios
-  return (
-    <View style={CommonStyles.container}>
-      {memoizedSheetMusic}
-      <View style={topBarStyle} pointerEvents="box-none">
-        <TouchableOpacity
-          onPress={() => toggleFavorite(tag.id)}
-          activeOpacity={0.4}
-        >
-          <View style={themedStyles.idHolder}>
-            <Text style={themedStyles.id}># {tag.id}</Text>
-            <Icon
-              name={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-              color={theme.colors.primary}
-              size={16}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.buttonHolder} pointerEvents="box-none">
-        <View style={styles.actionBar} pointerEvents="box-none">
-          <Appbar.BackAction
-            color={theme.colors.primary}
-            onPress={navigation.goBack}
-            size={SMALL_BUTTON_SIZE}
-            style={backButtonStyle}
-          />
-        </View>
-        <View style={bottomActionBarStyle} pointerEvents="box-none">
-          {buttonsDimmed ? null : (
-            <>
-              <Appbar.Action
-                icon={noteIcon}
-                onPress={() => {
-                  // handler required for onPressIn to be handled
-                }}
-                onPressIn={async () => {
-                  noteHandler.onPressIn()
-                  brightenButtons()
-                }}
-                onPressOut={async () => {
-                  noteHandler.onPressOut()
-                  brightenThenFade()
-                }}
-                color={theme.colors.primary}
-                size={BIG_BUTTON_SIZE}
-                style={dimmableIconHolderStyle}
-              />
-              <AppAction
-                icon={playingState === PlayingState.playing ? 'pause' : 'play'}
-                onPress={async () => {
-                  dispatch(playOrPause)
-                }}
-                disabled={!hasTracks()}
-              />
-            </>
-          )}
-          <Appbar.Content title=" " pointerEvents="none" />
-          <AppAction
-            icon="shuffle"
-            onPress={async () => {
-              dispatch(stopTrack())
-              dispatch(getRandomTag())
-            }}
-          />
-        </View>
-        <FABDown
-          icon={fabOpen ? 'minus' : 'cog-outline'}
-          open={fabOpen}
-          actions={fabActions}
-          onStateChange={({ open }) => {
-            dimButtons()
-            setFabOpen(open)
-          }}
-          style={fabGroupStyle}
-          fabStyle={styles.fabDown}
-          theme={theme}
-        />
-      </View>
-      <SafeAreaInsetsContext.Provider
-        value={{
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+  const shuffleAction = (
+    <>
+      <Appbar.Content title=" " pointerEvents="none" />
+      <Appbar.Action
+        icon="shuffle"
+        onPress={async () => {
+          brightenThenFade()
+          dispatch(stopTrack())
+          dispatch(getRandomTag())
         }}
-      >
-        <Modal
-          visible={infoVisible}
-          onDismiss={() => setInfoVisible(false)}
-          style={themedStyles.modal}
-        >
-          <TagInfoView tag={tag} tagListType={TagListEnum.SearchResults} />
-        </Modal>
-        {hasVideos() ? (
-          <Modal
-            visible={videosVisible}
-            onDismiss={() => setVideosVisible(false)}
-            style={videoModalStyle}
-          >
-            <VideoView tag={tag} />
-          </Modal>
-        ) : null}
-        <Modal
-          visible={tracksVisible}
-          onDismiss={() => setTracksVisible(false)}
-          style={themedStyles.modal}
-        >
-          <TrackMenu onDismiss={() => setTracksVisible(false)} />
-        </Modal>
-        {videosVisible ? (
-          <IconButton
-            icon="close"
-            mode="contained"
-            onPress={() => setVideosVisible(false)}
-            style={modalCloseButtonStyle}
-          />
-        ) : null}
-      </SafeAreaInsetsContext.Provider>
-    </View>
+        color={theme.colors.primary}
+        size={BIG_BUTTON_SIZE}
+        style={styles.dimmableIconHolderStyle}
+      />
+    </>
+  )
+
+  return (
+    <TagScreenLayout
+      tag={tag}
+      tagListType={TagListEnum.SearchResults}
+      favoritesById={favoritesById}
+      playingState={playingState}
+      buttonsDimmed={buttonsDimmed}
+      tracksVisible={tracksVisible}
+      videosVisible={videosVisible}
+      infoVisible={infoVisible}
+      fabOpen={fabOpen}
+      hasTracks={hasTracks()}
+      hasVideos={hasVideos()}
+      onToggleFavorite={toggleFavorite}
+      onPlayOrPause={playOrPause}
+      onBack={navigation.goBack}
+      onBrightenButtons={brightenButtons}
+      onBrightenThenFade={brightenThenFade}
+      onDimButtons={dimButtons}
+      onSetTracksVisible={setTracksVisible}
+      onSetVideosVisible={setVideosVisible}
+      onSetInfoVisible={setInfoVisible}
+      onSetFabOpen={setFabOpen}
+      onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      styles={styles}
+      additionalActions={shuffleAction}
+    />
   )
 }
-
-const BUTTON_DIM_OPACITY = 0.5
-
-const styles = StyleSheet.create({
-  container: {
-    ...CommonStyles.container,
-  },
-  topBar: {
-    position: 'absolute',
-    top: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  buttonHolder: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 3,
-    justifyContent: 'space-between',
-    paddingHorizontal: 18,
-  },
-  actionBar: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 80,
-  },
-  fabDown: {
-    ...CommonStyles.fabDown,
-    marginBottom: 20,
-  },
-  fabGroup: {
-    paddingTop: 21,
-    paddingRight: 16,
-  },
-  noteIcon: {
-    position: 'absolute',
-    margin: 20,
-    left: 0,
-    bottom: 56,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 5,
-    left: 10,
-  },
-  backButton: {
-    backgroundColor: IdBackground,
-  },
-  iconHolder: {
-    backgroundColor: InversePrimaryLowAlpha,
-  },
-})
 
 export default RandomScreen
