@@ -72,9 +72,7 @@ export default function HomeScreen({
   useEffect(() => {
     const handleOpenUrl = async (event: { url: string }) => {
       try {
-        if (
-          event.url.startsWith('file://')
-        ) {
+        if (event.url.startsWith('file://')) {
           dispatch(receiveSharedFile(event.url))
         } else {
           throw new Error(`unknown url type ${event.url}`)
@@ -202,7 +200,13 @@ export default function HomeScreen({
           </TouchableOpacity>
         </View>
         <View style={styles.listHolder}>
-          <TouchableOpacity onPress={() => navigation.navigate('Random')}>
+          <TouchableOpacity
+            onPress={() => {
+              const parent = navigation.getParent()
+              const root = parent?.getParent()
+              root?.navigate('Random' as never)
+            }}
+          >
             <List.Item
               title="random tag"
               left={RandomIcon}

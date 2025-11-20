@@ -18,6 +18,7 @@ export type RootStackParamList = {
   TagLabels: undefined
   PortraitTransition: undefined
   LandscapeTransition: undefined
+  Random: undefined
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
@@ -42,7 +43,6 @@ export type HomeNavigatorParamList = {
   Classic: undefined
   Easy: undefined
   New: undefined
-  Random: undefined
   Labels: undefined
   Labeled: { label: string }
   LabelEditor: undefined
