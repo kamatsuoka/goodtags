@@ -8,7 +8,9 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
-      "expo-file-system"
+      "expo-file-system",
+      "expo-asset",
+      "expo-sqlite"
     ]
   }
 }

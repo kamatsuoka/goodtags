@@ -1,4 +1,9 @@
-	pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+	pluginManagement {
+		includeBuild("../node_modules/@react-native/gradle-plugin")
+		plugins {
+			id("org.jetbrains.kotlin.jvm") version "2.1.20"
+		}
+	}
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'goodtags'

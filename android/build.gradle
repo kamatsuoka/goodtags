@@ -7,16 +7,18 @@ buildscript {
         compileSdkVersion = 36
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
+        // Align with React Native Gradle plugin libs.versions.toml
         kotlinVersion = "2.1.20"
+        agpVersion = "8.11.0"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:$agpVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         // https://github.com/software-mansion/react-native-screens/issues/1369
         // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -25,16 +27,6 @@ buildscript {
 apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
-    // see https://wix.github.io/Detox/docs/next/troubleshooting/building-the-app/#problem-minsdkversion-mismatch
-    afterEvaluate {
-        if (it.hasProperty('android')){
-            android {
-                defaultConfig {
-                    minSdkVersion 21
-                }
-            }
-        }
-    }
     repositories {
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
