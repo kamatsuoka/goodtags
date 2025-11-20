@@ -30,55 +30,36 @@ target 'goodtags' do
     # Hermes is now enabled by default. Disable by setting this flag to false.
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    # :flipper_configuration => FlipperConfiguration.enabled,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
+
+    # Fix for Hermes script path issue in React Native 0.82.x
+    # The REACT_NATIVE_PATH environment variable is not set, so we need to use absolute paths
+    react_native_path = File.expand_path(config[:reactNativePath])
+    
     installer.pods_project.targets.each do |target|
-      if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
-        target.build_configurations.each do |config|
-            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-            config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64 i386'
+      if target.name == 'hermes-engine'
+        target.shell_script_build_phases.each do |phase|
+          if phase.name&.include?("Replace Hermes")
+            # Replace all instances of $REACT_NATIVE_PATH with the actual path
+            phase.shell_script = phase.shell_script.gsub(
+              '$REACT_NATIVE_PATH',
+              "\"#{react_native_path}\""
+            ).gsub(
+              '"$NODE_BINARY"',
+              "\"#{`command -v node`.strip}\""
+            )
+          end
         end
       end
     end
   end
-
-  # see https://discuss.bitrise.io/t/xcode-16-known-issues/24484
-  def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
-    podfile_dir = File.dirname(__FILE__)
-    framework_path = File.join(podfile_dir, framework_relative_path)
-    command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
-    puts "Stripping bitcode: #{command}"
-    system(command)
-  end
-  
-  framework_paths = [
-    "Pods/hermes-engine/destroot/Library/Frameworks/macosx/hermes.framework/hermes",
-    "Pods/hermes-engine/destroot/Library/Frameworks/macosx/hermes.framework/Versions/Current/hermes",
-    "Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/ios-arm64/hermes.framework/hermes",
-    "Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/ios-arm64_x86_64-maccatalyst/hermes.framework/hermes"
-  ]
-
-  bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
-  framework_paths.each do |framework_relative_path|
-    strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
-  end
-
-
 end
