@@ -175,34 +175,30 @@ export const TagScreenLayout = ({
           />
         </View>
         <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
-          {buttonsDimmed ? null : (
-            <>
-              <Appbar.Action
-                icon={noteIcon}
-                onPress={() => {
-                  // handler required for onPressIn to be handled
-                }}
-                onPressIn={async () => {
-                  noteHandler.onPressIn()
-                  onBrightenButtons()
-                }}
-                onPressOut={async () => {
-                  noteHandler.onPressOut()
-                  onBrightenThenFade()
-                }}
-                color={theme.colors.primary}
-                size={BIG_BUTTON_SIZE}
-                style={styles.dimmableIconHolderStyle}
-              />
-              <AppAction
-                icon={playingState === PlayingState.playing ? 'pause' : 'play'}
-                onPress={async () => {
-                  onPlayOrPause()
-                }}
-                disabled={!hasTracks}
-              />
-            </>
-          )}
+          <Appbar.Action
+            icon={noteIcon}
+            onPress={() => {
+              // handler required for onPressIn to be handled
+            }}
+            onPressIn={async () => {
+              noteHandler.onPressIn()
+              onBrightenButtons()
+            }}
+            onPressOut={async () => {
+              noteHandler.onPressOut()
+              onBrightenThenFade()
+            }}
+            color={theme.colors.primary}
+            size={BIG_BUTTON_SIZE}
+            style={styles.dimmableIconHolderStyle}
+          />
+          <AppAction
+            icon={playingState === PlayingState.playing ? 'pause' : 'play'}
+            onPress={async () => {
+              onPlayOrPause()
+            }}
+            disabled={!hasTracks}
+          />
           {additionalActions}
         </View>
         <FABDown
