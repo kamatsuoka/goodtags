@@ -111,7 +111,8 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const fabGroupStyle = {
     ...baseStyles.fabGroup,
-    marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
+    // marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
+    marginTop: ios ? 0 : insets.top,
     marginRight: ios ? 0 : insets.right - baseStyles.fabGroup.paddingRight,
   }
 
