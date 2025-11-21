@@ -151,9 +151,16 @@ export const TagScreenLayout = ({
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
       <View style={styles.topBarStyle} pointerEvents="box-none">
+        <Appbar.BackAction
+          color={theme.colors.primary}
+          onPress={onBack}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.backButtonStyle}
+        />
         <TouchableOpacity
           onPress={() => onToggleFavorite(tag.id)}
           activeOpacity={0.4}
+          style={styles.themedStyles.idHolderContainer}
         >
           <View style={styles.themedStyles.idHolder}>
             <Text style={styles.themedStyles.id}># {tag.id}</Text>
@@ -164,59 +171,56 @@ export const TagScreenLayout = ({
             />
           </View>
         </TouchableOpacity>
-      </View>
-      <View style={styles.baseStyles.buttonHolder} pointerEvents="box-none">
-        <View style={styles.baseStyles.actionBar} pointerEvents="box-none">
-          <Appbar.BackAction
-            color={theme.colors.primary}
-            onPress={onBack}
-            size={SMALL_BUTTON_SIZE}
-            style={styles.backButtonStyle}
-          />
-        </View>
-        <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
-          {buttonsDimmed ? null : (
-            <>
-              <Appbar.Action
-                icon={noteIcon}
-                onPress={() => {
-                  // handler required for onPressIn to be handled
-                }}
-                onPressIn={async () => {
-                  noteHandler.onPressIn()
-                  onBrightenButtons()
-                }}
-                onPressOut={async () => {
-                  noteHandler.onPressOut()
-                  onBrightenThenFade()
-                }}
-                color={theme.colors.primary}
-                size={BIG_BUTTON_SIZE}
-                style={styles.dimmableIconHolderStyle}
-              />
-              <AppAction
-                icon={playingState === PlayingState.playing ? 'pause' : 'play'}
-                onPress={async () => {
-                  onPlayOrPause()
-                }}
-                disabled={!hasTracks}
-              />
-            </>
-          )}
-          {additionalActions}
-        </View>
-        <FABDown
+        <Appbar.Action
           icon={fabOpen ? 'minus' : 'cog-outline'}
-          open={fabOpen}
-          actions={fabActions}
-          onStateChange={({ open }) => {
-            onDimButtons()
-            onSetFabOpen(open)
-          }}
-          style={styles.fabGroupStyle}
-          fabStyle={styles.baseStyles.fabDown}
-          theme={theme}
+          onPress={() => onSetFabOpen(!fabOpen)}
+          color={theme.colors.primary}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.fabButtonStyle}
         />
+      </View>
+      <FABDown
+        icon={fabOpen ? 'minus' : 'cog-outline'}
+        open={fabOpen}
+        actions={fabActions}
+        onStateChange={({ open }) => {
+          onDimButtons()
+          onSetFabOpen(open)
+        }}
+        style={styles.fabGroupStyle}
+        fabStyle={styles.fabHiddenStyle}
+        theme={theme}
+      />
+      <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
+        {buttonsDimmed ? null : (
+          <>
+            <Appbar.Action
+              icon={noteIcon}
+              onPress={() => {
+                // handler required for onPressIn to be handled
+              }}
+              onPressIn={async () => {
+                noteHandler.onPressIn()
+                onBrightenButtons()
+              }}
+              onPressOut={async () => {
+                noteHandler.onPressOut()
+                onBrightenThenFade()
+              }}
+              color={theme.colors.primary}
+              size={BIG_BUTTON_SIZE}
+              style={styles.dimmableIconHolderStyle}
+            />
+            <AppAction
+              icon={playingState === PlayingState.playing ? 'pause' : 'play'}
+              onPress={async () => {
+                onPlayOrPause()
+              }}
+              disabled={!hasTracks}
+            />
+          </>
+        )}
+        {additionalActions}
       </View>
       <SafeAreaInsetsContext.Provider
         value={{

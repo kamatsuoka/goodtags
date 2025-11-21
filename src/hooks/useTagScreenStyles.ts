@@ -14,8 +14,11 @@ const baseStyles = StyleSheet.create({
   topBar: {
     position: 'absolute',
     top: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     backgroundColor: 'transparent',
   },
   buttonHolder: {
@@ -38,8 +41,8 @@ const baseStyles = StyleSheet.create({
     marginBottom: 20,
   },
   fabGroup: {
-    paddingTop: 21,
-    paddingRight: 16,
+    // paddingTop: 21,
+    // paddingRight: 16,
   },
   noteIcon: {
     position: 'absolute',
@@ -54,6 +57,13 @@ const baseStyles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: IdBackground,
+  },
+  fabButton: {
+    backgroundColor: IdBackground,
+  },
+  fabHidden: {
+    opacity: 0,
+    pointerEvents: 'none',
   },
   iconHolder: {
     backgroundColor: InversePrimaryLowAlpha,
@@ -83,6 +93,13 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
       paddingBottom: 4,
       paddingVertical: ios ? 4 : 0,
     },
+    idHolderContainer: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     modal: {
       ...CommonStyles.modal,
       borderWidth: 1,
@@ -104,15 +121,17 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const topBarStyle = {
     ...baseStyles.topBar,
-    paddingTop: insets.top,
+    borderWidth: 1,
+    borderColor: 'red',
+    marginTop: Math.max(insets.top, 20),
     // avoid split screen controls interfering with favorite button on iPad
     ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
   }
 
   const fabGroupStyle = {
     ...baseStyles.fabGroup,
-    marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
-    marginRight: ios ? 0 : insets.right - baseStyles.fabGroup.paddingRight,
+    // marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
+    // marginRight: ios ? 0 : insets.right - baseStyles.fabGroup.paddingRight,
   }
 
   const backButtonStyle = {
@@ -120,6 +139,14 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
     marginTop: ios ? 0 : insets.top + 15,
     marginLeft: ios ? 0 : insets.left,
   }
+
+  const fabButtonStyle = {
+    ...baseStyles.fabButton,
+    marginTop: ios ? 0 : insets.top + 15,
+    marginRight: ios ? 0 : insets.right,
+  }
+
+  const fabHiddenStyle = baseStyles.fabHidden
 
   const bottomActionBarStyle = {
     ...baseStyles.actionBar,
@@ -151,6 +178,8 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
     topBarStyle,
     fabGroupStyle,
     backButtonStyle,
+    fabButtonStyle,
+    fabHiddenStyle,
     bottomActionBarStyle,
     modalCloseButtonStyle,
     videoModalStyle,
