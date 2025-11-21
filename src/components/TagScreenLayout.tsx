@@ -1,10 +1,13 @@
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { ReactNode, useCallback, useMemo } from 'react'
-import { ColorValue, TouchableOpacity, View } from 'react-native'
+import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context'
+import {
+  SafeAreaInsetsContext,
+  SafeAreaView,
+} from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import CommonStyles from '../constants/CommonStyles'
 import { NoteHandler } from '../lib/NoteHandler'
@@ -148,56 +151,59 @@ export const TagScreenLayout = ({
   return (
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
-      <View style={styles.topBarStyle} pointerEvents="box-none">
-        <TouchableOpacity
-          onPress={() => onToggleFavorite(tag.id)}
-          activeOpacity={0.4}
-        >
-          <View style={styles.themedStyles.idHolder}>
-            <Text style={styles.themedStyles.id}># {tag.id}</Text>
-            <Icon
-              name={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-              color={theme.colors.primary}
-              size={16}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.baseStyles.buttonHolder} pointerEvents="box-none">
-        <View style={styles.baseStyles.actionBar} pointerEvents="box-none">
+      <SafeAreaView
+        style={[StyleSheet.absoluteFill, { zIndex: 100, elevation: 100 }]}
+        pointerEvents="box-none"
+      >
+        <View style={styles.topBarStyle} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => onToggleFavorite(tag.id)}
+            activeOpacity={0.4}
+          >
+            <View style={styles.themedStyles.idHolder}>
+              <Text style={styles.themedStyles.id}># {tag.id}</Text>
+              <Icon
+                name={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
+                color={theme.colors.primary}
+                size={16}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.baseStyles.buttonHolder} pointerEvents="box-none">
           <Appbar.BackAction
             color={theme.colors.primary}
             onPress={onBack}
             size={SMALL_BUTTON_SIZE}
             style={styles.backButtonStyle}
           />
-        </View>
-        <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
-          <Appbar.Action
-            icon={noteIcon}
-            onPress={() => {
-              // handler required for onPressIn to be handled
-            }}
-            onPressIn={async () => {
-              noteHandler.onPressIn()
-              onBrightenButtons()
-            }}
-            onPressOut={async () => {
-              noteHandler.onPressOut()
-              onBrightenThenFade()
-            }}
-            color={theme.colors.primary}
-            size={BIG_BUTTON_SIZE}
-            style={styles.dimmableIconHolderStyle}
-          />
-          <AppAction
-            icon={playingState === PlayingState.playing ? 'pause' : 'play'}
-            onPress={async () => {
-              onPlayOrPause()
-            }}
-            disabled={!hasTracks}
-          />
-          {additionalActions}
+          <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
+            <Appbar.Action
+              icon={noteIcon}
+              onPress={() => {
+                // handler required for onPressIn to be handled
+              }}
+              onPressIn={async () => {
+                noteHandler.onPressIn()
+                onBrightenButtons()
+              }}
+              onPressOut={async () => {
+                noteHandler.onPressOut()
+                onBrightenThenFade()
+              }}
+              color={theme.colors.primary}
+              size={BIG_BUTTON_SIZE}
+              style={styles.dimmableIconHolderStyle}
+            />
+            <AppAction
+              icon={playingState === PlayingState.playing ? 'pause' : 'play'}
+              onPress={async () => {
+                onPlayOrPause()
+              }}
+              disabled={!hasTracks}
+            />
+            {additionalActions}
+          </View>
         </View>
         <FABDown
           icon={fabOpen ? 'minus' : 'cog-outline'}
@@ -211,7 +217,7 @@ export const TagScreenLayout = ({
           fabStyle={styles.baseStyles.fabDown}
           theme={theme}
         />
-      </View>
+      </SafeAreaView>
       <SafeAreaInsetsContext.Provider
         value={{
           top: 0,

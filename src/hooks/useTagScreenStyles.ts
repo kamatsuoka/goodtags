@@ -12,40 +12,31 @@ const baseStyles = StyleSheet.create({
     ...CommonStyles.container,
   },
   topBar: {
-    position: 'absolute',
-    top: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
   buttonHolder: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 3,
+    flex: 1,
     justifyContent: 'space-between',
     paddingHorizontal: 18,
+    alignItems: 'flex-start',
   },
   actionBar: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 80,
   },
   fabDown: {
     ...CommonStyles.fabDown,
     marginBottom: 20,
   },
   fabGroup: {
-    paddingTop: 21,
-    paddingRight: 16,
+    zIndex: 1000,
+    elevation: 1000,
   },
   noteIcon: {
-    position: 'absolute',
     margin: 20,
-    left: 0,
-    bottom: 56,
   },
   closeButton: {
     position: 'absolute',
@@ -54,6 +45,7 @@ const baseStyles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: IdBackground,
+    margin: 0,
   },
   iconHolder: {
     backgroundColor: InversePrimaryLowAlpha,
@@ -81,7 +73,7 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
       flexDirection: 'row',
       paddingHorizontal: 7,
       paddingBottom: 4,
-      paddingVertical: ios ? 4 : 0,
+      paddingVertical: 4,
     },
     modal: {
       ...CommonStyles.modal,
@@ -104,29 +96,23 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const topBarStyle = {
     ...baseStyles.topBar,
-    paddingTop: insets.top,
     // avoid split screen controls interfering with favorite button on iPad
     ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
   }
 
   const fabGroupStyle = {
     ...baseStyles.fabGroup,
-    // marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
-    marginTop: ios ? 0 : insets.top,
-    marginRight: ios ? 0 : insets.right - baseStyles.fabGroup.paddingRight,
+    marginTop: 10,
   }
 
   const backButtonStyle = {
     ...baseStyles.backButton,
-    marginTop: ios ? 0 : insets.top + 15,
-    marginLeft: ios ? 0 : insets.left,
+    marginTop: -24,
+    marginLeft: -10,
   }
 
   const bottomActionBarStyle = {
     ...baseStyles.actionBar,
-    marginBottom: ios ? 0 : insets.bottom,
-    marginLeft: ios ? 0 : insets.left,
-    marginRight: ios ? 0 : insets.right,
   }
 
   const modalCloseButtonStyle = ios
