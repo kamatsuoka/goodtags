@@ -41,25 +41,21 @@ target 'goodtags' do
       :mac_catalyst_enabled => false
     )
 
-    # Fix for Hermes script path issue in React Native 0.82.x
-    # The REACT_NATIVE_PATH environment variable is not set, so we need to use absolute paths
-    react_native_path = File.expand_path(config[:reactNativePath])
-    
+    # Fix for Hermes node path issue in React Native 0.81.x
+    # The build script has a hardcoded temp node path from pod install time
     installer.pods_project.targets.each do |target|
       if target.name == 'hermes-engine'
         target.shell_script_build_phases.each do |phase|
           if phase.name&.include?("Replace Hermes")
-            # Replace all instances of $REACT_NATIVE_PATH with the actual path
+            # Replace any hardcoded /tmp/.../node or /private/tmp/.../node path with dynamic node lookup
             phase.shell_script = phase.shell_script.gsub(
-              '$REACT_NATIVE_PATH',
-              "\"#{react_native_path}\""
-            ).gsub(
-              '"$NODE_BINARY"',
-              "\"#{`command -v node`.strip}\""
+              /"\/(private\/)?tmp\/[^"]*\/node"/,
+              "\"$(command -v node)\""
             )
           end
         end
       end
     end
+
   end
 end
