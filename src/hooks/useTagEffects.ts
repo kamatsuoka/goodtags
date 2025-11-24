@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import Tag from '../lib/models/Tag'
 import { HistoryActions } from '../modules/historySlice'
-import { setTagTracks, stopTrack } from '../modules/tracksSlice'
+import { setTagTracks } from '../modules/tracksSlice'
 import { useAppDispatch } from './index'
 
 const HISTORY_MIN_VIEW_TIME = 7000
@@ -24,10 +24,5 @@ export const useTagEffects = (tag: Tag) => {
     dispatch(setTagTracks(tag))
   }, [dispatch, tag])
 
-  // when the component unmounts, stop the track
-  useEffect(() => {
-    return () => {
-      dispatch(stopTrack())
-    }
-  }, [dispatch])
+  // track cleanup is handled by the audio hook's unmount behavior
 }

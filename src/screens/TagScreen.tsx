@@ -12,10 +12,10 @@ import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
+import useTrackPlayer from '../hooks/useTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
 import { TagListEnum } from '../modules/tagLists'
-import { PlayingState, playTrack, stopTrack } from '../modules/tracksSlice'
 import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
@@ -33,7 +33,6 @@ const TagScreen = ({ navigation }: Props) => {
   const tagListState = useTagListState(tagListType)
   const allTagIds = tagListState.allTagIds
   const selectedTag = tagListState.selectedTag
-  const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useSelectedTag(tagListType)
   const tracksState = useAppSelector(state => state.tracks)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
@@ -52,8 +51,9 @@ const TagScreen = ({ navigation }: Props) => {
   const [fabOpen, setFabOpen] = React.useState(false)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
-
   useTagEffects(tag)
+  const { playing: audioPlaying, playOrPause: trackPlayOrPause } =
+    useTrackPlayer(tracksState.selectedTrack?.url)
 
   /**
    * Go back to list.
@@ -133,11 +133,7 @@ const TagScreen = ({ navigation }: Props) => {
 
   const playOrPause = () => {
     if (tracksState.selectedTrack) {
-      if (playingState === PlayingState.playing) {
-        dispatch(stopTrack())
-      } else {
-        dispatch(playTrack(false))
-      }
+      trackPlayOrPause()
     }
   }
 
@@ -174,7 +170,7 @@ const TagScreen = ({ navigation }: Props) => {
       tag={tag}
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}
-      playingState={playingState}
+      audioPlaying={audioPlaying}
       buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
       videosVisible={videosVisible}
@@ -182,6 +178,8 @@ const TagScreen = ({ navigation }: Props) => {
       fabOpen={fabOpen}
       hasTracks={hasTracks()}
       hasVideos={hasVideos()}
+      // trackPlayer={trackPlayer}
+      // trackAudioStatus={trackAudioStatus}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={goBack}

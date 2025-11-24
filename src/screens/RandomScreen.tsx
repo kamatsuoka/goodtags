@@ -4,7 +4,6 @@
 import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useEffect, useState } from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
 import { TagScreenLayout } from '../components/TagScreenLayout'
@@ -12,12 +11,9 @@ import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
+import useTrackPlayer from '../hooks/useTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
-import { PlayingState, playTrack, stopTrack } from '../modules/tracksSlice'
-import { RootStackParamList } from '../navigation/navigationParams'
-
-type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 
 // Fallback tag to avoid recreating on every render
 const FALLBACK_TAG: SearchResult = {
@@ -40,11 +36,16 @@ const RandomScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
-  const playingState = useAppSelector(state => state.tracks.playingState)
   const tag = useAppSelector(state => {
     return selectRandomTag(state) || FALLBACK_TAG
   })
   const tracksState = useAppSelector(state => state.tracks)
+
+  const {
+    player: trackPlayer,
+    playing: audioPlaying,
+    playOrPause: trackPlayOrPause,
+  } = useTrackPlayer(tracksState.selectedTrack?.url)
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -82,11 +83,7 @@ const RandomScreen = () => {
 
   const playOrPause = () => {
     if (tracksState.selectedTrack) {
-      if (playingState === PlayingState.playing) {
-        dispatch(stopTrack())
-      } else {
-        dispatch(playTrack(false))
-      }
+      trackPlayOrPause()
     }
   }
 
@@ -97,7 +94,11 @@ const RandomScreen = () => {
         icon="shuffle"
         onPress={async () => {
           brightenThenFade()
-          dispatch(stopTrack())
+          try {
+            trackPlayer?.pause?.()
+          } catch (e) {
+            // ignore if player not available
+          }
           dispatch(getRandomTag())
         }}
         color={theme.colors.primary}
@@ -112,7 +113,7 @@ const RandomScreen = () => {
       tag={tag}
       tagListType={TagListEnum.SearchResults}
       favoritesById={favoritesById}
-      playingState={playingState}
+      audioPlaying={audioPlaying}
       buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
       videosVisible={videosVisible}

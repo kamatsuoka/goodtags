@@ -1,5 +1,6 @@
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
+// import { AudioPlayer, AudioStatus } from 'expo-audio'
 import { ReactNode, useCallback, useMemo } from 'react'
 import { ColorValue, View } from 'react-native'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
@@ -8,7 +9,6 @@ import { SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import CommonStyles from '../constants/CommonStyles'
 import { NoteHandler } from '../lib/NoteHandler'
 import { noteForKey } from '../lib/NotePlayer'
-import { PlayingState } from '../modules/tracksSlice'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'
@@ -31,7 +31,7 @@ interface TagScreenLayoutProps {
   tag: Tag
   tagListType: TagListEnum
   favoritesById: Record<number, any>
-  playingState: PlayingState
+  audioPlaying: boolean
   buttonsDimmed: boolean
   tracksVisible: boolean
   videosVisible: boolean
@@ -39,6 +39,8 @@ interface TagScreenLayoutProps {
   fabOpen: boolean
   hasTracks: boolean
   hasVideos: boolean
+  // trackPlayer: AudioPlayer
+  // trackAudioStatus: AudioStatus
   onToggleFavorite: (id: number) => void
   onPlayOrPause: () => void
   onBack: () => void
@@ -59,7 +61,7 @@ export const TagScreenLayout = ({
   tag,
   tagListType,
   favoritesById,
-  playingState,
+  audioPlaying,
   buttonsDimmed,
   tracksVisible,
   videosVisible,
@@ -67,6 +69,8 @@ export const TagScreenLayout = ({
   fabOpen,
   hasTracks,
   hasVideos,
+  // trackPlayer,
+  // trackAudioStatus,
   onToggleFavorite,
   onPlayOrPause,
   onBack,
@@ -213,7 +217,7 @@ export const TagScreenLayout = ({
               style={styles.dimmableIconHolderStyle}
             />
             <AppAction
-              icon={playingState === PlayingState.playing ? 'pause' : 'play'}
+              icon={audioPlaying ? 'pause' : 'play'}
               onPress={async () => {
                 onPlayOrPause()
               }}
