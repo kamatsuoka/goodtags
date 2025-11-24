@@ -1,16 +1,7 @@
 {
   "name": "goodtags",
+  "displayName": "goodtags",
   "expo": {
-    "plugins": [
-      [
-        "expo-audio",
-        {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        }
-      ],
-      "expo-file-system",
-      "expo-asset",
-      "expo-sqlite"
-    ]
+    "plugins": ["expo-audio", "expo-file-system", "expo-asset", "expo-sqlite"]
   }
 }

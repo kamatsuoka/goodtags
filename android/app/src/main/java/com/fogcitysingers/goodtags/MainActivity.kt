@@ -7,6 +7,9 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
+import androidx.core.view.WindowCompat
 
 class MainActivity : ReactActivity() {
 
@@ -19,6 +22,18 @@ class MainActivity : ReactActivity() {
   // react-native-screens override -- see https://github.com/software-mansion/react-native-screens#android
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(null)
+    
+    // Enable edge-to-edge display
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    
+    // Set status bar to transparent
+    window.statusBarColor = android.graphics.Color.TRANSPARENT
+    
+    // Allow content to draw behind status bar
+    window.setFlags(
+      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+    )
   }
 
   /**

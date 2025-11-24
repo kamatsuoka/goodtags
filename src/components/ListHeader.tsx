@@ -4,6 +4,7 @@ import { FlashList } from '@shopify/flash-list'
 import React from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import useHeaderHeight from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
@@ -30,6 +31,7 @@ export default function ListHeader({
 }: ListHeaderProps) {
   const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
+  const insets = useSafeAreaInsets()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -41,6 +43,7 @@ export default function ListHeader({
       ...styles.header,
       height: headerHeight,
       paddingLeft,
+      paddingTop: insets.top,
     },
   })
 

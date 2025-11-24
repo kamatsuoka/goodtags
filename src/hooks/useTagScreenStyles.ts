@@ -6,6 +6,7 @@ import CommonStyles from '../constants/CommonStyles'
 import { IdBackground, InversePrimaryLowAlpha } from '../lib/theme'
 
 const BUTTON_DIM_OPACITY = 0.5
+const MIN_HORIZONTAL_INSET = 12
 
 const baseStyles = StyleSheet.create({
   container: {
@@ -20,6 +21,10 @@ const baseStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     backgroundColor: 'transparent',
+  },
+  topBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   buttonHolder: {
     position: 'absolute',
@@ -57,9 +62,11 @@ const baseStyles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: IdBackground,
+    marginLeft: 14,
   },
   fabButton: {
     backgroundColor: IdBackground,
+    marginRight: 14,
   },
   fabHidden: {
     opacity: 0,
@@ -78,27 +85,20 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const themedStyles = StyleSheet.create({
     id: {
-      color: theme.colors.primary,
-      fontSize: 18,
+      color: theme.colors.onPrimary,
+      fontSize: iPad ? 26 : 18,
+      fontWeight: 'normal',
       marginRight: 7,
     },
     idHolder: {
-      alignItems: 'baseline',
-      backgroundColor: IdBackground,
-      borderRadius: 7,
-      borderColor: theme.colors.secondaryContainer,
-      borderWidth: 2,
-      flexDirection: 'row',
-      paddingHorizontal: 7,
-      paddingBottom: 4,
-      paddingVertical: ios ? 4 : 0,
-    },
-    idHolderContainer: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: theme.colors.primary,
+      flexDirection: 'row',
+      minWidth: iPad ? 80 : 50,
+      borderRadius: iPad ? 12 : 8,
+      paddingHorizontal: iPad ? 12 : 8,
+      paddingVertical: iPad ? 4 : 2,
     },
     modal: {
       ...CommonStyles.modal,
@@ -121,38 +121,21 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const topBarStyle = {
     ...baseStyles.topBar,
-    borderWidth: 1,
-    borderColor: 'red',
-    marginTop: Math.max(insets.top, 20),
-    // avoid split screen controls interfering with favorite button on iPad
-    ...(iPad ? { left: 120 } : { left: 0, right: 0 }),
+    marginTop: ios ? 6 : Math.min(insets.top, 40),
+    marginLeft: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
+    marginRight: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
   }
 
-  const fabGroupStyle = {
-    ...baseStyles.fabGroup,
-    // marginTop: ios ? 0 : insets.top - baseStyles.fabGroup.paddingTop,
-    // marginRight: ios ? 0 : insets.right - baseStyles.fabGroup.paddingRight,
-  }
-
-  const backButtonStyle = {
-    ...baseStyles.backButton,
-    marginTop: ios ? 0 : insets.top + 15,
-    marginLeft: ios ? 0 : insets.left,
-  }
-
-  const fabButtonStyle = {
-    ...baseStyles.fabButton,
-    marginTop: ios ? 0 : insets.top + 15,
-    marginRight: ios ? 0 : insets.right,
-  }
-
+  const fabGroupStyle = baseStyles.fabGroup
+  const backButtonStyle = baseStyles.backButton
+  const fabButtonStyle = baseStyles.fabButton
   const fabHiddenStyle = baseStyles.fabHidden
 
   const bottomActionBarStyle = {
     ...baseStyles.actionBar,
-    marginBottom: ios ? 0 : insets.bottom,
-    marginLeft: ios ? 0 : insets.left,
-    marginRight: ios ? 0 : insets.right,
+    marginBottom: insets.bottom,
+    marginLeft: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
+    marginRight: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
   }
 
   const modalCloseButtonStyle = ios

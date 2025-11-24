@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
 import {
   Divider,
@@ -6,7 +7,6 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 type Props = {
   title: string

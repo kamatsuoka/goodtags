@@ -1,28 +1,14 @@
 {
   "extends": "@react-native/typescript-config",
-  /* Recommended React Native TSConfig base */
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
-    /* Completeness */
-    "skipLibCheck": true,
-    /* Skip type checking all .d.ts files. */
     "baseUrl": ".",
     "paths": {
-      "@app/*": [
-        "src/*"
-      ],
+      "@app/*": ["src/*"],
       "react-native-paper/lib/module/*": [
         "node_modules/react-native-paper/lib/typescript/*"
       ]
     }
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS",
-      "types": ["node"]
-    }
-  },
-  "exclude": ["node_modules", "dist"]
+  }
 }

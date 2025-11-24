@@ -1,18 +1,18 @@
 import useShallowScreen from '@app/hooks/useShallowScreen'
+import HistoryScreen from '@app/screens/HistoryScreen'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { TabBarBackground } from '../lib/theme'
 import { FavoritesScreen } from '../screens/FavoritesScreen'
 import SearchScreen from '../screens/SearchScreen'
 import HomeNavigator from './HomeNavigator'
 import { TabsParamList } from './navigationParams'
-import HistoryScreen from '@app/screens/HistoryScreen'
 
 export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
 
@@ -30,20 +30,20 @@ export default function TabNavigator() {
   const androidHorizPadding = Math.max(insets.left, insets.right)
 
   const styles = StyleSheet.create({
-    safeArea: {
+    container: {
       flex: 1,
       backgroundColor: TabBarBackground,
+      paddingHorizontal: ios ? 0 : androidHorizPadding,
     },
     tabBar: {
       backgroundColor: TabBarBackground,
-      height: (ios ? 90 : 75 + insets.bottom) - (shallowScreen ? 30 : 0),
+      height:
+        (ios ? 90 : 75 + insets.bottom) -
+        (shallowScreen && !ios ? 25 : shallowScreen ? 20 : 0),
       paddingTop: 5,
       paddingBottom: ios ? 25 : 15 + insets.bottom,
       marginHorizontal: ios ? 0 : androidHorizPadding,
       shadowColor: 'white',
-    },
-    sceneContainer: {
-      paddingHorizontal: ios ? 0 : androidHorizPadding,
     },
     tabBarLabel: {
       fontFamily: theme.fonts.labelSmall.fontFamily,
@@ -65,44 +65,45 @@ export default function TabNavigator() {
   }
 
   return (
-    <Tab.Navigator
-      initialRouteName="HomeNavigator"
-      screenOptions={screenOptions}
-      sceneContainerStyle={styles.sceneContainer}
-    >
-      <Tab.Screen
-        name="HomeNavigator"
-        component={HomeNavigator}
-        options={{
-          title: 'home',
-          tabBarIcon: HomeIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{
-          title: 'search',
-          tabBarIcon: SearchIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Favorites"
-        component={FavoritesScreen}
-        options={{
-          title: 'faves',
-          tabBarIcon: FavoritesIcon,
-        }}
-      />
-      <Tab.Screen
-        name="History"
-        component={HistoryScreen}
-        options={{
-          title: 'history',
-          tabBarIcon: HistoryIcon,
-        }}
-      />
-    </Tab.Navigator>
+    <View style={styles.container}>
+      <Tab.Navigator
+        initialRouteName="HomeNavigator"
+        screenOptions={screenOptions}
+      >
+        <Tab.Screen
+          name="HomeNavigator"
+          component={HomeNavigator}
+          options={{
+            title: 'home',
+            tabBarIcon: HomeIcon,
+          }}
+        />
+        <Tab.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{
+            title: 'search',
+            tabBarIcon: SearchIcon,
+          }}
+        />
+        <Tab.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={{
+            title: 'faves',
+            tabBarIcon: FavoritesIcon,
+          }}
+        />
+        <Tab.Screen
+          name="History"
+          component={HistoryScreen}
+          options={{
+            title: 'history',
+            tabBarIcon: HistoryIcon,
+          }}
+        />
+      </Tab.Navigator>
+    </View>
   )
 }
 

@@ -4,6 +4,22 @@ import 'react-native-gesture-handler/jestSetup'
 // Extend expect (added also via jest.config but harmless)
 import '@testing-library/jest-native/extend-expect'
 
+// Mock redux-persist so `persistReducer` doesn't require native storage at module load.
+jest.mock('redux-persist', () => {
+  const real = jest.requireActual('redux-persist')
+  return {
+    ...real,
+    persistReducer: (config: any, reducers: any) => reducers,
+    persistStore: (_store: any) => ({
+      subscribe: () => {},
+      getState: () => ({}),
+      dispatch: () => {},
+      purge: () => {},
+      flush: async () => {},
+    }),
+  }
+})
+
 // Mock only the modules we directly rely on that are problematic in Node.
 jest.mock('react-native-reanimated', () =>
   require('react-native-reanimated/mock'),
@@ -53,6 +69,16 @@ jest.mock('expo-file-system', () => {
   }
 })
 
+// Mock the legacy entrypoint to avoid pulling in native expo-modules-core
+// (which references EventEmitter) during Jest runs.
+jest.mock('expo-file-system/legacy', () => ({
+  copyAsync: jest.fn(async ({ _, to }: any) => ({ uri: to, exists: true })),
+  EncodingType: {
+    UTF8: 'utf8',
+    BASE64: 'base64',
+  },
+}))
+
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(async () => ({
     withTransactionAsync: async (cb: () => Promise<void>) => {
@@ -62,6 +88,32 @@ jest.mock('expo-sqlite', () => ({
     closeAsync: () => {},
   })),
 }))
+
+// Mock vector icons (avoids loading expo-font/expo-modules-core in tests)
+jest.mock('@expo/vector-icons', () => ({
+  MaterialCommunityIcons: ({ _name, _size }: any) => null,
+  Ionicons: ({ _name, _size }: any) => null,
+  FontAwesome: ({ _name, _size }: any) => null,
+}))
+
+// Mock FlashList to avoid ESM/transform issues from the package in node/Jest
+jest.mock('@shopify/flash-list', () => {
+  const React = require('react')
+  return {
+    FlashList: ({ data = [], ListEmptyComponent, renderItem }: any) => {
+      if (!data || data.length === 0) {
+        return ListEmptyComponent
+          ? ListEmptyComponent()
+          : React.createElement(React.Fragment, null)
+      }
+      return React.createElement(
+        React.Fragment,
+        null,
+        ...data.map((item: any, index: number) => renderItem({ item, index })),
+      )
+    },
+  }
+})
 
 jest.mock('expo-audio', () => ({
   createAudioPlayer: jest.fn(() => ({

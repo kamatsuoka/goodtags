@@ -1,10 +1,9 @@
-import type { AppState } from '@app/store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alert } from 'react-native'
 
 /**
  * CURRENTLY UNUSED
- * 
+ *
  * the idea is to remind users periodically to back up their data
  */
 
@@ -63,7 +62,7 @@ export const markBackupCreated = async (): Promise<void> => {
 export const showBackupReminder = (): void => {
   Alert.alert(
     'Backup your data',
-    "We recommend backing up your favorites and labels in the cloud somewhere so you can restore them when you get a new device. Would you like to do that now?",
+    'We recommend backing up your favorites and labels in the cloud somewhere so you can restore them when you get a new device. Would you like to do that now?',
     [
       {
         text: 'Later',

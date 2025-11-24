@@ -131,7 +131,7 @@ function debugDbPerfLogging(label: string, start: number) {
 
 /**
  * Counts the number of tags in the database
- * 
+ *
  * @returns number of tags in the db
  */
 export async function countTags(): Promise<number> {

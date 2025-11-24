@@ -514,7 +514,6 @@ interface ReceivedData {
   receivedLabels: ReceivedLabel[]
 }
 
-
 function getFilename(url: string): string {
   const filePart = url.split('/').pop()
   return filePart ? decodeURI(filePart) : ''

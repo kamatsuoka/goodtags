@@ -6,7 +6,7 @@ import useTagListState from '@app/hooks/useTagListState'
 import { TagState, setTagState } from '@app/modules/visitSlice'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
-import { Appbar } from 'react-native-paper'
+import { Appbar, useTheme } from 'react-native-paper'
 import { TagScreenLayout } from '../components/TagScreenLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
@@ -26,6 +26,7 @@ const BIG_BUTTON_SIZE = 40
  * Sheet music screen
  */
 const TagScreen = ({ navigation }: Props) => {
+  const theme = useTheme()
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
@@ -150,7 +151,7 @@ const TagScreen = ({ navigation }: Props) => {
           selectPrevTag()
         }}
         disabled={!hasPrevTag()}
-        color={styles.themedStyles.id.color as string}
+        color={theme.colors.primary}
         size={BIG_BUTTON_SIZE}
         style={styles.dimmableIconHolderStyle}
       />
@@ -161,7 +162,7 @@ const TagScreen = ({ navigation }: Props) => {
           selectNextTag()
         }}
         disabled={!hasNextTag()}
-        color={styles.themedStyles.id.color as string}
+        color={theme.colors.primary}
         size={BIG_BUTTON_SIZE}
         style={styles.dimmableIconHolderStyle}
       />

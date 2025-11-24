@@ -8,5 +8,6 @@ export const HEADER_HEIGHT = 65
 export default function useHeaderHeight() {
   const { top } = useSafeAreaInsets()
   const topFactor = Platform.OS === 'android' ? 0.6 : 0.5
-  return HEADER_HEIGHT + Math.round(top * topFactor)
+  const baseHeight = HEADER_HEIGHT + Math.round(top * topFactor)
+  return baseHeight
 }

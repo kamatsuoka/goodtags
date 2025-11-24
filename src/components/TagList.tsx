@@ -5,7 +5,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { FlashList } from '@shopify/flash-list'
 import { RefObject, useCallback, useRef } from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import CommonStyles from '../constants/CommonStyles'
 import { useAppDispatch, useAppSelector } from '../hooks'
@@ -142,8 +142,15 @@ const TagList = (props: TagListProps) => {
     (tagData: { item: number; index: number }) => {
       const tag: Tag = tagsById[tagData.item]
       return (
-        <TouchableOpacity
-          style={styles.listItemHolder}
+        <TagListItem
+          tag={tag}
+          tagListType={props.tagListType}
+          index={tagData.index}
+          selected={
+            tagData.index === selectedTag?.index &&
+            tag.id === selectedTag.id &&
+            props.tagListType !== TagListEnum.History
+          }
           onPress={() => {
             dispatch(setSelectedTag({ index: tagData.index, id: tag.id }))
             dispatch(setTagListType(props.tagListType))
@@ -154,18 +161,7 @@ const TagList = (props: TagListProps) => {
               navigation.navigate('Tag')
             }
           }}
-        >
-          <TagListItem
-            tag={tag}
-            tagListType={props.tagListType}
-            index={tagData.index}
-            selected={
-              tagData.index === selectedTag?.index &&
-              tag.id === selectedTag.id &&
-              props.tagListType !== TagListEnum.History
-            }
-          />
-        </TouchableOpacity>
+        />
       )
     },
     [
@@ -208,9 +204,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingTop: 55,
     textAlign: 'center',
-  },
-  listItemHolder: {
-    flexDirection: 'row',
   },
 })
 

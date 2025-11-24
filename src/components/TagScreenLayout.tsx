@@ -1,11 +1,10 @@
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { ReactNode, useCallback, useMemo } from 'react'
-import { ColorValue, TouchableOpacity, View } from 'react-native'
+import { ColorValue, View } from 'react-native'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import CommonStyles from '../constants/CommonStyles'
 import { NoteHandler } from '../lib/NoteHandler'
 import { noteForKey } from '../lib/NotePlayer'
@@ -151,33 +150,33 @@ export const TagScreenLayout = ({
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
       <View style={styles.topBarStyle} pointerEvents="box-none">
-        <Appbar.BackAction
-          color={theme.colors.primary}
-          onPress={onBack}
-          size={SMALL_BUTTON_SIZE}
-          style={styles.backButtonStyle}
-        />
-        <TouchableOpacity
-          onPress={() => onToggleFavorite(tag.id)}
-          activeOpacity={0.4}
-          style={styles.themedStyles.idHolderContainer}
-        >
+        <View style={styles.baseStyles.topBarRow}>
+          <Appbar.BackAction
+            color={theme.colors.primary}
+            onPress={onBack}
+            size={SMALL_BUTTON_SIZE}
+            style={styles.backButtonStyle}
+          />
           <View style={styles.themedStyles.idHolder}>
             <Text style={styles.themedStyles.id}># {tag.id}</Text>
-            <Icon
-              name={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-              color={theme.colors.primary}
-              size={16}
-            />
           </View>
-        </TouchableOpacity>
-        <Appbar.Action
-          icon={fabOpen ? 'minus' : 'cog-outline'}
-          onPress={() => onSetFabOpen(!fabOpen)}
-          color={theme.colors.primary}
-          size={SMALL_BUTTON_SIZE}
-          style={styles.fabButtonStyle}
-        />
+        </View>
+        <View style={styles.baseStyles.topBarRow}>
+          <Appbar.Action
+            icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
+            onPress={() => onToggleFavorite(tag.id)}
+            color={theme.colors.primary}
+            size={SMALL_BUTTON_SIZE}
+            style={styles.fabButtonStyle}
+          />
+          <Appbar.Action
+            icon={fabOpen ? 'minus' : 'cog-outline'}
+            onPress={() => onSetFabOpen(!fabOpen)}
+            color={theme.colors.primary}
+            size={SMALL_BUTTON_SIZE}
+            style={styles.fabButtonStyle}
+          />
+        </View>
       </View>
       <FABDown
         icon={fabOpen ? 'minus' : 'cog-outline'}

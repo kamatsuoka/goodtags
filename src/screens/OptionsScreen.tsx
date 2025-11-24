@@ -23,6 +23,7 @@ export default function OptionsScreen() {
   const serifsSelected = useAppSelector(state => state.options.serifs)
   const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
   const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
+  const showStatusBar = useAppSelector(state => state.options.showStatusBar)
   const [delayDraft, setDelayDraft] = useState(autoRotateDelay)
   const dispatch = useAppDispatch()
 
@@ -78,6 +79,14 @@ export default function OptionsScreen() {
           descriptionNumberOfLines={2}
         />
         {autoRotateSelected ? autoRotateDelaySlider : null}
+        <List.Item
+          left={checkBox(showStatusBar, () =>
+            dispatch(OptionsActions.setShowStatusBar(!showStatusBar)),
+          )}
+          title="show status bar"
+          titleStyle={styles.listItemTitle}
+          description="show the status bar"
+        />
       </View>
     </ScrollView>
   )

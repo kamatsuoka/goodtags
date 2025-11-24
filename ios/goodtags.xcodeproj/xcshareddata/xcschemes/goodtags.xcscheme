@@ -38,28 +38,6 @@
                ReferencedContainer = "container:goodtags.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BA282F7F294FA047004E2192"
-               BuildableName = "goodtagsUITests.xctest"
-               BlueprintName = "goodtagsUITests"
-               ReferencedContainer = "container:goodtags.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BA923FC329B5153300B09F23"
-               BuildableName = "screenshot.xctest"
-               BlueprintName = "screenshot"
-               ReferencedContainer = "container:goodtags.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

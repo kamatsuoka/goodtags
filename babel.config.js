@@ -4,12 +4,11 @@ module.exports = {
     [
       'module-resolver',
       {
+        root: ['./src'],
         alias: {
           '@app': './src',
         },
       },
     ],
-    // NOTE: react-native-worklets plugin MUST be listed last
-    'react-native-worklets/plugin',
   ],
-}
+};

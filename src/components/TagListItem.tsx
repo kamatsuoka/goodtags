@@ -1,8 +1,9 @@
 import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { Pressable } from 'react-native-gesture-handler'
 import { Text, useTheme } from 'react-native-paper'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tag, { SearchResult } from '../lib/models/Tag'
 import { TagListType } from '../modules/tagLists'
 import TagId from './TagId'
@@ -13,6 +14,7 @@ export type ComponentProps = {
   tagListType: TagListType
   index: number
   selected: boolean
+  onPress?: () => void
 }
 
 type Props = ComponentProps
@@ -78,7 +80,8 @@ function TagListItem(props: Props) {
   }
 
   const tag = props.tag
-  return (
+
+  const content = (
     <View style={themedStyles.listItem}>
       <View style={styles.dotHolder}>
         <Text testID={`tagleft_${tag.id}`} style={styles.selectedDot}>
@@ -115,6 +118,12 @@ function TagListItem(props: Props) {
       </View>
     </View>
   )
+
+  if (!props.onPress) {
+    return content
+  }
+
+  return <Pressable onPress={props.onPress}>{content}</Pressable>
 }
 
 export const ITEM_HEIGHT = 60

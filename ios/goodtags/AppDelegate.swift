@@ -1,11 +1,13 @@
 import UIKit
+import Expo
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
-import ExpoModulesCore
 
 @main
-class AppDelegate: EXAppDelegateWrapper {
+class AppDelegate: ExpoAppDelegate {
+  var window: UIWindow?
+
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
 
@@ -14,11 +16,12 @@ class AppDelegate: EXAppDelegateWrapper {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
     let delegate = ReactNativeDelegate()
-    let factory = RCTReactNativeFactory(delegate: delegate)
+    let factory = ExpoReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
+    bindReactNativeFactory(factory)
 
     window = UIWindow(frame: UIScreen.main.bounds)
 
@@ -28,39 +31,19 @@ class AppDelegate: EXAppDelegateWrapper {
       launchOptions: launchOptions
     )
 
-    // Call super to ensure Expo modules are properly initialized
-    super.application(application, didFinishLaunchingWithOptions: launchOptions)
-    
-    return true
-  }
-  
-  // MARK: - URL Handling
-  override func application(
-    _ app: UIApplication,
-    open url: URL,
-    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-  ) -> Bool {
-    return super.application(app, open: url, options: options)
-  }
-  
-  // MARK: - Universal Links
-  override func application(
-    _ application: UIApplication,
-    continue userActivity: NSUserActivity,
-    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
-  ) -> Bool {
-    return super.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
 
-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {
   override func sourceURL(for bridge: RCTBridge) -> URL? {
-    self.bundleURL()
+    // needed to return the correct URL for expo-dev-client.
+    bridge.bundleURL ?? bundleURL()
   }
 
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif

@@ -1,3 +1,4 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -5,57 +6,45 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-
 platform :ios, min_ios_version_supported
-
 prepare_react_native_project!
+
+# Enable static frameworks to use precompiled React Native binaries (0.81+)
+use_frameworks! :linkage => :static
 
 target 'goodtags' do
   use_expo_modules!
-  post_integrate do |installer|
-    begin
-      expo_patch_react_imports!(installer)
-    rescue => e
-      Pod::UI.warn e
-    end
-  end
-  config = use_native_modules!
 
-  # Flags change depending on the env values.
-  flags = get_default_flags()
+  if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
+    config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
+  else
+    config_command = [
+      'node',
+      '--no-warnings',
+      '--eval',
+      'require(require.resolve(\'expo-modules-autolinking\', { paths: [require.resolve(\'expo/package.json\')] }))(process.argv.slice(1))',
+      'react-native-config',
+      '--json',
+      '--platform',
+      'ios'
+    ]
+  end
+
+  config = use_native_modules!(config_command)
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   post_install do |installer|
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
-
-    # Fix for Hermes node path issue in React Native 0.81.x
-    # The build script has a hardcoded temp node path from pod install time
-    installer.pods_project.targets.each do |target|
-      if target.name == 'hermes-engine'
-        target.shell_script_build_phases.each do |phase|
-          if phase.name&.include?("Replace Hermes")
-            # Replace any hardcoded /tmp/.../node or /private/tmp/.../node path with dynamic node lookup
-            phase.shell_script = phase.shell_script.gsub(
-              /"\/(private\/)?tmp\/[^"]*\/node"/,
-              "\"$(command -v node)\""
-            )
-          end
-        end
-      end
-    end
-
   end
 end

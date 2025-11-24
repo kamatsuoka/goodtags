@@ -11,10 +11,7 @@ class RampDownParams {
   delay: number
   increment: number
 
-  constructor(
-    readonly totalTime: number,
-    readonly divs: number,
-  ) {
+  constructor(readonly totalTime: number, readonly divs: number) {
     this.delay = totalTime / divs
     this.increment = 1.0 / divs
   }

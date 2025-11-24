@@ -1,4 +1,4 @@
-const config = {
+module.exports = {
   arrowParens: 'avoid',
   bracketSpacing: true,
   plugins: ['prettier-plugin-organize-imports'],
@@ -6,4 +6,3 @@ const config = {
   trailingComma: 'all',
   semi: false,
 }
-module.exports = config
