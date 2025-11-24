@@ -195,6 +195,7 @@ const TagScreen = ({ navigation }: Props) => {
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
       styles={styles}
       additionalActions={navigationActions}
+      dimAdditionalActions={true}
     />
   )
 }

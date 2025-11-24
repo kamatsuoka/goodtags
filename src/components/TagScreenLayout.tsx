@@ -52,6 +52,7 @@ interface TagScreenLayoutProps {
   onNavigateToTagLabels: () => void
   styles: any
   additionalActions?: ReactNode
+  dimAdditionalActions?: boolean
 }
 
 export const TagScreenLayout = ({
@@ -79,6 +80,7 @@ export const TagScreenLayout = ({
   onNavigateToTagLabels,
   styles,
   additionalActions,
+  dimAdditionalActions = false,
 }: TagScreenLayoutProps) => {
   const theme = useTheme()
   const keyNote = noteForKey(tag.key)
@@ -219,7 +221,7 @@ export const TagScreenLayout = ({
             />
           </>
         )}
-        {additionalActions}
+        {dimAdditionalActions && buttonsDimmed ? null : additionalActions}
       </View>
       <SafeAreaInsetsContext.Provider
         value={{
