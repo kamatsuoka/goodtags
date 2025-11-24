@@ -133,9 +133,12 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
 
   const bottomActionBarStyle = {
     ...baseStyles.actionBar,
-    marginBottom: insets.bottom,
-    marginLeft: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
-    marginRight: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
+    position: 'absolute',
+    bottom: insets.bottom,
+    left: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
+    right: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
+    backgroundColor: 'transparent',
+    zIndex: 10,
   }
 
   const modalCloseButtonStyle = ios
