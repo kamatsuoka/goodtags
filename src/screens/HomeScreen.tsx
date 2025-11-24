@@ -36,7 +36,6 @@ export default function HomeScreen({
     container: {
       flex: 1,
       paddingVertical: 5,
-      alignItems: 'flex-start',
       backgroundColor: theme.colors.secondaryContainer,
       paddingTop: insets.top,
       paddingBottom: Math.max(insets.bottom, 10),
@@ -62,8 +61,6 @@ export default function HomeScreen({
       marginVertical: 5,
     },
     listItem: {
-      // borderColor: "red",
-      // borderWidth: 1,
       height: 50,
       flexDirection: 'row',
       paddingLeft: 5,
@@ -108,7 +105,7 @@ export default function HomeScreen({
       flex: 1,
       paddingLeft: Platform.OS === 'ios' ? insets.left : 0,
       paddingRight: Platform.OS === 'ios' ? insets.right : 0,
-      paddingTop: 10,
+      paddingTop: 15,
       width: '100%',
     },
     scrollContentContainer: {

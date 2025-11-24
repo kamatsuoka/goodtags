@@ -77,8 +77,6 @@ export default function LabelEditor() {
     return (
       <View
         pointerEvents="box-none"
-        // entering={FadeIn.duration(300)}
-        // exiting={FadeOut.duration(300)}
         key={item}
         style={[
           styles.itemHolder,
