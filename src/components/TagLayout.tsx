@@ -152,8 +152,20 @@ export const TagLayout = ({
   return (
     <View style={CommonStyles.container}>
       {memoizedSheetMusic}
+      <FABDown
+        icon={fabOpen ? 'minus' : 'cog-outline'}
+        open={fabOpen}
+        actions={fabActions}
+        onStateChange={({ open }) => {
+          onDimButtons()
+          onSetFabOpen(open)
+        }}
+        style={styles.fabGroupStyle}
+        fabStyle={styles.fabHiddenStyle}
+        theme={theme}
+      />
       <View style={styles.topBarStyle} pointerEvents="box-none">
-        <View style={styles.baseStyles.topBarRow}>
+        <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
           <Appbar.BackAction
             color={theme.colors.primary}
             onPress={onBack}
@@ -170,8 +182,9 @@ export const TagLayout = ({
             onPress={() => onToggleFavorite(tag.id)}
             color={theme.colors.primary}
             size={SMALL_BUTTON_SIZE}
-            style={styles.fabButtonStyle}
+            style={[styles.fabButtonStyle, styles.heartIconStyle]}
           />
+          <Appbar.Content title="" style={styles.fabIconReplacementStyle} />
           <Appbar.Action
             icon={fabOpen ? 'minus' : 'cog-outline'}
             onPress={() => onSetFabOpen(!fabOpen)}
@@ -181,18 +194,6 @@ export const TagLayout = ({
           />
         </View>
       </View>
-      <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
-        open={fabOpen}
-        actions={fabActions}
-        onStateChange={({ open }) => {
-          onDimButtons()
-          onSetFabOpen(open)
-        }}
-        style={styles.fabGroupStyle}
-        fabStyle={styles.fabHiddenStyle}
-        theme={theme}
-      />
       <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
         {buttonsDimmed ? null : (
           <>

@@ -43,12 +43,12 @@ const TagScreen = ({ navigation }: Props) => {
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
 
-  const styles = useTagScreenStyles(buttonsDimmed)
-
   const [tracksVisible, setTracksVisible] = React.useState(false)
   const [videosVisible, setVideosVisible] = React.useState(false)
   const [infoVisible, setInfoVisible] = React.useState(false)
   const [fabOpen, setFabOpen] = React.useState(false)
+
+  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
   const { audioPlaying, setTrackUrl: setUrl, playOrPause } = useTagTrackPlayer()

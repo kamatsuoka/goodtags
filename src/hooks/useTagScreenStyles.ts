@@ -46,8 +46,7 @@ const baseStyles = StyleSheet.create({
     marginBottom: 20,
   },
   fabGroup: {
-    // paddingTop: 21,
-    // paddingRight: 16,
+    paddingTop: 10,
   },
   noteIcon: {
     position: 'absolute',
@@ -77,7 +76,10 @@ const baseStyles = StyleSheet.create({
   },
 })
 
-export const useTagScreenStyles = (buttonsDimmed: boolean) => {
+export const useTagScreenStyles = (
+  buttonsDimmed: boolean,
+  fabOpen: boolean,
+) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const ios = Platform.OS === 'ios'
@@ -158,6 +160,10 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
     ? themedStyles.iconHolderDim
     : themedStyles.iconHolderBright
 
+  const topBarLeftStyle = fabOpen ? { display: 'none' } : {}
+  const heartIconStyle = fabOpen ? { display: 'none' } : {}
+  const fabIconReplacementStyle = fabOpen ? {} : { display: 'none' }
+
   return {
     baseStyles,
     themedStyles,
@@ -170,6 +176,9 @@ export const useTagScreenStyles = (buttonsDimmed: boolean) => {
     modalCloseButtonStyle,
     videoModalStyle,
     dimmableIconHolderStyle,
+    topBarLeftStyle,
+    heartIconStyle,
+    fabIconReplacementStyle,
     ios,
     iPad,
   }

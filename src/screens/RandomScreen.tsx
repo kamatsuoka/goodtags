@@ -44,7 +44,7 @@ const RandomScreen = () => {
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
 
-  const styles = useTagScreenStyles(buttonsDimmed)
+  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
 
   useEffect(() => {
     dispatch(getRandomTag())
