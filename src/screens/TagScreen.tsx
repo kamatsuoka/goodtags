@@ -35,7 +35,6 @@ const TagScreen = ({ navigation }: Props) => {
   const allTagIds = tagListState.allTagIds
   const selectedTag = tagListState.selectedTag
   const tag = useSelectedTag(tagListType)
-  const tracksState = useAppSelector(state => state.tracks)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
   const delabeledSelectedTag = useAppSelector(
     state => state.favorites.strandedTag,
@@ -52,7 +51,8 @@ const TagScreen = ({ navigation }: Props) => {
   const [fabOpen, setFabOpen] = React.useState(false)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
-  useTagEffects(tag)
+
+  const tracksState = useAppSelector(state => state.tracks)
   const selectedTrack = getSelectedTrack(
     tracksState.tagTracks,
     tracksState.selectedPart,
@@ -62,6 +62,7 @@ const TagScreen = ({ navigation }: Props) => {
     playOrPause: trackPlayOrPause,
     setTrackUrl: setUrl,
   } = useTrackPlayer(selectedTrack?.url)
+  useTagEffects(tag)
 
   /**
    * Go back to list.

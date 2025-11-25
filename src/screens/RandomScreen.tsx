@@ -40,17 +40,6 @@ const RandomScreen = () => {
   const tag = useAppSelector(state => {
     return selectRandomTag(state) || FALLBACK_TAG
   })
-  const tracksState = useAppSelector(state => state.tracks)
-  const selectedTrack = getSelectedTrack(
-    tracksState.tagTracks,
-    tracksState.selectedPart,
-  )
-  const {
-    player: trackPlayer,
-    playing: audioPlaying,
-    playOrPause: trackPlayOrPause,
-    setTrackUrl,
-  } = useTrackPlayer(selectedTrack?.url)
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -67,6 +56,16 @@ const RandomScreen = () => {
     }
   }, [tag.id])
 
+  const tracksState = useAppSelector(state => state.tracks)
+  const selectedTrack = getSelectedTrack(
+    tracksState.tagTracks,
+    tracksState.selectedPart,
+  )
+  const {
+    playing: audioPlaying,
+    playOrPause: trackPlayOrPause,
+    setTrackUrl,
+  } = useTrackPlayer(selectedTrack?.url)
   useTagEffects(tag)
 
   const hasTracks = (): boolean => {
