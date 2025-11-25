@@ -3,7 +3,6 @@
  */
 import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
-import { getSelectedTrack } from '@app/modules/tracksSlice'
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
@@ -12,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
-import useTrackPlayer from '../hooks/useTrackPlayer'
+import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
 
@@ -56,16 +55,7 @@ const RandomScreen = () => {
     }
   }, [tag.id])
 
-  const tracksState = useAppSelector(state => state.tracks)
-  const selectedTrack = getSelectedTrack(
-    tracksState.tagTracks,
-    tracksState.selectedPart,
-  )
-  const {
-    playing: audioPlaying,
-    playOrPause: trackPlayOrPause,
-    setTrackUrl,
-  } = useTrackPlayer(selectedTrack?.url)
+  const { audioPlaying, setTrackUrl, playOrPause, pause } = useTagTrackPlayer()
   useTagEffects(tag)
 
   const hasTracks = (): boolean => {
@@ -85,12 +75,6 @@ const RandomScreen = () => {
     }
   }
 
-  const playOrPause = () => {
-    if (selectedTrack) {
-      trackPlayOrPause()
-    }
-  }
-
   const shuffleAction = (
     <>
       <Appbar.Content title=" " pointerEvents="none" />
@@ -99,7 +83,7 @@ const RandomScreen = () => {
         onPress={async () => {
           brightenThenFade()
           try {
-            trackPlayer?.pause?.()
+            pause()
           } catch (e) {
             // ignore if player not available
           }

@@ -12,11 +12,10 @@ import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
-import useTrackPlayer from '../hooks/useTrackPlayer'
+import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
 import { TagListEnum } from '../modules/tagLists'
-import { getSelectedTrack } from '../modules/tracksSlice'
 import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
@@ -51,17 +50,7 @@ const TagScreen = ({ navigation }: Props) => {
   const [fabOpen, setFabOpen] = React.useState(false)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
-
-  const tracksState = useAppSelector(state => state.tracks)
-  const selectedTrack = getSelectedTrack(
-    tracksState.tagTracks,
-    tracksState.selectedPart,
-  )
-  const {
-    playing: audioPlaying,
-    playOrPause: trackPlayOrPause,
-    setTrackUrl: setUrl,
-  } = useTrackPlayer(selectedTrack?.url)
+  const { audioPlaying, setTrackUrl: setUrl, playOrPause } = useTagTrackPlayer()
   useTagEffects(tag)
 
   /**
@@ -137,12 +126,6 @@ const TagScreen = ({ navigation }: Props) => {
       }
     } else {
       dispatch(FavoritesActions.addFavorite(tag))
-    }
-  }
-
-  const playOrPause = () => {
-    if (selectedTrack) {
-      trackPlayOrPause()
     }
   }
 
