@@ -5,7 +5,7 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs'
-import { Platform, StyleSheet, View } from 'react-native'
+import { Platform, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TabBarBackground } from '../lib/theme'
@@ -29,27 +29,25 @@ export default function TabNavigator() {
 
   const androidHorizPadding = Math.max(insets.left, insets.right)
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: TabBarBackground,
-      paddingHorizontal: ios ? 0 : androidHorizPadding,
-    },
-    tabBar: {
-      backgroundColor: TabBarBackground,
-      height:
-        (ios ? 90 : 75 + insets.bottom) -
-        (shallowScreen && !ios ? 25 : shallowScreen ? 20 : 0),
-      paddingTop: 5,
-      paddingBottom: ios ? 25 : 15 + insets.bottom,
-      marginHorizontal: ios ? 0 : androidHorizPadding,
-      shadowColor: 'white',
-    },
-    tabBarLabel: {
-      fontFamily: theme.fonts.labelSmall.fontFamily,
-      fontSize: 14,
-    },
-  })
+  const containerStyle = {
+    flex: 1,
+    backgroundColor: TabBarBackground,
+    paddingHorizontal: ios ? 0 : androidHorizPadding,
+  }
+  const minHeight = ios ? 50 : 60
+  // beside-icon vs below-icon
+  const height = Math.max(minHeight, insets.bottom + (shallowScreen ? 35 : 55))
+  const tabBarStyle = {
+    backgroundColor: TabBarBackground,
+    height: height,
+    paddingTop: 5,
+    shadowColor: 'white',
+  }
+
+  const tabBarLabelStyle = {
+    fontFamily: theme.fonts.labelSmall.fontFamily,
+    fontSize: 14,
+  }
 
   // note: setting freezeOnBlur: true improves performance, but
   // at one point seemed to lead to wrong layouts
@@ -59,13 +57,13 @@ export default function TabNavigator() {
     headerShown: false,
     tabBarHideOnKeyboard: true,
     tabBarInactiveTintColor: theme.colors.outline,
-    tabBarLabelStyle: styles.tabBarLabel,
-    tabBarStyle: styles.tabBar,
+    tabBarLabelStyle,
+    tabBarStyle,
     tabBarLabelPosition: shallowScreen ? 'beside-icon' : 'below-icon',
   }
 
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Tab.Navigator
         initialRouteName="HomeNavigator"
         screenOptions={screenOptions}
@@ -109,7 +107,7 @@ export default function TabNavigator() {
 
 function tabIcon(name: string) {
   return (props: { focused: boolean; color: string; size: number }) => (
-    <Icon name={name} size={props.size} color={props.color} />
+    <Icon name={name as any} size={props.size} color={props.color} />
   )
 }
 
