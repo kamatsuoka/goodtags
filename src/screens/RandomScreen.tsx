@@ -3,8 +3,9 @@
  */
 import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
+import { getSelectedTrack } from '@app/modules/tracksSlice'
 import { useNavigation } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
 import { TagScreenLayout } from '../components/TagScreenLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
@@ -40,12 +41,16 @@ const RandomScreen = () => {
     return selectRandomTag(state) || FALLBACK_TAG
   })
   const tracksState = useAppSelector(state => state.tracks)
-
+  const selectedTrack = getSelectedTrack(
+    tracksState.tagTracks,
+    tracksState.selectedPart,
+  )
   const {
     player: trackPlayer,
     playing: audioPlaying,
     playOrPause: trackPlayOrPause,
-  } = useTrackPlayer(tracksState.selectedTrack?.url)
+    setTrackUrl,
+  } = useTrackPlayer(selectedTrack?.url)
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -82,7 +87,7 @@ const RandomScreen = () => {
   }
 
   const playOrPause = () => {
-    if (tracksState.selectedTrack) {
+    if (selectedTrack) {
       trackPlayOrPause()
     }
   }
@@ -132,6 +137,7 @@ const RandomScreen = () => {
       onSetInfoVisible={setInfoVisible}
       onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      onPlayTrack={setTrackUrl}
       styles={styles}
       additionalActions={shuffleAction}
     />

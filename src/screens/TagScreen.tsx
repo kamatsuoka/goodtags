@@ -16,6 +16,7 @@ import useTrackPlayer from '../hooks/useTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
 import { TagListEnum } from '../modules/tagLists'
+import { getSelectedTrack } from '../modules/tracksSlice'
 import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
@@ -52,8 +53,15 @@ const TagScreen = ({ navigation }: Props) => {
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
   useTagEffects(tag)
-  const { playing: audioPlaying, playOrPause: trackPlayOrPause } =
-    useTrackPlayer(tracksState.selectedTrack?.url)
+  const selectedTrack = getSelectedTrack(
+    tracksState.tagTracks,
+    tracksState.selectedPart,
+  )
+  const {
+    playing: audioPlaying,
+    playOrPause: trackPlayOrPause,
+    setTrackUrl: setUrl,
+  } = useTrackPlayer(selectedTrack?.url)
 
   /**
    * Go back to list.
@@ -132,7 +140,7 @@ const TagScreen = ({ navigation }: Props) => {
   }
 
   const playOrPause = () => {
-    if (tracksState.selectedTrack) {
+    if (selectedTrack) {
       trackPlayOrPause()
     }
   }
@@ -178,8 +186,6 @@ const TagScreen = ({ navigation }: Props) => {
       fabOpen={fabOpen}
       hasTracks={hasTracks()}
       hasVideos={hasVideos()}
-      // trackPlayer={trackPlayer}
-      // trackAudioStatus={trackAudioStatus}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={goBack}
@@ -191,6 +197,7 @@ const TagScreen = ({ navigation }: Props) => {
       onSetInfoVisible={setInfoVisible}
       onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      onPlayTrack={setUrl}
       styles={styles}
       additionalActions={navigationActions}
       dimAdditionalActions={true}

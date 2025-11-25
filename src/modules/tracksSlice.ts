@@ -11,7 +11,6 @@ type TagTracks = {
 export interface TracksState {
   selectedPart: TrackPart
   tagTracks: TagTracks
-  selectedTrack?: Track
 }
 
 export const initialState: TracksState = {
@@ -44,17 +43,9 @@ export const tracksSlice = createSlice({
       const tracks = action.payload.tracks || []
       const map = new Map(tracks.map(track => [track.part, track]))
       state.tagTracks = Object.fromEntries(map)
-      state.selectedTrack = getSelectedTrack(
-        state.tagTracks,
-        state.selectedPart,
-      )
     },
     setSelectedPart: (state, action: PayloadAction<TrackPart>) => {
       state.selectedPart = action.payload
-      state.selectedTrack = getSelectedTrack(
-        state.tagTracks,
-        state.selectedPart,
-      )
     },
   },
 })

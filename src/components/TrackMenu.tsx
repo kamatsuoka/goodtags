@@ -2,34 +2,20 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Divider, Menu, Text, useTheme } from 'react-native-paper'
 import { useAppDispatch, useAppSelector } from '../hooks'
-// import useTrackPlayer from '../hooks/useTrackPlayer'
 import { TrackPart } from '../lib/models/Tag'
 import { setSelectedPart } from '../modules/tracksSlice'
 
 type TrackMenuProps = {
   onDismiss: () => void
+  onPlayTrack?: (url: string) => void
 }
 
 export default function TrackMenu(props: TrackMenuProps) {
   const theme = useTheme()
-  const { onDismiss } = props
+  const { onDismiss, onPlayTrack } = props
   const tracksState = useAppSelector(state => state.tracks)
   const { selectedPart, tagTracks } = tracksState
   const dispatch = useAppDispatch()
-
-  // const { player: trackPlayer } = useTrackPlayer(tracksState.selectedTrack?.url)
-  // const selectedTrack = tracksState.selectedTrack
-
-  // useEffect(() => {
-  //   // when the selected track changes in the store, start playing it
-  //   if (selectedTrack) {
-  //     try {
-  //       trackPlayer?.play?.()
-  //     } catch (e) {
-  //       // ignore if player not ready
-  //     }
-  //   }
-  // }, [selectedTrack, trackPlayer])
 
   const styles = StyleSheet.create({
     container: {
@@ -57,6 +43,10 @@ export default function TrackMenu(props: TrackMenuProps) {
 
   function playPart(part: string) {
     dispatch(setSelectedPart(part as TrackPart))
+    const track = tagTracks[part as TrackPart]
+    if (track?.url && onPlayTrack) {
+      onPlayTrack(track.url)
+    }
     onDismiss()
   }
 

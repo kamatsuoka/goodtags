@@ -1,6 +1,5 @@
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
-// import { AudioPlayer, AudioStatus } from 'expo-audio'
 import { ReactNode, useCallback, useMemo } from 'react'
 import { ColorValue, View } from 'react-native'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
@@ -39,8 +38,6 @@ interface TagScreenLayoutProps {
   fabOpen: boolean
   hasTracks: boolean
   hasVideos: boolean
-  // trackPlayer: AudioPlayer
-  // trackAudioStatus: AudioStatus
   onToggleFavorite: (id: number) => void
   onPlayOrPause: () => void
   onBack: () => void
@@ -52,6 +49,7 @@ interface TagScreenLayoutProps {
   onSetInfoVisible: (visible: boolean) => void
   onSetFabOpen: (open: boolean) => void
   onNavigateToTagLabels: () => void
+  onPlayTrack?: (url: string) => void
   styles: any
   additionalActions?: ReactNode
   dimAdditionalActions?: boolean
@@ -69,8 +67,6 @@ export const TagScreenLayout = ({
   fabOpen,
   hasTracks,
   hasVideos,
-  // trackPlayer,
-  // trackAudioStatus,
   onToggleFavorite,
   onPlayOrPause,
   onBack,
@@ -82,6 +78,7 @@ export const TagScreenLayout = ({
   onSetInfoVisible,
   onSetFabOpen,
   onNavigateToTagLabels,
+  onPlayTrack,
   styles,
   additionalActions,
   dimAdditionalActions = false,
@@ -256,7 +253,10 @@ export const TagScreenLayout = ({
           onDismiss={() => onSetTracksVisible(false)}
           style={styles.themedStyles.modal}
         >
-          <TrackMenu onDismiss={() => onSetTracksVisible(false)} />
+          <TrackMenu
+            onDismiss={() => onSetTracksVisible(false)}
+            onPlayTrack={onPlayTrack}
+          />
         </Modal>
         {videosVisible ? (
           <IconButton
