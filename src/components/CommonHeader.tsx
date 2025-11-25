@@ -70,8 +70,11 @@ export default function CommonHeader({
     header: {
       ...styles.header,
       height: headerHeight,
-      paddingHorizontal: ios ? paddingLeft : 0,
-      marginHorizontal: !ios && insetHeader ? headerInset : 0,
+      paddingHorizontal: 0,
+    },
+    headerContent: {
+      ...styles.headerContent,
+      paddingHorizontal: ios ? paddingLeft : insetHeader ? headerInset : 0,
     },
   })
 
@@ -107,19 +110,24 @@ export default function CommonHeader({
 
   return (
     <View style={themedStyles.header}>
-      {backButton()}
-      {titleComponent}
-      <View style={styles.spacer} />
+      <View style={themedStyles.headerContent}>
+        {backButton()}
+        {titleComponent}
+        <View style={styles.spacer} />
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'flex-end',
     backgroundColor: TabBarBackground,
+  },
+  headerContent: {
+    alignItems: 'flex-end',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flex: 1,
   },
   cancel: {
     marginLeft: 10,

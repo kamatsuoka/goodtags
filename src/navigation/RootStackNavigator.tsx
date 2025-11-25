@@ -132,6 +132,10 @@ export default function RootStackNavigator() {
               options={{
                 title: 'labels',
                 header: navHeader(true),
+                contentStyle: {
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                },
                 ...tagOrientation,
               }}
             />
@@ -142,6 +146,10 @@ export default function RootStackNavigator() {
                 title: 'new label',
                 headerBackTitle: 'cancel',
                 header: navHeader(true),
+                contentStyle: {
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                },
                 orientation: 'all',
               }}
             />
