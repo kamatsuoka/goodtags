@@ -8,7 +8,7 @@ import {
 import { Platform, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { TabBarBackground } from '../lib/theme'
+import { TabBarActiveColor, TabBarBackground } from '../lib/theme'
 import { FavoritesScreen } from '../screens/FavoritesScreen'
 import SearchScreen from '../screens/SearchScreen'
 import HomeNavigator from './HomeNavigator'
@@ -38,10 +38,11 @@ export default function TabNavigator() {
   // beside-icon vs below-icon
   const height = Math.max(minHeight, insets.bottom + (shallowScreen ? 35 : 55))
   const tabBarStyle = {
-    backgroundColor: TabBarBackground,
+    backgroundColor: theme.colors.elevation.level2,
     height: height,
     paddingTop: 5,
-    shadowColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.outlineVariant,
   }
 
   const tabBarLabelStyle = {
@@ -56,7 +57,8 @@ export default function TabNavigator() {
     freezeOnBlur: true,
     headerShown: false,
     tabBarHideOnKeyboard: true,
-    tabBarInactiveTintColor: theme.colors.outline,
+    tabBarActiveTintColor: TabBarActiveColor,
+    tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
     tabBarLabelStyle,
     tabBarStyle,
     tabBarLabelPosition: shallowScreen ? 'beside-icon' : 'below-icon',
