@@ -1,13 +1,12 @@
 import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
-import { useAppDispatch } from '@app/hooks'
+import { useAppDispatch, useBodyInsets } from '@app/hooks'
 import useShallowScreen from '@app/hooks/useShallowScreen'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
 import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
 import { useEffect, useState } from 'react'
 import {
   Linking,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -25,6 +24,7 @@ export default function HomeScreen({
 }: HomeNavigatorScreenProps<'Home'>) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const shallow = useShallowScreen()
   const dispatch = useAppDispatch()
   const [snackBarVisible, setSnackBarVisible] = useState(false)
@@ -103,8 +103,8 @@ export default function HomeScreen({
   const themedStyles = StyleSheet.create({
     listContainer: {
       flex: 1,
-      paddingLeft: Platform.OS === 'ios' ? insets.left : 0,
-      paddingRight: Platform.OS === 'ios' ? insets.right : 0,
+      paddingLeft,
+      paddingRight,
       paddingTop: 15,
       width: '100%',
     },

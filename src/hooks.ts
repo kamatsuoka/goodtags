@@ -1,4 +1,3 @@
-import { Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import type { RootState } from './store'
@@ -10,8 +9,8 @@ export const useAppDispatch: () => AppDispatch = useDispatch // Export a hook th
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 export const useBodyInsets = () => {
   const insets = useSafeAreaInsets()
-  const paddingLeft = Platform.OS === 'ios' ? insets.left : 0
-  const paddingRight = Platform.OS === 'ios' ? insets.right : 0
+  const paddingLeft = insets.left
+  const paddingRight = insets.right
   return { paddingLeft, paddingRight }
 }
 export const useHorizontalInset = () => {

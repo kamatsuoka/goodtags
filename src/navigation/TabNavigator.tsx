@@ -32,7 +32,6 @@ export default function TabNavigator() {
   const containerStyle = {
     flex: 1,
     backgroundColor: TabBarBackground,
-    paddingHorizontal: ios ? 0 : androidHorizPadding,
   }
   const minHeight = ios ? 50 : 60
   // beside-icon vs below-icon
@@ -43,6 +42,7 @@ export default function TabNavigator() {
     paddingTop: 5,
     borderTopWidth: 1,
     borderTopColor: theme.colors.outlineVariant,
+    paddingHorizontal: ios ? 0 : androidHorizPadding,
   }
 
   const tabBarLabelStyle = {
