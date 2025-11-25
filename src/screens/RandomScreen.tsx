@@ -6,7 +6,7 @@ import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
-import { TagScreenLayout } from '../components/TagScreenLayout'
+import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
@@ -90,7 +90,7 @@ const RandomScreen = () => {
   )
 
   return (
-    <TagScreenLayout
+    <TagLayout
       tag={tag}
       tagListType={TagListEnum.SearchResults}
       favoritesById={favoritesById}

@@ -7,7 +7,7 @@ import { TagState, setTagState } from '@app/modules/visitSlice'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
-import { TagScreenLayout } from '../components/TagScreenLayout'
+import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
@@ -152,7 +152,7 @@ const TagScreen = ({ navigation }: Props) => {
   )
 
   return (
-    <TagScreenLayout
+    <TagLayout
       tag={tag}
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}

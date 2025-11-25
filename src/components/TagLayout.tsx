@@ -26,7 +26,7 @@ type AppActionProps = {
   onPressOut?: () => void
 }
 
-interface TagScreenLayoutProps {
+interface TagLayoutProps {
   tag: Tag
   tagListType: TagListEnum
   favoritesById: Record<number, any>
@@ -55,7 +55,7 @@ interface TagScreenLayoutProps {
   dimAdditionalActions?: boolean
 }
 
-export const TagScreenLayout = ({
+export const TagLayout = ({
   tag,
   tagListType,
   favoritesById,
@@ -82,7 +82,7 @@ export const TagScreenLayout = ({
   styles,
   additionalActions,
   dimAdditionalActions = false,
-}: TagScreenLayoutProps) => {
+}: TagLayoutProps) => {
   const theme = useTheme()
   const keyNote = noteForKey(tag.key)
   const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
