@@ -10,6 +10,7 @@ import { TagScreenLayout } from '../components/TagScreenLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
+import useTagMedia from '../hooks/useTagMedia'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
@@ -56,16 +57,8 @@ const RandomScreen = () => {
   }, [tag.id])
 
   const { audioPlaying, setTrackUrl, playOrPause, pause } = useTagTrackPlayer()
+  const { hasTracks, hasVideos } = useTagMedia(tag)
   useTagEffects(tag)
-
-  const hasTracks = (): boolean => {
-    const tracks = tag.tracks
-    return tracks?.length > 0 && tracks[0] !== undefined
-  }
-  const hasVideos = (): boolean => {
-    const videos = tag.videos
-    return videos?.length > 0 && videos[0] !== undefined
-  }
 
   async function toggleFavorite(id: number) {
     if (favoritesById[id]) {
@@ -107,8 +100,8 @@ const RandomScreen = () => {
       videosVisible={videosVisible}
       infoVisible={infoVisible}
       fabOpen={fabOpen}
-      hasTracks={hasTracks()}
-      hasVideos={hasVideos()}
+      hasTracks={hasTracks}
+      hasVideos={hasVideos}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={navigation.goBack}

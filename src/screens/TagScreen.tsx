@@ -11,6 +11,7 @@ import { TagScreenLayout } from '../components/TagScreenLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
+import useTagMedia from '../hooks/useTagMedia'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
@@ -51,6 +52,7 @@ const TagScreen = ({ navigation }: Props) => {
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
   const { audioPlaying, setTrackUrl: setUrl, playOrPause } = useTagTrackPlayer()
+  const { hasTracks, hasVideos } = useTagMedia(tag)
   useTagEffects(tag)
 
   /**
@@ -107,14 +109,6 @@ const TagScreen = ({ navigation }: Props) => {
     return 0 // sus
   }
 
-  const hasTracks = (): boolean => {
-    const tracks = tag.tracks
-    return tracks?.length > 0 && tracks[0] !== undefined
-  }
-  const hasVideos = (): boolean => {
-    const videos = tag.videos
-    return videos?.length > 0 && videos[0] !== undefined
-  }
   const hasPrevTag = () => selectedTag && selectedTag.index > 0
   const hasNextTag = () => selectedTag && selectedTag.index < getMaxIndex()
 
@@ -168,8 +162,8 @@ const TagScreen = ({ navigation }: Props) => {
       videosVisible={videosVisible}
       infoVisible={infoVisible}
       fabOpen={fabOpen}
-      hasTracks={hasTracks()}
-      hasVideos={hasVideos()}
+      hasTracks={hasTracks}
+      hasVideos={hasVideos}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={goBack}
