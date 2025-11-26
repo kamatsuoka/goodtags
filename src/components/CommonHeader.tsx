@@ -4,12 +4,7 @@ import { getHeaderTitle } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import React from 'react'
-import {
-  Platform,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import useHeaderHeight from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
@@ -59,7 +54,6 @@ export default function CommonHeader({
   const headerInset = useHorizontalInset()
   const navigation = useNavigation()
   const headerHeight = useHeaderHeight()
-  const ios = Platform.OS === 'ios'
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -74,7 +68,7 @@ export default function CommonHeader({
     },
     headerContent: {
       ...styles.headerContent,
-      paddingHorizontal: ios ? paddingLeft : insetHeader ? headerInset : 0,
+      paddingHorizontal: insetHeader ? headerInset : paddingLeft,
     },
   })
 
