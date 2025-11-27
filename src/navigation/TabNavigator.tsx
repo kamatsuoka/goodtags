@@ -5,7 +5,7 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs'
-import { Platform, View } from 'react-native'
+import { Dimensions, Platform, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TabBarActiveColor, TabBarBackground } from '../lib/theme'
@@ -24,6 +24,8 @@ export default function TabNavigator() {
   const theme = useTheme()
   const shallowScreen = useShallowScreen()
   const insets = useSafeAreaInsets()
+  const { width: windowWidth, height: windowHeight } = Dimensions.get('window')
+  const isLandscape = windowWidth > windowHeight
 
   const ios = Platform.OS === 'ios'
 
@@ -61,7 +63,8 @@ export default function TabNavigator() {
     tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
     tabBarLabelStyle,
     tabBarStyle,
-    tabBarLabelPosition: shallowScreen ? 'beside-icon' : 'below-icon',
+    tabBarLabelPosition: 'beside-icon',
+    tabBarShowLabel: isLandscape,
   }
 
   return (
