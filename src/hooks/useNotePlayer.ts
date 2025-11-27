@@ -11,19 +11,19 @@ setAudioModeAsync({ playsInSilentMode: true })
 // Static mapping of note names to their audio files
 // prettier-ignore
 const noteAudioMap: Record<string, any> = {
-  'aflat': require('../../ios/notes/aflat.mp3'),
-  'anatural': require('../../ios/notes/anatural.mp3'),
-  'bflat': require('../../ios/notes/bflat.mp3'),
-  'bnatural': require('../../ios/notes/bnatural.mp3'),
-  'cflat': require('../../ios/notes/bnatural.mp3'),
-  'cnatural': require('../../ios/notes/cnatural.mp3'),
-  'dflat': require('../../ios/notes/dflat.mp3'),
-  'dnatural': require('../../ios/notes/dnatural.mp3'),
-  'eflat': require('../../ios/notes/eflat.mp3'),
-  'enatural': require('../../ios/notes/enatural.mp3'),
-  'fnatural': require('../../ios/notes/fnatural.mp3'),
-  'gflat': require('../../ios/notes/gflat.mp3'),
-  'gnatural': require('../../ios/notes/gnatural.mp3'),
+  'aflat': require('../assets/audio/aflat.mp3'),
+  'anatural': require('../assets/audio/anatural.mp3'),
+  'bflat': require('../assets/audio/bflat.mp3'),
+  'bnatural': require('../assets/audio/bnatural.mp3'),
+  'cflat': require('../assets/audio/bnatural.mp3'),
+  'cnatural': require('../assets/audio/cnatural.mp3'),
+  'dflat': require('../assets/audio/dflat.mp3'),
+  'dnatural': require('../assets/audio/dnatural.mp3'),
+  'eflat': require('../assets/audio/eflat.mp3'),
+  'enatural': require('../assets/audio/enatural.mp3'),
+  'fnatural': require('../assets/audio/fnatural.mp3'),
+  'gflat': require('../assets/audio/gflat.mp3'),
+  'gnatural': require('../assets/audio/gnatural.mp3'),
 }
 
 // canonical names have flats
