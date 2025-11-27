@@ -75,7 +75,6 @@ export default function DataScreen() {
             <TouchableOpacity onPress={() => shareFavorites(favorites)}>
               <List.Item
                 title="backup"
-                description="export faves and labels"
                 left={ExportIcon}
                 right={RightIcon}
                 style={styles.listItem}
@@ -101,18 +100,32 @@ export default function DataScreen() {
                         receiveSharedFile(pickerResult.uri),
                       )
                       const importResult = importPayload.payload
-                      console.log(`importResult: ${importResult}`)
-                      if (typeof importResult === 'string') {
+                      console.log(`importResult:`, importResult)
+                      if (importPayload.type.endsWith('/rejected')) {
+                        // Handle rejection
+                        const errorMessage =
+                          typeof importResult === 'string'
+                            ? importResult
+                            : 'import failed'
+                        setSnackBarMessage(errorMessage)
+                      } else if (typeof importResult === 'string') {
                         setSnackBarMessage(importResult)
                       } else if (importResult?.favorites) {
+                        const favCount = importResult.favorites.length
+                        const labelCount = importResult.receivedLabels.length
                         setSnackBarMessage(
-                          `imported ${importResult.favorites.length} tags` +
-                            ` and ${importResult.receivedLabels.length} labels`,
+                          `imported ${favCount} tag${
+                            favCount !== 1 ? 's' : ''
+                          }` +
+                            ` and ${labelCount} label${
+                              labelCount !== 1 ? 's' : ''
+                            }`,
                         )
                       } else {
                         setSnackBarMessage('import failed')
                       }
                     } catch (parseError) {
+                      console.error('Parse error:', parseError)
                       setSnackBarMessage('invalid file format')
                     }
                     setSnackBarVisible(true)
@@ -133,7 +146,6 @@ export default function DataScreen() {
             >
               <List.Item
                 title="restore"
-                description="import faves and labels"
                 left={ImportIcon}
                 right={RightIcon}
                 style={styles.listItem}

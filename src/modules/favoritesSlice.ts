@@ -546,11 +546,18 @@ export const receiveSharedFile = createAsyncThunk<
       const { tags: favorites } = await fetchAndConvertTags(
         { ids: favoriteIds },
         false,
+        undefined,
+        false, // Don't use transaction to avoid nesting issues
       )
       const receivedLabels = await Promise.all(
         sharedData.labels.map(async sharedLabel => {
           const tagIds = sharedLabel.tags.map(t => t.id)
-          const { tags } = await fetchAndConvertTags({ ids: tagIds }, false)
+          const { tags } = await fetchAndConvertTags(
+            { ids: tagIds },
+            false,
+            undefined,
+            false, // Don't use transaction to avoid nesting issues
+          )
           return { label: sharedLabel.label, tags }
         }),
       )
@@ -559,7 +566,11 @@ export const receiveSharedFile = createAsyncThunk<
         receivedLabels,
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue(getImportErrorMessage(url))
+      console.error('Error importing favorites:', e)
+      return thunkAPI.rejectWithValue(
+        getImportErrorMessage(url) +
+          `: ${e instanceof Error ? e.message : String(e)}`,
+      )
     }
   }
 

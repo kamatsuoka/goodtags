@@ -65,13 +65,14 @@ export async function fetchAndConvertTags(
   searchParams: SearchParams,
   useApi: boolean,
   baseUrl: string = Search.API_BASE,
+  useTransaction: boolean = true,
 ): Promise<ConvertedTags> {
   if (useApi) {
     const queryParams = buildApiQueryParams(searchParams)
     const responseText = await getUrl(baseUrl, { params: queryParams })
     return tagsFromApiResponse(responseText)
   } else {
-    return searchDb(searchParams)
+    return searchDb(searchParams, useTransaction)
   }
 }
 
@@ -142,7 +143,10 @@ export async function countTags(): Promise<number> {
   return countRaw[0].count
 }
 
-async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
+async function searchDb(
+  searchParams: SearchParams,
+  useTransaction: boolean = true,
+): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =
     buildSqlParts(searchParams)
@@ -160,7 +164,7 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   let videoRows: DbRow[] = []
   let count = '0'
 
-  await db.runTransactionAsync(async () => {
+  const executeQueries = async () => {
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
@@ -204,7 +208,13 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
     }
     count = count_raw[0].count.toString()
     console.log('raw count', count)
-  })
+  }
+
+  if (useTransaction) {
+    await db.runTransactionAsync(executeQueries)
+  } else {
+    await executeQueries()
+  }
 
   debugDbPerfLogging('Db done, parsing rows', overallStart)
   return tagsFromDbRows(
