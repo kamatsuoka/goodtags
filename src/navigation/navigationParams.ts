@@ -1,14 +1,14 @@
-import Tag from "@app/lib/models/Tag"
-import {BottomTabScreenProps} from "@react-navigation/bottom-tabs"
-import {CompositeScreenProps} from "@react-navigation/native"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
+import Tag from '@app/lib/models/Tag'
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
+import { CompositeScreenProps } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 export type RootStackParamList = {
   Welcome: undefined
   Tabs: undefined
   Favorites: undefined
-  History: undefined
   Tag: undefined
+  History: undefined
   About: undefined
   Options: undefined
   LabelEditor: undefined
@@ -16,8 +16,12 @@ export type RootStackParamList = {
     tag?: Tag
   }
   TagLabels: undefined
+  TagVideos: {
+    tag: Tag
+  }
   PortraitTransition: undefined
   LandscapeTransition: undefined
+  Random: undefined
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
@@ -43,7 +47,7 @@ export type HomeNavigatorParamList = {
   Easy: undefined
   New: undefined
   Labels: undefined
-  Labeled: {label: string}
+  Labeled: { label: string }
   LabelEditor: undefined
   Options: undefined
   Data: undefined

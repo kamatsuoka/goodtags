@@ -1,34 +1,34 @@
-import {getDbConnection} from "@app/modules/sqlUtil"
-import {toInteger} from "lodash"
+import { getDbConnection } from '@app/modules/sqlUtil'
+import { toInteger } from 'lodash'
 import {
   Collection,
   Parts,
   Search,
   SearchParams,
   SortOrder,
-} from "../constants/Search"
+} from '../constants/Search'
 import {
   ConvertedTags,
   tagsFromApiResponse,
   tagsFromDbRows,
-} from "../lib/models/Tag"
-import getUrl from "./getUrl"
-import {SearchState} from "./searchSlice"
+} from '../lib/models/Tag'
+import getUrl from './getUrl'
+import { SearchState } from './searchSlice'
 
 const idRegex = /^[0-9]+$/
 export const isId = (query: string) => idRegex.test(query)
 
 const COLLECTION_PARAMS = {
-  [Collection.ALL]: "",
-  [Collection.CLASSIC]: "classic",
-  [Collection.EASY]: "easytags",
+  [Collection.ALL]: '',
+  [Collection.CLASSIC]: 'classic',
+  [Collection.EASY]: 'easytags',
 }
 
 export const SORTBY_PARAMS = {
-  [SortOrder.alpha]: "Title",
-  [SortOrder.downloads]: "Downloaded",
-  [SortOrder.newest]: "Posted",
-  [SortOrder.id]: "id",
+  [SortOrder.alpha]: 'Title',
+  [SortOrder.downloads]: 'Downloaded',
+  [SortOrder.newest]: 'Posted',
+  [SortOrder.id]: 'id',
 }
 
 export const PARTS_PARAMS = {
@@ -43,10 +43,10 @@ export function getSearchParams(
   start: number,
 ): SearchParams {
   const trimQuery = state.query.trim()
-  const cleanQuery = trimQuery.replace(/[^a-zA-Z0-9]/g, " ").trim()
+  const cleanQuery = trimQuery.replace(/[^a-zA-Z0-9]/g, ' ').trim()
   if (isId(cleanQuery)) {
     // treat numeric query as request for tag by id (rip 1776 tag)
-    return {id: toInteger(cleanQuery)}
+    return { id: toInteger(cleanQuery) }
   }
 
   return {
@@ -65,13 +65,14 @@ export async function fetchAndConvertTags(
   searchParams: SearchParams,
   useApi: boolean,
   baseUrl: string = Search.API_BASE,
+  useTransaction: boolean = true,
 ): Promise<ConvertedTags> {
   if (useApi) {
     const queryParams = buildApiQueryParams(searchParams)
-    const responseText = await getUrl(baseUrl, {params: queryParams})
+    const responseText = await getUrl(baseUrl, { params: queryParams })
     return tagsFromApiResponse(responseText)
   } else {
-    return searchDb(searchParams)
+    return searchDb(searchParams, useTransaction)
   }
 }
 
@@ -107,18 +108,18 @@ function buildApiQueryParams(searchParams: SearchParams): ApiQueryParams {
       collection => COLLECTION_PARAMS[collection],
     ),
     Sortby: apply(searchParams.sortBy, sortBy => SORTBY_PARAMS[sortBy]),
-    SheetMusic: searchParams.requireSheetMusic ? "Yes" : undefined,
-    Learning: searchParams.requireLearningTracks ? "Yes" : undefined,
+    SheetMusic: searchParams.requireSheetMusic ? 'Yes' : undefined,
+    Learning: searchParams.requireLearningTracks ? 'Yes' : undefined,
     Parts: searchParams.parts,
   }
 }
 
-export type DbRow = {[column: string]: any}
+export type DbRow = { [column: string]: any }
 
 const DEBUG_DB_PERF = false
 function debugDbPerfCurrentTime() {
   if (DEBUG_DB_PERF) {
-    return global.performance.now()
+    return (global as any).performance.now()
   } else {
     return 0
   }
@@ -129,54 +130,70 @@ function debugDbPerfLogging(label: string, start: number) {
   }
 }
 
-async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
-  const overallStart = debugDbPerfCurrentTime()
-  const {whereVariables, whereClause, suffixClauses, suffixVariables} =
-    buildSqlParts(searchParams)
-  console.log("whereVariables", whereVariables)
-  console.log("whereClause", whereClause)
-  console.log("suffixClauses", suffixClauses)
-  console.log("suffixVariables", suffixVariables)
+/**
+ * Counts the number of tags in the database
+ *
+ * @returns number of tags in the db
+ */
+export async function countTags(): Promise<number> {
   const db = await getDbConnection()
-  debugDbPerfLogging("Got db", overallStart)
+  const countRaw = await db.getAllAsync<{ count: number }>(
+    `SELECT COUNT(*) AS count FROM tags`,
+  )
+  return countRaw[0].count
+}
+
+async function searchDb(
+  searchParams: SearchParams,
+  useTransaction: boolean = true,
+): Promise<ConvertedTags> {
+  const overallStart = debugDbPerfCurrentTime()
+  const { whereVariables, whereClause, suffixClauses, suffixVariables } =
+    buildSqlParts(searchParams)
+  console.log('whereVariables', whereVariables)
+  console.log('whereClause', whereClause)
+  console.log('suffixClauses', suffixClauses)
+  console.log('suffixVariables', suffixVariables)
+  const db = await getDbConnection()
+  debugDbPerfLogging('Got db', overallStart)
 
   // This is kinda a gross API. We can't return anything out of the transaction (and it's generally recommended to use
   // a transaction), so we have to declare these variables here and mutate them within the transaction function >.>
   let tagRows: DbRow[] = []
   let trackRows: DbRow[] = []
   let videoRows: DbRow[] = []
-  let count = "0"
+  let count = '0'
 
-  await db.runTransactionAsync(async txn => {
+  const executeQueries = async () => {
     const start = debugDbPerfCurrentTime()
-    debugDbPerfLogging("Txn start", overallStart)
+    debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
-    console.log("tagSql", tagSql)
-    tagRows = (
-      await txn.executeSqlAsync(tagSql, [...whereVariables, ...suffixVariables])
-    ).rows
-    console.log("got tagRows.length = ", tagRows.length)
+    console.log('tagSql', tagSql)
+    tagRows = await db.getAllAsync<DbRow>(
+      tagSql,
+      ...whereVariables,
+      ...suffixVariables,
+    )
+    console.log('got tagRows.length = ', tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
-    trackRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM tracks WHERE tracks.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
-        [...whereVariables, ...suffixVariables],
-      )
-    ).rows
+    trackRows = await db.getAllAsync<DbRow>(
+      `SELECT * FROM tracks WHERE tracks.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      ...whereVariables,
+      ...suffixVariables,
+    )
     const trackTime = debugDbPerfCurrentTime()
 
-    videoRows = (
-      await txn.executeSqlAsync(
-        `SELECT * FROM videos WHERE videos.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
-        [...whereVariables, ...suffixVariables],
-      )
-    ).rows
+    videoRows = await db.getAllAsync<DbRow>(
+      `SELECT * FROM videos WHERE videos.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      ...whereVariables,
+      ...suffixVariables,
+    )
     const videoTime = debugDbPerfCurrentTime()
 
-    const count_raw = await txn.executeSqlAsync(
+    const count_raw = await db.getAllAsync<{ count: number }>(
       `SELECT COUNT(*) AS count FROM tags${whereClause}`,
-      whereVariables,
+      ...whereVariables,
     )
     const countTime = debugDbPerfCurrentTime()
     if (DEBUG_DB_PERF) {
@@ -189,11 +206,17 @@ async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
           `total=${countTime - start}`,
       )
     }
-    count = count_raw.rows[0].count
-    console.log("raw count", count)
-  }, true /* readOnly txn */)
+    count = count_raw[0].count.toString()
+    console.log('raw count', count)
+  }
 
-  debugDbPerfLogging("Db done, parsing rows", overallStart)
+  if (useTransaction) {
+    await db.runTransactionAsync(executeQueries)
+  } else {
+    await executeQueries()
+  }
+
+  debugDbPerfLogging('Db done, parsing rows', overallStart)
   return tagsFromDbRows(
     tagRows,
     trackRows,
@@ -212,32 +235,32 @@ function buildSqlParts(searchParams: SearchParams) {
   const whereVariables = []
 
   if (searchParams.id !== undefined) {
-    whereClauseParts.push("tags.id = ?")
+    whereClauseParts.push('tags.id = ?')
     whereVariables.push(searchParams.id)
   }
   if (searchParams.ids !== undefined) {
     whereClauseParts.push(`tags.id in (${searchParams.ids.toString()})`)
   }
-  if (searchParams.query !== undefined && searchParams.query !== "") {
+  if (searchParams.query !== undefined && searchParams.query !== '') {
     whereClauseParts.push(
-      "(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)",
+      '(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)',
     )
     whereVariables.push(`${searchParams.query}*`)
     whereVariables.push(`%${searchParams.query}%`)
   }
   if (searchParams.parts !== undefined) {
-    whereClauseParts.push("tags.parts = ?")
+    whereClauseParts.push('tags.parts = ?')
     whereVariables.push(searchParams.parts)
   }
   if (
     searchParams.collection !== undefined &&
     searchParams.collection !== Collection.ALL
   ) {
-    whereClauseParts.push("tags.collection = ?")
+    whereClauseParts.push('tags.collection = ?')
     whereVariables.push(COLLECTION_PARAMS[searchParams.collection])
   }
   if (searchParams.requireLearningTracks) {
-    whereClauseParts.push("tags.id IN (SELECT tag_id FROM tracks)")
+    whereClauseParts.push('tags.id IN (SELECT tag_id FROM tracks)')
   }
   if (searchParams.requireSheetMusic) {
     whereClauseParts.push(
@@ -246,30 +269,30 @@ function buildSqlParts(searchParams: SearchParams) {
   }
   const whereClause =
     whereClauseParts.length === 0
-      ? ""
-      : ` WHERE ${whereClauseParts.join(" AND ")}`
+      ? ''
+      : ` WHERE ${whereClauseParts.join(' AND ')}`
 
-  let suffixClauses = ""
+  let suffixClauses = ''
   const suffixVariables = []
 
   switch (searchParams.sortBy) {
     case SortOrder.alpha:
-      suffixClauses += " ORDER BY tags.title ASC"
+      suffixClauses += ' ORDER BY tags.title ASC'
       break
     case SortOrder.downloads:
-      suffixClauses += " ORDER BY tags.downloaded DESC"
+      suffixClauses += ' ORDER BY tags.downloaded DESC'
       break
     case SortOrder.newest:
-      suffixClauses += " ORDER BY tags.posted DESC, tags.id DESC"
+      suffixClauses += ' ORDER BY tags.posted DESC, tags.id DESC'
       break
   }
   if (searchParams.limit !== undefined) {
-    suffixClauses += " LIMIT ?"
+    suffixClauses += ' LIMIT ?'
     suffixVariables.push(searchParams.limit)
   }
   if (searchParams.offset !== undefined) {
-    suffixClauses += " OFFSET ?"
+    suffixClauses += ' OFFSET ?'
     suffixVariables.push(searchParams.offset)
   }
-  return {whereClause, whereVariables, suffixClauses, suffixVariables}
+  return { whereClause, whereVariables, suffixClauses, suffixVariables }
 }

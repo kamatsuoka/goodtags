@@ -1,4 +1,4 @@
-import Tag, {buildTag} from "./Tag"
+import Tag, { buildTag } from './Tag'
 
 export interface Favorite extends Tag {
   addedDate: string
@@ -8,9 +8,9 @@ export function buildFavorite(
   t: Tag,
   addedDate: string = new Date().toISOString(),
 ): Favorite {
-  if ("addedDate" in t) {
+  if ('addedDate' in t) {
     // already a Favorite, just copy it
-    return {...t} as Favorite
+    return { ...t } as Favorite
   } else {
     const tag = buildTag(
       t.id,

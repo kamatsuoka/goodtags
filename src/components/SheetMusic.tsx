@@ -1,33 +1,46 @@
-import {useAppSelector} from "@app/hooks"
-import {Platform, StyleSheet, useWindowDimensions, View} from "react-native"
-import {ActivityIndicator, Text} from "react-native-paper"
-import Pdf from "react-native-pdf"
-import {EdgeInsets, useSafeAreaInsets} from "react-native-safe-area-context"
-import WebView from "react-native-webview"
+import { useAppSelector } from '@app/hooks'
+import { usePdfCache } from '@app/hooks/usePdfCache'
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { ActivityIndicator, Text } from 'react-native-paper'
+import PdfRendererView from 'react-native-pdf-renderer'
+import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context'
+import WebView from 'react-native-webview'
+import { scheduleOnRN } from 'react-native-worklets'
 
-const isPdf = (uri: string) => uri.toLowerCase().endsWith(".pdf")
-const BACKGROUND_COLOR = "#fcfcff"
+const isPdf = (uri: string) => uri.toLowerCase().endsWith('.pdf')
+const BACKGROUND_COLOR = '#fcfcff'
 
-type Props = {
-  uri: string
-  onPress: () => void
-}
+type Props = { uri: string; onPress: () => void }
 
 /**
  * Sheet musics viewer. Supports pdfs, gifs, etc.
  */
 export default function SheetMusic(props: Props) {
-  const {uri, onPress} = props
-  const {width, height} = useWindowDimensions()
+  const { uri, onPress } = props
+  const { width, height } = useWindowDimensions()
   const wideMode = width >= height
   const doAutoRotate = useAppSelector(state => state.options.autoRotate)
   // on android, sometimes pdfs render before orientation change registers
   const showPdf = wideMode || !doAutoRotate
   const rawInsets = useSafeAreaInsets()
   const insets =
-    Platform.OS === "android"
+    Platform.OS === 'android'
       ? rawInsets
-      : {top: 0, bottom: 0, left: 0, right: 0}
+      : { top: 0, bottom: 0, left: 0, right: 0 }
+
+  // Use the PDF cache hook for handling remote PDF downloads
+  const { localPath, isLoading, error } = usePdfCache(uri)
+
+  // Single tap gesture that only fires if not part of a pinch/pan
+  const tap = Gesture.Tap()
+    .maxDuration(250)
+    .onEnd(() => {
+      scheduleOnRN(onPress)
+    })
+
+  // Allow simultaneous gestures so PDF viewer can handle pinch/pan
+  const composed = Gesture.Simultaneous(tap)
 
   const pdfStyle = {
     ...styles.pdf,
@@ -40,19 +53,47 @@ export default function SheetMusic(props: Props) {
 
   if (uri) {
     if (isPdf(uri)) {
-      return showPdf ? (
-        <Pdf
-          trustAllCerts={false}
-          source={{uri}}
-          onPageSingleTap={onPress}
-          onError={error => console.log(error)}
-          fitPolicy={0}
-          minScale={0.5}
-          maxScale={2.0}
-          renderActivityIndicator={() => <ActivityIndicator />}
-          style={pdfStyle}
-        />
-      ) : null
+      if (!showPdf) {
+        return null
+      }
+
+      if (isLoading) {
+        return (
+          <View style={[pdfStyle, styles.centerContent]}>
+            <ActivityIndicator size="large" />
+            <Text style={styles.loadingText}>Loading PDF...</Text>
+          </View>
+        )
+      }
+
+      if (error) {
+        return (
+          <View style={[pdfStyle, styles.centerContent]}>
+            <Text style={styles.errorText}>Error loading PDF: {error}</Text>
+          </View>
+        )
+      }
+
+      if (localPath) {
+        return (
+          <GestureDetector gesture={composed}>
+            <View style={pdfStyle}>
+              <PdfRendererView
+                source={localPath}
+                onPageChange={(current, total) => {
+                  console.log(`PDF page ${current} of ${total}`)
+                }}
+                onError={() => console.log('PDF render error')}
+                maxZoom={2.0}
+                distanceBetweenPages={16}
+                style={styles.pdfRenderer}
+              />
+            </View>
+          </GestureDetector>
+        )
+      }
+
+      return null
     } else {
       const source = imageSource(uri, insets)
       return (
@@ -61,7 +102,7 @@ export default function SheetMusic(props: Props) {
           source={source}
           renderError={() => <Text>Unable to load image</Text>}
           onMessage={event => {
-            if (event.nativeEvent?.data === "click") {
+            if (event.nativeEvent?.data === 'click') {
               onPress()
             }
           }}
@@ -81,7 +122,7 @@ export default function SheetMusic(props: Props) {
  * HTML page for viewing non-pdf images in WebView.
  * Designed for landscape or wide screens, puts music full width.
  */
-function imageSource(uri: string, insets: EdgeInsets): {html: string} {
+function imageSource(uri: string, insets: EdgeInsets): { html: string } {
   return {
     html: `<head>
          <title>sheet music</title>
@@ -120,13 +161,11 @@ function imageSource(uri: string, insets: EdgeInsets): {html: string} {
 }
 
 const styles = StyleSheet.create({
-  pdf: {
-    backgroundColor: BACKGROUND_COLOR,
-    flex: 1,
-    elevation: 4,
-  },
-  emptyHolder: {padding: 20},
-  emptyText: {
-    textAlign: "center",
-  },
+  pdf: { backgroundColor: BACKGROUND_COLOR, flex: 1, elevation: 4 },
+  pdfRenderer: { flex: 1, backgroundColor: BACKGROUND_COLOR },
+  emptyHolder: { padding: 20 },
+  emptyText: { textAlign: 'center' },
+  centerContent: { justifyContent: 'center', alignItems: 'center' },
+  loadingText: { marginTop: 16, textAlign: 'center' },
+  errorText: { textAlign: 'center', color: 'red' },
 })

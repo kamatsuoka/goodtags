@@ -1,26 +1,25 @@
-import {SortOrder} from "@app/constants/Search"
-import {buildFavorite, FavoritesById} from "@app/lib/models/Favorite"
+import { SortOrder } from '@app/constants/Search'
+import { buildFavorite, FavoritesById } from '@app/lib/models/Favorite'
 import Tag, {
-  ConvertedTags,
   IdsByString,
   StringsByNumber,
   TagsById,
-} from "@app/lib/models/Tag"
-import {RootState} from "@app/store"
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import _ from "lodash"
-import ReactNativeBlobUtil from "react-native-blob-util"
-import Share from "react-native-share"
-import {fetchAndConvertTags} from "./searchutil"
+} from '@app/lib/models/Tag'
+import { RootState } from '@app/store'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import _ from 'lodash'
+import ReactNativeBlobUtil from 'react-native-blob-util'
+import Share from 'react-native-share'
+import { fetchAndConvertTags } from './searchutil'
 import {
   LoadingState,
   sortAlpha,
   sortTagsAlpha,
   TagListState,
   TagListType,
-} from "./tagLists"
-import {SelectedTag} from "./tagListUtil"
-import {ThunkApiConfig} from "./thunkApiConfig"
+} from './tagLists'
+import { SelectedTag } from './tagListUtil'
+import { ThunkApiConfig } from './thunkApiConfig'
 
 type LabelsState = {
   labelsByTagId: StringsByNumber
@@ -33,7 +32,7 @@ type LabelsState = {
   labeledSelectedTag?: SelectedTag
   labelError?: string
   // selected tag that has had selected label removed
-  strandedTag?: {tag: Tag; label: string}
+  strandedTag?: { tag: Tag; label: string }
 }
 export type FavoritesState = {
   tagsById: FavoritesById
@@ -65,14 +64,14 @@ export const InitialState: FavoritesState = {
  */
 function sortNewest(state: FavoritesState) {
   const addedTime = (id: number) =>
-    state.tagsById[id].addedDate ? state.tagsById[id].addedDate : "0"
+    state.tagsById[id].addedDate ? state.tagsById[id].addedDate : '0'
   state.allTagIds.sort(
     (id1, id2) => -addedTime(id1).localeCompare(addedTime(id2)),
   )
 }
 
 const favoritesSlice = createSlice({
-  name: "favorites",
+  name: 'favorites',
   initialState: InitialState,
   reducers: {
     addFavorite: (state, action: PayloadAction<Tag>) => {
@@ -171,7 +170,7 @@ const favoritesSlice = createSlice({
       }
     },
     // add a label to a tag (creating it if necessary)
-    addLabel: (state, action: PayloadAction<{tag: Tag; label: string}>) => {
+    addLabel: (state, action: PayloadAction<{ tag: Tag; label: string }>) => {
       const tag = action.payload.tag
       const tagId = tag.id
       const label = action.payload.label.trim()
@@ -190,7 +189,7 @@ const favoritesSlice = createSlice({
         tagListType: TagListType
       }>,
     ) => {
-      const {id, label, tagListType} = action.payload
+      const { id, label, tagListType } = action.payload
       if (
         tagListType === label &&
         state.selectedLabel === label &&
@@ -198,7 +197,7 @@ const favoritesSlice = createSlice({
       ) {
         // removing currently select label from tag while in label list
         // need to handle this case carefully, since tag will be "stranded"
-        state.strandedTag = {tag: state.labeledById[id], label}
+        state.strandedTag = { tag: state.labeledById[id], label }
       }
       _.pull(state.tagIdsByLabel[label], id)
       const labels = _.pull(state.labelsByTagId[id], label)
@@ -214,9 +213,9 @@ const favoritesSlice = createSlice({
     },
     renameLabel: (
       state,
-      action: PayloadAction<{oldLabel: string; newLabel: string}>,
+      action: PayloadAction<{ oldLabel: string; newLabel: string }>,
     ) => {
-      const {oldLabel, newLabel} = action.payload
+      const { oldLabel, newLabel } = action.payload
       const tagIds = state.tagIdsByLabel[oldLabel]
       if (tagIds) {
         state.tagIdsByLabel[newLabel] = state.tagIdsByLabel[oldLabel]
@@ -293,15 +292,15 @@ const favoritesSlice = createSlice({
           if (action.payload.favorites?.length > 0) {
             favoritesSlice.caseReducers.addFavorites(state, {
               payload: action.payload.favorites,
-              type: "addFavorites",
+              type: 'addFavorites',
             })
           }
           if (action.payload.receivedLabels?.length > 0) {
             action.payload.receivedLabels.forEach(receivedLabel => {
               receivedLabel.tags.forEach(tag => {
                 favoritesSlice.caseReducers.addLabel(state, {
-                  payload: {tag: tag, label: receivedLabel.label},
-                  type: "addLabel",
+                  payload: { tag: tag, label: receivedLabel.label },
+                  type: 'addLabel',
                 })
               })
             })
@@ -324,17 +323,10 @@ export const refreshFavorite = createAsyncThunk<
   Tag | undefined,
   number,
   ThunkApiConfig
->("favorites/refresh", async (id, thunkAPI) => {
+>('favorites/refresh', async (id, thunkAPI) => {
   try {
-    let convertedTags: ConvertedTags
-    try {
-      convertedTags = await fetchAndConvertTags({id}, false /* useApi */)
-    } catch (e) {
-      console.log(e)
-      const baseUrl = `https://goodtags.net/goodtags/xml/${id}.xml` // TODO
-      convertedTags = await fetchAndConvertTags({}, false /* useApi */, baseUrl)
-    }
-    const {tags} = convertedTags
+    const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
+    const { tags } = convertedTags
     return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
   } catch (e) {
     return thunkAPI.rejectWithValue(`Unable to download tag with id ${id}`)
@@ -370,8 +362,8 @@ export const selectLabelState = (
       allTagIds: [tag.id],
       error: undefined,
       loadingState: LoadingState.idle,
-      selectedTag: {id: tag.id, index: 0},
-      tagsById: {[tag.id]: tag},
+      selectedTag: { id: tag.id, index: 0 },
+      tagsById: { [tag.id]: tag },
       sortOrder: favs.labeledSortOrder,
     }
   }
@@ -399,7 +391,7 @@ export const selectLabel = (state: RootState, label: string): TagListState => {
   } else {
     return {
       allTagIds: [],
-      error: "no label selected",
+      error: 'no label selected',
       loadingState: LoadingState.idle,
       selectedTag: undefined,
       tagsById: {},
@@ -414,7 +406,7 @@ export const shareFavorites = async (favorites: FavoritesState) => {
     console.info(`wrote favorites to ${path}`)
     const response = await Share.open({
       url: `file://${path}`,
-      type: "application/json",
+      type: 'application/json',
     })
     console.info(response)
   } catch (e) {
@@ -445,9 +437,9 @@ const buildLabeledTags = (
 ) => {
   const tags = tagIds.map(id => {
     const tag = tagsById[id]
-    return {id, title: tag.title}
+    return { id, title: tag.title }
   })
-  return {label, tags}
+  return { label, tags }
 }
 
 /**
@@ -482,7 +474,7 @@ const writeFavoritesToFile = async (
   favorites: FavoritesState,
 ): Promise<string> => {
   const fs = ReactNativeBlobUtil.fs
-  const dir = fs.dirs.CacheDir + "/goodtags"
+  const dir = fs.dirs.CacheDir + '/goodtags'
   const dirExists = await fs.isDir(dir)
   if (dirExists) {
     console.info(`directory ${dir} already exists`)
@@ -494,12 +486,12 @@ const writeFavoritesToFile = async (
   const path = `${dir}/${filename}`
   console.info(`path: ${path}`)
   const favString = writeFavoritesToString(favorites)
-  await fs.writeFile(path, favString, "utf8")
+  await fs.writeFile(path, favString, 'utf8')
   return path
 }
 
 export const getDateString = (date: Date) => {
-  const zeroPad = (num: number): string => num.toString().padStart(2, "0")
+  const zeroPad = (num: number): string => num.toString().padStart(2, '0')
   const year = date.getFullYear()
   const month = zeroPad(date.getMonth() + 1)
   const day = zeroPad(date.getDate())
@@ -522,6 +514,17 @@ interface ReceivedData {
   receivedLabels: ReceivedLabel[]
 }
 
+function getFilename(url: string): string {
+  const filePart = url.split('/').pop()
+  return filePart ? decodeURI(filePart) : ''
+}
+
+function getImportErrorMessage(url: string): string {
+  const filename = getFilename(url)
+  const message = 'unable to import favorites'
+  return filename ? `${message} from ${filename}` : message
+}
+
 /**
  * Import favorites/labels from file (or stream: tbd).
  *
@@ -532,23 +535,30 @@ export const receiveSharedFile = createAsyncThunk<
   ReceivedData,
   string,
   ThunkApiConfig
->("favorites/import", async (url, thunkAPI) => {
+>('favorites/import', async (url, thunkAPI) => {
   async function receiveData(data: string) {
     try {
       const sharedObj = JSON.parse(data)
       const sharedData = sharedObj as SharedData
       if (sharedData.favorites === undefined && sharedData.labels === undefined)
-        throw `no favorites or labels found`
+        throw new Error('no favorites or labels found')
       const favoriteIds = sharedData.favorites.map(f => f.id) || []
-      const {tags: favorites} = await fetchAndConvertTags(
-        {ids: favoriteIds},
+      const { tags: favorites } = await fetchAndConvertTags(
+        { ids: favoriteIds },
         false,
+        undefined,
+        false, // Don't use transaction to avoid nesting issues
       )
       const receivedLabels = await Promise.all(
         sharedData.labels.map(async sharedLabel => {
           const tagIds = sharedLabel.tags.map(t => t.id)
-          const {tags} = await fetchAndConvertTags({ids: tagIds}, false)
-          return {label: sharedLabel.label, tags}
+          const { tags } = await fetchAndConvertTags(
+            { ids: tagIds },
+            false,
+            undefined,
+            false, // Don't use transaction to avoid nesting issues
+          )
+          return { label: sharedLabel.label, tags }
         }),
       )
       return {
@@ -556,7 +566,11 @@ export const receiveSharedFile = createAsyncThunk<
         receivedLabels,
       }
     } catch (e) {
-      return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
+      console.error('Error importing favorites:', e)
+      return thunkAPI.rejectWithValue(
+        getImportErrorMessage(url) +
+          `: ${e instanceof Error ? e.message : String(e)}`,
+      )
     }
   }
 
@@ -580,18 +594,18 @@ export const receiveSharedFile = createAsyncThunk<
     //   })
     //   stream.open()
     // } else
-    if (url.startsWith("/") || url.startsWith("file://")) {
-      const path = url.startsWith("file://") ? url.slice(7) : url
+    if (url.startsWith('/') || url.startsWith('file://')) {
+      const path = url.startsWith('file://') ? url.slice(7) : url
       if (!(await fs.exists(path))) {
-        throw `unable to find file ${path}`
+        throw new Error(`unable to find file ${path}`)
       }
-      const data = await fs.readFile(path, "utf8")
+      const data = await fs.readFile(path, 'utf8')
       return await receiveData(data)
     } else {
-      throw `unknown url type: ${url}`
+      throw new Error(`unknown url type: ${url}`)
     }
   } catch (e) {
     console.error(e)
-    return thunkAPI.rejectWithValue(`unable to import favorites from ${url}`)
+    return thunkAPI.rejectWithValue(getImportErrorMessage(url))
   }
 })

@@ -1,8 +1,8 @@
-import {useAppSelector} from "@app/hooks"
-import {TagListType} from "@app/modules/tagLists"
-import {makeSelectTagState} from "@app/modules/tagListUtil"
-import {RootState} from "@app/store"
-import {useMemo} from "react"
+import { TagListType } from '@app/modules/tagLists'
+import { makeSelectTagState } from '@app/modules/tagListUtil'
+import { RootState } from '@app/store'
+import { useMemo } from 'react'
+import { useAppSelector } from '../hooks'
 
 /**
  * Get tag state for tag list type

@@ -1,6 +1,6 @@
-import {EmptyTag} from "@app/lib/models/Tag"
-import {TagListType} from "@app/modules/tagLists"
-import useTagListState from "./useTagListState"
+import { EmptyTag } from '@app/lib/models/Tag'
+import { TagListType } from '@app/modules/tagLists'
+import useTagListState from './useTagListState'
 
 /**
  * Get selected tag

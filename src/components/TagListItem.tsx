@@ -1,18 +1,20 @@
-import {isFavoriteOrLabel} from "@app/modules/tagListUtil"
-import React from "react"
-import {StyleSheet, View} from "react-native"
-import {Text, useTheme} from "react-native-paper"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-import Tag, {SearchResult} from "../lib/models/Tag"
-import {TagListType} from "../modules/tagLists"
-import TagId from "./TagId"
-import {arranger} from "./tagInfo"
+import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Pressable } from 'react-native-gesture-handler'
+import { Text, useTheme } from 'react-native-paper'
+import Tag, { SearchResult } from '../lib/models/Tag'
+import { TagListType } from '../modules/tagLists'
+import TagId from './TagId'
+import { arranger } from './tagInfo'
 
 export type ComponentProps = {
   tag: Tag
   tagListType: TagListType
   index: number
   selected: boolean
+  onPress?: () => void
 }
 
 type Props = ComponentProps
@@ -20,27 +22,26 @@ type Props = ComponentProps
 /**
  * A tag displayed in a list
  */
-function TagListItem(props: Props) {
+const TagListItem = React.memo((props: Props) => {
   const theme = useTheme()
 
   const themedStyles = StyleSheet.create({
     listItem: {
       flex: 1,
-      flexDirection: "row",
-      height: ITEM_HEIGHT,
+      flexDirection: 'row',
       paddingHorizontal: 0,
       paddingVertical: 2,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       borderWidth: 0,
       borderBottomWidth: 1,
       borderColor: theme.colors.outlineVariant,
     },
     title: {
       color: theme.colors.primary,
-      overflow: "hidden",
+      overflow: 'hidden',
       marginRight: 0,
-      textAlign: "left",
+      textAlign: 'left',
       fontSize: 18,
     },
     arranger: {
@@ -57,7 +58,7 @@ function TagListItem(props: Props) {
     id: {
       color: theme.colors.primary,
       fontSize: 18,
-      textAlign: "left",
+      textAlign: 'left',
       width: 69,
     },
     aka: {
@@ -78,11 +79,12 @@ function TagListItem(props: Props) {
   }
 
   const tag = props.tag
-  return (
+
+  const content = (
     <View style={themedStyles.listItem}>
       <View style={styles.dotHolder}>
         <Text testID={`tagleft_${tag.id}`} style={styles.selectedDot}>
-          {props.selected ? "•" : ""}
+          {props.selected ? '•' : ''}
         </Text>
       </View>
       <View style={styles.body}>
@@ -90,12 +92,14 @@ function TagListItem(props: Props) {
           <Text
             testID={`title_${tag.id}`}
             numberOfLines={1}
-            style={themedStyles.title}>
+            style={themedStyles.title}
+          >
             {tag.title}&nbsp;
             <Text
               numberOfLines={1}
               style={themedStyles.aka}
-              ellipsizeMode="tail">
+              ellipsizeMode="tail"
+            >
               {tag.aka ? `aka ${tag.aka}` : null}
             </Text>
           </Text>
@@ -113,47 +117,50 @@ function TagListItem(props: Props) {
       </View>
     </View>
   )
-}
 
-export const ITEM_HEIGHT = 60
+  if (!props.onPress) {
+    return content
+  }
+
+  return <Pressable onPress={props.onPress}>{content}</Pressable>
+})
 
 const styles = StyleSheet.create({
   ripple: {
     flex: 1,
-    flexDirection: "row",
-    height: ITEM_HEIGHT,
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   body: {
     flex: 1,
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
   },
   tagIcon: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingTop: 10,
   },
   metadataContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   metadataLeft: {
     flexGrow: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   titleView: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dotHolder: {
     flex: 0,
     paddingHorizontal: 3,
   },
   selectedDot: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     fontSize: 14,
     width: 8,
   },

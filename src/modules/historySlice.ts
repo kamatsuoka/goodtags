@@ -1,9 +1,9 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import _ from "lodash"
-import {SortOrder} from "../constants/Search"
-import Tag from "../lib/models/Tag"
-import {RootState} from "../store"
-import {InitialTagListState, sortAlpha, TagListState} from "./tagLists"
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import _ from 'lodash'
+import { SortOrder } from '../constants/Search'
+import Tag from '../lib/models/Tag'
+import { RootState } from '../store'
+import { InitialTagListState, sortAlpha, TagListState } from './tagLists'
 
 export type HistoryState = TagListState & {
   history: number[] // tag ids sorted by date seen, newest first
@@ -19,12 +19,12 @@ export const InitialState: HistoryState = {
 export const MAX_HISTORY = 50
 
 const historySlice = createSlice({
-  name: "history",
+  name: 'history',
   initialState: InitialState,
   reducers: {
     addHistory: (
       state,
-      action: PayloadAction<{tag: Tag; timestamp?: string}>,
+      action: PayloadAction<{ tag: Tag; timestamp?: string }>,
     ) => {
       // adds tag to history but does not change tagsById since that
       // would wreak havoc with history while viewing tags from history

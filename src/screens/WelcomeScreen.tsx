@@ -1,15 +1,15 @@
-import AboutBase from "@app/components/AboutBase"
-import {useAppDispatch} from "@app/hooks"
-import {getPopularTags} from "@app/modules/popularSlice"
-import {setLastVisited} from "@app/modules/visitSlice"
-import {RootStackParamList} from "@app/navigation/navigationParams"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {useEffect} from "react"
-import {StyleSheet, View} from "react-native"
-import {IconButton, Text, useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import AboutBase from '@app/components/AboutBase'
+import { useAppDispatch } from '@app/hooks'
+import { getPopularTags } from '@app/modules/popularSlice'
+import { setLastVisited } from '@app/modules/visitSlice'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { IconButton, Text, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-type Props = NativeStackScreenProps<RootStackParamList, "Welcome">
+type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>
 /**
  * Welcome screen
  */
@@ -21,8 +21,8 @@ export default function WelcomeScreen(props: Props) {
   const styles = StyleSheet.create({
     welcomeContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: theme.colors.primary,
       paddingTop: insets.top,
       paddingBottom: insets.bottom,
@@ -30,7 +30,7 @@ export default function WelcomeScreen(props: Props) {
       paddingRight: insets.right,
     },
     iconHolder: {
-      justifyContent: "flex-start",
+      justifyContent: 'flex-start',
       marginTop: 10,
     },
   })
@@ -48,7 +48,7 @@ export default function WelcomeScreen(props: Props) {
         <IconButton
           onPress={async () => {
             dispatch(setLastVisited())
-            navigation.navigate("Tabs")
+            navigation.navigate('Tabs')
           }}
           icon="arrow-right"
           iconColor={theme.colors.onPrimary}

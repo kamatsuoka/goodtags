@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -41,22 +41,22 @@
     </style>
     <script>
       const urls = [
-        "https://www.barbershoptags.com/tags/A_Foggy_Day_.jpg",
-        "https://www.barbershoptags.com/tags/If_(Simply_Fly_Away).png",
-        "https://www.barbershoptags.com/tags/Foggy_London_Town.gif",
+        'https://www.barbershoptags.com/tags/A_Foggy_Day_.jpg',
+        'https://www.barbershoptags.com/tags/If_(Simply_Fly_Away).png',
+        'https://www.barbershoptags.com/tags/Foggy_London_Town.gif',
       ]
       let selectedIndex = 0
       function prev() {
         if (selectedIndex > 0) selectedIndex -= 1
         else selectedIndex = urls.length - 1
-        document.querySelector("#music").src = urls[selectedIndex]
+        document.querySelector('#music').src = urls[selectedIndex]
       }
       function next() {
         if (selectedIndex < urls.length - 1) selectedIndex += 1
         else selectedIndex = 0
-        document.querySelector("#music").src = urls[selectedIndex]
+        document.querySelector('#music').src = urls[selectedIndex]
       }
-      window.onload = () => (document.querySelector("#music").src = urls[0])
+      window.onload = () => (document.querySelector('#music').src = urls[0])
     </script>
   </head>
   <body>

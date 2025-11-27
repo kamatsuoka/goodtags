@@ -1,9 +1,9 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {TagListEnum, TagListType} from "./tagLists"
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { TagListEnum, TagListType } from './tagLists'
 
 export enum TagState {
-  opening = "opening",
-  closing = "closing",
+  opening = 'opening',
+  closing = 'closing',
 }
 
 export interface VisitState {
@@ -19,7 +19,7 @@ const initialState: VisitState = {
 }
 
 export const visitSlice = createSlice({
-  name: "visit",
+  name: 'visit',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -38,6 +38,6 @@ export const visitSlice = createSlice({
   },
 })
 
-export const {setLastVisited, clearLastVisited, setTagState, setTagListType} =
+export const { setLastVisited, clearLastVisited, setTagState, setTagListType } =
   visitSlice.actions
 export default visitSlice.reducer

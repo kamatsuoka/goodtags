@@ -1,17 +1,17 @@
 export const MAX_TAGS = 99
 
 export enum Collection {
-  ALL = "All",
-  CLASSIC = "classic",
-  EASY = "easytags",
+  ALL = 'All',
+  CLASSIC = 'classic',
+  EASY = 'easytags',
 }
 
 export const Search = {
-  TITLE: "Title",
-  DOWNLOADS: "Downloads",
-  NEWEST: "Newest",
+  TITLE: 'Title',
+  DOWNLOADS: 'Downloads',
+  NEWEST: 'Newest',
   TAGS_PER_QUERY: 33,
-  API_BASE: "https://www.barbershoptags.com/api.php?client=goodtags",
+  API_BASE: 'https://www.barbershoptags.com/api.php?client=goodtags',
 }
 export type SearchParams = {
   // Filter what we're looking for
@@ -29,15 +29,15 @@ export type SearchParams = {
 }
 
 export enum SortOrder {
-  alpha = "alpha",
-  downloads = "downloads",
-  id = "id",
-  newest = "newest",
+  alpha = 'alpha',
+  downloads = 'downloads',
+  id = 'id',
+  newest = 'newest',
 }
 
 export enum Parts {
-  any = "any",
-  four = "four",
-  five = "five",
-  six = "six",
+  any = 'any',
+  four = 'four',
+  five = 'five',
+  six = 'six',
 }

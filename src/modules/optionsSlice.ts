@@ -1,10 +1,11 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Define a type for the slice state
 export interface OptionsState {
   serifs: boolean
   autoRotate: boolean
   autoRotateDelay: number
+  showStatusBar: boolean
 }
 
 // Define the initial state using that type
@@ -12,9 +13,10 @@ export const initialState: OptionsState = {
   serifs: true,
   autoRotate: false,
   autoRotateDelay: 200,
+  showStatusBar: false,
 }
 export const optionsSlice = createSlice({
-  name: "options",
+  name: 'options',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -26,6 +28,9 @@ export const optionsSlice = createSlice({
     },
     setAutoRotateDelay: (state, action: PayloadAction<number>) => {
       state.autoRotateDelay = action.payload
+    },
+    setShowStatusBar: (state, action: PayloadAction<boolean>) => {
+      state.showStatusBar = action.payload
     },
   },
 })

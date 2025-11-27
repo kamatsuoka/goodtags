@@ -1,19 +1,26 @@
-import {useBodyInsets} from "@app/hooks"
-import {TabBarBackground} from "@app/lib/theme"
-import {FlashList} from "@shopify/flash-list"
-import React from "react"
-import {StyleSheet, TouchableWithoutFeedback, View} from "react-native"
-import {Text} from "react-native-paper"
-import useHeaderHeight from "../hooks/useHeaderHeight"
-import BackButton from "./BackButton"
-import homeIcon from "./homeIcon"
+import { useBodyInsets } from '@app/hooks'
+import { TabBarBackground } from '@app/lib/theme'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import { FlashListRef } from '@shopify/flash-list'
+import React, { ComponentProps } from 'react'
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
+import { Text } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import useHeaderHeight from '../hooks/useHeaderHeight'
+import BackButton from './BackButton'
+import homeIcon from './homeIcon'
 
 type ListHeaderProps = {
   // reference to FlashList with tags
-  listRef: React.RefObject<FlashList<number>>
+  listRef: React.RefObject<FlashListRef<number> | null>
   showBackButton?: boolean
   title?: string | React.ReactNode
-  titleIcon?: string
+  titleIcon?: ComponentProps<typeof Icon>['name']
 }
 
 const LOGO_SIZE = 30
@@ -25,22 +32,33 @@ const BUTTON_SIZE = LOGO_SIZE + 10
 export default function ListHeader({
   listRef,
   showBackButton = false,
-  title = "",
-  titleIcon = "",
+  title = '',
+  titleIcon,
 }: ListHeaderProps) {
-  const {paddingLeft} = useBodyInsets()
+  const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
+  const insets = useSafeAreaInsets()
+  const { width, height } = Dimensions.get('window')
+  const isPortrait = height > width
 
   const themedStyles = StyleSheet.create({
     logoButton: {
       width: BUTTON_SIZE,
       height: BUTTON_SIZE,
-      backgroundColor: "transparent",
+      backgroundColor: 'transparent',
     },
     header: {
       ...styles.header,
       height: headerHeight,
-      paddingLeft,
+      paddingTop: insets.top,
+    },
+    leftSpacer: {
+      ...styles.leftSpacer,
+      left: paddingLeft,
+    },
+    titleHolder: {
+      ...styles.titleHolder,
+      paddingBottom: isPortrait ? 7 : 0,
     },
   })
 
@@ -51,8 +69,8 @@ export default function ListHeader({
   )
 
   const maybeWrappedTitle: React.ReactNode =
-    typeof title === "string" ? (
-      <View style={styles.titleHolder}>
+    typeof title === 'string' ? (
+      <View style={themedStyles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
         <Text variant="titleMedium" style={styles.title}>
           {title}
@@ -69,36 +87,51 @@ export default function ListHeader({
           index: 0,
           animated: true,
         })
-      }}>
+      }}
+    >
       {maybeWrappedTitle}
     </TouchableWithoutFeedback>
   )
 
   return (
     <View style={themedStyles.header}>
-      {backButton}
+      <View style={themedStyles.leftSpacer}>{backButton}</View>
       {titleComponent}
-      <View style={styles.spacer} />
+      <View style={styles.rightSpacer} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: "flex-end",
+    alignItems: 'center',
     backgroundColor: TabBarBackground,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    opacity: 0.9,
+    flexDirection: 'row',
+    justifyContent: 'center',
     paddingHorizontal: 10,
     height: 55,
   },
   spacer: {
     width: 50,
   },
+  leftSpacer: {
+    position: 'absolute',
+    left: 10,
+    bottom: 0,
+  },
+  rightSpacer: {
+    position: 'absolute',
+    right: 10,
+    width: 50,
+  },
+  centerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   titleHolder: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 50,
   },
   title: {

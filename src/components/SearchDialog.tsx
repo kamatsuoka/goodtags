@@ -1,5 +1,5 @@
-import {useState} from "react"
-import {Keyboard, Pressable, StyleSheet, View} from "react-native"
+import { useMemo, useState } from 'react'
+import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
 import {
   Button,
   Checkbox,
@@ -10,92 +10,100 @@ import {
   Searchbar,
   Text,
   useTheme,
-} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
-import {Collection, Parts} from "../constants/Search"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "../hooks"
+} from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Collection, Parts } from '../constants/Search'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
 import {
   SearchFilters,
   newSearch,
   selectSearchResults,
-} from "../modules/searchSlice"
-import SearchOptions from "./SearchOptions"
+} from '../modules/searchSlice'
+import SearchOptions from './SearchOptions'
 
 type Props = {
   query: string
   filters: SearchFilters
   dismiss: () => void
 }
+
+const staticStyles = StyleSheet.create({
+  searchOptions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    paddingLeft: 20,
+  },
+  searchInput: {
+    borderWidth: 0,
+    borderBottomWidth: 0,
+    borderBottomColor: 'transparent',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  optionText: {
+    marginLeft: 5,
+  },
+  searchBar: {
+    margin: 10,
+  },
+  checkboxItem: {
+    paddingLeft: 0,
+    paddingRight: 5,
+    paddingVertical: 3,
+  },
+  infoButton: {
+    paddingLeft: 10,
+    marginHorizontal: 5,
+  },
+  offlineTitle: {
+    padding: 0,
+    paddingLeft: 10,
+  },
+})
+
 export default function SearchDialog(props: Props) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const {query, filters, dismiss} = props
+  const { query, filters, dismiss } = props
   const [draftFilters, setDraftFilters] = useState(filters)
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const allTagIds = useAppSelector(
     state => selectSearchResults(state).allTagIds,
   )
   const [modeExplanationDialogVisible, setModeExplanationDialogVisible] =
     useState(false)
 
-  const styles = StyleSheet.create({
-    container: {
-      // Paddings to handle safe area
-      paddingTop: insets.top,
-      paddingLeft,
-      paddingRight,
-    },
-    searchOptions: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      flexWrap: "wrap",
-      alignItems: "flex-start",
-      paddingLeft: 20,
-    },
-    searchInput: {
-      borderWidth: 0,
-      borderBottomWidth: 0,
-      borderBottomColor: "transparent",
-    },
-    optionsContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginHorizontal: 5,
-    },
-    optionText: {
-      marginLeft: 5,
-    },
-    searchBar: {
-      margin: 10,
-    },
-    checkboxItem: {
-      paddingLeft: 0,
-      paddingRight: 5,
-      paddingVertical: 3,
-    },
-    infoButton: {
-      paddingLeft: 10,
-      marginHorizontal: 5,
-    },
-    offlineTitle: {
-      padding: 0,
-      paddingLeft: 10,
-    },
-  })
+  const dynamicStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          // Paddings to handle safe area
+          paddingTop: insets.top,
+          paddingLeft,
+          paddingRight,
+        },
+      }),
+    [insets.top, paddingLeft, paddingRight],
+  )
 
   const existingSearchResults = allTagIds.length > 0
 
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       <Searchbar
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect={false}
         autoFocus={true}
-        icon={existingSearchResults ? "chevron-left" : () => null}
-        inputStyle={styles.searchInput}
+        icon={existingSearchResults ? 'chevron-left' : () => null}
+        inputStyle={staticStyles.searchInput}
         multiline={false}
         numberOfLines={1}
         onChangeText={setDraftQuery}
@@ -113,10 +121,10 @@ export default function SearchDialog(props: Props) {
           )
         }}
         spellCheck={false}
-        style={styles.searchBar}
+        style={staticStyles.searchBar}
       />
       <Pressable onPress={Keyboard.dismiss}>
-        <View style={styles.searchOptions}>
+        <View style={staticStyles.searchOptions}>
           <SearchOptions title="collection" icon="playlist-music-outline">
             <RadioButton.Group
               onValueChange={value =>
@@ -125,17 +133,19 @@ export default function SearchDialog(props: Props) {
                   collection: value as Collection,
                 })
               }
-              value={draftFilters.collection}>
+              value={draftFilters.collection}
+            >
               {Object.values(Collection).map(value => {
                 return (
                   <View
                     key={`collection_${value}`}
-                    style={styles.optionsContainer}>
+                    style={staticStyles.optionsContainer}
+                  >
                     <RadioButton.Item
                       label={value.toLowerCase()}
-                      labelStyle={styles.optionText}
+                      labelStyle={staticStyles.optionText}
                       position="leading"
-                      style={styles.checkboxItem}
+                      style={staticStyles.checkboxItem}
                       value={value}
                     />
                   </View>
@@ -144,13 +154,13 @@ export default function SearchDialog(props: Props) {
             </RadioButton.Group>
           </SearchOptions>
           <SearchOptions title="media" icon="music-clef-treble">
-            <View style={styles.optionsContainer}>
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="sheet music"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
-                status={draftFilters.sheetMusic ? "checked" : "unchecked"}
+                status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -159,13 +169,13 @@ export default function SearchDialog(props: Props) {
                 }
               />
             </View>
-            <View style={styles.optionsContainer}>
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="tracks"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
-                status={draftFilters.learningTracks ? "checked" : "unchecked"}
+                status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -183,15 +193,19 @@ export default function SearchDialog(props: Props) {
                   parts: value as Parts,
                 })
               }
-              value={draftFilters.parts || "any"}>
+              value={draftFilters.parts || 'any'}
+            >
               {Object.values(Parts).map(value => {
                 return (
-                  <View key={`parts_${value}`} style={styles.optionsContainer}>
+                  <View
+                    key={`parts_${value}`}
+                    style={staticStyles.optionsContainer}
+                  >
                     <RadioButton.Item
                       label={value.toLowerCase()}
-                      labelStyle={styles.optionText}
+                      labelStyle={staticStyles.optionText}
                       position="leading"
-                      style={styles.checkboxItem}
+                      style={staticStyles.checkboxItem}
                       value={value}
                     />
                   </View>
@@ -203,21 +217,22 @@ export default function SearchDialog(props: Props) {
             title="offline"
             icon="cog-outline"
             infoButton=<IconButton
-              style={styles.infoButton}
+              style={staticStyles.infoButton}
               icon="information-outline"
               onPress={() => {
                 setModeExplanationDialogVisible(true)
                 Keyboard.dismiss()
               }}
             />
-            titleStyle={styles.offlineTitle}>
-            <View style={styles.optionsContainer}>
+            titleStyle={staticStyles.offlineTitle}
+          >
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="enabled"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
-                status={draftFilters.offline ? "checked" : "unchecked"}
+                status={draftFilters.offline ? 'checked' : 'unchecked'}
                 onPress={() =>
                   setDraftFilters({
                     ...draftFilters,
@@ -234,7 +249,8 @@ export default function SearchDialog(props: Props) {
           visible={modeExplanationDialogVisible}
           onDismiss={() => setModeExplanationDialogVisible(false)}
           // It's otherwise a *very* round dialog
-          theme={{...theme, roundness: 3}}>
+          theme={{ ...theme, roundness: 3 }}
+        >
           <Dialog.Title>Search mode</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">

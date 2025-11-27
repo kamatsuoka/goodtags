@@ -1,28 +1,15 @@
-// prettier-ignore
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
-  /* Recommended React Native TSConfig base */
+  "extends": "@react-native/typescript-config",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
-    /* Completeness */
-    "skipLibCheck": true,
-    /* Skip type checking all .d.ts files. */
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
-      "@app/*": [
-        "src/*"
-      ],
+      "@app/*": ["src/*"],
       "react-native-paper/lib/module/*": [
         "node_modules/react-native-paper/lib/typescript/*"
       ]
     }
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "types": ["node"]
-    }
-  },
-  "exclude": ["node_modules", "dist"]
+  }
 }

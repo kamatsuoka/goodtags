@@ -1,48 +1,57 @@
-import {isFavoriteOrLabel} from "@app/modules/tagListUtil"
-import {useMemo} from "react"
-import {Linking, StyleSheet, View} from "react-native"
-import {Divider, IconButton, Text, useTheme} from "react-native-paper"
-import {useAppDispatch} from "../hooks"
-import Tag from "../lib/models/Tag"
-import {refreshFavorite} from "../modules/favoritesSlice"
-import {TagListType} from "../modules/tagLists"
-import {arranger} from "./tagInfo"
+import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
+import { BottomSheetView } from '@gorhom/bottom-sheet'
+import React, { useMemo } from 'react'
+import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Divider, IconButton, Text, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useAppDispatch } from '../hooks'
+import Tag from '../lib/models/Tag'
+import { refreshFavorite } from '../modules/favoritesSlice'
+import { TagListType } from '../modules/tagLists'
+import { arranger } from './tagInfo'
 
-const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
-  const {tag, tagListType} = props
+const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
+  const { tag, tagListType } = props
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const insets = useSafeAreaInsets()
+  const { width, height } = useWindowDimensions()
+  const isLandscape = width > height
 
   const themedStyles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.inversePrimary,
-      padding: 20,
-      margin: 10,
-      borderRadius: 15,
-      justifyContent: "space-between",
+    outerContainer: {
+      paddingHorizontal: isLandscape
+        ? Math.max(60, insets.left + 20, insets.right + 20)
+        : Math.max(20, insets.left + 20, insets.right + 20),
+      alignItems: 'center',
+    },
+    innerContainer: {
+      paddingTop: 10,
+      paddingBottom: 50,
+      maxWidth: '95%',
     },
     divider: {
-      marginVertical: 5,
-      backgroundColor: theme.colors.outline,
+      marginVertical: 10,
+      backgroundColor: theme.colors.outlineVariant,
     },
   })
 
   const items: [string, string | number | undefined][] = useMemo(() => {
     return [
-      ["aka", tag.aka],
-      ["id", tag.id],
-      ["arranger", arranger(tag)],
-      ["posted", tag.posted],
-      ["parts", tag.parts],
-      ["lyrics", tag.lyrics],
+      ['aka', tag.aka],
+      ['id', tag.id],
+      ['arranger', arranger(tag)],
+      ['posted', tag.posted],
+      ['parts', tag.parts],
+      ['lyrics', tag.lyrics],
     ]
   }, [tag])
 
   return (
-    <View style={styles.centeredView}>
-      <View style={themedStyles.container}>
+    <BottomSheetView style={themedStyles.outerContainer}>
+      <View style={themedStyles.innerContainer}>
         <View style={styles.titleHolder}>
-          <Text style={styles.infoTitle} variant="titleMedium">
+          <Text style={styles.infoTitle} variant="titleLarge">
             {tag.title}
           </Text>
           {isFavoriteOrLabel(tagListType) ? (
@@ -58,12 +67,12 @@ const TagInfoView = (props: {tag: Tag; tagListType: TagListType}) => {
           <TracksInfo tag={tag} />
         </View>
       </View>
-    </View>
+    </BottomSheetView>
   )
 }
 
-function InfoItems(props: {items: [string, string | number | undefined][]}) {
-  const {items} = props
+function InfoItems(props: { items: [string, string | number | undefined][] }) {
+  const { items } = props
   return items ? (
     <>
       {items.map(([key, value], id) =>
@@ -75,20 +84,22 @@ function InfoItems(props: {items: [string, string | number | undefined][]}) {
   ) : null
 }
 
-function TracksInfo(props: {tag: Tag}) {
-  const {tag} = props
+function TracksInfo(props: { tag: Tag }) {
+  const { tag } = props
   if (tag.quartet) {
-    if (tag.quartetUrl?.startsWith("http")) {
+    if (tag.quartetUrl?.startsWith('http')) {
       return (
-        <View style={styles.tracksRow}>
-          <Text style={styles.infoName}>tracks: </Text>
-          <View style={styles.buttonHolder}>
-            <Text
-              style={styles.link}
-              onPress={() => Linking.openURL(tag.quartetUrl!)}>
-              {tag.quartet}
-            </Text>
-          </View>
+        <View style={styles.infoItemRow}>
+          <Text style={styles.infoName} numberOfLines={1}>
+            tracks:{' '}
+          </Text>
+          <Text
+            style={styles.infoValue}
+            numberOfLines={2}
+            onPress={() => Linking.openURL(tag.quartetUrl!)}
+          >
+            <Text style={styles.link}>{tag.quartet}</Text>
+          </Text>
         </View>
       )
     } else {
@@ -98,19 +109,21 @@ function TracksInfo(props: {tag: Tag}) {
   return null
 }
 
-function InfoItem(props: {infoName: string; infoValue: string | number}) {
-  const {infoName, infoValue} = props
-  return (
-    <View style={styles.infoItemRow}>
-      <Text style={styles.infoName} numberOfLines={1}>
-        {infoName}:{" "}
-      </Text>
-      <Text style={styles.infoValue} numberOfLines={2}>
-        {infoName === "lyrics" ? truncateLyrics(`${infoValue}`) : infoValue}
-      </Text>
-    </View>
-  )
-}
+const InfoItem = React.memo(
+  (props: { infoName: string; infoValue: string | number }) => {
+    const { infoName, infoValue } = props
+    return (
+      <View style={styles.infoItemRow}>
+        <Text style={styles.infoName} numberOfLines={1}>
+          {infoName}:{' '}
+        </Text>
+        <Text style={styles.infoValue} numberOfLines={2}>
+          {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
+        </Text>
+      </View>
+    )
+  },
+)
 
 const MAX_LENGTH = 80
 
@@ -119,69 +132,40 @@ function truncateLyrics(lyrics: string): string {
   if (length <= MAX_LENGTH) {
     return lyrics
   }
-  const spaceIndex = lyrics.lastIndexOf(" ", MAX_LENGTH)
+  const spaceIndex = lyrics.lastIndexOf(' ', MAX_LENGTH)
   const truncIndex = spaceIndex > MAX_LENGTH - 20 ? spaceIndex : MAX_LENGTH
-  return lyrics.substring(0, truncIndex) + " …"
+  return lyrics.substring(0, truncIndex) + ' …'
 }
 
 const styles = StyleSheet.create({
-  centeredView: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
   listContainer: {
     paddingTop: 10,
-    paddingLeft: 5,
   },
   titleHolder: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   infoTitle: {
     marginLeft: 3,
   },
   infoItemRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
     paddingVertical: 3,
-  },
-  tracksRow: {
-    alignItems: "flex-end",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 3,
+    gap: 10,
   },
   infoName: {
-    flexBasis: 70,
+    minWidth: 70,
     fontSize: 14,
+    flexShrink: 0,
   },
   infoValue: {
-    flexBasis: 230,
     fontSize: 15,
-  },
-  buttonHolder: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    flex: 3,
-  },
-  button: {
-    alignSelf: "flex-start",
-    marginTop: 2,
-    paddingBottom: 0,
-  },
-  buttonLabel: {
-    fontSize: 14,
-    marginVertical: 0,
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 2,
-    marginBottom: 0,
-    paddingBottom: 0,
+    flexShrink: 1,
   },
   link: {
-    textDecorationLine: "underline",
-    color: "#4444ff",
+    textDecorationLine: 'underline',
+    color: '#4444ff',
   },
 })
 

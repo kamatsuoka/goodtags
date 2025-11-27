@@ -1,19 +1,19 @@
-import {useAppDispatch, useAppSelector} from "@app/hooks"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {RootStackParamList} from "@app/navigation/navigationParams"
-import {useNavigation} from "@react-navigation/native"
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {useState} from "react"
-import {StyleSheet, View} from "react-native"
-import {Text, TextInput, useTheme} from "react-native-paper"
+import { useAppDispatch, useAppSelector } from '@app/hooks'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Text, TextInput, useTheme } from 'react-native-paper'
 
-type Props = NativeStackScreenProps<RootStackParamList, "CreateLabel">
+type Props = NativeStackScreenProps<RootStackParamList, 'CreateLabel'>
 
-export default function CreateLabel({route}: Props) {
-  const {tag} = route.params
+export default function CreateLabel({ route }: Props) {
+  const { tag } = route.params
   const labels = useAppSelector(state => state.favorites.labels)
   const navigation = useNavigation()
-  const [draft, setDraft] = useState("")
+  const [draft, setDraft] = useState('')
   const dispatch = useAppDispatch()
   const theme = useTheme()
 
@@ -22,7 +22,7 @@ export default function CreateLabel({route}: Props) {
   const createLabel = (label: string) => {
     if (label && !labelAlreadyExists(label)) {
       if (tag) {
-        dispatch(FavoritesActions.addLabel({label, tag}))
+        dispatch(FavoritesActions.addLabel({ label, tag }))
       } else {
         dispatch(FavoritesActions.createLabel(label))
       }
@@ -66,19 +66,19 @@ export default function CreateLabel({route}: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   inputHolder: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   inputAndMessage: {
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
     marginTop: 20,
   },
   textInput: {

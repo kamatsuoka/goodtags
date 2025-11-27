@@ -1,3 +1,7 @@
 {
   "name": "goodtags",
+  "displayName": "goodtags",
+  "expo": {
+    "plugins": ["expo-audio", "expo-file-system", "expo-asset", "expo-sqlite"]
+  }
 }

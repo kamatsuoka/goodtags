@@ -1,6 +1,6 @@
-import {PopularSearchParams} from "@app/modules/popularSlice"
-import {AxiosRequestConfig} from "axios"
-import {popularXml} from "./__mocks__/popular.xml"
+import { PopularSearchParams } from '@app/modules/popularSlice'
+import { AxiosRequestConfig } from 'axios'
+import { popularXml } from './__mocks__/popular.xml'
 
 /**
  * Mock for detox end-to-end testing

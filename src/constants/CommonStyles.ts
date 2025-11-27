@@ -1,5 +1,5 @@
-import {StyleSheet} from "react-native"
-import {InversePrimaryHighAlpha} from "../lib/theme"
+import { StyleSheet } from 'react-native'
+import { InversePrimaryHighAlpha } from '../lib/theme'
 
 export const FAB_GROUP_PADDING_BOTTOM = 35
 
@@ -11,8 +11,8 @@ const CommonStyles = StyleSheet.create({
     fontSize: 18,
   },
   modal: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 0,
   },
   fabGroup: {
@@ -25,7 +25,7 @@ const CommonStyles = StyleSheet.create({
     opacity: 0.85,
   },
   fabDown: {
-    backgroundColor: "transparent", // MainTheme.colors.inversePrimary,
+    backgroundColor: 'transparent', // MainTheme.colors.inversePrimary,
     marginBottom: 15,
   },
   sheetMusicLeft: {
@@ -33,19 +33,19 @@ const CommonStyles = StyleSheet.create({
   },
   spinnerHolder: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   redBox: {
     borderWidth: 1,
-    borderColor: "red",
+    borderColor: 'red',
   },
   greenBox: {
     borderWidth: 1,
-    borderColor: "green",
+    borderColor: 'green',
   },
   blueBox: {
     borderWidth: 1,
-    borderColor: "blue",
+    borderColor: 'blue',
   },
 })
 

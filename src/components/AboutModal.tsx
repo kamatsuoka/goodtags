@@ -1,9 +1,9 @@
-import {useNavigation} from "@react-navigation/native"
-import {useEffect} from "react"
-import {StyleSheet} from "react-native"
-import {Modal, useTheme} from "react-native-paper"
-import CommonStyles from "../constants/CommonStyles"
-import AboutWithCredits from "./AboutWithCredits"
+import { useNavigation } from '@react-navigation/native'
+import { useEffect } from 'react'
+import { StyleSheet } from 'react-native'
+import { Modal, useTheme } from 'react-native-paper'
+import CommonStyles from '../constants/CommonStyles'
+import AboutWithCredits from './AboutWithCredits'
 
 type AboutModalProps = {
   visible: boolean
@@ -21,7 +21,7 @@ export default function AboutModal(props: AboutModalProps) {
   })
 
   useEffect(() => {
-    return navigation.addListener("blur", props.hide)
+    return navigation.addListener('blur', props.hide)
   }, [navigation, props.hide])
 
   return (
@@ -30,7 +30,8 @@ export default function AboutModal(props: AboutModalProps) {
       dismissable={true}
       onDismiss={props.hide}
       style={styles.modal}
-      testID="about_modal">
+      testID="about_modal"
+    >
       <AboutWithCredits />
     </Modal>
   )

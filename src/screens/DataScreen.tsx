@@ -1,11 +1,23 @@
-import homeIcon from "@app/components/homeIcon"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import {receiveSharedFile, shareFavorites} from "@app/modules/favoritesSlice"
-import {useState} from "react"
-import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import DocumentPicker from "react-native-document-picker"
-import {List, Portal, Snackbar, Text, useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import homeIcon from '@app/components/homeIcon'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
+import {
+  errorCodes,
+  isErrorWithCode,
+  pick as pickDocument,
+  types,
+} from '@react-native-documents/picker'
+import { useState } from 'react'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Divider,
+  List,
+  Portal,
+  Snackbar,
+  Text,
+  useTheme,
+} from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
  * Data (i/o) screen
@@ -13,16 +25,16 @@ import {useSafeAreaInsets} from "react-native-safe-area-context"
 export default function DataScreen() {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const dispatch = useAppDispatch()
   const favorites = useAppSelector(state => state.favorites)
   const [snackBarVisible, setSnackBarVisible] = useState(false)
-  const [snackBarMessage, setSnackBarMessage] = useState("")
+  const [snackBarMessage, setSnackBarMessage] = useState('')
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "flex-start",
+      alignItems: 'flex-start',
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 20),
       paddingLeft,
@@ -30,6 +42,9 @@ export default function DataScreen() {
     },
     section: {
       paddingHorizontal: 10,
+    },
+    sectionTitle: {
+      marginTop: 20,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
@@ -39,14 +54,15 @@ export default function DataScreen() {
     },
     listItem: {
       height: 50,
-      flexDirection: "row",
+      flexDirection: 'row',
       paddingLeft: 5,
       paddingRight: 0,
+      marginVertical: 10,
     },
     buttonHolder: {
       paddingVertical: 10,
       paddingLeft: insets.left,
-      alignItems: "flex-start",
+      alignItems: 'flex-start',
     },
   })
 
@@ -56,63 +72,81 @@ export default function DataScreen() {
         <ScrollView>
           <Text variant="titleLarge">faves + labels</Text>
           <View style={styles.listHolder}>
+            <TouchableOpacity onPress={() => shareFavorites(favorites)}>
+              <List.Item
+                title="backup"
+                left={ExportIcon}
+                right={RightIcon}
+                style={styles.listItem}
+              />
+            </TouchableOpacity>
+            <Divider />
             <TouchableOpacity
               onPress={async () => {
                 try {
-                  const pickerResult = await DocumentPicker.pickSingle({
-                    presentationStyle: "fullScreen",
-                    copyTo: "documentDirectory",
-                    // copyTo: "cachesDirectory",
+                  const pickerResults = await pickDocument({
+                    presentationStyle: 'fullScreen',
+                    mode: 'import',
+                    type: [types.json, types.allFiles],
                   })
-                  console.log(
-                    `result from DocumentPicker.pickSingle: ${pickerResult}`,
-                  )
-                  if (pickerResult?.copyError) {
-                    console.error(
-                      `error copying file: ${pickerResult.copyError}`,
-                    )
+                  const pickerResult = pickerResults[0] // Get first file
+                  console.log(`result from pickDocument: ${pickerResult}`)
+                  if (pickerResult?.error) {
+                    console.error(`error with file: ${pickerResult.error}`)
                   }
-                  if (pickerResult?.fileCopyUri) {
-                    const importPayload = await dispatch(
-                      receiveSharedFile(pickerResult.fileCopyUri),
-                    )
-                    const importResult = importPayload.payload
-                    console.log(`importResult: ${importResult}`)
-                    // if importResult is a string, it's an error message
-                    if (typeof importResult === "string") {
-                      setSnackBarMessage(importResult)
-                      // or if it's a list of tags, just report how many were imported
-                    } else if (importResult?.favorites) {
-                      setSnackBarMessage(
-                        `imported ${importResult.favorites.length} tags` +
-                          ` and ${importResult.receivedLabels.length} labels`,
+                  if (pickerResult?.uri) {
+                    try {
+                      const importPayload = await dispatch(
+                        receiveSharedFile(pickerResult.uri),
                       )
-                    } else {
-                      setSnackBarMessage("import failed")
+                      const importResult = importPayload.payload
+                      console.log(`importResult:`, importResult)
+                      if (importPayload.type.endsWith('/rejected')) {
+                        // Handle rejection
+                        const errorMessage =
+                          typeof importResult === 'string'
+                            ? importResult
+                            : 'import failed'
+                        setSnackBarMessage(errorMessage)
+                      } else if (typeof importResult === 'string') {
+                        setSnackBarMessage(importResult)
+                      } else if (importResult?.favorites) {
+                        const favCount = importResult.favorites.length
+                        const labelCount = importResult.receivedLabels.length
+                        setSnackBarMessage(
+                          `imported ${favCount} tag${
+                            favCount !== 1 ? 's' : ''
+                          }` +
+                            ` and ${labelCount} label${
+                              labelCount !== 1 ? 's' : ''
+                            }`,
+                        )
+                      } else {
+                        setSnackBarMessage('import failed')
+                      }
+                    } catch (parseError) {
+                      console.error('Parse error:', parseError)
+                      setSnackBarMessage('invalid file format')
                     }
                     setSnackBarVisible(true)
                   }
                 } catch (e) {
-                  if (DocumentPicker.isCancel(e)) {
-                    console.log("document picker cancelled")
+                  if (
+                    isErrorWithCode(e) &&
+                    e.code === errorCodes.OPERATION_CANCELED
+                  ) {
+                    console.log('document picker canceled')
                   } else {
                     console.error(JSON.stringify(e))
                     setSnackBarMessage(`import error: ${e}`)
                     setSnackBarVisible(true)
                   }
                 }
-              }}>
+              }}
+            >
               <List.Item
-                title="import"
+                title="restore"
                 left={ImportIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => shareFavorites(favorites)}>
-              <List.Item
-                title="export"
-                left={ExportIcon}
                 right={RightIcon}
                 style={styles.listItem}
               />
@@ -125,8 +159,9 @@ export default function DataScreen() {
           visible={snackBarVisible}
           onDismiss={() => setSnackBarVisible(false)}
           action={{
-            label: "close",
-          }}>
+            label: 'close',
+          }}
+        >
           {snackBarMessage}
         </Snackbar>
       </Portal>
@@ -134,6 +169,6 @@ export default function DataScreen() {
   )
 }
 
-const RightIcon = homeIcon("chevron-right")
-const ExportIcon = homeIcon("database-export")
-const ImportIcon = homeIcon("database-import")
+const RightIcon = homeIcon('chevron-right')
+const ExportIcon = homeIcon('database-export')
+const ImportIcon = homeIcon('database-import')

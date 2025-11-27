@@ -1,12 +1,12 @@
-import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {useState} from "react"
-import {Platform, StyleSheet, TouchableOpacity, View} from "react-native"
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { useState } from 'react'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
   RenderItemParams,
-} from "react-native-draggable-flatlist"
+} from 'react-native-draggable-flatlist'
 import {
   Button,
   Dialog,
@@ -14,20 +14,20 @@ import {
   Text,
   TextInput,
   useTheme,
-} from "react-native-paper"
-import Animated, {FadeIn, FadeOut} from "react-native-reanimated"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+} from 'react-native-paper'
+// import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ITEM_HEIGHT = 60
 
 export default function LabelEditor() {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const setLabels = (items: string[]) =>
     dispatch(FavoritesActions.setLabels(items))
-  const [draftLabel, setDraftLabel] = useState("")
-  const [labelToEdit, setLabelToEdit] = useState("")
-  const [labelToDelete, setLabelToDelete] = useState("")
+  const [draftLabel, setDraftLabel] = useState('')
+  const [labelToEdit, setLabelToEdit] = useState('')
+  const [labelToDelete, setLabelToDelete] = useState('')
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
   const dispatch = useAppDispatch()
   const theme = useTheme()
@@ -36,10 +36,10 @@ export default function LabelEditor() {
   const themedStyles = StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: "space-between",
-      height: "100%",
+      justifyContent: 'space-between',
+      height: '100%',
       paddingTop: 7,
-      paddingBottom: Platform.OS === "android" ? 7 + insets.bottom : 7,
+      paddingBottom: Platform.OS === 'android' ? 7 + insets.bottom : 7,
       paddingLeft,
       paddingRight,
     },
@@ -51,10 +51,10 @@ export default function LabelEditor() {
     setLabelToEdit(label)
   }
 
-  const stopEditing = () => setLabelToEdit("")
+  const stopEditing = () => setLabelToEdit('')
 
   const renameLabel = (label: string, newLabel: string) => {
-    dispatch(FavoritesActions.renameLabel({oldLabel: label, newLabel}))
+    dispatch(FavoritesActions.renameLabel({ oldLabel: label, newLabel }))
   }
 
   const startDeleting = (label: string) => {
@@ -63,22 +63,20 @@ export default function LabelEditor() {
     setDeleteDialogVisible(true)
   }
   const stopDeleting = () => {
-    setLabelToDelete("")
+    setLabelToDelete('')
     setDeleteDialogVisible(false)
   }
   const deleteLabel = async () => {
     dispatch(FavoritesActions.deleteLabel(labelToDelete))
-    setLabelToDelete("")
+    setLabelToDelete('')
     setDeleteDialogVisible(false)
   }
 
-  const renderItem = ({item, drag, isActive}: RenderItemParams<string>) => {
+  const renderItem = ({ item, drag, isActive }: RenderItemParams<string>) => {
     const editingThisItem = item === labelToEdit
     return (
-      <Animated.View
+      <View
         pointerEvents="box-none"
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
         key={item}
         style={[
           styles.itemHolder,
@@ -87,9 +85,10 @@ export default function LabelEditor() {
               ? theme.colors.secondaryContainer
               : theme.colors.onSecondary,
           },
-        ]}>
+        ]}
+      >
         <IconButton
-          icon={editingThisItem ? "close" : "pencil-outline"}
+          icon={editingThisItem ? 'close' : 'pencil-outline'}
           animated
           onPress={() => (editingThisItem ? stopEditing() : startEditing(item))}
         />
@@ -116,7 +115,7 @@ export default function LabelEditor() {
               <IconButton
                 icon="trash-can-outline"
                 disabled={item !== draftLabel}
-                onPress={() => startDeleting(item)} // TODO: confirmation
+                onPress={() => startDeleting(item)}
               />
             </>
           ) : (
@@ -134,7 +133,7 @@ export default function LabelEditor() {
             </>
           )}
         </View>
-      </Animated.View>
+      </View>
     )
   }
 
@@ -144,7 +143,7 @@ export default function LabelEditor() {
         <NestableDraggableFlatList
           keyboardShouldPersistTaps="handled"
           data={labels}
-          onDragEnd={({data}) => {
+          onDragEnd={({ data }) => {
             return setLabels(data)
           }}
           keyExtractor={item => item}
@@ -170,28 +169,28 @@ const styles = StyleSheet.create({
     height: 35,
   },
   createButton: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     margin: 15,
   },
   scrollHolder: {
     flex: 1,
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
   },
   itemHolder: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     height: ITEM_HEIGHT,
   },
   itemAndRightIcon: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     flexGrow: 3,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 30,
   },
   itemText: {
@@ -199,9 +198,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   title: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 40,
   },
 })

@@ -1,0 +1,121 @@
+/**
+ * Screen for displaying a random tag
+ */
+import { SearchResult } from '@app/lib/models/Tag'
+import { TagListEnum } from '@app/modules/tagLists'
+import { useNavigation } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
+import { Appbar, useTheme } from 'react-native-paper'
+import { TagLayout } from '../components/TagLayout'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { useButtonDimming } from '../hooks/useButtonDimming'
+import { useTagEffects } from '../hooks/useTagEffects'
+import useTagMedia from '../hooks/useTagMedia'
+import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
+import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
+import { FavoritesActions } from '../modules/favoritesSlice'
+import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
+
+// Fallback tag to avoid recreating on every render
+const FALLBACK_TAG: SearchResult = {
+  id: 0,
+  title: 'not found',
+  key: 'F:natural',
+} as SearchResult
+
+const BIG_BUTTON_SIZE = 40
+
+/**
+ * Random tag screen
+ */
+const RandomScreen = () => {
+  const theme = useTheme()
+  const navigation = useNavigation()
+  const [tracksVisible, setTracksVisible] = useState(false)
+  const [infoVisible, setInfoVisible] = useState(false)
+  const [fabOpen, setFabOpen] = useState(false)
+  const dispatch = useAppDispatch()
+  const favoritesById = useAppSelector(state => state.favorites.tagsById)
+  const tag = useAppSelector(state => {
+    return selectRandomTag(state) || FALLBACK_TAG
+  })
+
+  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
+    useButtonDimming()
+
+  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
+
+  useEffect(() => {
+    dispatch(getRandomTag())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (tag.id !== 0) {
+      console.log(`RandomScreen: tag id=${tag.id}`)
+    }
+  }, [tag.id])
+
+  const { audioPlaying, setTrackUrl, playOrPause, pause } = useTagTrackPlayer()
+  const { hasTracks, hasVideos } = useTagMedia(tag)
+  useTagEffects(tag)
+
+  async function toggleFavorite(id: number) {
+    if (favoritesById[id]) {
+      dispatch(FavoritesActions.removeFavorite(id))
+    } else {
+      dispatch(FavoritesActions.addFavorite(tag))
+    }
+  }
+
+  const shuffleAction = (
+    <>
+      <Appbar.Content title=" " pointerEvents="none" />
+      <Appbar.Action
+        icon="shuffle"
+        onPress={async () => {
+          brightenThenFade()
+          try {
+            pause()
+          } catch (e) {
+            // ignore if player not available
+          }
+          dispatch(getRandomTag())
+        }}
+        color={theme.colors.primary}
+        size={BIG_BUTTON_SIZE}
+        style={styles.dimmableIconHolderStyle}
+      />
+    </>
+  )
+
+  return (
+    <TagLayout
+      tag={tag}
+      tagListType={TagListEnum.SearchResults}
+      favoritesById={favoritesById}
+      audioPlaying={audioPlaying}
+      buttonsDimmed={buttonsDimmed}
+      tracksVisible={tracksVisible}
+      infoVisible={infoVisible}
+      fabOpen={fabOpen}
+      hasTracks={hasTracks}
+      hasVideos={hasVideos}
+      onToggleFavorite={toggleFavorite}
+      onPlayOrPause={playOrPause}
+      onBack={navigation.goBack}
+      onBrightenButtons={brightenButtons}
+      onBrightenThenFade={brightenThenFade}
+      onDimButtons={dimButtons}
+      onSetTracksVisible={setTracksVisible}
+      onSetInfoVisible={setInfoVisible}
+      onSetFabOpen={setFabOpen}
+      onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      onNavigateToVideos={() => navigation.navigate('TagVideos', { tag })}
+      onPlayTrack={setTrackUrl}
+      styles={styles}
+      additionalActions={shuffleAction}
+    />
+  )
+}
+
+export default RandomScreen

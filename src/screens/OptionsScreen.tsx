@@ -1,30 +1,54 @@
-import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import {TabBarBackground} from "@app/lib/theme"
-import {OptionsActions} from "@app/modules/optionsSlice"
-import Slider from "@react-native-community/slider"
-import {useState} from "react"
-import {ScrollView, StyleSheet, View} from "react-native"
-import {Checkbox, List, Text} from "react-native-paper"
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { TabBarBackground } from '@app/lib/theme'
+import { OptionsActions } from '@app/modules/optionsSlice'
+import Slider from '@react-native-community/slider'
+import React, { useCallback, useMemo, useState } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { Checkbox, List, Text } from 'react-native-paper'
 
-function checkBox(selected: boolean, onPress: Function) {
-  return () => (
-    <Checkbox.Android
-      status={selected ? "checked" : "unchecked"}
-      onPress={() => onPress()}
-    />
-  )
-}
+const CheckBoxComponent = ({
+  selected,
+  onPress,
+}: {
+  selected: boolean
+  onPress: () => void
+}) => (
+  <Checkbox.Android
+    status={selected ? 'checked' : 'unchecked'}
+    onPress={onPress}
+  />
+)
 
 /**
  * Screen for setting ui options
  */
 export default function OptionsScreen() {
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const serifsSelected = useAppSelector(state => state.options.serifs)
   const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
   const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
+  const showStatusBar = useAppSelector(state => state.options.showStatusBar)
   const [delayDraft, setDelayDraft] = useState(autoRotateDelay)
   const dispatch = useAppDispatch()
+
+  const toggleSerifs = useCallback(() => {
+    dispatch(OptionsActions.setSerifs(!serifsSelected))
+  }, [dispatch, serifsSelected])
+
+  const toggleAutoRotate = useCallback(() => {
+    dispatch(OptionsActions.setAutoRotate(!autoRotateSelected))
+  }, [dispatch, autoRotateSelected])
+
+  const toggleStatusBar = useCallback(() => {
+    dispatch(OptionsActions.setShowStatusBar(!showStatusBar))
+  }, [dispatch, showStatusBar])
+
+  const handleAutoRotateDelay = useCallback(
+    (value: number) => {
+      dispatch(OptionsActions.setAutoRotateDelay(value))
+    },
+    [dispatch],
+  )
 
   const autoRotateDelaySlider = (
     <View style={styles.delayHolder}>
@@ -34,10 +58,8 @@ export default function OptionsScreen() {
         </Text>
         <Slider
           value={delayDraft}
-          onValueChange={value => setDelayDraft(value)}
-          onSlidingComplete={value =>
-            dispatch(OptionsActions.setAutoRotateDelay(value))
-          }
+          onValueChange={setDelayDraft}
+          onSlidingComplete={handleAutoRotateDelay}
           step={10}
           style={styles.slider}
           minimumValue={200}
@@ -49,35 +71,65 @@ export default function OptionsScreen() {
     </View>
   )
 
-  const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
-      paddingLeft,
-      paddingRight,
-    },
-  })
+  const themedStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        listContainer: {
+          flex: 1,
+          paddingLeft,
+          paddingRight,
+        },
+      }),
+    [paddingLeft, paddingRight],
+  )
+
+  const renderSerifsCheckbox = useCallback(
+    () => (
+      <CheckBoxComponent selected={serifsSelected} onPress={toggleSerifs} />
+    ),
+    [serifsSelected, toggleSerifs],
+  )
+
+  const renderAutoRotateCheckbox = useCallback(
+    () => (
+      <CheckBoxComponent
+        selected={autoRotateSelected}
+        onPress={toggleAutoRotate}
+      />
+    ),
+    [autoRotateSelected, toggleAutoRotate],
+  )
+
+  const renderStatusBarCheckbox = useCallback(
+    () => (
+      <CheckBoxComponent selected={showStatusBar} onPress={toggleStatusBar} />
+    ),
+    [showStatusBar, toggleStatusBar],
+  )
 
   return (
     <ScrollView style={themedStyles.listContainer}>
       <View style={styles.container}>
         <List.Item
-          left={checkBox(serifsSelected, () =>
-            dispatch(OptionsActions.setSerifs(!serifsSelected)),
-          )}
+          left={renderSerifsCheckbox}
           title="serifs"
           titleStyle={styles.listItemTitle}
           description="use serif fonts"
         />
         <List.Item
-          left={checkBox(autoRotateSelected, () =>
-            dispatch(OptionsActions.setAutoRotate(!autoRotateSelected)),
-          )}
+          left={renderAutoRotateCheckbox}
           title="auto-rotate"
           titleStyle={styles.listItemTitle}
           description="automatically rotate to optimal orientation"
           descriptionNumberOfLines={2}
         />
         {autoRotateSelected ? autoRotateDelaySlider : null}
+        <List.Item
+          left={renderStatusBarCheckbox}
+          title="show status bar"
+          titleStyle={styles.listItemTitle}
+          description="show the status bar"
+        />
       </View>
     </ScrollView>
   )
@@ -103,7 +155,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   headerRight: {
     width: 10,
@@ -117,10 +169,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 50,
     marginRight: 40,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   delayText: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   sliderHolder: {
     marginLeft: 10,
@@ -131,7 +183,7 @@ const styles = StyleSheet.create({
   },
   sliderValue: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     margin: 0,
   },
 })

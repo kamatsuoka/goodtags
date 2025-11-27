@@ -1,33 +1,21 @@
 /**
  * Keeps track of playing learning tracks.
  */
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import SoundPlayer from "react-native-sound-player"
-import Tag, {Track, TrackPart} from "../lib/models/Tag"
-import {AppDispatch, RootState} from "../store"
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import Tag, { Track, TrackPart } from '../lib/models/Tag'
 
 type TagTracks = {
   [key in TrackPart]?: Track
 }
 
-export enum PlayingState {
-  idle = "idle",
-  playing = "playing",
-  paused = "paused",
-  ended = "ended",
-}
-
 export interface TracksState {
   selectedPart: TrackPart
   tagTracks: TagTracks
-  playingState: PlayingState
-  selectedTrack?: Track
 }
 
 export const initialState: TracksState = {
   selectedPart: TrackPart.AllParts,
   tagTracks: {},
-  playingState: PlayingState.idle,
 }
 
 /**
@@ -48,89 +36,84 @@ export function getSelectedTrack(
 }
 
 export const tracksSlice = createSlice({
-  name: "tracks",
+  name: 'tracks',
   initialState,
   reducers: {
     setTagTracks: (state, action: PayloadAction<Tag>) => {
-      const map = new Map(
-        action.payload.tracks.map(track => [track.part, track]),
-      )
+      const tracks = action.payload.tracks || []
+      const map = new Map(tracks.map(track => [track.part, track]))
       state.tagTracks = Object.fromEntries(map)
-      state.playingState = PlayingState.idle
-      state.selectedTrack = getSelectedTrack(
-        state.tagTracks,
-        state.selectedPart,
-      )
     },
     setSelectedPart: (state, action: PayloadAction<TrackPart>) => {
       state.selectedPart = action.payload
-      state.selectedTrack = getSelectedTrack(
-        state.tagTracks,
-        state.selectedPart,
-      )
-    },
-    setPlayingState: (state, action: PayloadAction<PlayingState>) => {
-      state.playingState = action.payload
     },
   },
 })
 
-export const playTrack = createAsyncThunk<
-  void,
-  boolean,
-  {
-    dispatch: AppDispatch
-    state: RootState
-    rejectValue: string
-  }
->("tracks/playTrack", async (fromStart: boolean, thunkAPI) => {
-  const state = thunkAPI.getState()
-  const track = state.tracks.selectedTrack
-  if (track) {
-    if (fromStart || state.tracks.playingState !== PlayingState.paused) {
-      SoundPlayer.playUrl(track.url)
-    } else {
-      SoundPlayer.resume()
-    }
-    thunkAPI.dispatch(setPlayingState(PlayingState.playing))
-  }
-})
+// export const playTrack = createAsyncThunk<
+//   void,
+//   void,
+//   {
+//     dispatch: AppDispatch
+//     state: RootState
+//     rejectValue: string
+//   }
+// >('tracks/playTrack', async (_, thunkAPI) => {
+//   const state = thunkAPI.getState()
+//   const track = state.tracks.selectedTrack
+//   console.log(`playTrack called with track ${track?.url}`)
+//   try {
+//     const player = useAudioPlayer(track?.url)
+//     console.log(`calling play on ${player}`)
+//     player.play()
+//     const status = useAudioPlayerStatus(player)
+//     thunkAPI.dispatch(tracksSlice.actions.setPlayer(player))
+//     thunkAPI.dispatch(tracksSlice.actions.setPlayerStatus(status))
+//   } catch (error) {
+//     console.error('Error in playTrack:', error)
+//   }
+// })
 
-export const playOrPause = createAsyncThunk<
-  void,
-  void,
-  {
-    dispatch: AppDispatch
-    state: RootState
-    rejectValue: string
-  }
->("tracks/playOrPause", async (_, thunkAPI) => {
-  const state = thunkAPI.getState()
-  const track = state.tracks.selectedTrack
-  if (track) {
-    if (state.tracks.playingState === PlayingState.playing) {
-      SoundPlayer.pause()
-      thunkAPI.dispatch(setPlayingState(PlayingState.paused))
-    } else {
-      thunkAPI.dispatch(playTrack(false))
-    }
-  }
-})
+// export const playOrPause = createAsyncThunk<
+//   void,
+//   void,
+//   {
+//     dispatch: AppDispatch
+//     state: RootState
+//     rejectValue: string
+//   }
+// >('tracks/playOrPause', async (_, thunkAPI) => {
+//   const state = thunkAPI.getState()
+//   const track = state.tracks.selectedTrack
+//   if (track) {
+//     const player = state.tracks.player
+//     if (!player) {
+//       console.warn('No track player available in playOrPause')
+//       return
+//     }
+//     if (state.tracks.audioStatus?.playing) {
+//       player.pause()
+//     } else {
+//       thunkAPI.dispatch(playTrack())
+//     }
+//   }
+// })
 
-export const stopTrack = createAsyncThunk<
-  void,
-  void,
-  {
-    dispatch: AppDispatch
-    state: RootState
-    rejectValue: string
-  }
->("tracks/stopTrack", async (_, thunkAPI) => {
-  SoundPlayer.stop()
-  thunkAPI.dispatch(setPlayingState(PlayingState.ended))
-})
+// export const stopTrack = createAsyncThunk<
+//   void,
+//   void,
+//   {
+//     dispatch: AppDispatch
+//     state: RootState
+//     rejectValue: string
+//   }
+// >('tracks/stopTrack', async (_, thunkAPI) => {
+//   const state = thunkAPI.getState()
+//   if (state.tracks.player) {
+//     state.tracks.player.pause()
+//   }
+// })
 
-export const {setTagTracks, setSelectedPart, setPlayingState} =
-  tracksSlice.actions
+export const { setTagTracks, setSelectedPart } = tracksSlice.actions
 
 export default tracksSlice.reducer

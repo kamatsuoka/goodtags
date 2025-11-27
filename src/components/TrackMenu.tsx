@@ -1,27 +1,35 @@
-import {StyleSheet, View} from "react-native"
-import {Divider, Menu, Text, useTheme} from "react-native-paper"
-import {useAppDispatch, useAppSelector} from "../hooks"
-import {TrackPart} from "../lib/models/Tag"
-import {playTrack, setSelectedPart} from "../modules/tracksSlice"
+import { BottomSheetView } from '@gorhom/bottom-sheet'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Divider, Menu, Text, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { TrackPart } from '../lib/models/Tag'
+import { setSelectedPart } from '../modules/tracksSlice'
 
 type TrackMenuProps = {
   onDismiss: () => void
+  onPlayTrack?: (url: string) => void
 }
 
 export default function TrackMenu(props: TrackMenuProps) {
   const theme = useTheme()
-  const {onDismiss} = props
-  const {selectedPart, tagTracks} = useAppSelector(state => state.tracks)
+  const insets = useSafeAreaInsets()
+  const { onDismiss, onPlayTrack } = props
+  const tracksState = useAppSelector(state => state.tracks)
+  const { selectedPart, tagTracks } = tracksState
   const dispatch = useAppDispatch()
 
   const styles = StyleSheet.create({
+    outerContainer: {
+      paddingHorizontal: Math.max(20, insets.left + 20, insets.right + 20),
+      alignItems: 'center',
+    },
     container: {
-      backgroundColor: theme.colors.inversePrimary,
-      justifyContent: "center",
       paddingVertical: 12,
       paddingLeft: 8,
       paddingRight: 4,
-      borderRadius: 15,
+      maxWidth: '100%',
     },
     title: {
       paddingLeft: 26,
@@ -40,12 +48,15 @@ export default function TrackMenu(props: TrackMenuProps) {
 
   function playPart(part: string) {
     dispatch(setSelectedPart(part as TrackPart))
-    dispatch(playTrack(true))
+    const track = tagTracks[part as TrackPart]
+    if (track?.url && onPlayTrack) {
+      onPlayTrack(track.url)
+    }
     onDismiss()
   }
 
   const displayName = (part: string) =>
-    `${part}`.replace("AllParts", "All Parts")
+    `${part}`.replace('AllParts', 'All Parts')
 
   const itemTitle = (part: string) => (
     <Text>
@@ -57,19 +68,21 @@ export default function TrackMenu(props: TrackMenuProps) {
   )
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title} variant="titleLarge">
-        Tracks
-      </Text>
-      <Divider bold style={styles.divider} />
-      {Object.keys(tagTracks).map(part => (
-        <Menu.Item
-          dense
-          key={part}
-          onPress={() => playPart(part)}
-          title={itemTitle(part)}
-        />
-      ))}
-    </View>
+    <BottomSheetView style={styles.outerContainer}>
+      <View style={styles.container}>
+        <Text style={styles.title} variant="titleLarge">
+          Tracks
+        </Text>
+        <Divider bold style={styles.divider} />
+        {Object.keys(tagTracks).map(part => (
+          <Menu.Item
+            dense
+            key={part}
+            onPress={() => playPart(part)}
+            title={itemTitle(part)}
+          />
+        ))}
+      </View>
+    </BottomSheetView>
   )
 }

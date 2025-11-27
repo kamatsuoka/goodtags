@@ -1,6 +1,6 @@
-import {DbRow} from "@app/modules/searchutil"
-import _ from "lodash"
-import parseXml from "../../util/xmlparser"
+import { DbRow } from '@app/modules/searchutil'
+import _ from 'lodash'
+import parseXml from '../../util/xmlparser'
 
 export const CurrentTagVersion = 5
 
@@ -23,14 +23,14 @@ export default interface Tag {
 
 export const EmptyTag: Tag = {
   id: -1,
-  title: "",
-  aka: "",
-  lyrics: "",
-  uri: "",
+  title: '',
+  aka: '',
+  lyrics: '',
+  uri: '',
   parts: 0,
-  arranger: "",
-  posted: "",
-  key: "",
+  arranger: '',
+  posted: '',
+  key: '',
   tracks: [],
   videos: [],
 }
@@ -47,11 +47,11 @@ export interface XmlTrack {
 }
 
 export enum TrackPart {
-  AllParts = "AllParts",
-  Tenor = "Tenor",
-  Lead = "Lead",
-  Bari = "Bari",
-  Bass = "Bass",
+  AllParts = 'AllParts',
+  Tenor = 'Tenor',
+  Lead = 'Lead',
+  Bari = 'Bari',
+  Bass = 'Bass',
 }
 
 export interface XmlVideo {
@@ -156,7 +156,7 @@ function extractTrack(part: TrackPart, xmlTag: XmlTag): Track | undefined {
 }
 
 function buildTrack(part: TrackPart, xmlTrack?: XmlTrack): Track | undefined {
-  if (xmlTrack?.attr?.type === "mp3") {
+  if (xmlTrack?.attr?.type === 'mp3') {
     return {
       part: part,
       fileType: xmlTrack.attr.type,
@@ -211,7 +211,7 @@ export function tagFromApiXml(t: XmlTag): SearchResult {
   ) as SearchResult
   tag.searchResultIndex = parseInt(t.attr.index, 10) - 1 // Convert 1-based index from API to 0-based
   tag.downloaded = t.Downloaded
-  tag.posted = new Date(tag.posted).toISOString().split("T")[0]
+  tag.posted = new Date(tag.posted).toISOString().split('T')[0]
   return tag
 }
 
@@ -271,7 +271,6 @@ export function buildTagIds(tags: Array<SearchResult>) {
 
 export interface ConvertedTags {
   available: number
-  rawTags: XmlTag[]
   tags: SearchResult[]
   highestIndex: number
 }
@@ -286,7 +285,6 @@ export function tagsFromApiResponse(responseText: string): ConvertedTags {
     tags.length > 0 ? tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
-    rawTags, // TODO - Unused, delete this field
     tags,
     highestIndex,
   }
@@ -309,7 +307,6 @@ export function tagsFromDbRows(
     tags.length > 0 ? offset + tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
-    rawTags: [], // TODO - Unused, delete this field
     tags,
     highestIndex,
   }
@@ -318,9 +315,9 @@ export function tagsFromDbRows(
 function groupByTagId<T>(
   rows: DbRow[],
   transform: (row: DbRow) => T,
-): {[id: string]: T[]} {
-  const byId: {[id: string]: T[]} = {}
-  rows.forEach(({tag_id, ...row}) => {
+): { [id: string]: T[] } {
+  const byId: { [id: string]: T[] } = {}
+  rows.forEach(({ tag_id, ...row }) => {
     const group: T[] = byId[tag_id] || []
     group.push(transform(row))
     byId[tag_id] = group

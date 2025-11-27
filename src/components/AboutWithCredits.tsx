@@ -1,6 +1,6 @@
-import {Linking, StyleSheet, TextStyle, View, ViewStyle} from "react-native"
-import {Button, Text, useTheme} from "react-native-paper"
-import AboutBase from "./AboutBase"
+import { Linking, StyleSheet, TextStyle, View, ViewStyle } from 'react-native'
+import { Button, Text, useTheme } from 'react-native-paper'
+import AboutBase from './AboutBase'
 
 type LinkButtonParams = {
   url: string
@@ -15,7 +15,8 @@ function LinkButton(props: LinkButtonParams) {
       mode="text"
       labelStyle={props.labelStyle}
       contentStyle={props.contentStyle}
-      onPress={() => Linking.openURL(props.url)}>
+      onPress={() => Linking.openURL(props.url)}
+    >
       {props.label}
     </Button>
   )
@@ -26,12 +27,12 @@ export default function AboutWithCredits() {
 
   const styles = StyleSheet.create({
     body: {
-      alignItems: "center",
-      justifyContent: "space-between",
+      alignItems: 'center',
+      justifyContent: 'space-between',
       backgroundColor: theme.colors.primary,
     },
     homepage: {
-      flexDirection: "row",
+      flexDirection: 'row',
       paddingTop: 2,
       paddingHorizontal: 20,
     },
@@ -41,17 +42,17 @@ export default function AboutWithCredits() {
       margin: 5,
     },
     credits: {
-      alignItems: "center",
+      alignItems: 'center',
       padding: 20,
     },
     buttonLabel: {
       color: theme.colors.onPrimary,
       fontSize: 15,
-      textDecorationLine: "underline",
+      textDecorationLine: 'underline',
     },
     buttonContent: {
-      flexDirection: "row-reverse",
-      alignItems: "baseline",
+      flexDirection: 'row-reverse',
+      alignItems: 'baseline',
     },
     text2: {
       color: theme.colors.outlineVariant,
@@ -61,7 +62,7 @@ export default function AboutWithCredits() {
       marginTop: 0,
       color: theme.colors.outlineVariant,
       fontSize: 13,
-      textDecorationLine: "underline",
+      textDecorationLine: 'underline',
     },
     button2: {
       margin: 0,

@@ -1,13 +1,14 @@
-const presets = ["babel-preset-expo"]
-const plugins = [
-  "react-native-reanimated/plugin",
-  [
-    "module-resolver",
-    {
-      alias: {
-        "@app": "./src",
+module.exports = {
+  presets: ['babel-preset-expo'],
+  plugins: [
+    [
+      'module-resolver',
+      {
+        root: ['./src'],
+        alias: {
+          '@app': './src',
+        },
       },
-    },
+    ],
   ],
-]
-module.exports = {presets, plugins}
+};

@@ -1,12 +1,12 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {Collection, SearchParams, SortOrder} from "../constants/Search"
-import {buildTagIds, SearchResult, SearchResultsById} from "../lib/models/Tag"
-import {RootState} from "../store"
-import {handleError} from "./handleError"
-import {fetchAndConvertTags} from "./searchutil"
-import {LoadingState, sortAlpha, TagListState} from "./tagLists"
-import {SelectedTag} from "./tagListUtil"
-import {ThunkApiConfig} from "./thunkApiConfig"
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Collection, SearchParams, SortOrder } from '../constants/Search'
+import { buildTagIds, SearchResult, SearchResultsById } from '../lib/models/Tag'
+import { RootState } from '../store'
+import { handleError } from './handleError'
+import { fetchAndConvertTags } from './searchutil'
+import { LoadingState, sortAlpha, TagListState } from './tagLists'
+import { SelectedTag } from './tagListUtil'
+import { ThunkApiConfig } from './thunkApiConfig'
 
 // Define a type for the slice state
 export interface ClassicState {
@@ -34,7 +34,7 @@ function sortById(state: ClassicState) {
 }
 
 export const classicSlice = createSlice({
-  name: "classic",
+  name: 'classic',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -66,7 +66,7 @@ export const classicSlice = createSlice({
     })
     builder.addCase(getClassicTags.fulfilled, (state, action) => {
       if (action.payload !== undefined) {
-        const {tagsById, allTagIds} = buildTagIds(action.payload)
+        const { tagsById, allTagIds } = buildTagIds(action.payload)
         state.tagsById = tagsById
         state.allTagIds = allTagIds
       }
@@ -94,12 +94,12 @@ export const getClassicTags = createAsyncThunk<
   SearchResult[] | undefined,
   boolean,
   ThunkApiConfig
->("classic/getClassicTags", async (refresh: boolean, thunkAPI) => {
+>('classic/getClassicTags', async (refresh: boolean, thunkAPI) => {
   const state = thunkAPI.getState().classic
   if (refresh || state.allTagIds.length === 0) {
     try {
       const fetchResult = await fetchAndConvertTags(
-        {...ClassicSearchParams, sortBy: state.sortOrder},
+        { ...ClassicSearchParams, sortBy: state.sortOrder },
         false /* useApi */,
       )
       return fetchResult.tags

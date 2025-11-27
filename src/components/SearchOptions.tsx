@@ -1,16 +1,17 @@
-import {StyleProp, StyleSheet, View, ViewStyle} from "react-native"
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import { ComponentProps } from 'react'
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
 import {
   Divider,
   MD3TypescaleKey,
   Surface,
   Text,
   useTheme,
-} from "react-native-paper"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+} from 'react-native-paper'
 
 type Props = {
   title: string
-  icon: string
+  icon: ComponentProps<typeof Icon>['name']
   iconColor?: string
   iconSize?: number
   titleVariant?: keyof typeof MD3TypescaleKey
@@ -28,7 +29,7 @@ const SearchOptions = ({
   icon,
   iconColor,
   iconSize,
-  titleVariant = "bodyLarge",
+  titleVariant = 'bodyLarge',
   rightStyle,
   children,
   infoButton,
@@ -72,8 +73,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     minHeight: 40,
   },

@@ -1,14 +1,14 @@
-import {useAppDispatch, useAppSelector, useHorizontalInset} from "@app/hooks"
-import useSelectedTag from "@app/hooks/useSelectedTag"
-import Tag from "@app/lib/models/Tag"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {TagListType} from "@app/modules/tagLists"
-import {RootStackParamList} from "@app/navigation/navigationParams"
-import {useNavigation} from "@react-navigation/native"
-import {NativeStackNavigationProp} from "@react-navigation/native-stack"
-import {Platform, ScrollView, StyleSheet, View} from "react-native"
-import {Button, Checkbox, useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import { useAppDispatch, useAppSelector, useHorizontalInset } from '@app/hooks'
+import useSelectedTag from '@app/hooks/useSelectedTag'
+import Tag from '@app/lib/models/Tag'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { TagListType } from '@app/modules/tagLists'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Platform, ScrollView, StyleSheet, View } from 'react-native'
+import { Button, Checkbox, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const LabelSelector = (props: {
   tag: Tag
@@ -17,19 +17,23 @@ const LabelSelector = (props: {
   selected: boolean
 }) => {
   const dispatch = useAppDispatch()
-  const {tag, label, tagListType, selected} = props
+  const { tag, label, tagListType, selected } = props
   return (
     <View style={styles.labelSelector}>
       <Checkbox.Item
         mode="android" // lack of placeholder on ios is confusing
-        status={selected ? "checked" : "unchecked"}
+        status={selected ? 'checked' : 'unchecked'}
         label={label}
         onPress={() => {
           selected
             ? dispatch(
-                FavoritesActions.removeLabel({id: tag.id, label, tagListType}),
+                FavoritesActions.removeLabel({
+                  id: tag.id,
+                  label,
+                  tagListType,
+                }),
               )
-            : dispatch(FavoritesActions.addLabel({tag, label}))
+            : dispatch(FavoritesActions.addLabel({ tag, label }))
         }}
         style={styles.checkboxItem}
         position="leading"
@@ -56,9 +60,9 @@ const TagLabels = () => {
       flex: 1,
       margin: 10,
       borderRadius: 15,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
       paddingHorizontal,
-      paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
+      paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
     },
     divider: {
       marginTop: 10,
@@ -85,8 +89,9 @@ const TagLabels = () => {
       <Button
         icon="plus"
         mode="contained-tonal"
-        onPress={() => navigation.navigate("CreateLabel", {tag})}
-        style={styles.createButton}>
+        onPress={() => navigation.navigate('CreateLabel', { tag })}
+        style={styles.createButton}
+      >
         new label
       </Button>
     </View>
@@ -98,8 +103,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleHolder: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginHorizontal: 10,
   },
   listContainer: {
@@ -107,7 +112,7 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
   },
   labelSelector: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingVertical: 5,
   },
   checkboxItem: {
@@ -116,7 +121,7 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   createButton: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     margin: 15,
   },
 })

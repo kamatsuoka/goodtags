@@ -1,12 +1,12 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {SearchParams, SortOrder} from "../constants/Search"
-import {buildTagIds, SearchResult, SearchResultsById} from "../lib/models/Tag"
-import {RootState} from "../store"
-import {handleError} from "./handleError"
-import {fetchAndConvertTags} from "./searchutil"
-import {LoadingState, sortAlpha, sortPosted, TagListState} from "./tagLists"
-import {SelectedTag} from "./tagListUtil"
-import {ThunkApiConfig} from "./thunkApiConfig"
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { SearchParams, SortOrder } from '../constants/Search'
+import { buildTagIds, SearchResult, SearchResultsById } from '../lib/models/Tag'
+import { RootState } from '../store'
+import { handleError } from './handleError'
+import { fetchAndConvertTags } from './searchutil'
+import { LoadingState, sortAlpha, sortPosted, TagListState } from './tagLists'
+import { SelectedTag } from './tagListUtil'
+import { ThunkApiConfig } from './thunkApiConfig'
 
 // Define a type for the slice state
 export interface NewState {
@@ -27,7 +27,7 @@ export const initialState: NewState = {
 }
 
 export const newSlice = createSlice({
-  name: "new",
+  name: 'new',
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -60,7 +60,7 @@ export const newSlice = createSlice({
     })
     builder.addCase(getNewTags.fulfilled, (state, action) => {
       if (action.payload !== undefined) {
-        const {tagsById, allTagIds} = buildTagIds(action.payload)
+        const { tagsById, allTagIds } = buildTagIds(action.payload)
         state.tagsById = tagsById
         state.allTagIds = allTagIds
       }
@@ -88,7 +88,7 @@ export const getNewTags = createAsyncThunk<
   SearchResult[] | undefined,
   boolean,
   ThunkApiConfig
->("new/getNewTags", async (refresh: boolean, thunkAPI) => {
+>('new/getNewTags', async (refresh: boolean, thunkAPI) => {
   const state = thunkAPI.getState().new
   if (refresh || state.allTagIds.length === 0) {
     try {

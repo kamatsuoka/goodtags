@@ -1,33 +1,32 @@
 // import {StackParamList} from "@app/navigation/navigationParams"
-import homeIcon from "@app/components/homeIcon"
-import {useAppDispatch, useAppSelector, useBodyInsets} from "@app/hooks"
-import {FavoritesActions} from "@app/modules/favoritesSlice"
-import {HomeNavigatorScreenProps} from "@app/navigation/navigationParams"
-import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native"
-import {Divider, List, useTheme} from "react-native-paper"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import homeIcon from '@app/components/homeIcon'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Button, Divider, List, useTheme } from 'react-native-paper'
 
 /**
  * List of labels for navigating to labeled tags
  */
 export default function LabelsScreen({
   navigation,
-}: HomeNavigatorScreenProps<"Labels">) {
+}: HomeNavigatorScreenProps<'Labels'>) {
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
-  const {paddingLeft, paddingRight} = useBodyInsets()
+  const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const dispatch = useAppDispatch()
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "flex-start",
       backgroundColor: theme.colors.secondaryContainer,
-      paddingBottom: Math.max(insets.bottom, 20),
-      paddingHorizontal: 15,
       paddingLeft,
       paddingRight,
+    },
+    scrollContent: {
+      paddingHorizontal: 15,
+      paddingBottom: 20,
     },
     section: {
       paddingHorizontal: 10,
@@ -40,68 +39,85 @@ export default function LabelsScreen({
     },
     listItem: {
       height: 50,
-      flexDirection: "row",
+      flexDirection: 'row',
       paddingLeft: 5,
       paddingRight: 0,
     },
-    buttonHolder: {
-      paddingVertical: 10,
-      alignItems: "flex-start",
+    emptyText: {
+      color: theme.colors.outline,
+      fontStyle: 'italic',
+    },
+    actionBar: {
+      flexDirection: 'row',
+      gap: 10,
+      paddingHorizontal: 15,
+      paddingVertical: 15,
+      paddingBottom: 10,
+      backgroundColor: theme.colors.secondaryContainer,
+    },
+    actionButton: {
+      flex: 1,
+      borderRadius: 20,
+      backgroundColor: theme.colors.surface,
     },
   })
 
   return (
     <View style={styles.container}>
-      <List.Section style={styles.section}>
-        <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <List.Section style={styles.section}>
           <View style={styles.listHolder}>
-            {labels.map((label, index) => (
-              <View key={`label_${index}`}>
-                <TouchableOpacity
-                  onPress={() => {
-                    dispatch(FavoritesActions.selectLabel(label))
-                    navigation.navigate("Labeled", {label})
-                  }}>
-                  <List.Item
-                    title={label}
-                    left={LabelIcon}
-                    right={RightIcon}
-                    style={styles.listItem}
-                  />
-                </TouchableOpacity>
-                {index === labels.length - 1 ? null : <Divider />}
-              </View>
-            ))}
-          </View>
-          <View style={styles.listHolder}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("CreateLabel", {})}>
+            {labels.length > 0 ? (
+              labels.map((label, index) => (
+                <View key={`label_${index}`}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      dispatch(FavoritesActions.selectLabel(label))
+                      navigation.navigate('Labeled', { label })
+                    }}
+                  >
+                    <List.Item
+                      title={label}
+                      left={LabelIcon}
+                      right={RightIcon}
+                      style={styles.listItem}
+                    />
+                  </TouchableOpacity>
+                  {index === labels.length - 1 ? null : <Divider />}
+                </View>
+              ))
+            ) : (
               <List.Item
-                title="new label"
-                left={AddLabelIcon}
-                right={RightIcon}
+                title="no labels yet"
+                titleStyle={styles.emptyText}
                 style={styles.listItem}
               />
-            </TouchableOpacity>
+            )}
           </View>
-          <View style={styles.listHolder}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("LabelEditor")}>
-              <List.Item
-                title="edit labels"
-                left={EditLabelsIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </List.Section>
+        </List.Section>
+      </ScrollView>
+      <View style={styles.actionBar}>
+        <Button
+          mode="outlined"
+          icon="plus"
+          onPress={() => navigation.navigate('CreateLabel', {})}
+          style={styles.actionButton}
+        >
+          new label
+        </Button>
+        <Button
+          mode="outlined"
+          icon="pencil-outline"
+          onPress={() => navigation.navigate('LabelEditor')}
+          style={styles.actionButton}
+          disabled={labels.length === 0}
+        >
+          edit labels
+        </Button>
+      </View>
     </View>
   )
 }
 
-const RightIcon = homeIcon("chevron-right")
-const AddLabelIcon = homeIcon("tag-plus-outline")
-const LabelIcon = homeIcon("tag-outline")
-const EditLabelsIcon = homeIcon("tag-multiple-outline")
+const RightIcon = homeIcon('chevron-right')
+const LabelIcon = homeIcon('tag-outline')
