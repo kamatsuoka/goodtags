@@ -214,7 +214,7 @@ const SearchScreen = () => {
         <Button
           mode="elevated"
           contentStyle={styles.compactSearchContent}
-          icon="magnify"
+          icon="shimmer"
           onPress={() => {
             dispatch(SearchActions.clearSearch())
             return setSearchMenuVisible(true)
