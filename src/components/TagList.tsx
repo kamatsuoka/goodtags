@@ -87,21 +87,26 @@ const TagList = (props: TagListProps) => {
     }, [dispatch, scrollToSelectedTag, tagState]),
   )
 
-  const onViewableItemsChanged = (items: { viewableItems: Array<any> }) => {
-    if (items.viewableItems?.length > 0) {
-      visibleIndex.current = {
-        min: items.viewableItems[0].index,
-        max: items.viewableItems[items.viewableItems.length - 1].index,
+  const onViewableItemsChanged = useCallback(
+    (items: { viewableItems: Array<any> }) => {
+      if (items.viewableItems?.length > 0) {
+        visibleIndex.current = {
+          min: items.viewableItems[0].index,
+          max: items.viewableItems[items.viewableItems.length - 1].index,
+        }
       }
-    }
-  }
-  const viewabilityConfig = {
+    },
+    [],
+  )
+
+  const viewabilityConfig = useRef({
     waitForInteraction: true,
     viewAreaCoveragePercentThreshold: 95,
-  }
+  })
+
   const viewabilityConfigCallbackPairs = useRef([
     {
-      viewabilityConfig,
+      viewabilityConfig: viewabilityConfig.current,
       onViewableItemsChanged,
     },
   ])

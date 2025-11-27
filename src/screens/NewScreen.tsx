@@ -1,7 +1,7 @@
 import { clearLastVisited } from '@app/modules/visitSlice'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashList } from '@shopify/flash-list'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
 import { FABDown } from '../components/FABDown'
@@ -52,39 +52,49 @@ const NewScreen = () => {
   const otherOrder =
     sortOrder === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
 
-  const fabActions = [
-    {
-      icon: SORT_ICONS[otherOrder],
-      label: SORT_LABELS[otherOrder],
-      onPress: async () => {
-        return dispatch(NewActions.toggleSortOrder())
+  const fabActions = useMemo(
+    () => [
+      {
+        icon: SORT_ICONS[otherOrder],
+        label: SORT_LABELS[otherOrder],
+        onPress: async () => {
+          return dispatch(NewActions.toggleSortOrder())
+        },
       },
-    },
-    {
-      icon: 'reload',
-      label: 'reload new tags',
-      onPress: async () => {
-        return dispatch(getNewTags(true))
+      {
+        icon: 'reload',
+        label: 'reload new tags',
+        onPress: async () => {
+          return dispatch(getNewTags(true))
+        },
       },
-    },
-    {
-      icon: 'broom',
-      label: 'clear new tags',
-      onPress: async () => {
-        return dispatch(NewActions.reset())
+      {
+        icon: 'broom',
+        label: 'clear new tags',
+        onPress: async () => {
+          return dispatch(NewActions.reset())
+        },
       },
-    },
-  ]
+    ],
+    [otherOrder, dispatch],
+  )
 
-  const setIdle = () => dispatch(NewActions.setLoadingState(LoadingState.idle))
+  const setIdle = useCallback(
+    () => dispatch(NewActions.setLoadingState(LoadingState.idle)),
+    [dispatch],
+  )
 
-  const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
-      paddingLeft,
-      paddingRight,
-    },
-  })
+  const themedStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        listContainer: {
+          flex: 1,
+          paddingLeft,
+          paddingRight,
+        },
+      }),
+    [paddingLeft, paddingRight],
+  )
 
   return (
     <View style={CommonStyles.container}>

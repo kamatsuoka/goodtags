@@ -22,7 +22,7 @@ type Props = ComponentProps
 /**
  * A tag displayed in a list
  */
-function TagListItem(props: Props) {
+const TagListItem = React.memo((props: Props) => {
   const theme = useTheme()
 
   const themedStyles = StyleSheet.create({
@@ -124,9 +124,9 @@ function TagListItem(props: Props) {
   }
 
   return <Pressable onPress={props.onPress}>{content}</Pressable>
-}
+})
 
-export const ITEM_HEIGHT = 60
+export const ITEM_HEIGHT = 68
 
 const styles = StyleSheet.create({
   ripple: {

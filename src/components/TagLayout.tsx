@@ -128,6 +128,18 @@ export const TagLayout = ({
     [onBrightenThenFade, tag.uri],
   )
 
+  const handleNotePressIn = useCallback(() => {
+    noteOnPressIn()
+    // Defer state update to avoid re-render during touch event
+    setTimeout(() => onBrightenButtons(), 0)
+  }, [noteOnPressIn, onBrightenButtons])
+
+  const handleNotePressOut = useCallback(() => {
+    noteOnPressOut()
+    // Defer state update to avoid re-render during touch event
+    setTimeout(() => onBrightenThenFade(), 0)
+  }, [noteOnPressOut, onBrightenThenFade])
+
   const AppAction = useCallback(
     (props: AppActionProps) => {
       return (
@@ -202,16 +214,8 @@ export const TagLayout = ({
               onPress={() => {
                 // handler required for onPressIn to be handled
               }}
-              onPressIn={() => {
-                noteOnPressIn()
-                // Defer state update to avoid re-render during touch event
-                setTimeout(() => onBrightenButtons(), 0)
-              }}
-              onPressOut={() => {
-                noteOnPressOut()
-                // Defer state update to avoid re-render during touch event
-                setTimeout(() => onBrightenThenFade(), 0)
-              }}
+              onPressIn={handleNotePressIn}
+              onPressOut={handleNotePressOut}
               color={theme.colors.primary}
               size={BIG_BUTTON_SIZE}
               style={styles.dimmableIconHolderStyle}

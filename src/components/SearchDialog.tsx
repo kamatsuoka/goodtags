@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
 import {
   Button,
@@ -26,6 +26,46 @@ type Props = {
   filters: SearchFilters
   dismiss: () => void
 }
+
+const staticStyles = StyleSheet.create({
+  searchOptions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    paddingLeft: 20,
+  },
+  searchInput: {
+    borderWidth: 0,
+    borderBottomWidth: 0,
+    borderBottomColor: 'transparent',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  optionText: {
+    marginLeft: 5,
+  },
+  searchBar: {
+    margin: 10,
+  },
+  checkboxItem: {
+    paddingLeft: 0,
+    paddingRight: 5,
+    paddingVertical: 3,
+  },
+  infoButton: {
+    paddingLeft: 10,
+    marginHorizontal: 5,
+  },
+  offlineTitle: {
+    padding: 0,
+    paddingLeft: 10,
+  },
+})
+
 export default function SearchDialog(props: Props) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
@@ -40,62 +80,30 @@ export default function SearchDialog(props: Props) {
   const [modeExplanationDialogVisible, setModeExplanationDialogVisible] =
     useState(false)
 
-  const styles = StyleSheet.create({
-    container: {
-      // Paddings to handle safe area
-      paddingTop: insets.top,
-      paddingLeft,
-      paddingRight,
-    },
-    searchOptions: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      flexWrap: 'wrap',
-      alignItems: 'flex-start',
-      paddingLeft: 20,
-    },
-    searchInput: {
-      borderWidth: 0,
-      borderBottomWidth: 0,
-      borderBottomColor: 'transparent',
-    },
-    optionsContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginHorizontal: 5,
-    },
-    optionText: {
-      marginLeft: 5,
-    },
-    searchBar: {
-      margin: 10,
-    },
-    checkboxItem: {
-      paddingLeft: 0,
-      paddingRight: 5,
-      paddingVertical: 3,
-    },
-    infoButton: {
-      paddingLeft: 10,
-      marginHorizontal: 5,
-    },
-    offlineTitle: {
-      padding: 0,
-      paddingLeft: 10,
-    },
-  })
+  const dynamicStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          // Paddings to handle safe area
+          paddingTop: insets.top,
+          paddingLeft,
+          paddingRight,
+        },
+      }),
+    [insets.top, paddingLeft, paddingRight],
+  )
 
   const existingSearchResults = allTagIds.length > 0
 
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       <Searchbar
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect={false}
         autoFocus={true}
         icon={existingSearchResults ? 'chevron-left' : () => null}
-        inputStyle={styles.searchInput}
+        inputStyle={staticStyles.searchInput}
         multiline={false}
         numberOfLines={1}
         onChangeText={setDraftQuery}
@@ -113,10 +121,10 @@ export default function SearchDialog(props: Props) {
           )
         }}
         spellCheck={false}
-        style={styles.searchBar}
+        style={staticStyles.searchBar}
       />
       <Pressable onPress={Keyboard.dismiss}>
-        <View style={styles.searchOptions}>
+        <View style={staticStyles.searchOptions}>
           <SearchOptions title="collection" icon="playlist-music-outline">
             <RadioButton.Group
               onValueChange={value =>
@@ -131,13 +139,13 @@ export default function SearchDialog(props: Props) {
                 return (
                   <View
                     key={`collection_${value}`}
-                    style={styles.optionsContainer}
+                    style={staticStyles.optionsContainer}
                   >
                     <RadioButton.Item
                       label={value.toLowerCase()}
-                      labelStyle={styles.optionText}
+                      labelStyle={staticStyles.optionText}
                       position="leading"
-                      style={styles.checkboxItem}
+                      style={staticStyles.checkboxItem}
                       value={value}
                     />
                   </View>
@@ -146,11 +154,11 @@ export default function SearchDialog(props: Props) {
             </RadioButton.Group>
           </SearchOptions>
           <SearchOptions title="media" icon="music-clef-treble">
-            <View style={styles.optionsContainer}>
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="sheet music"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
                 status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
                 onPress={() =>
@@ -161,11 +169,11 @@ export default function SearchDialog(props: Props) {
                 }
               />
             </View>
-            <View style={styles.optionsContainer}>
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="tracks"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
                 status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
                 onPress={() =>
@@ -189,12 +197,15 @@ export default function SearchDialog(props: Props) {
             >
               {Object.values(Parts).map(value => {
                 return (
-                  <View key={`parts_${value}`} style={styles.optionsContainer}>
+                  <View
+                    key={`parts_${value}`}
+                    style={staticStyles.optionsContainer}
+                  >
                     <RadioButton.Item
                       label={value.toLowerCase()}
-                      labelStyle={styles.optionText}
+                      labelStyle={staticStyles.optionText}
                       position="leading"
-                      style={styles.checkboxItem}
+                      style={staticStyles.checkboxItem}
                       value={value}
                     />
                   </View>
@@ -206,20 +217,20 @@ export default function SearchDialog(props: Props) {
             title="offline"
             icon="cog-outline"
             infoButton=<IconButton
-              style={styles.infoButton}
+              style={staticStyles.infoButton}
               icon="information-outline"
               onPress={() => {
                 setModeExplanationDialogVisible(true)
                 Keyboard.dismiss()
               }}
             />
-            titleStyle={styles.offlineTitle}
+            titleStyle={staticStyles.offlineTitle}
           >
-            <View style={styles.optionsContainer}>
+            <View style={staticStyles.optionsContainer}>
               <Checkbox.Item
                 label="enabled"
-                labelStyle={styles.optionText}
-                style={styles.checkboxItem}
+                labelStyle={staticStyles.optionText}
+                style={staticStyles.checkboxItem}
                 position="leading"
                 status={draftFilters.offline ? 'checked' : 'unchecked'}
                 onPress={() =>

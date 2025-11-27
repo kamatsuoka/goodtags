@@ -1,5 +1,5 @@
 import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
 import { Divider, IconButton, Text, useTheme } from 'react-native-paper'
 import { useAppDispatch } from '../hooks'
@@ -99,19 +99,21 @@ function TracksInfo(props: { tag: Tag }) {
   return null
 }
 
-function InfoItem(props: { infoName: string; infoValue: string | number }) {
-  const { infoName, infoValue } = props
-  return (
-    <View style={styles.infoItemRow}>
-      <Text style={styles.infoName} numberOfLines={1}>
-        {infoName}:{' '}
-      </Text>
-      <Text style={styles.infoValue} numberOfLines={2}>
-        {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
-      </Text>
-    </View>
-  )
-}
+const InfoItem = React.memo(
+  (props: { infoName: string; infoValue: string | number }) => {
+    const { infoName, infoValue } = props
+    return (
+      <View style={styles.infoItemRow}>
+        <Text style={styles.infoName} numberOfLines={1}>
+          {infoName}:{' '}
+        </Text>
+        <Text style={styles.infoValue} numberOfLines={2}>
+          {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
+        </Text>
+      </View>
+    )
+  },
+)
 
 const MAX_LENGTH = 80
 
