@@ -4,11 +4,10 @@
 import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import useTagMedia from '../hooks/useTagMedia'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
@@ -31,19 +30,13 @@ const BIG_BUTTON_SIZE = 40
 const RandomScreen = () => {
   const theme = useTheme()
   const navigation = useNavigation()
-  const [tracksVisible, setTracksVisible] = useState(false)
-  const [infoVisible, setInfoVisible] = useState(false)
-  const [fabOpen, setFabOpen] = useState(false)
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tag = useAppSelector(state => {
     return selectRandomTag(state) || FALLBACK_TAG
   })
 
-  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
-    useButtonDimming()
-
-  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
+  const styles = useTagScreenStyles(false, false)
 
   useEffect(() => {
     dispatch(getRandomTag())
@@ -73,7 +66,6 @@ const RandomScreen = () => {
       <Appbar.Action
         icon="shuffle"
         onPress={async () => {
-          brightenThenFade()
           try {
             pause()
           } catch (e) {
@@ -94,25 +86,17 @@ const RandomScreen = () => {
       tagListType={TagListEnum.SearchResults}
       favoritesById={favoritesById}
       audioPlaying={audioPlaying}
-      buttonsDimmed={buttonsDimmed}
-      tracksVisible={tracksVisible}
-      infoVisible={infoVisible}
-      fabOpen={fabOpen}
       hasTracks={hasTracks}
       hasVideos={hasVideos}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={navigation.goBack}
-      onBrightenButtons={brightenButtons}
-      onBrightenThenFade={brightenThenFade}
-      onDimButtons={dimButtons}
-      onSetTracksVisible={setTracksVisible}
-      onSetInfoVisible={setInfoVisible}
-      onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
-      onNavigateToVideos={() => navigation.navigate('TagVideos', { tag })}
+      onNavigateToVideos={() => {
+        pause()
+        navigation.navigate('TagVideos', { tag })
+      }}
       onPlayTrack={setTrackUrl}
-      styles={styles}
       additionalActions={shuffleAction}
     />
   )

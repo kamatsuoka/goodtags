@@ -26,6 +26,14 @@ const baseStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  topBarLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  topBarSpacer: {
+    flex: 1,
+  },
   buttonHolder: {
     position: 'absolute',
     left: 0,
@@ -138,7 +146,7 @@ export const useTagScreenStyles = (
 
   const bottomActionBarStyle = {
     ...baseStyles.actionBar,
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: insets.bottom,
     left: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
     right: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
@@ -163,7 +171,10 @@ export const useTagScreenStyles = (
     ? themedStyles.iconHolderDim
     : themedStyles.iconHolderBright
 
-  const topBarLeftStyle = fabOpen ? { display: 'none' } : {}
+  const topBarLeftStyle = {
+    ...baseStyles.topBarLeft,
+    opacity: fabOpen ? 0 : 1,
+  }
   const heartIconStyle = fabOpen ? { display: 'none' } : {}
   const fabIconReplacementStyle = fabOpen ? {} : { display: 'none' }
 

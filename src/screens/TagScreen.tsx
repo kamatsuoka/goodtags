@@ -9,7 +9,6 @@ import React from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { useButtonDimming } from '../hooks/useButtonDimming'
 import { useTagEffects } from '../hooks/useTagEffects'
 import useTagMedia from '../hooks/useTagMedia'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
@@ -40,17 +39,15 @@ const TagScreen = ({ navigation }: Props) => {
     state => state.favorites.strandedTag,
   )
 
-  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
-    useButtonDimming()
-
-  const [tracksVisible, setTracksVisible] = React.useState(false)
-  const [infoVisible, setInfoVisible] = React.useState(false)
-  const [fabOpen, setFabOpen] = React.useState(false)
-
-  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
+  const styles = useTagScreenStyles(false, false)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
-  const { audioPlaying, setTrackUrl: setUrl, playOrPause } = useTagTrackPlayer()
+  const {
+    audioPlaying,
+    setTrackUrl: setUrl,
+    playOrPause,
+    pause,
+  } = useTagTrackPlayer()
   const { hasTracks, hasVideos } = useTagMedia(tag)
   useTagEffects(tag)
 
@@ -128,7 +125,6 @@ const TagScreen = ({ navigation }: Props) => {
       <Appbar.Action
         icon="arrow-up"
         onPress={async () => {
-          brightenThenFade()
           selectPrevTag()
         }}
         disabled={!hasPrevTag()}
@@ -139,7 +135,6 @@ const TagScreen = ({ navigation }: Props) => {
       <Appbar.Action
         icon="arrow-down"
         onPress={async () => {
-          brightenThenFade()
           selectNextTag()
         }}
         disabled={!hasNextTag()}
@@ -156,25 +151,17 @@ const TagScreen = ({ navigation }: Props) => {
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}
       audioPlaying={audioPlaying}
-      buttonsDimmed={buttonsDimmed}
-      tracksVisible={tracksVisible}
-      infoVisible={infoVisible}
-      fabOpen={fabOpen}
       hasTracks={hasTracks}
       hasVideos={hasVideos}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={goBack}
-      onBrightenButtons={brightenButtons}
-      onBrightenThenFade={brightenThenFade}
-      onDimButtons={dimButtons}
-      onSetTracksVisible={setTracksVisible}
-      onSetInfoVisible={setInfoVisible}
-      onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
-      onNavigateToVideos={() => navigation.navigate('TagVideos', { tag })}
+      onNavigateToVideos={() => {
+        pause()
+        navigation.navigate('TagVideos', { tag })
+      }}
       onPlayTrack={setUrl}
-      styles={styles}
       additionalActions={navigationActions}
       dimAdditionalActions={true}
     />

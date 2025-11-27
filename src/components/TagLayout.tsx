@@ -5,12 +5,21 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { ColorValue, View } from 'react-native'
 import { Appbar, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import CommonStyles from '../constants/CommonStyles'
+import { useButtonDimming } from '../hooks/useButtonDimming'
 import { noteForKey, useNotePlayer } from '../hooks/useNotePlayer'
+import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'
@@ -33,25 +42,14 @@ interface TagLayoutProps {
   tagListType: TagListEnum
   favoritesById: Record<number, any>
   audioPlaying: boolean
-  buttonsDimmed: boolean
-  tracksVisible: boolean
-  infoVisible: boolean
-  fabOpen: boolean
   hasTracks: boolean
   hasVideos: boolean
   onToggleFavorite: (id: number) => void
   onPlayOrPause: () => void
   onBack: () => void
-  onBrightenButtons: () => void
-  onBrightenThenFade: () => void
-  onDimButtons: () => void
-  onSetTracksVisible: (visible: boolean) => void
-  onSetInfoVisible: (visible: boolean) => void
-  onSetFabOpen: (open: boolean) => void
   onNavigateToTagLabels: () => void
   onNavigateToVideos: () => void
   onPlayTrack?: (url: string) => void
-  styles: any
   additionalActions?: ReactNode
   dimAdditionalActions?: boolean
 }
@@ -61,25 +59,14 @@ export const TagLayout = ({
   tagListType,
   favoritesById,
   audioPlaying,
-  buttonsDimmed,
-  tracksVisible,
-  infoVisible,
-  fabOpen,
   hasTracks,
   hasVideos,
   onToggleFavorite,
   onPlayOrPause,
   onBack,
-  onBrightenButtons,
-  onBrightenThenFade,
-  onDimButtons,
-  onSetTracksVisible,
-  onSetInfoVisible,
-  onSetFabOpen,
   onNavigateToTagLabels,
   onNavigateToVideos,
   onPlayTrack,
-  styles,
   additionalActions,
   dimAdditionalActions = false,
 }: TagLayoutProps) => {
@@ -87,6 +74,15 @@ export const TagLayout = ({
   const keyNote = noteForKey(tag.key)
   const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
     useNotePlayer(keyNote)
+
+  const [tracksVisible, setTracksVisible] = useState(false)
+  const [infoVisible, setInfoVisible] = useState(false)
+  const [fabOpen, setFabOpen] = useState(false)
+
+  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
+    useButtonDimming()
+
+  const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const tracksSheetRef = useRef<BottomSheetModal>(null)
@@ -126,7 +122,7 @@ export const TagLayout = ({
     {
       icon: 'file-document-outline',
       label: 'tag info',
-      onPress: () => onSetInfoVisible(true),
+      onPress: () => setInfoVisible(true),
     },
     {
       icon: 'tag-outline',
@@ -139,7 +135,7 @@ export const TagLayout = ({
     fabActions.push({
       icon: 'headphones',
       label: 'tracks',
-      onPress: () => onSetTracksVisible(true),
+      onPress: () => setTracksVisible(true),
     })
   }
 
@@ -159,21 +155,21 @@ export const TagLayout = ({
   )
 
   const memoizedSheetMusic = useMemo(
-    () => <SheetMusic uri={tag.uri} onPress={onBrightenThenFade} />,
-    [onBrightenThenFade, tag.uri],
+    () => <SheetMusic uri={tag.uri} onPress={brightenThenFade} />,
+    [brightenThenFade, tag.uri],
   )
 
   const handleNotePressIn = useCallback(() => {
     noteOnPressIn()
     // Defer state update to avoid re-render during touch event
-    setTimeout(() => onBrightenButtons(), 0)
-  }, [noteOnPressIn, onBrightenButtons])
+    setTimeout(() => brightenButtons(), 0)
+  }, [noteOnPressIn, brightenButtons])
 
   const handleNotePressOut = useCallback(() => {
     noteOnPressOut()
     // Defer state update to avoid re-render during touch event
-    setTimeout(() => onBrightenThenFade(), 0)
-  }, [noteOnPressOut, onBrightenThenFade])
+    setTimeout(() => brightenThenFade(), 0)
+  }, [noteOnPressOut, brightenThenFade])
 
   const AppAction = useCallback(
     (props: AppActionProps) => {
@@ -182,7 +178,7 @@ export const TagLayout = ({
           icon={props.icon}
           color={theme.colors.primary}
           onPress={() => {
-            onBrightenThenFade()
+            brightenThenFade()
             props.onPress()
           }}
           onPressIn={props.onPressIn}
@@ -193,7 +189,7 @@ export const TagLayout = ({
         />
       )
     },
-    [onBrightenThenFade, styles.dimmableIconHolderStyle, theme.colors.primary],
+    [brightenThenFade, styles.dimmableIconHolderStyle, theme.colors.primary],
   )
 
   return (
@@ -205,8 +201,8 @@ export const TagLayout = ({
           open={fabOpen}
           actions={fabActions}
           onStateChange={({ open }) => {
-            onDimButtons()
-            onSetFabOpen(open)
+            dimButtons()
+            setFabOpen(open)
           }}
           style={styles.fabGroupStyle}
           fabStyle={styles.fabHiddenStyle}
@@ -223,24 +219,22 @@ export const TagLayout = ({
             <View style={styles.themedStyles.idHolder}>
               <Text style={styles.themedStyles.id}># {tag.id}</Text>
             </View>
-          </View>
-          <View style={styles.baseStyles.topBarRow}>
+            <Appbar.Content title=" " style={styles.baseStyles.topBarSpacer} />
             <Appbar.Action
               icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
               onPress={() => onToggleFavorite(tag.id)}
               color={theme.colors.primary}
               size={SMALL_BUTTON_SIZE}
-              style={[styles.fabButtonStyle, styles.heartIconStyle]}
-            />
-            <Appbar.Content title="" style={styles.fabIconReplacementStyle} />
-            <Appbar.Action
-              icon={fabOpen ? 'minus' : 'cog-outline'}
-              onPress={() => onSetFabOpen(!fabOpen)}
-              color={theme.colors.primary}
-              size={SMALL_BUTTON_SIZE}
               style={styles.fabButtonStyle}
             />
           </View>
+          <Appbar.Action
+            icon={fabOpen ? 'minus' : 'cog-outline'}
+            onPress={() => setFabOpen(!fabOpen)}
+            color={theme.colors.primary}
+            size={SMALL_BUTTON_SIZE}
+            style={styles.fabButtonStyle}
+          />
         </View>
         <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
           {buttonsDimmed ? null : (
@@ -271,7 +265,7 @@ export const TagLayout = ({
           ref={bottomSheetModalRef}
           snapPoints={infoSnapPoints}
           enablePanDownToClose
-          onDismiss={() => onSetInfoVisible(false)}
+          onDismiss={() => setInfoVisible(false)}
           backgroundStyle={{ backgroundColor: theme.colors.surface }}
           handleIndicatorStyle={{ backgroundColor: theme.colors.outline }}
           backdropComponent={renderBackdrop}
@@ -283,14 +277,14 @@ export const TagLayout = ({
           ref={tracksSheetRef}
           snapPoints={tracksSnapPoints}
           enablePanDownToClose
-          onDismiss={() => onSetTracksVisible(false)}
+          onDismiss={() => setTracksVisible(false)}
           backgroundStyle={{ backgroundColor: theme.colors.surface }}
           handleIndicatorStyle={{ backgroundColor: theme.colors.outline }}
           backdropComponent={renderBackdrop}
           android_keyboardInputMode="adjustResize"
         >
           <TrackMenu
-            onDismiss={() => onSetTracksVisible(false)}
+            onDismiss={() => setTracksVisible(false)}
             onPlayTrack={onPlayTrack}
           />
         </BottomSheetModal>
