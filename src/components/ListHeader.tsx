@@ -3,7 +3,12 @@ import { TabBarBackground } from '@app/lib/theme'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
 import { Text } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import useHeaderHeight from '../hooks/useHeaderHeight'
@@ -33,6 +38,8 @@ export default function ListHeader({
   const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
+  const { width, height } = Dimensions.get('window')
+  const isPortrait = height > width
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -49,6 +56,10 @@ export default function ListHeader({
       ...styles.leftSpacer,
       left: paddingLeft,
     },
+    titleHolder: {
+      ...styles.titleHolder,
+      paddingBottom: isPortrait ? 7 : 0,
+    },
   })
 
   const backButton = showBackButton ? (
@@ -59,7 +70,7 @@ export default function ListHeader({
 
   const maybeWrappedTitle: React.ReactNode =
     typeof title === 'string' ? (
-      <View style={styles.titleHolder}>
+      <View style={themedStyles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
         <Text variant="titleMedium" style={styles.title}>
           {title}
@@ -120,6 +131,7 @@ const styles = StyleSheet.create({
   titleHolder: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     height: 50,
   },
   title: {
