@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import {
@@ -46,7 +46,7 @@ const SearchScreen = () => {
   const sortOrder = useAppSelector(
     state => selectSearchResults(state).sortOrder,
   )
-  const listRef = useRef<typeof FlashList<number>>(null)
+  const listRef = useRef<FlashListRef<number> | null>(null)
   const moreAvailable = useAppSelector(
     state => state.search.results.moreAvailable,
   )

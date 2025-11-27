@@ -3,7 +3,7 @@ import { setTagListType, setTagState, TagState } from '@app/modules/visitSlice'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { FlashList } from '@shopify/flash-list'
+import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { RefObject, useCallback, useRef } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
@@ -19,7 +19,7 @@ export type TagListProps = {
   emptyMessage: string
   loadMore?: (numTags: number) => Promise<boolean>
   tagListType: TagListType
-  listRef: RefObject<FlashList<number>>
+  listRef: RefObject<FlashListRef<number> | null>
 }
 
 /**
@@ -185,7 +185,6 @@ const TagList = (props: TagListProps) => {
       <FlashList
         ref={listRef}
         data={allTagIds}
-        estimatedItemSize={ITEM_HEIGHT}
         extraData={selectedTag}
         keyExtractor={(item, index) => 'key' + index}
         ListEmptyComponent={listEmptyComponent}

@@ -1,6 +1,6 @@
 import { useBodyInsets } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import React from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from 'react-native-paper'
@@ -11,7 +11,7 @@ import homeIcon from './homeIcon'
 
 type ListHeaderProps = {
   // reference to FlashList with tags
-  listRef: React.RefObject<FlashList<number>>
+  listRef: React.RefObject<FlashListRef<number> | null>
   showBackButton?: boolean
   title?: string | React.ReactNode
   titleIcon?: string

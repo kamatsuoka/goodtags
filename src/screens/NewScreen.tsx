@@ -1,6 +1,6 @@
 import { clearLastVisited } from '@app/modules/visitSlice'
 import { useFocusEffect } from '@react-navigation/native'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
@@ -34,7 +34,7 @@ const NewScreen = () => {
   const loadingState = useAppSelector(state => selectNew(state).loadingState)
   const error = useAppSelector(state => selectNew(state).error)
   const sortOrder = useAppSelector(state => selectNew(state).sortOrder)
-  const listRef = useRef<FlashList<number>>(null)
+  const listRef = useRef<FlashListRef<number> | null>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(

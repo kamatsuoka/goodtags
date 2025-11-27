@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { FlashList } from '@shopify/flash-list'
+import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
@@ -21,7 +21,7 @@ export const FavoritesScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
   const dispatch = useAppDispatch()
-  const listRef = useRef<typeof FlashList<number>>(null)
+  const listRef = useRef<FlashListRef<number> | null>(null)
   const fabStyleSheet = useFabDownStyle()
 
   useFocusEffect(
