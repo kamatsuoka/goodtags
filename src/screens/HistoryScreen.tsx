@@ -17,6 +17,7 @@ import { SORT_ICONS, SORT_LABELS, TagListEnum } from '../modules/tagLists'
  * Recently viewed tags.
  */
 const HistoryScreen = () => {
+  const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.history.sortOrder)
@@ -90,7 +91,8 @@ const HistoryScreen = () => {
         onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        color={theme.colors.onPrimary}
+        theme={theme}
       />
     </View>
   )

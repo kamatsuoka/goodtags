@@ -35,6 +35,7 @@ const PopularScreen = () => {
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
+  const theme = useTheme()
   const loadingState = useAppSelector(
     state => selectPopular(state).loadingState,
   )
@@ -133,13 +134,14 @@ const PopularScreen = () => {
       </Snackbar>
       <FABDown
         icon={fabOpen ? 'minus' : 'cog-outline'}
+        color={theme.colors.onPrimary}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        theme={theme}
       />
     </View>
   )

@@ -31,6 +31,7 @@ const EasyScreen = () => {
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
+  const theme = useTheme()
   const loadingState = useAppSelector(state => selectEasy(state).loadingState)
   const error = useAppSelector(state => selectEasy(state).error)
   const sortOrder = useAppSelector(state => selectEasy(state).sortOrder)
@@ -127,13 +128,14 @@ const EasyScreen = () => {
       </Snackbar>
       <FABDown
         icon={fabOpen ? 'minus' : 'cog-outline'}
+        color={theme.colors.onPrimary}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        theme={theme}
       />
     </View>
   )

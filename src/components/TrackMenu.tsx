@@ -42,7 +42,7 @@ export default function TrackMenu(props: TrackMenuProps) {
       backgroundColor: theme.colors.outline,
     },
     hiddenDot: {
-      color: theme.colors.inversePrimary,
+      color: theme.colors.background,
     },
   })
 

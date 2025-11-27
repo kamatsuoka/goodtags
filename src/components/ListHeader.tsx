@@ -1,5 +1,4 @@
 import { useBodyInsets } from '@app/hooks'
-import { TabBarBackground } from '@app/lib/theme'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
@@ -9,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import useHeaderHeight from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
@@ -40,6 +39,7 @@ export default function ListHeader({
   const insets = useSafeAreaInsets()
   const { width, height } = Dimensions.get('window')
   const isPortrait = height > width
+  const theme = useTheme()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -51,6 +51,7 @@ export default function ListHeader({
       ...styles.header,
       height: headerHeight,
       paddingTop: insets.top,
+      backgroundColor: theme.colors.primary,
     },
     leftSpacer: {
       ...styles.leftSpacer,
@@ -59,6 +60,13 @@ export default function ListHeader({
     titleHolder: {
       ...styles.titleHolder,
       paddingBottom: isPortrait ? 7 : 0,
+    },
+    title: {
+      ...styles.title,
+      color: theme.colors.onPrimary,
+    },
+    icon: {
+      color: theme.colors.onPrimary,
     },
   })
 
@@ -71,8 +79,8 @@ export default function ListHeader({
   const maybeWrappedTitle: React.ReactNode =
     typeof title === 'string' ? (
       <View style={themedStyles.titleHolder}>
-        {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleMedium" style={styles.title}>
+        {titleIcon ? homeIcon(titleIcon)({ style: themedStyles.icon }) : null}
+        <Text variant="titleMedium" style={themedStyles.title}>
           {title}
         </Text>
       </View>
@@ -105,7 +113,6 @@ export default function ListHeader({
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    backgroundColor: TabBarBackground,
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: 10,
@@ -118,6 +125,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   rightSpacer: {
     position: 'absolute',

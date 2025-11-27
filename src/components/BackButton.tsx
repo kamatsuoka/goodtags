@@ -20,7 +20,7 @@ export default function BackButton() {
   return (
     <IconButton
       icon="chevron-left"
-      iconColor={theme.colors.onPrimaryContainer}
+      iconColor={theme.colors.onPrimary}
       size={ICON_SIZE}
       style={themedStyles.button}
       mode="contained"

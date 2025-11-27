@@ -17,6 +17,7 @@ import { SORT_ICONS } from '../modules/tagLists'
  * Lists of labeled tags
  */
 export const LabeledScreen = () => {
+  const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
@@ -83,7 +84,8 @@ export const LabeledScreen = () => {
         onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        color={theme.colors.onPrimary}
+        theme={theme}
       />
     </View>
   )

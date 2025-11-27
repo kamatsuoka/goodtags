@@ -238,6 +238,7 @@ const SearchScreen = () => {
         onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
+        color={theme.colors.onPrimary}
         theme={theme}
       />
     </View>

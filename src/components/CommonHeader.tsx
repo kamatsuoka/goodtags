@@ -1,12 +1,11 @@
 import { useBodyInsets, useHorizontalInset } from '@app/hooks'
-import { TabBarBackground } from '@app/lib/theme'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { getHeaderTitle } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import React, { ComponentProps } from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, useTheme } from 'react-native-paper'
 import useHeaderHeight from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
@@ -55,6 +54,7 @@ export default function CommonHeader({
   const headerInset = useHorizontalInset()
   const navigation = useNavigation()
   const headerHeight = useHeaderHeight()
+  const theme = useTheme()
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -63,9 +63,13 @@ export default function CommonHeader({
       backgroundColor: 'transparent',
     },
     header: {
-      ...styles.header,
+      backgroundColor: theme.colors.primary,
       height: headerHeight,
       paddingHorizontal: 0,
+    },
+    title: {
+      ...styles.title,
+      color: theme.colors.onPrimary,
     },
     headerContent: {
       ...styles.headerContent,
@@ -95,7 +99,7 @@ export default function CommonHeader({
     typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleMedium" style={styles.title}>
+        <Text variant="titleMedium" style={themedStyles.title}>
           {title}
         </Text>
       </View>
@@ -115,9 +119,6 @@ export default function CommonHeader({
 }
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: TabBarBackground,
-  },
   headerContent: {
     alignItems: 'flex-end',
     flexDirection: 'row',

@@ -17,6 +17,7 @@ import { SORT_ICONS, TagListEnum } from '../modules/tagLists'
  * Favorites list
  */
 export const FavoritesScreen = () => {
+  const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const sortOrder = useAppSelector(state => state.favorites.sortOrder)
@@ -76,7 +77,8 @@ export const FavoritesScreen = () => {
         onStateChange={({ open }) => setFabOpen(open)}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        color={theme.colors.onPrimary}
+        theme={theme}
       />
     </View>
   )

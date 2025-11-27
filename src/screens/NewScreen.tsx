@@ -28,6 +28,7 @@ import {
  * New tags
  */
 const NewScreen = () => {
+  const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
@@ -133,7 +134,8 @@ const NewScreen = () => {
         onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
-        theme={useTheme()}
+        color={theme.colors.onPrimary}
+        theme={theme}
       />
     </View>
   )
