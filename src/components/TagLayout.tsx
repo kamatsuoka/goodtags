@@ -93,7 +93,7 @@ export const TagLayout = ({
     useNotePlayer(keyNote)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['65%', '90%'], [])
+  const snapPoints = useMemo(() => ['75%', '90%'], [])
 
   useEffect(() => {
     if (infoVisible) {
