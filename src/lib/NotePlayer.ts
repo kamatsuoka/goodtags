@@ -57,11 +57,24 @@ export class NotePlayer {
   }
 
   playSound = () => {
+    if (this.playing) {
+      // Already playing, just reset volume and clear any ramp-down
+      console.log(
+        `NotePlayer.playSound ${this.note} - already playing, skipping`,
+      )
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = undefined
+      }
+      this.player.volume = 1.0
+      return
+    }
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
+      this.timeoutId = undefined
     }
     this.player.volume = 1.0
-    console.log('NotePlayer.playSound')
+    console.log(`NotePlayer.playSound ${this.note}`)
     this.player.seekTo(0) // Reset to beginning
     this.player.play()
     stopOthers(this.note)
@@ -69,7 +82,7 @@ export class NotePlayer {
   }
 
   stopSound = () => {
-    console.log('NotePlayer.stopSound')
+    console.log(`NotePlayer.stopSound ${this.note}`)
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
       this.timeoutId = undefined

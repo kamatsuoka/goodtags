@@ -202,13 +202,15 @@ export const TagLayout = ({
               onPress={() => {
                 // handler required for onPressIn to be handled
               }}
-              onPressIn={async () => {
+              onPressIn={() => {
                 noteHandler.onPressIn()
-                onBrightenButtons()
+                // Defer state update to avoid re-render during touch event
+                setTimeout(() => onBrightenButtons(), 0)
               }}
-              onPressOut={async () => {
+              onPressOut={() => {
                 noteHandler.onPressOut()
-                onBrightenThenFade()
+                // Defer state update to avoid re-render during touch event
+                setTimeout(() => onBrightenThenFade(), 0)
               }}
               color={theme.colors.primary}
               size={BIG_BUTTON_SIZE}
