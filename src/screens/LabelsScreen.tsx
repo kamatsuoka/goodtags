@@ -5,7 +5,6 @@ import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Button, Divider, List, useTheme } from 'react-native-paper'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
  * List of labels for navigating to labeled tags
@@ -14,7 +13,6 @@ export default function LabelsScreen({
   navigation,
 }: HomeNavigatorScreenProps<'Labels'>) {
   const theme = useTheme()
-  const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const dispatch = useAppDispatch()
