@@ -65,7 +65,6 @@ export const FavoritesScreen = () => {
       <View style={styles.listContainer}>
         <TagList
           listRef={listRef}
-          title="favorites"
           emptyMessage={emptyMessage}
           tagListType={TagListEnum.Favorites}
         />

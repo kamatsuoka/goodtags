@@ -70,7 +70,7 @@ CombinedTheme.colors = {
 
 CombinedTheme.roundness = 9
 
-export const TabBarBackground = CombinedTheme.colors.primaryContainer
+export const TabBarBackground = CombinedTheme.colors.elevation.level1
 export const TabBarActiveColor = 'rgb(33, 150, 243)' // Vibrant blue for active tab
 export const InversePrimaryLowAlpha = 'rgba(168, 200, 255, 0.2)'
 export const InversePrimaryHighAlpha = 'rgba(168, 200, 255, 0.8)'

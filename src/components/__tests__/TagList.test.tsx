@@ -40,7 +40,6 @@ test('renders TagList empty state', () => {
     <Provider store={store}>
       <NavigationContainer>
         <TagList
-          title="Test"
           emptyMessage="No tags"
           tagListType={TagListEnum.History}
           listRef={listRef}

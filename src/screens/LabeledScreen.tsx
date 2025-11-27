@@ -72,7 +72,6 @@ export const LabeledScreen = () => {
       <View style={themedStyles.listContainer}>
         <TagList
           listRef={listRef}
-          title="tag-outline"
           emptyMessage={emptyMessage}
           tagListType={selectedLabel || ''}
         />

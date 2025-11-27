@@ -196,7 +196,6 @@ const SearchScreen = () => {
       <View style={themedStyles.listHolder}>
         <TagList
           listRef={listRef}
-          title="Search"
           loadMore={(numTags: number) => loadMore(numTags)}
           emptyMessage={statusMessage()}
           tagListType={TagListEnum.SearchResults}

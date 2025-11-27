@@ -107,7 +107,7 @@ const PopularScreen = () => {
       <ListHeader
         listRef={listRef}
         showBackButton={true}
-        title="popular tags"
+        title="popular"
         titleIcon="star"
       />
       <View style={themedStyles.listContainer}>
@@ -117,7 +117,6 @@ const PopularScreen = () => {
             loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
-          title="Popular Tags"
         />
       </View>
       {loadingState === LoadingState.pending ? (

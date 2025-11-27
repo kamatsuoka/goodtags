@@ -101,7 +101,7 @@ const NewScreen = () => {
       <ListHeader
         listRef={listRef}
         showBackButton={true}
-        title="new tags"
+        title="new"
         titleIcon="leaf"
       />
       <View style={themedStyles.listContainer}>
@@ -111,7 +111,6 @@ const NewScreen = () => {
             loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
-          title="New Tags"
         />
       </View>
       {loadingState === LoadingState.pending ? (

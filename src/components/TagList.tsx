@@ -15,7 +15,6 @@ import { getSelectedTagSetter } from '../modules/tagListUtil'
 import TagListItem from './TagListItem'
 
 export type TagListProps = {
-  title: string
   emptyMessage: string
   loadMore?: (numTags: number) => Promise<boolean>
   tagListType: TagListType

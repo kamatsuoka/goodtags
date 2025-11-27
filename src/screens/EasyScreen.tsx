@@ -101,7 +101,7 @@ const EasyScreen = () => {
       <ListHeader
         listRef={listRef}
         showBackButton={true}
-        title="easy tags"
+        title="easy"
         titleIcon="teddy-bear"
       />
       <View style={themedStyles.listContainer}>
@@ -111,7 +111,6 @@ const EasyScreen = () => {
             loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
-          title="Easy Tags"
         />
       </View>
       {loadingState === LoadingState.pending ? (

@@ -61,10 +61,20 @@ export default function HomeScreen({
       marginVertical: 5,
     },
     listItem: {
-      height: 50,
+      height: 56,
       flexDirection: 'row',
       paddingLeft: 5,
       paddingRight: 0,
+      paddingVertical: 4,
+    },
+    listItemTitle: {
+      fontSize: 18,
+    },
+    listItemContent: {
+      paddingVertical: 4,
+    },
+    iconStyle: {
+      marginTop: 4,
     },
     columnsContainer: {
       flexDirection: isLandscape ? 'row' : 'column',
@@ -130,37 +140,45 @@ export default function HomeScreen({
             <View style={styles.listHolder}>
               <TouchableOpacity onPress={() => navigation.navigate('Popular')}>
                 <List.Item
-                  title="popular tags"
+                  title="popular"
                   left={PopularIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity onPress={() => navigation.navigate('Classic')}>
                 <List.Item
-                  title="classic tags"
+                  title="classic"
                   left={ClassicIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity onPress={() => navigation.navigate('Easy')}>
                 <List.Item
-                  title="easy tags"
+                  title="easy"
                   left={EasyIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity onPress={() => navigation.navigate('New')}>
                 <List.Item
-                  title="new tags"
+                  title="new"
                   left={NewIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
             </View>
@@ -173,10 +191,12 @@ export default function HomeScreen({
                 }}
               >
                 <List.Item
-                  title="random tag"
+                  title="random"
                   left={RandomIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
             </View>
@@ -193,6 +213,8 @@ export default function HomeScreen({
                   left={LabelsIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
@@ -206,6 +228,8 @@ export default function HomeScreen({
                   left={OptionsIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
@@ -219,6 +243,8 @@ export default function HomeScreen({
                   left={DataIcon}
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
               <Divider />
@@ -233,6 +259,8 @@ export default function HomeScreen({
                   testID="about_button"
                   right={RightIcon}
                   style={styles.listItem}
+                  titleStyle={styles.listItemTitle}
+                  contentStyle={styles.listItemContent}
                 />
               </TouchableOpacity>
             </View>

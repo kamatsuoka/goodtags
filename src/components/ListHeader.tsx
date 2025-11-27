@@ -61,7 +61,7 @@ export default function ListHeader({
     typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleMedium" style={styles.title}>
+        <Text variant="titleLarge" style={styles.title}>
           {title}
         </Text>
       </View>
@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
     backgroundColor: TabBarBackground,
     flexDirection: 'row',
     justifyContent: 'center',
-    opacity: 0.9,
     paddingHorizontal: 10,
     height: 55,
   },

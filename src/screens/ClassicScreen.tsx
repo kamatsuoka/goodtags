@@ -107,7 +107,7 @@ const ClassicScreen = () => {
       <ListHeader
         listRef={listRef}
         showBackButton={true}
-        title="classic tags"
+        title="classic"
         titleIcon="pillar"
       />
       <View style={themedStyles.listContainer}>
@@ -117,7 +117,6 @@ const ClassicScreen = () => {
             loadingState === LoadingState.succeeded ? 'no tags found' : ''
           }
           listRef={listRef}
-          title="Classic Tags"
         />
       </View>
       {loadingState === LoadingState.pending ? (
