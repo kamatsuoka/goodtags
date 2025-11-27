@@ -1,6 +1,11 @@
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
-import { ReactNode, useCallback, useMemo } from 'react'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet'
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
 import { ColorValue, View } from 'react-native'
 import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
@@ -87,6 +92,30 @@ export const TagLayout = ({
   const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
     useNotePlayer(keyNote)
 
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const snapPoints = useMemo(() => ['65%', '90%'], [])
+
+  useEffect(() => {
+    if (infoVisible) {
+      bottomSheetModalRef.current?.present()
+    } else {
+      bottomSheetModalRef.current?.dismiss()
+    }
+  }, [infoVisible])
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.3}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  )
+
   const fabActions = [
     {
       icon: 'file-document-outline',
@@ -162,118 +191,125 @@ export const TagLayout = ({
   )
 
   return (
-    <View style={CommonStyles.container}>
-      {memoizedSheetMusic}
-      <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
-        open={fabOpen}
-        actions={fabActions}
-        onStateChange={({ open }) => {
-          onDimButtons()
-          onSetFabOpen(open)
-        }}
-        style={styles.fabGroupStyle}
-        fabStyle={styles.fabHiddenStyle}
-        theme={theme}
-      />
-      <View style={styles.topBarStyle} pointerEvents="box-none">
-        <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
-          <Appbar.BackAction
-            color={theme.colors.primary}
-            onPress={onBack}
-            size={SMALL_BUTTON_SIZE}
-            style={styles.backButtonStyle}
-          />
-          <View style={styles.themedStyles.idHolder}>
-            <Text style={styles.themedStyles.id}># {tag.id}</Text>
+    <BottomSheetModalProvider>
+      <View style={CommonStyles.container}>
+        {memoizedSheetMusic}
+        <FABDown
+          icon={fabOpen ? 'minus' : 'cog-outline'}
+          open={fabOpen}
+          actions={fabActions}
+          onStateChange={({ open }) => {
+            onDimButtons()
+            onSetFabOpen(open)
+          }}
+          style={styles.fabGroupStyle}
+          fabStyle={styles.fabHiddenStyle}
+          theme={theme}
+        />
+        <View style={styles.topBarStyle} pointerEvents="box-none">
+          <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
+            <Appbar.BackAction
+              color={theme.colors.primary}
+              onPress={onBack}
+              size={SMALL_BUTTON_SIZE}
+              style={styles.backButtonStyle}
+            />
+            <View style={styles.themedStyles.idHolder}>
+              <Text style={styles.themedStyles.id}># {tag.id}</Text>
+            </View>
+          </View>
+          <View style={styles.baseStyles.topBarRow}>
+            <Appbar.Action
+              icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
+              onPress={() => onToggleFavorite(tag.id)}
+              color={theme.colors.primary}
+              size={SMALL_BUTTON_SIZE}
+              style={[styles.fabButtonStyle, styles.heartIconStyle]}
+            />
+            <Appbar.Content title="" style={styles.fabIconReplacementStyle} />
+            <Appbar.Action
+              icon={fabOpen ? 'minus' : 'cog-outline'}
+              onPress={() => onSetFabOpen(!fabOpen)}
+              color={theme.colors.primary}
+              size={SMALL_BUTTON_SIZE}
+              style={styles.fabButtonStyle}
+            />
           </View>
         </View>
-        <View style={styles.baseStyles.topBarRow}>
-          <Appbar.Action
-            icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-            onPress={() => onToggleFavorite(tag.id)}
-            color={theme.colors.primary}
-            size={SMALL_BUTTON_SIZE}
-            style={[styles.fabButtonStyle, styles.heartIconStyle]}
-          />
-          <Appbar.Content title="" style={styles.fabIconReplacementStyle} />
-          <Appbar.Action
-            icon={fabOpen ? 'minus' : 'cog-outline'}
-            onPress={() => onSetFabOpen(!fabOpen)}
-            color={theme.colors.primary}
-            size={SMALL_BUTTON_SIZE}
-            style={styles.fabButtonStyle}
-          />
+        <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
+          {buttonsDimmed ? null : (
+            <>
+              <Appbar.Action
+                icon={noteIcon}
+                onPress={() => {
+                  // handler required for onPressIn to be handled
+                }}
+                onPressIn={handleNotePressIn}
+                onPressOut={handleNotePressOut}
+                color={theme.colors.primary}
+                size={BIG_BUTTON_SIZE}
+                style={styles.dimmableIconHolderStyle}
+              />
+              <AppAction
+                icon={audioPlaying ? 'pause' : 'play'}
+                onPress={async () => {
+                  onPlayOrPause()
+                }}
+                disabled={!hasTracks}
+              />
+            </>
+          )}
+          {dimAdditionalActions && buttonsDimmed ? null : additionalActions}
         </View>
-      </View>
-      <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
-        {buttonsDimmed ? null : (
-          <>
-            <Appbar.Action
-              icon={noteIcon}
-              onPress={() => {
-                // handler required for onPressIn to be handled
-              }}
-              onPressIn={handleNotePressIn}
-              onPressOut={handleNotePressOut}
-              color={theme.colors.primary}
-              size={BIG_BUTTON_SIZE}
-              style={styles.dimmableIconHolderStyle}
-            />
-            <AppAction
-              icon={audioPlaying ? 'pause' : 'play'}
-              onPress={async () => {
-                onPlayOrPause()
-              }}
-              disabled={!hasTracks}
-            />
-          </>
-        )}
-        {dimAdditionalActions && buttonsDimmed ? null : additionalActions}
-      </View>
-      <SafeAreaInsetsContext.Provider
-        value={{
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      >
-        <Modal
-          visible={infoVisible}
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          snapPoints={snapPoints}
+          enablePanDownToClose
           onDismiss={() => onSetInfoVisible(false)}
-          style={styles.themedStyles.modal}
+          backgroundStyle={{ backgroundColor: theme.colors.surface }}
+          handleIndicatorStyle={{ backgroundColor: theme.colors.outline }}
+          backdropComponent={renderBackdrop}
+          android_keyboardInputMode="adjustResize"
         >
           <TagInfoView tag={tag} tagListType={tagListType} />
-        </Modal>
-        {hasVideos ? (
-          <Modal
-            visible={videosVisible}
-            onDismiss={() => onSetVideosVisible(false)}
-            style={styles.videoModalStyle}
-          >
-            <VideoView tag={tag} />
-          </Modal>
-        ) : null}
-        <Modal
-          visible={tracksVisible}
-          onDismiss={() => onSetTracksVisible(false)}
-          style={styles.themedStyles.modal}
+        </BottomSheetModal>
+        <SafeAreaInsetsContext.Provider
+          value={{
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
         >
-          <TrackMenu
+          {hasVideos ? (
+            <Modal
+              visible={videosVisible}
+              onDismiss={() => onSetVideosVisible(false)}
+              style={styles.videoModalStyle}
+            >
+              <VideoView tag={tag} />
+            </Modal>
+          ) : null}
+          <Modal
+            visible={tracksVisible}
             onDismiss={() => onSetTracksVisible(false)}
-            onPlayTrack={onPlayTrack}
-          />
-        </Modal>
-        {videosVisible ? (
-          <IconButton
-            icon="close"
-            mode="contained"
-            onPress={() => onSetVideosVisible(false)}
-            style={styles.modalCloseButtonStyle}
-          />
-        ) : null}
-      </SafeAreaInsetsContext.Provider>
-    </View>
+            style={styles.themedStyles.modal}
+          >
+            <TrackMenu
+              onDismiss={() => onSetTracksVisible(false)}
+              onPlayTrack={onPlayTrack}
+            />
+          </Modal>
+          {videosVisible ? (
+            <IconButton
+              icon="close"
+              mode="contained"
+              onPress={() => onSetVideosVisible(false)}
+              style={styles.modalCloseButtonStyle}
+            />
+          ) : null}
+        </SafeAreaInsetsContext.Provider>
+      </View>
+    </BottomSheetModalProvider>
   )
 }

@@ -1,7 +1,9 @@
 import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
+import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useMemo } from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { Divider, IconButton, Text, useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch } from '../hooks'
 import Tag from '../lib/models/Tag'
 import { refreshFavorite } from '../modules/favoritesSlice'
@@ -12,18 +14,25 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   const { tag, tagListType } = props
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const insets = useSafeAreaInsets()
+  const { width, height } = useWindowDimensions()
+  const isLandscape = width > height
 
   const themedStyles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.inversePrimary,
-      padding: 20,
-      margin: 10,
-      borderRadius: 15,
-      justifyContent: 'space-between',
+    outerContainer: {
+      paddingHorizontal: isLandscape
+        ? Math.max(60, insets.left + 20, insets.right + 20)
+        : Math.max(20, insets.left + 20, insets.right + 20),
+      alignItems: 'center',
+    },
+    innerContainer: {
+      paddingTop: 10,
+      paddingBottom: 50,
+      maxWidth: '95%',
     },
     divider: {
-      marginVertical: 5,
-      backgroundColor: theme.colors.outline,
+      marginVertical: 10,
+      backgroundColor: theme.colors.outlineVariant,
     },
   })
 
@@ -39,10 +48,10 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   }, [tag])
 
   return (
-    <View style={styles.centeredView}>
-      <View style={themedStyles.container}>
+    <BottomSheetView style={themedStyles.outerContainer}>
+      <View style={themedStyles.innerContainer}>
         <View style={styles.titleHolder}>
-          <Text style={styles.infoTitle} variant="titleMedium">
+          <Text style={styles.infoTitle} variant="titleLarge">
             {tag.title}
           </Text>
           {isFavoriteOrLabel(tagListType) ? (
@@ -58,7 +67,7 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
           <TracksInfo tag={tag} />
         </View>
       </View>
-    </View>
+    </BottomSheetView>
   )
 }
 
@@ -80,16 +89,17 @@ function TracksInfo(props: { tag: Tag }) {
   if (tag.quartet) {
     if (tag.quartetUrl?.startsWith('http')) {
       return (
-        <View style={styles.tracksRow}>
-          <Text style={styles.infoName}>tracks: </Text>
-          <View style={styles.buttonHolder}>
-            <Text
-              style={styles.link}
-              onPress={() => Linking.openURL(tag.quartetUrl!)}
-            >
-              {tag.quartet}
-            </Text>
-          </View>
+        <View style={styles.infoItemRow}>
+          <Text style={styles.infoName} numberOfLines={1}>
+            tracks:{' '}
+          </Text>
+          <Text
+            style={styles.infoValue}
+            numberOfLines={2}
+            onPress={() => Linking.openURL(tag.quartetUrl!)}
+          >
+            <Text style={styles.link}>{tag.quartet}</Text>
+          </Text>
         </View>
       )
     } else {
@@ -128,13 +138,8 @@ function truncateLyrics(lyrics: string): string {
 }
 
 const styles = StyleSheet.create({
-  centeredView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   listContainer: {
     paddingTop: 10,
-    paddingLeft: 5,
   },
   titleHolder: {
     flexDirection: 'row',
@@ -146,41 +151,17 @@ const styles = StyleSheet.create({
   },
   infoItemRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     paddingVertical: 3,
-  },
-  tracksRow: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 3,
+    gap: 10,
   },
   infoName: {
-    flexBasis: 70,
+    minWidth: 70,
     fontSize: 14,
+    flexShrink: 0,
   },
   infoValue: {
-    flexBasis: 230,
     fontSize: 15,
-  },
-  buttonHolder: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    flex: 3,
-  },
-  button: {
-    alignSelf: 'flex-start',
-    marginTop: 2,
-    paddingBottom: 0,
-  },
-  buttonLabel: {
-    fontSize: 14,
-    marginVertical: 0,
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 2,
-    marginBottom: 0,
-    paddingBottom: 0,
+    flexShrink: 1,
   },
   link: {
     textDecorationLine: 'underline',
