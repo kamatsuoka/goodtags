@@ -61,7 +61,7 @@ export default function ListHeader({
     typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleLarge" style={styles.title}>
+        <Text variant="titleMedium" style={styles.title}>
           {title}
         </Text>
       </View>

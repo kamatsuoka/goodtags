@@ -82,11 +82,39 @@ const FontRegular = 'Vollkorn-Regular'
 const fontConfig = {
   fontFamily: FontRegular,
 }
+const customFontSizes = {
+  displayLarge: { fontSize: 59 },
+  displayMedium: { fontSize: 47 },
+  displaySmall: { fontSize: 38 },
+  headlineLarge: { fontSize: 34 },
+  headlineMedium: { fontSize: 30 },
+  headlineSmall: { fontSize: 26 },
+  titleLarge: { fontSize: 24 },
+  titleMedium: { fontSize: 18 },
+  titleSmall: { fontSize: 16 },
+  labelLarge: { fontSize: 16 },
+  labelMedium: { fontSize: 14 },
+  labelSmall: { fontSize: 13 },
+  bodyLarge: { fontSize: 18 },
+  bodyMedium: { fontSize: 16 },
+  bodySmall: { fontSize: 14 },
+}
 export const MainTheme = {
   ...CombinedTheme,
-  fonts: configureFonts({
-    config: fontConfig,
-  }),
+  fonts: {
+    ...configureFonts({ config: fontConfig }),
+    ...Object.fromEntries(
+      Object.entries(customFontSizes).map(([key, value]) => [
+        key,
+        {
+          ...configureFonts({ config: fontConfig })[
+            key as keyof typeof customFontSizes
+          ],
+          ...value,
+        },
+      ]),
+    ),
+  },
 }
 const SansRegular = 'Lato-Regular'
 const sansFontConfig = {
@@ -94,7 +122,18 @@ const sansFontConfig = {
 }
 export const SansSerifTheme = {
   ...CombinedTheme,
-  fonts: configureFonts({
-    config: sansFontConfig,
-  }),
+  fonts: {
+    ...configureFonts({ config: sansFontConfig }),
+    ...Object.fromEntries(
+      Object.entries(customFontSizes).map(([key, value]) => [
+        key,
+        {
+          ...configureFonts({ config: sansFontConfig })[
+            key as keyof typeof customFontSizes
+          ],
+          ...value,
+        },
+      ]),
+    ),
+  },
 }
