@@ -5,7 +5,8 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
-import {
+import { useNavigation } from '@react-navigation/native'
+import React, {
   ReactNode,
   useCallback,
   useEffect,
@@ -47,7 +48,6 @@ interface TagLayoutProps {
   onToggleFavorite: (id: number) => void
   onPlayOrPause: () => void
   onBack: () => void
-  onNavigateToTagLabels: () => void
   onNavigateToVideos: () => void
   onPlayTrack?: (url: string) => void
   additionalActions?: ReactNode
@@ -64,13 +64,13 @@ export const TagLayout = ({
   onToggleFavorite,
   onPlayOrPause,
   onBack,
-  onNavigateToTagLabels,
   onNavigateToVideos,
   onPlayTrack,
   additionalActions,
   dimAdditionalActions = false,
 }: TagLayoutProps) => {
   const theme = useTheme()
+  const navigation = useNavigation()
   const keyNote = noteForKey(tag.key)
   const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
     useNotePlayer(keyNote)
@@ -127,7 +127,7 @@ export const TagLayout = ({
     {
       icon: 'tag-outline',
       label: 'labels',
-      onPress: onNavigateToTagLabels,
+      onPress: () => navigation.navigate('TagLabels'),
     },
   ]
 

@@ -156,7 +156,6 @@ const TagScreen = ({ navigation }: Props) => {
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={goBack}
-      onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
       onNavigateToVideos={() => {
         pause()
         navigation.navigate('TagVideos', { tag })

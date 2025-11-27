@@ -91,7 +91,6 @@ const RandomScreen = () => {
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
       onBack={navigation.goBack}
-      onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
       onNavigateToVideos={() => {
         pause()
         navigation.navigate('TagVideos', { tag })
