@@ -99,7 +99,7 @@ export default function LabelsScreen({
       <View style={styles.actionBar}>
         <Button
           mode="outlined"
-          icon="tag-plus-outline"
+          icon="plus"
           onPress={() => navigation.navigate('CreateLabel', {})}
           style={styles.actionButton}
         >
