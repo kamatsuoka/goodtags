@@ -7,9 +7,8 @@ import {
 } from '@gorhom/bottom-sheet'
 import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
 import { ColorValue, View } from 'react-native'
-import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
+import { Appbar, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import CommonStyles from '../constants/CommonStyles'
 import { noteForKey, useNotePlayer } from '../hooks/useNotePlayer'
 import { FABDown } from './FABDown'
@@ -17,7 +16,6 @@ import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'
 import TagInfoView from './TagInfoView'
 import TrackMenu from './TrackMenu'
-import VideoView from './VideoView'
 
 const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
@@ -37,7 +35,6 @@ interface TagLayoutProps {
   audioPlaying: boolean
   buttonsDimmed: boolean
   tracksVisible: boolean
-  videosVisible: boolean
   infoVisible: boolean
   fabOpen: boolean
   hasTracks: boolean
@@ -49,10 +46,10 @@ interface TagLayoutProps {
   onBrightenThenFade: () => void
   onDimButtons: () => void
   onSetTracksVisible: (visible: boolean) => void
-  onSetVideosVisible: (visible: boolean) => void
   onSetInfoVisible: (visible: boolean) => void
   onSetFabOpen: (open: boolean) => void
   onNavigateToTagLabels: () => void
+  onNavigateToVideos: () => void
   onPlayTrack?: (url: string) => void
   styles: any
   additionalActions?: ReactNode
@@ -66,7 +63,6 @@ export const TagLayout = ({
   audioPlaying,
   buttonsDimmed,
   tracksVisible,
-  videosVisible,
   infoVisible,
   fabOpen,
   hasTracks,
@@ -78,10 +74,10 @@ export const TagLayout = ({
   onBrightenThenFade,
   onDimButtons,
   onSetTracksVisible,
-  onSetVideosVisible,
   onSetInfoVisible,
   onSetFabOpen,
   onNavigateToTagLabels,
+  onNavigateToVideos,
   onPlayTrack,
   styles,
   additionalActions,
@@ -151,7 +147,7 @@ export const TagLayout = ({
     fabActions.push({
       icon: 'video-box',
       label: 'videos',
-      onPress: () => onSetVideosVisible(true),
+      onPress: onNavigateToVideos,
     })
   }
 
@@ -298,32 +294,6 @@ export const TagLayout = ({
             onPlayTrack={onPlayTrack}
           />
         </BottomSheetModal>
-        <SafeAreaInsetsContext.Provider
-          value={{
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-        >
-          {hasVideos ? (
-            <Modal
-              visible={videosVisible}
-              onDismiss={() => onSetVideosVisible(false)}
-              style={styles.videoModalStyle}
-            >
-              <VideoView tag={tag} />
-            </Modal>
-          ) : null}
-          {videosVisible ? (
-            <IconButton
-              icon="close"
-              mode="contained"
-              onPress={() => onSetVideosVisible(false)}
-              style={styles.modalCloseButtonStyle}
-            />
-          ) : null}
-        </SafeAreaInsetsContext.Provider>
       </View>
     </BottomSheetModalProvider>
   )

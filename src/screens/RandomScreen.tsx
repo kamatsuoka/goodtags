@@ -32,7 +32,6 @@ const RandomScreen = () => {
   const theme = useTheme()
   const navigation = useNavigation()
   const [tracksVisible, setTracksVisible] = useState(false)
-  const [videosVisible, setVideosVisible] = useState(false)
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch = useAppDispatch()
@@ -97,7 +96,6 @@ const RandomScreen = () => {
       audioPlaying={audioPlaying}
       buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
-      videosVisible={videosVisible}
       infoVisible={infoVisible}
       fabOpen={fabOpen}
       hasTracks={hasTracks}
@@ -109,10 +107,10 @@ const RandomScreen = () => {
       onBrightenThenFade={brightenThenFade}
       onDimButtons={dimButtons}
       onSetTracksVisible={setTracksVisible}
-      onSetVideosVisible={setVideosVisible}
       onSetInfoVisible={setInfoVisible}
       onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      onNavigateToVideos={() => navigation.navigate('TagVideos', { tag })}
       onPlayTrack={setTrackUrl}
       styles={styles}
       additionalActions={shuffleAction}

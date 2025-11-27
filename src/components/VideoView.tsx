@@ -1,120 +1,193 @@
-import { useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
-import { IconButton, useTheme } from 'react-native-paper'
+import { useHorizontalInset } from '@app/hooks'
+import { RootStackParamList } from '@app/navigation/navigationParams'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useRef, useState } from 'react'
+import {
+  Dimensions,
+  FlatList,
+  Platform,
+  StyleSheet,
+  View,
+  ViewToken,
+} from 'react-native'
+import { useTheme } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import YoutubePlayer from 'react-native-youtube-iframe'
-import Tag, { Video } from '../lib/models/Tag'
+import { Video } from '../lib/models/Tag'
+
+type Props = NativeStackScreenProps<RootStackParamList, 'TagVideos'>
 
 /**
- * View youtube videos for a tag
+ * Full-screen carousel view for youtube videos
  */
-const VideoView = (props: { tag: Tag }) => {
+const VideoView = ({ route }: Props) => {
   const theme = useTheme()
-  const { tag } = props
-  const [videoIndex, setVideoIndex] = useState(0)
-  const getSelectedVideo = (): Video => tag.videos[videoIndex]
+  const tag = route.params.tag
+  const insets = useSafeAreaInsets()
+  const paddingHorizontal = useHorizontalInset()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const flatListRef = useRef<FlatList<Video>>(null)
 
-  const prevVideo = () => {
-    if (videoIndex > 0) setVideoIndex(videoIndex - 1)
-  }
-  const nextVideo = () => {
-    if (videoIndex < tag.videos.length) setVideoIndex(videoIndex + 1)
-  }
-
-  const hasPrev = videoIndex > 0
-  const hasNext = videoIndex < tag.videos.length - 1
   const screen = Dimensions.get('window')
   const deviceAspectRatio = screen.width / screen.height
 
-  const styles = StyleSheet.create({
-    body: {
-      margin: MARGIN,
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+        const newIndex = viewableItems[0].index
+        setCurrentIndex(newIndex)
+        setPlaying(false)
+      }
+    },
+  ).current
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+  }).current
+
+  const themedStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      paddingHorizontal,
+      paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
+    },
+    videoCard: {
+      width: screen.width - paddingHorizontal * 2,
+      justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 20,
-      justifyContent: 'space-between',
+      paddingVertical: 10,
+    },
+    videoInfo: {
+      marginTop: 16,
+      alignItems: 'center',
+    },
+    videoCounter: {
+      fontSize: 14,
+      color: theme.colors.outline,
+    },
+    backButton: {
+      alignSelf: 'flex-start',
+      margin: 15,
     },
     webView: {
-      flex: 1,
       elevation: 0,
-      borderTopLeftRadius: 30,
-      width: '100%',
+      borderRadius: 12,
     },
-    videoView: {
-      aspectRatio: VIDEO_ASPECT_RATIO,
-      paddingLeft: 0,
-      paddingRight: 0,
-      backgroundColor: 'transparent',
-      margin: 0,
-      alignItems: 'center',
-    },
-    videoInner: {
-      alignItems: 'center',
+    indicatorContainer: {
       flexDirection: 'row',
-      overflow: 'hidden',
-      padding: 0,
-      margin: 0,
+      justifyContent: 'center',
+      paddingVertical: 12,
     },
-    arrow: { justifyContent: 'center' },
+    indicator: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginHorizontal: 4,
+    },
+    placeholder: {
+      backgroundColor: theme.colors.surfaceVariant,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: theme.colors.outline,
+    },
   })
 
   function getVideoSize() {
+    const availableWidth = screen.width - paddingHorizontal * 2
+    // Use more screen height in landscape mode
+    const maxHeightPercent = deviceAspectRatio > VIDEO_ASPECT_RATIO ? 0.75 : 0.5
+    const maxHeight = screen.height * maxHeightPercent
+
     if (deviceAspectRatio > VIDEO_ASPECT_RATIO) {
-      // normally landscape mode
-      const height = screen.height - 2 * MARGIN
+      // landscape mode - height constrained
+      const height = Math.min(maxHeight, availableWidth / VIDEO_ASPECT_RATIO)
       const width = height * VIDEO_ASPECT_RATIO
       return { height, width }
     } else {
-      const width = screen.width - 2 * MARGIN
+      // portrait mode - width constrained
+      const width = availableWidth
       const height = width / VIDEO_ASPECT_RATIO
       return { height, width }
     }
   }
 
   const videoSize = getVideoSize()
-  const buttonMode = 'contained'
-  const bodyStyle = StyleSheet.compose(styles.body, videoSize)
 
-  return (
-    <View style={bodyStyle}>
-      <View style={styles.videoInner}>
-        <IconButton
-          icon="arrow-left"
-          disabled={!hasPrev}
-          mode={buttonMode}
-          onPress={prevVideo}
-          iconColor={
-            hasPrev ? theme.colors.primary : theme.colors.onSurfaceDisabled
-          }
-          style={styles.arrow}
-        />
+  const renderVideo = ({ item, index }: { item: Video; index: number }) => (
+    <View style={themedStyles.videoCard} key={`video-card-${index}`}>
+      {index === currentIndex ? (
         <YoutubePlayer
           height={videoSize.height}
           width={videoSize.width}
-          videoId={getSelectedVideo().code}
-          webViewStyle={styles.webView}
+          videoId={item.code}
+          play={playing}
+          onChangeState={(state: string) => {
+            setPlaying(state === 'playing')
+          }}
+          webViewStyle={themedStyles.webView}
           webViewProps={{
             containerStyle: {
-              borderRadius: 20,
+              borderRadius: 12,
               borderWidth: 2,
               borderColor: theme.colors.outline,
             },
           }}
         />
-        <IconButton
-          icon="arrow-right"
-          disabled={!hasNext}
-          mode={buttonMode}
-          onPress={nextVideo}
-          iconColor={
-            hasNext ? theme.colors.primary : theme.colors.onSurfaceDisabled
-          }
-          style={styles.arrow}
+      ) : (
+        <View
+          style={[
+            themedStyles.placeholder,
+            {
+              height: videoSize.height,
+              width: videoSize.width,
+            },
+          ]}
         />
-      </View>
+      )}
+    </View>
+  )
+
+  const renderIndicators = () => (
+    <View style={themedStyles.indicatorContainer}>
+      {tag.videos.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            themedStyles.indicator,
+            {
+              backgroundColor:
+                index === currentIndex
+                  ? theme.colors.primary
+                  : theme.colors.surfaceVariant,
+            },
+          ]}
+        />
+      ))}
+    </View>
+  )
+
+  return (
+    <View style={themedStyles.container}>
+      <FlatList
+        ref={flatListRef}
+        data={tag.videos}
+        renderItem={renderVideo}
+        keyExtractor={(item, index) => `video-${index}`}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        decelerationRate="fast"
+        snapToAlignment="center"
+      />
+      {tag.videos.length > 1 && renderIndicators()}
     </View>
   )
 }
 
-const MARGIN = 40
 const VIDEO_ASPECT_RATIO = 16 / 9
 
 export default VideoView

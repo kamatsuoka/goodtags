@@ -1,6 +1,7 @@
 import { navHeader } from '@app/components/CommonHeader'
 import CreateLabel from '@app/components/CreateLabel'
 import TagLabels from '@app/components/TagLabels'
+import VideoView from '@app/components/VideoView'
 import { MainTheme, SansSerifTheme } from '@app/lib/theme'
 import AboutScreen from '@app/screens/AboutScreen'
 import { FavoritesScreen } from '@app/screens/FavoritesScreen'
@@ -134,6 +135,19 @@ export default function RootStackNavigator() {
               component={TagLabels}
               options={{
                 title: 'labels',
+                header: navHeader(true),
+                contentStyle: {
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                },
+                ...tagOrientation,
+              }}
+            />
+            <Stack.Screen
+              name="TagVideos"
+              component={VideoView}
+              options={{
+                title: 'videos',
                 header: navHeader(true),
                 contentStyle: {
                   paddingLeft: 0,

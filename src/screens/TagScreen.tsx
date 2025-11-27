@@ -44,7 +44,6 @@ const TagScreen = ({ navigation }: Props) => {
     useButtonDimming()
 
   const [tracksVisible, setTracksVisible] = React.useState(false)
-  const [videosVisible, setVideosVisible] = React.useState(false)
   const [infoVisible, setInfoVisible] = React.useState(false)
   const [fabOpen, setFabOpen] = React.useState(false)
 
@@ -159,7 +158,6 @@ const TagScreen = ({ navigation }: Props) => {
       audioPlaying={audioPlaying}
       buttonsDimmed={buttonsDimmed}
       tracksVisible={tracksVisible}
-      videosVisible={videosVisible}
       infoVisible={infoVisible}
       fabOpen={fabOpen}
       hasTracks={hasTracks}
@@ -171,10 +169,10 @@ const TagScreen = ({ navigation }: Props) => {
       onBrightenThenFade={brightenThenFade}
       onDimButtons={dimButtons}
       onSetTracksVisible={setTracksVisible}
-      onSetVideosVisible={setVideosVisible}
       onSetInfoVisible={setInfoVisible}
       onSetFabOpen={setFabOpen}
       onNavigateToTagLabels={() => navigation.navigate('TagLabels')}
+      onNavigateToVideos={() => navigation.navigate('TagVideos', { tag })}
       onPlayTrack={setUrl}
       styles={styles}
       additionalActions={navigationActions}

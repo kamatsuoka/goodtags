@@ -16,6 +16,9 @@ export type RootStackParamList = {
     tag?: Tag
   }
   TagLabels: undefined
+  TagVideos: {
+    tag: Tag
+  }
   PortraitTransition: undefined
   LandscapeTransition: undefined
   Random: undefined
