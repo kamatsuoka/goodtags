@@ -7,7 +7,10 @@ import { FavoritesScreen } from '@app/screens/FavoritesScreen'
 import LandscapeTransition from '@app/screens/LandscapeTransition'
 import PortraitTransition from '@app/screens/PortraitTransition'
 import RandomScreen from '@app/screens/RandomScreen'
-import { NavigationContainer } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  Theme as NavigationTheme,
+} from '@react-navigation/native'
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
@@ -61,7 +64,7 @@ export default function RootStackNavigator() {
 
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer theme={theme}>
+      <NavigationContainer theme={theme as unknown as NavigationTheme}>
         <Stack.Navigator
           initialRouteName={lastVisited ? 'Tabs' : 'Welcome'}
           screenOptions={screenOptions}

@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react-native'
+import { ReactElement } from 'react'
 import { Provider as ReactReduxProvider } from 'react-redux'
 // @ts-ignore
 import configureStore from 'redux-mock-store'
@@ -12,7 +13,7 @@ const middlewares = [thunk] // add your middlewares like `redux-thunk`
 const mockStore = configureStore(middlewares)
 const store = mockStore(INITIAL_STATE)
 
-const reduxRender = (ui: JSX.Element, options: any = {}) =>
+const reduxRender = (ui: ReactElement, options: any = {}) =>
   render(ui, {
     wrapper: ({ children }) => (
       <ReactReduxProvider store={store}>{children}</ReactReduxProvider>

@@ -1,7 +1,8 @@
 import { useBodyInsets } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -14,7 +15,7 @@ type ListHeaderProps = {
   listRef: React.RefObject<FlashListRef<number> | null>
   showBackButton?: boolean
   title?: string | React.ReactNode
-  titleIcon?: string
+  titleIcon?: ComponentProps<typeof Icon>['name']
 }
 
 const LOGO_SIZE = 30
@@ -27,7 +28,7 @@ export default function ListHeader({
   listRef,
   showBackButton = false,
   title = '',
-  titleIcon = '',
+  titleIcon,
 }: ListHeaderProps) {
   const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()

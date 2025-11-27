@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import { ComponentProps } from 'react'
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
 import {
   Divider,
@@ -10,7 +11,7 @@ import {
 
 type Props = {
   title: string
-  icon: string
+  icon: ComponentProps<typeof Icon>['name']
   iconColor?: string
   iconSize?: number
   titleVariant?: keyof typeof MD3TypescaleKey

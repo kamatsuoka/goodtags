@@ -146,10 +146,13 @@ export const searchSlice = createSlice({
         state.loadingState = LoadingState.morePending
         state.error = undefined
       })
-      .addMatcher(isSearchAction('/rejected'), (state, action) => {
-        state.loadingState = LoadingState.failed
-        state.error = action.payload
-      })
+      .addMatcher(
+        isSearchAction('/rejected'),
+        (state, action: PayloadAction<string>) => {
+          state.loadingState = LoadingState.failed
+          state.error = action.payload
+        },
+      )
   },
 })
 

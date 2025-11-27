@@ -118,7 +118,7 @@ export type DbRow = { [column: string]: any }
 const DEBUG_DB_PERF = false
 function debugDbPerfCurrentTime() {
   if (DEBUG_DB_PERF) {
-    return global.performance.now()
+    return (global as any).performance.now()
   } else {
     return 0
   }

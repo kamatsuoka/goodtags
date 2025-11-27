@@ -1,13 +1,13 @@
-import { X2jOptionsOptional, XMLParser } from 'fast-xml-parser'
+import { X2jOptions, XMLParser } from 'fast-xml-parser'
 import { decode } from 'html-entities'
 
-const xmlParseOptions: X2jOptionsOptional = {
+const xmlParseOptions: Partial<X2jOptions> = {
   ignoreDeclaration: true,
   ignoreAttributes: false,
   attributeNamePrefix: '',
   attributesGroupName: 'attr',
   textNodeName: 'text',
-  tagValueProcessor: (tagName, tagValue) => decode(tagValue),
+  tagValueProcessor: (_: string, tagValue: string) => decode(tagValue),
 }
 
 export default function parseXml(text: string): any {

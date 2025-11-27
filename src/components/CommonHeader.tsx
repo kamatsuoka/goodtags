@@ -1,9 +1,10 @@
 import { useBodyInsets, useHorizontalInset } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { getHeaderTitle } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import useHeaderHeight from '../hooks/useHeaderHeight'
@@ -13,7 +14,7 @@ import homeIcon from './homeIcon'
 type CommonHeaderProps = {
   backType?: BackType
   title?: string | React.ReactNode
-  titleIcon?: string
+  titleIcon?: ComponentProps<typeof Icon>['name']
   insetHeader?: boolean
 }
 
@@ -47,7 +48,7 @@ export const navHeader =
 export default function CommonHeader({
   backType = BackType.Back,
   title = '',
-  titleIcon = '',
+  titleIcon,
   insetHeader = false,
 }: CommonHeaderProps) {
   const { paddingLeft } = useBodyInsets()

@@ -4,6 +4,7 @@
   "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@app/*": ["src/*"],
       "react-native-paper/lib/module/*": [
