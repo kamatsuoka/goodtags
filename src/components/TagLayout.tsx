@@ -93,7 +93,9 @@ export const TagLayout = ({
     useNotePlayer(keyNote)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['75%', '90%'], [])
+  const tracksSheetRef = useRef<BottomSheetModal>(null)
+  const infoSnapPoints = useMemo(() => ['75%', '90%'], [])
+  const tracksSnapPoints = useMemo(() => ['75%', '90%'], [])
 
   useEffect(() => {
     if (infoVisible) {
@@ -102,6 +104,14 @@ export const TagLayout = ({
       bottomSheetModalRef.current?.dismiss()
     }
   }, [infoVisible])
+
+  useEffect(() => {
+    if (tracksVisible) {
+      tracksSheetRef.current?.present()
+    } else {
+      tracksSheetRef.current?.dismiss()
+    }
+  }, [tracksVisible])
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -263,7 +273,7 @@ export const TagLayout = ({
         </View>
         <BottomSheetModal
           ref={bottomSheetModalRef}
-          snapPoints={snapPoints}
+          snapPoints={infoSnapPoints}
           enablePanDownToClose
           onDismiss={() => onSetInfoVisible(false)}
           backgroundStyle={{ backgroundColor: theme.colors.surface }}
@@ -272,6 +282,21 @@ export const TagLayout = ({
           android_keyboardInputMode="adjustResize"
         >
           <TagInfoView tag={tag} tagListType={tagListType} />
+        </BottomSheetModal>
+        <BottomSheetModal
+          ref={tracksSheetRef}
+          snapPoints={tracksSnapPoints}
+          enablePanDownToClose
+          onDismiss={() => onSetTracksVisible(false)}
+          backgroundStyle={{ backgroundColor: theme.colors.surface }}
+          handleIndicatorStyle={{ backgroundColor: theme.colors.outline }}
+          backdropComponent={renderBackdrop}
+          android_keyboardInputMode="adjustResize"
+        >
+          <TrackMenu
+            onDismiss={() => onSetTracksVisible(false)}
+            onPlayTrack={onPlayTrack}
+          />
         </BottomSheetModal>
         <SafeAreaInsetsContext.Provider
           value={{
@@ -290,16 +315,6 @@ export const TagLayout = ({
               <VideoView tag={tag} />
             </Modal>
           ) : null}
-          <Modal
-            visible={tracksVisible}
-            onDismiss={() => onSetTracksVisible(false)}
-            style={styles.themedStyles.modal}
-          >
-            <TrackMenu
-              onDismiss={() => onSetTracksVisible(false)}
-              onPlayTrack={onPlayTrack}
-            />
-          </Modal>
           {videosVisible ? (
             <IconButton
               icon="close"
