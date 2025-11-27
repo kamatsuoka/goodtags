@@ -2,7 +2,13 @@ import CommonStyles from '@app/constants/CommonStyles'
 import { useAppSelector } from '@app/hooks'
 import RootStackNavigator from '@app/navigation/RootStackNavigator'
 import { persistor, store } from '@app/store'
-import { LogBox, StatusBar, StyleSheet, useColorScheme, View } from 'react-native'
+import {
+  LogBox,
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from 'react-native'
 import ErrorBoundary from 'react-native-error-boundary'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'

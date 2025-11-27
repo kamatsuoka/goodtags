@@ -35,16 +35,17 @@ export default function HomeScreen({
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingVertical: 5,
       backgroundColor: theme.colors.secondaryContainer,
-      paddingTop: insets.top,
       paddingBottom: Math.max(insets.bottom, 10),
-      paddingHorizontal: 15,
     },
     buttonHolder: { alignItems: 'flex-start' },
     logoHolder: {
+      paddingTop: insets.top,
+      paddingBottom: 10,
+      paddingHorizontal: 15,
+      backgroundColor: theme.colors.primary,
       justifyContent: 'center',
-      flexBasis: 50,
+      height: 60 + insets.top,
       marginBottom: 5,
     },
     navHolder: {
@@ -119,6 +120,7 @@ export default function HomeScreen({
       width: '100%',
     },
     scrollContentContainer: {
+      paddingHorizontal: 15,
       width: '100%',
     },
   })
@@ -127,7 +129,7 @@ export default function HomeScreen({
     <View style={styles.container} testID="home_container">
       {shallow ? null : (
         <View style={styles.logoHolder}>
-          <Logo size={30} dark />
+          <Logo size={30} dark={false} />
         </View>
       )}
       <ScrollView
