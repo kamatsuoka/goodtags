@@ -70,12 +70,12 @@ export default function DataScreen() {
     <View style={styles.container}>
       <List.Section style={styles.section}>
         <ScrollView>
-          <Text variant="titleLarge">favorites + labels</Text>
+          <Text variant="titleLarge">faves + labels</Text>
           <View style={styles.listHolder}>
             <TouchableOpacity onPress={() => shareFavorites(favorites)}>
               <List.Item
                 title="backup"
-                description="export favorites and labels"
+                description="export faves and labels"
                 left={ExportIcon}
                 right={RightIcon}
                 style={styles.listItem}
@@ -133,7 +133,7 @@ export default function DataScreen() {
             >
               <List.Item
                 title="restore"
-                description="import favorites and labels"
+                description="import faves and labels"
                 left={ImportIcon}
                 right={RightIcon}
                 style={styles.listItem}
