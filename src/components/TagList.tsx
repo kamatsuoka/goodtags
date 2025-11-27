@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../hooks'
 import Tag from '../lib/models/Tag'
 import { LoadingState, TagListEnum, TagListType } from '../modules/tagLists'
 import { getSelectedTagSetter } from '../modules/tagListUtil'
-import TagListItem, { ITEM_HEIGHT } from './TagListItem'
+import TagListItem from './TagListItem'
 
 export type TagListProps = {
   title: string
@@ -61,13 +61,11 @@ const TagList = (props: TagListProps) => {
         if (i < visibleIndex.current.min) {
           listRef.current.scrollToIndex({
             index: i,
-            viewOffset: ITEM_HEIGHT / 2,
             viewPosition: 0,
           })
         } else if (i > visibleIndex.current.max) {
           listRef.current.scrollToIndex({
             index: i,
-            viewOffset: -ITEM_HEIGHT / 2,
             viewPosition: 1,
           })
         }
@@ -131,7 +129,6 @@ const TagList = (props: TagListProps) => {
           // use timer because new tags aren't immediately available
           listRef.current!.scrollToIndex({
             index: lastIndex,
-            viewOffset: -ITEM_HEIGHT,
             viewPosition: 1,
           })
           // listRef.current!.

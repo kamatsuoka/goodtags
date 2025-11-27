@@ -29,7 +29,6 @@ const TagListItem = React.memo((props: Props) => {
     listItem: {
       flex: 1,
       flexDirection: 'row',
-      height: ITEM_HEIGHT,
       paddingHorizontal: 0,
       paddingVertical: 2,
       alignItems: 'center',
@@ -126,13 +125,10 @@ const TagListItem = React.memo((props: Props) => {
   return <Pressable onPress={props.onPress}>{content}</Pressable>
 })
 
-export const ITEM_HEIGHT = 68
-
 const styles = StyleSheet.create({
   ripple: {
     flex: 1,
     flexDirection: 'row',
-    height: ITEM_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
   },
