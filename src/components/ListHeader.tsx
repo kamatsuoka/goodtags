@@ -42,8 +42,11 @@ export default function ListHeader({
     header: {
       ...styles.header,
       height: headerHeight,
-      paddingLeft,
       paddingTop: insets.top,
+    },
+    leftSpacer: {
+      ...styles.leftSpacer,
+      left: paddingLeft,
     },
   })
 
@@ -80,25 +83,39 @@ export default function ListHeader({
 
   return (
     <View style={themedStyles.header}>
-      {backButton}
+      <View style={themedStyles.leftSpacer}>{backButton}</View>
       {titleComponent}
-      <View style={styles.spacer} />
+      <View style={styles.rightSpacer} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     backgroundColor: TabBarBackground,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     opacity: 0.9,
     paddingHorizontal: 10,
     height: 55,
   },
   spacer: {
     width: 50,
+  },
+  leftSpacer: {
+    position: 'absolute',
+    left: 10,
+    bottom: 0,
+  },
+  rightSpacer: {
+    position: 'absolute',
+    right: 10,
+    width: 50,
+  },
+  centerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   titleHolder: {
     flexDirection: 'row',

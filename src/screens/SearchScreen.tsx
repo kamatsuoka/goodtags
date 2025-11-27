@@ -210,7 +210,7 @@ const SearchScreen = () => {
       {loadingState === LoadingState.morePending ? (
         <ActivityIndicator style={styles.spinner} size="small" />
       ) : null}
-      <View style={styles.buttonHolder}>
+      <View style={styles.floatingButtonHolder}>
         <Button
           mode="elevated"
           contentStyle={styles.compactSearchContent}
@@ -277,6 +277,16 @@ const styles = StyleSheet.create({
   buttonHolder: {
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  floatingButtonHolder: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    pointerEvents: 'box-none',
   },
   statusText: {
     paddingTop: 2,
