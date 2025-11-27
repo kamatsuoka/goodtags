@@ -6,8 +6,7 @@ import { Appbar, IconButton, Modal, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import CommonStyles from '../constants/CommonStyles'
-import { NoteHandler } from '../lib/NoteHandler'
-import { noteForKey } from '../lib/NotePlayer'
+import { noteForKey, useNotePlayer } from '../hooks/useNotePlayer'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'
@@ -85,7 +84,8 @@ export const TagLayout = ({
 }: TagLayoutProps) => {
   const theme = useTheme()
   const keyNote = noteForKey(tag.key)
-  const noteHandler = useMemo(() => new NoteHandler(keyNote), [keyNote])
+  const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
+    useNotePlayer(keyNote)
 
   const fabActions = [
     {
@@ -203,12 +203,12 @@ export const TagLayout = ({
                 // handler required for onPressIn to be handled
               }}
               onPressIn={() => {
-                noteHandler.onPressIn()
+                noteOnPressIn()
                 // Defer state update to avoid re-render during touch event
                 setTimeout(() => onBrightenButtons(), 0)
               }}
               onPressOut={() => {
-                noteHandler.onPressOut()
+                noteOnPressOut()
                 // Defer state update to avoid re-render during touch event
                 setTimeout(() => onBrightenThenFade(), 0)
               }}
