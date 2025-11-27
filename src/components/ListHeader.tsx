@@ -80,25 +80,25 @@ export default function ListHeader({
       title
     )
 
-  const titleComponent = (
-    <TouchableWithoutFeedback
-      onPress={async () => {
-        listRef.current!.scrollToIndex({
-          index: 0,
-          animated: true,
-        })
-      }}
-    >
-      {maybeWrappedTitle}
-    </TouchableWithoutFeedback>
-  )
+  const scrollToTop = async () => {
+    listRef.current!.scrollToIndex({
+      index: 0,
+      animated: true,
+    })
+  }
 
   return (
-    <View style={themedStyles.header}>
-      <View style={themedStyles.leftSpacer}>{backButton}</View>
-      {titleComponent}
-      <View style={styles.rightSpacer} />
-    </View>
+    <TouchableWithoutFeedback onPress={scrollToTop}>
+      <View style={themedStyles.header}>
+        <TouchableWithoutFeedback>
+          <View style={themedStyles.leftSpacer}>{backButton}</View>
+        </TouchableWithoutFeedback>
+        {maybeWrappedTitle}
+        <TouchableWithoutFeedback>
+          <View style={styles.rightSpacer} />
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
   )
 }
 
