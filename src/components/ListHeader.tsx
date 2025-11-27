@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 10,
     height: 55,
+    marginBottom: 5,
   },
   spacer: {
     width: 50,
