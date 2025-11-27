@@ -128,7 +128,10 @@ export const useTagScreenStyles = (
     marginRight: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
   }
 
-  const fabGroupStyle = baseStyles.fabGroup
+  const fabGroupStyle = {
+    ...baseStyles.fabGroup,
+    paddingTop: ios ? 10 : Math.max(10, insets.top * 0.8),
+  }
   const backButtonStyle = baseStyles.backButton
   const fabButtonStyle = baseStyles.fabButton
   const fabHiddenStyle = baseStyles.fabHidden
