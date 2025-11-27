@@ -1,10 +1,12 @@
 import { useAppSelector } from '@app/hooks'
 import { usePdfCache } from '@app/hooks/usePdfCache'
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { ActivityIndicator, Text } from 'react-native-paper'
 import PdfRendererView from 'react-native-pdf-renderer'
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
+import { scheduleOnRN } from 'react-native-worklets'
 
 const isPdf = (uri: string) => uri.toLowerCase().endsWith('.pdf')
 const BACKGROUND_COLOR = '#fcfcff'
@@ -30,61 +32,15 @@ export default function SheetMusic(props: Props) {
   // Use the PDF cache hook for handling remote PDF downloads
   const { localPath, isLoading, error } = usePdfCache(uri)
 
-  // Gesture tracking for tap detection
-  let touchStartTime = 0
-  let touchStartPosition = { x: 0, y: 0 }
-  let hasMoved = false
-  let tapTimeout: NodeJS.Timeout | null = null
+  // Single tap gesture that only fires if not part of a pinch/pan
+  const tap = Gesture.Tap()
+    .maxDuration(250)
+    .onEnd(() => {
+      scheduleOnRN(onPress)
+    })
 
-  const handleTouchStart = (evt: any) => {
-    touchStartTime = Date.now()
-    touchStartPosition = { x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY }
-    hasMoved = false
-
-    // Set a quick timeout to detect very fast taps
-    tapTimeout = setTimeout(() => {
-      // If we reach here and haven't moved, it's likely a tap
-      if (!hasMoved) {
-        onPress()
-      }
-      tapTimeout = null
-    }, 150) // Very short timeout for immediate response
-  }
-
-  const handleTouchMove = (evt: any) => {
-    const currentPosition = {
-      x: evt.nativeEvent.pageX,
-      y: evt.nativeEvent.pageY,
-    }
-    const distance = Math.sqrt(
-      Math.pow(currentPosition.x - touchStartPosition.x, 2) +
-        Math.pow(currentPosition.y - touchStartPosition.y, 2),
-    )
-
-    // If moved more than 5 pixels, consider it movement, not a tap
-    if (distance > 5) {
-      hasMoved = true
-      if (tapTimeout) {
-        clearTimeout(tapTimeout)
-        tapTimeout = null
-      }
-    }
-  }
-
-  const handleTouchEnd = () => {
-    const touchDuration = Date.now() - touchStartTime
-
-    if (tapTimeout) {
-      clearTimeout(tapTimeout)
-      tapTimeout = null
-    }
-
-    // Only trigger onPress if it was a quick tap without much movement
-    // and we haven't already triggered it via timeout
-    if (!hasMoved && touchDuration < 200) {
-      onPress()
-    }
-  }
+  // Allow simultaneous gestures so PDF viewer can handle pinch/pan
+  const composed = Gesture.Simultaneous(tap)
 
   const pdfStyle = {
     ...styles.pdf,
@@ -120,28 +76,20 @@ export default function SheetMusic(props: Props) {
 
       if (localPath) {
         return (
-          <View
-            style={pdfStyle}
-            onStartShouldSetResponder={() => true}
-            onResponderGrant={handleTouchStart}
-            onResponderMove={handleTouchMove}
-            onResponderRelease={handleTouchEnd}
-            onResponderTerminationRequest={() => {
-              // Allow termination if we've detected movement (not a tap)
-              return hasMoved
-            }}
-          >
-            <PdfRendererView
-              source={localPath}
-              onPageChange={(current, total) => {
-                console.log(`PDF page ${current} of ${total}`)
-              }}
-              onError={() => console.log('PDF render error')}
-              maxZoom={2.0}
-              distanceBetweenPages={16}
-              style={styles.pdfRenderer}
-            />
-          </View>
+          <GestureDetector gesture={composed}>
+            <View style={pdfStyle}>
+              <PdfRendererView
+                source={localPath}
+                onPageChange={(current, total) => {
+                  console.log(`PDF page ${current} of ${total}`)
+                }}
+                onError={() => console.log('PDF render error')}
+                maxZoom={2.0}
+                distanceBetweenPages={16}
+                style={styles.pdfRenderer}
+              />
+            </View>
+          </GestureDetector>
         )
       }
 
