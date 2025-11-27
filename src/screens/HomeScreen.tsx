@@ -64,7 +64,7 @@ export default function HomeScreen({
       height: 56,
       flexDirection: 'row',
       paddingLeft: 5,
-      paddingRight: 0,
+      paddingRight: 5,
       paddingVertical: 4,
     },
     listItemTitle: {
