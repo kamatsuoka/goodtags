@@ -70,7 +70,7 @@ export default function DataScreen() {
     <View style={styles.container}>
       <List.Section style={styles.section}>
         <ScrollView>
-          <Text variant="titleLarge">faves + labels</Text>
+          <Text variant="titleLarge">favorites + labels</Text>
           <View style={styles.listHolder}>
             <TouchableOpacity onPress={() => shareFavorites(favorites)}>
               <List.Item
