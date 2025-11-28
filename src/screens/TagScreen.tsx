@@ -9,8 +9,6 @@ import React from 'react'
 import { Appbar, useTheme } from 'react-native-paper'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { useTagEffects } from '../hooks/useTagEffects'
-import useTagMedia from '../hooks/useTagMedia'
 import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
@@ -48,8 +46,6 @@ const TagScreen = ({ navigation }: Props) => {
     playOrPause,
     pause,
   } = useTagTrackPlayer()
-  const { hasTracks, hasVideos } = useTagMedia(tag)
-  useTagEffects(tag)
 
   /**
    * Go back to list.
@@ -151,15 +147,10 @@ const TagScreen = ({ navigation }: Props) => {
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}
       audioPlaying={audioPlaying}
-      hasTracks={hasTracks}
-      hasVideos={hasVideos}
       onToggleFavorite={toggleFavorite}
       onPlayOrPause={playOrPause}
+      onPause={pause}
       onBack={goBack}
-      onNavigateToVideos={() => {
-        pause()
-        navigation.navigate('TagVideos', { tag })
-      }}
       onPlayTrack={setUrl}
       additionalActions={navigationActions}
       dimAdditionalActions={true}

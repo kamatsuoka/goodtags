@@ -1,3 +1,5 @@
+import { useTagEffects } from '@app/hooks/useTagEffects'
+import useTagMedia from '@app/hooks/useTagMedia'
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import {
@@ -6,7 +8,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
-import React, {
+import {
   ReactNode,
   useCallback,
   useEffect,
@@ -43,12 +45,10 @@ interface TagLayoutProps {
   tagListType: TagListEnum
   favoritesById: Record<number, any>
   audioPlaying: boolean
-  hasTracks: boolean
-  hasVideos: boolean
   onToggleFavorite: (id: number) => void
   onPlayOrPause: () => void
+  onPause: () => void
   onBack: () => void
-  onNavigateToVideos: () => void
   onPlayTrack?: (url: string) => void
   additionalActions?: ReactNode
   dimAdditionalActions?: boolean
@@ -59,12 +59,10 @@ export const TagLayout = ({
   tagListType,
   favoritesById,
   audioPlaying,
-  hasTracks,
-  hasVideos,
   onToggleFavorite,
   onPlayOrPause,
+  onPause,
   onBack,
-  onNavigateToVideos,
   onPlayTrack,
   additionalActions,
   dimAdditionalActions = false,
@@ -78,6 +76,7 @@ export const TagLayout = ({
   const [tracksVisible, setTracksVisible] = useState(false)
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
+  const { hasTracks, hasVideos } = useTagMedia(tag)
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -88,6 +87,8 @@ export const TagLayout = ({
   const tracksSheetRef = useRef<BottomSheetModal>(null)
   const infoSnapPoints = useMemo(() => ['75%', '90%'], [])
   const tracksSnapPoints = useMemo(() => ['75%', '90%'], [])
+
+  useTagEffects(tag)
 
   useEffect(() => {
     if (infoVisible) {
@@ -143,7 +144,10 @@ export const TagLayout = ({
     fabActions.push({
       icon: 'video-box',
       label: 'videos',
-      onPress: onNavigateToVideos,
+      onPress: () => {
+        onPause()
+        navigation.navigate('TagVideos', { tag })
+      },
     })
   }
 
