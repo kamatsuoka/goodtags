@@ -6,11 +6,8 @@ import useTagListState from '@app/hooks/useTagListState'
 import { TagState, setTagState } from '@app/modules/visitSlice'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
-import { Appbar, useTheme } from 'react-native-paper'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
-import useTagTrackPlayer from '../hooks/useTagTrackPlayer'
 import { FavoritesActions } from '../modules/favoritesSlice'
 import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
 import { TagListEnum } from '../modules/tagLists'
@@ -18,13 +15,10 @@ import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 
-const BIG_BUTTON_SIZE = 40
-
 /**
  * Sheet music screen
  */
 const TagScreen = ({ navigation }: Props) => {
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const favoritesById = useAppSelector(state => state.favorites.tagsById)
   const tagListType = useAppSelector(state => state.visit.tagListType)
@@ -37,15 +31,7 @@ const TagScreen = ({ navigation }: Props) => {
     state => state.favorites.strandedTag,
   )
 
-  const styles = useTagScreenStyles(false, false)
-
   const setSelectedTag = getSelectedTagSetter(tagListType)
-  const {
-    audioPlaying,
-    setTrackUrl: setUrl,
-    playOrPause,
-    pause,
-  } = useTagTrackPlayer()
 
   /**
    * Go back to list.
@@ -115,45 +101,31 @@ const TagScreen = ({ navigation }: Props) => {
     }
   }
 
-  const navigationActions = (
-    <>
-      <Appbar.Content title=" " pointerEvents="none" />
-      <Appbar.Action
-        icon="arrow-up"
-        onPress={async () => {
-          selectPrevTag()
-        }}
-        disabled={!hasPrevTag()}
-        color={theme.colors.primary}
-        size={BIG_BUTTON_SIZE}
-        style={styles.dimmableIconHolderStyle}
-      />
-      <Appbar.Action
-        icon="arrow-down"
-        onPress={async () => {
-          selectNextTag()
-        }}
-        disabled={!hasNextTag()}
-        color={theme.colors.primary}
-        size={BIG_BUTTON_SIZE}
-        style={styles.dimmableIconHolderStyle}
-      />
-    </>
-  )
+  const navigationActions = [
+    {
+      icon: 'arrow-up',
+      onPress: async () => {
+        selectPrevTag()
+      },
+      disabled: () => !hasPrevTag(),
+    },
+    {
+      icon: 'arrow-down',
+      onPress: async () => {
+        selectNextTag()
+      },
+      disabled: () => !hasNextTag(),
+    },
+  ]
 
   return (
     <TagLayout
       tag={tag}
       tagListType={tagListType as TagListEnum}
       favoritesById={favoritesById}
-      audioPlaying={audioPlaying}
       onToggleFavorite={toggleFavorite}
-      onPlayOrPause={playOrPause}
-      onPause={pause}
       onBack={goBack}
-      onPlayTrack={setUrl}
-      additionalActions={navigationActions}
-      dimAdditionalActions={true}
+      navigationActions={navigationActions}
     />
   )
 }

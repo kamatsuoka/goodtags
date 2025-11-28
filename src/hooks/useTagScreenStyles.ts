@@ -152,6 +152,7 @@ export const useTagScreenStyles = (
     right: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
     backgroundColor: 'transparent',
     zIndex: 10,
+    opacity: fabOpen ? 0 : 1,
   }
 
   const modalCloseButtonStyle = ios

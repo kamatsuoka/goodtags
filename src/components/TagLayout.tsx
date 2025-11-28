@@ -1,5 +1,6 @@
 import { useTagEffects } from '@app/hooks/useTagEffects'
 import useTagMedia from '@app/hooks/useTagMedia'
+import useTagTrackPlayer from '@app/hooks/useTagTrackPlayer'
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import {
@@ -8,14 +9,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
 import { Appbar, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
@@ -44,28 +38,24 @@ interface TagLayoutProps {
   tag: Tag
   tagListType: TagListEnum
   favoritesById: Record<number, any>
-  audioPlaying: boolean
   onToggleFavorite: (id: number) => void
-  onPlayOrPause: () => void
-  onPause: () => void
   onBack: () => void
-  onPlayTrack?: (url: string) => void
-  additionalActions?: ReactNode
-  dimAdditionalActions?: boolean
+  navigationActions?: NavigationAction[]
+}
+
+interface NavigationAction {
+  icon: string | IconSource
+  onPress: () => void
+  disabled?: () => boolean
 }
 
 export const TagLayout = ({
   tag,
   tagListType,
   favoritesById,
-  audioPlaying,
   onToggleFavorite,
-  onPlayOrPause,
-  onPause,
   onBack,
-  onPlayTrack,
-  additionalActions,
-  dimAdditionalActions = false,
+  navigationActions,
 }: TagLayoutProps) => {
   const theme = useTheme()
   const navigation = useNavigation()
@@ -77,6 +67,7 @@ export const TagLayout = ({
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const { hasTracks, hasVideos } = useTagMedia(tag)
+  const { audioPlaying, setTrackUrl, playOrPause, pause } = useTagTrackPlayer()
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -145,7 +136,7 @@ export const TagLayout = ({
       icon: 'video-box',
       label: 'videos',
       onPress: () => {
-        onPause()
+        pause()
         navigation.navigate('TagVideos', { tag })
       },
     })
@@ -241,29 +232,37 @@ export const TagLayout = ({
           />
         </View>
         <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
-          {buttonsDimmed ? null : (
-            <>
-              <Appbar.Action
-                icon={noteIcon}
-                onPress={() => {
-                  // handler required for onPressIn to be handled
-                }}
-                onPressIn={handleNotePressIn}
-                onPressOut={handleNotePressOut}
-                color={theme.colors.primary}
-                size={BIG_BUTTON_SIZE}
-                style={styles.dimmableIconHolderStyle}
-              />
+          <Appbar.Action
+            icon={noteIcon}
+            onPress={() => {
+              // handler required for onPressIn to be handled
+            }}
+            onPressIn={handleNotePressIn}
+            onPressOut={handleNotePressOut}
+            color={theme.colors.primary}
+            size={BIG_BUTTON_SIZE}
+            style={styles.dimmableIconHolderStyle}
+          />
+          <AppAction
+            icon={audioPlaying ? 'pause' : 'play'}
+            onPress={async () => {
+              playOrPause()
+            }}
+            disabled={!hasTracks}
+          />
+          <Appbar.Content title=" " pointerEvents="none" />
+          {navigationActions &&
+            navigationActions.map((action, index) => (
               <AppAction
-                icon={audioPlaying ? 'pause' : 'play'}
+                key={index}
+                icon={action.icon}
                 onPress={async () => {
-                  onPlayOrPause()
+                  pause()
+                  action.onPress()
                 }}
-                disabled={!hasTracks}
+                disabled={action.disabled ? action.disabled() : false}
               />
-            </>
-          )}
-          {dimAdditionalActions && buttonsDimmed ? null : additionalActions}
+            ))}
         </View>
         <BottomSheetModal
           ref={bottomSheetModalRef}
@@ -289,7 +288,7 @@ export const TagLayout = ({
         >
           <TrackMenu
             onDismiss={() => setTracksVisible(false)}
-            onPlayTrack={onPlayTrack}
+            onPlayTrack={setTrackUrl}
           />
         </BottomSheetModal>
       </View>
