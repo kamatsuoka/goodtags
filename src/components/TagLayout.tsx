@@ -1,6 +1,6 @@
 import { useTagEffects } from '@app/hooks/useTagEffects'
 import useTagMedia from '@app/hooks/useTagMedia'
-import useTagTrackPlayer from '@app/hooks/useTagTrackPlayer'
+import useTrackPlayer from '@app/hooks/useTrackPlayer'
 import Tag from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import {
@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
-import { Appbar, Text, useTheme } from 'react-native-paper'
+import { Appbar, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import CommonStyles from '../constants/CommonStyles'
 import { useButtonDimming } from '../hooks/useButtonDimming'
@@ -67,7 +67,13 @@ export const TagLayout = ({
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const { hasTracks, hasVideos } = useTagMedia(tag)
-  const { audioPlaying, setTrackUrl, playOrPause, pause } = useTagTrackPlayer()
+  const { audioPlaying, setTrackUrl, playOrPause, pause, error, clearError } =
+    useTrackPlayer()
+
+  // Debug logging for error state
+  useEffect(() => {
+    console.log('[TagLayout] Track player error:', error)
+  }, [error])
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
     useButtonDimming()
@@ -291,6 +297,19 @@ export const TagLayout = ({
             onPlayTrack={setTrackUrl}
           />
         </BottomSheetModal>
+        <Portal>
+          <Snackbar
+            visible={!!error}
+            onDismiss={clearError}
+            duration={4000}
+            action={{
+              label: 'Dismiss',
+              onPress: clearError,
+            }}
+          >
+            {error}
+          </Snackbar>
+        </Portal>
       </View>
     </BottomSheetModalProvider>
   )
