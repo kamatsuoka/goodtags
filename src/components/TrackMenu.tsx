@@ -9,13 +9,13 @@ import { setSelectedPart } from '../modules/tracksSlice'
 
 type TrackMenuProps = {
   onDismiss: () => void
-  onPlayTrack?: (url: string) => void
+  setTrackUrl?: (url: string | null) => void
 }
 
 export default function TrackMenu(props: TrackMenuProps) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { onDismiss, onPlayTrack } = props
+  const { onDismiss, setTrackUrl } = props
   const tracksState = useAppSelector(state => state.tracks)
   const { selectedPart, tagTracks } = tracksState
   const dispatch = useAppDispatch()
@@ -49,8 +49,8 @@ export default function TrackMenu(props: TrackMenuProps) {
   function playPart(part: string) {
     dispatch(setSelectedPart(part as TrackPart))
     const track = tagTracks[part as TrackPart]
-    if (track?.url && onPlayTrack) {
-      onPlayTrack(track.url)
+    if (track?.url && setTrackUrl) {
+      setTrackUrl(track.url)
     }
     onDismiss()
   }

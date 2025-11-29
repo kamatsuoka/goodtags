@@ -150,10 +150,10 @@ async function searchDb(
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =
     buildSqlParts(searchParams)
-  console.log('whereVariables', whereVariables)
-  console.log('whereClause', whereClause)
-  console.log('suffixClauses', suffixClauses)
-  console.log('suffixVariables', suffixVariables)
+  console.debug('whereVariables', whereVariables)
+  console.debug('whereClause', whereClause)
+  console.debug('suffixClauses', suffixClauses)
+  console.debug('suffixVariables', suffixVariables)
   const db = await getDbConnection()
   debugDbPerfLogging('Got db', overallStart)
 
@@ -168,13 +168,13 @@ async function searchDb(
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
-    console.log('tagSql', tagSql)
+    console.log('tagSql', tagSql, whereVariables, suffixVariables)
     tagRows = await db.getAllAsync<DbRow>(
       tagSql,
       ...whereVariables,
       ...suffixVariables,
     )
-    console.log('got tagRows.length = ', tagRows.length)
+    console.debug('got tagRows.length = ', tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
     trackRows = await db.getAllAsync<DbRow>(
@@ -207,7 +207,7 @@ async function searchDb(
       )
     }
     count = count_raw[0].count.toString()
-    console.log('raw count', count)
+    console.debug('raw count', count)
   }
 
   if (useTransaction) {

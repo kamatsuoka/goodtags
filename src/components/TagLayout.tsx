@@ -67,12 +67,14 @@ export const TagLayout = ({
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const { hasTracks, hasVideos } = useTagMedia(tag)
-  const { audioPlaying, setTrackUrl, playOrPause, pause, error, clearError } =
+  const { trackPlaying, setTrackUrl, playOrPause, pause, error, clearError } =
     useTrackPlayer()
 
   // Debug logging for error state
   useEffect(() => {
-    console.log('[TagLayout] Track player error:', error)
+    if (error) {
+      console.log('[TagLayout] Track player error:', error)
+    }
   }, [error])
 
   const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
@@ -179,6 +181,7 @@ export const TagLayout = ({
           icon={props.icon}
           color={theme.colors.primary}
           onPress={() => {
+            console.log('[TagLayout] AppAction pressed:', props.icon)
             brightenThenFade()
             props.onPress()
           }}
@@ -250,7 +253,7 @@ export const TagLayout = ({
             style={styles.dimmableIconHolderStyle}
           />
           <AppAction
-            icon={audioPlaying ? 'pause' : 'play'}
+            icon={trackPlaying ? 'pause' : 'play'}
             onPress={async () => {
               playOrPause()
             }}
@@ -294,7 +297,7 @@ export const TagLayout = ({
         >
           <TrackMenu
             onDismiss={() => setTracksVisible(false)}
-            onPlayTrack={setTrackUrl}
+            setTrackUrl={setTrackUrl}
           />
         </BottomSheetModal>
         <Portal>
