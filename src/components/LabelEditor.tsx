@@ -1,21 +1,19 @@
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { useState } from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
   RenderItemParams,
 } from 'react-native-draggable-flatlist'
-import {
-  Button,
-  Dialog,
-  IconButton,
-  Text,
-  TextInput,
-  useTheme,
-} from 'react-native-paper'
-// import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import { IconButton, Text, TextInput, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ITEM_HEIGHT = 60
@@ -27,8 +25,6 @@ export default function LabelEditor() {
     dispatch(FavoritesActions.setLabels(items))
   const [draftLabel, setDraftLabel] = useState('')
   const [labelToEdit, setLabelToEdit] = useState('')
-  const [labelToDelete, setLabelToDelete] = useState('')
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const insets = useSafeAreaInsets()
@@ -57,19 +53,24 @@ export default function LabelEditor() {
     dispatch(FavoritesActions.renameLabel({ oldLabel: label, newLabel }))
   }
 
-  const startDeleting = (label: string) => {
+  const confirmDelete = (label: string) => {
     stopEditing()
-    setLabelToDelete(label)
-    setDeleteDialogVisible(true)
-  }
-  const stopDeleting = () => {
-    setLabelToDelete('')
-    setDeleteDialogVisible(false)
-  }
-  const deleteLabel = async () => {
-    dispatch(FavoritesActions.deleteLabel(labelToDelete))
-    setLabelToDelete('')
-    setDeleteDialogVisible(false)
+    Alert.alert(
+      'delete label?',
+      label,
+      [
+        {
+          text: 'cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'delete',
+          style: 'destructive',
+          onPress: () => dispatch(FavoritesActions.deleteLabel(label)),
+        },
+      ],
+      { cancelable: true },
+    )
   }
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<string>) => {
@@ -115,7 +116,7 @@ export default function LabelEditor() {
               <IconButton
                 icon="trash-can-outline"
                 disabled={item !== draftLabel}
-                onPress={() => startDeleting(item)}
+                onPress={() => confirmDelete(item)}
               />
             </>
           ) : (
@@ -150,16 +151,6 @@ export default function LabelEditor() {
           renderItem={renderItem}
         />
       </NestableScrollContainer>
-      <Dialog visible={deleteDialogVisible} onDismiss={stopDeleting}>
-        <Dialog.Title>delete label</Dialog.Title>
-        <Dialog.Content>
-          <Text variant="bodyLarge">{labelToDelete}</Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={stopDeleting}>cancel</Button>
-          <Button onPress={deleteLabel}>ok</Button>
-        </Dialog.Actions>
-      </Dialog>
     </View>
   )
 }
