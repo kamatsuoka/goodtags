@@ -30,23 +30,23 @@ export function useTrackPlayer(): TrackPlayerHook {
   const playing = status.playing
   const [error, setError] = useState<string | null>(null)
   const [trackUrlState, setTrackUrlState] = useState<string | null>(null)
-  const [manualLoading, setManualLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  // only show loading when we've manually initiated loading, not from status.isbuffering
-  // status.isBuffering can be unreliable on iOS
-  const isLoading = manualLoading && !playing
+  // show loading when we've manually initiated loading.
+  // status.isBuffering is unreliable on iOS
+  const isLoading = loading && !playing && !error
 
   // clear loading when playing starts or error occurs
   useEffect(() => {
     if (playing || error) {
-      setManualLoading(false)
+      setLoading(false)
     }
   }, [playing, error])
 
   // clear loading when track is loaded
   useEffect(() => {
     if (status.isLoaded && !status.isBuffering) {
-      setManualLoading(false)
+      setLoading(false)
     }
   }, [status.isLoaded, status.isBuffering])
 
@@ -78,23 +78,23 @@ export function useTrackPlayer(): TrackPlayerHook {
       if (status.playing) {
         console.log('[TrackPlayer] Pausing playback')
         player.pause()
-        setManualLoading(false)
+        setLoading(false)
       } else if (!status.isLoaded || trackUrlState !== selectedTrack.url) {
         console.log('[TrackPlayer] Loading track on play:', selectedTrack.url)
         setError(null)
-        setManualLoading(true)
+        setLoading(true)
         player.replace(selectedTrack.url)
         setTrackUrlState(selectedTrack.url)
         player.play()
       } else {
         console.log('[TrackPlayer] Resuming playback')
-        setManualLoading(true)
+        setLoading(true)
         player.play()
       }
       setError(null) // Clear error on successful action
     } catch (e) {
       console.error('[TrackPlayer] Playback error:', e)
-      setManualLoading(false)
+      setLoading(false)
       const errorMsg = `Playback error: ${
         e instanceof Error ? e.message : 'Unknown error'
       }`
@@ -106,12 +106,12 @@ export function useTrackPlayer(): TrackPlayerHook {
     console.log('[TrackPlayer] setTrackUrl called:', url)
     try {
       setError(null)
-      setManualLoading(true)
+      setLoading(true)
       player.replace(url)
       player.play()
     } catch (e) {
       console.error('[TrackPlayer] Error setting track URL:', e)
-      setManualLoading(false)
+      setLoading(false)
       const errorMsg = `Failed to load track: ${
         e instanceof Error ? e.message : 'Unknown error'
       }`
@@ -146,10 +146,10 @@ export function useTrackPlayer(): TrackPlayerHook {
     console.log('[TrackPlayer] pause called')
     try {
       player.pause()
-      setManualLoading(false)
+      setLoading(false)
     } catch (e) {
       console.error('[TrackPlayer] Pause error:', e)
-      setManualLoading(false)
+      setLoading(false)
       const errorMsg = `Pause error: ${
         e instanceof Error ? e.message : 'Unknown error'
       }`

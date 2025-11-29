@@ -2,6 +2,7 @@ import { useTagEffects } from '@app/hooks/useTagEffects'
 import useTagMedia from '@app/hooks/useTagMedia'
 import useTrackPlayer from '@app/hooks/useTrackPlayer'
 import Tag from '@app/lib/models/Tag'
+import { TrackLoadingSpinner } from '@app/lib/theme'
 import { TagListEnum } from '@app/modules/tagLists'
 import {
   BottomSheetBackdrop,
@@ -33,13 +34,15 @@ import TrackMenu from './TrackMenu'
 const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
 
-const spinnerContainerStyle = { paddingTop: 5 }
-
-const LoadingSpinner = ({ color }: { color: string }) => (
-  <View style={spinnerContainerStyle}>
-    <ActivityIndicator size={28} color={color} />
-  </View>
-)
+const spinnerOverlayStyle = {
+  position: 'absolute' as const,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
+}
 
 // memoized component to prevent re-renders during rapid state changes
 const PlayPauseAction = React.memo(
@@ -60,34 +63,31 @@ const PlayPauseAction = React.memo(
     styles: any
     theme: any
   }) => {
-    if (isLoading) {
-      return (
+    const icon = isPlaying ? 'pause' : 'play'
+    return (
+      <View>
         <Appbar.Action
-          icon={LoadingSpinner}
-          iconColor={theme.colors.primary}
-          disabled
+          icon={icon}
+          color={theme.colors.primary}
+          onPress={() => {
+            console.log('[TagLayout] PlayPause pressed:', icon)
+            onPress()
+            // Defer state update to avoid re-render during touch event
+            setTimeout(() => brightenThenFade(), 0)
+          }}
+          disabled={disabled}
           size={BIG_BUTTON_SIZE}
           style={styles.dimmableIconHolderStyle}
         />
-      )
-    }
-
-    const icon = isPlaying ? 'pause' : 'play'
-    return (
-      <Appbar.Action
-        icon={icon}
-        color={theme.colors.primary}
-        animated={false}
-        onPress={() => {
-          console.log('[TagLayout] PlayPause pressed:', icon)
-          onPress()
-          // Defer state update to avoid re-render during touch event
-          setTimeout(() => brightenThenFade(), 0)
-        }}
-        disabled={disabled}
-        size={BIG_BUTTON_SIZE}
-        style={styles.dimmableIconHolderStyle}
-      />
+        {isLoading && (
+          <View style={spinnerOverlayStyle} pointerEvents="none">
+            <ActivityIndicator
+              size={BIG_BUTTON_SIZE + 12}
+              color={TrackLoadingSpinner}
+            />
+          </View>
+        )}
+      </View>
     )
   },
 )

@@ -75,7 +75,7 @@ export const TabBarActiveColor = 'rgb(33, 150, 243)' // Vibrant blue for active 
 export const InversePrimaryLowAlpha = 'rgba(168, 200, 255, 0.2)'
 export const InversePrimaryHighAlpha = 'rgba(168, 200, 255, 0.8)'
 export const IdBackground = 'rgba(255, 255, 255)'
-
+export const TrackLoadingSpinner = '#00E5FF'
 export const LogoFont = 'Vollkorn-Black'
 
 const FontRegular = 'Vollkorn-Regular'
