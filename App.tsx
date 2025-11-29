@@ -2,6 +2,7 @@ import CommonStyles from '@app/constants/CommonStyles'
 import { useAppSelector } from '@app/hooks'
 import RootStackNavigator from '@app/navigation/RootStackNavigator'
 import { persistor, store } from '@app/store'
+import { setAudioModeAsync } from 'expo-audio'
 import {
   LogBox,
   StatusBar,
@@ -16,6 +17,9 @@ import { Provider as ReactReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
 LogBox.ignoreLogs(['shouldStartLoad']) // react-native-webview for raster (non-pdf) sheet music
+
+// Configure audio mode once for the entire app
+setAudioModeAsync({ playsInSilentMode: true })
 
 /**
  * Top-level component.

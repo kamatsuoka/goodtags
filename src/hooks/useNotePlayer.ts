@@ -1,12 +1,5 @@
-import {
-  setAudioModeAsync,
-  useAudioPlayer,
-  useAudioPlayerStatus,
-} from 'expo-audio'
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
 import { useCallback, useEffect } from 'react'
-
-// enable playback in silent mode
-setAudioModeAsync({ playsInSilentMode: true })
 
 // Static mapping of note names to their audio files
 // prettier-ignore
