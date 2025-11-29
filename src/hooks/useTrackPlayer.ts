@@ -36,6 +36,15 @@ export function useTrackPlayer(): TrackPlayerHook {
     }
   }, [status.isLoaded, status.isBuffering, playing, selectedTrack?.url, status])
 
+  // allow replaying track after it ends
+  useEffect(() => {
+    // note: status.duration is not provided by expo-audio, but currentTime becomes NaN when track ends
+    if (status.isLoaded && !status.playing && isNaN(status.currentTime)) {
+      console.log('[TrackPlayer] Track finished, seeking to start')
+      player.seekTo(0)
+    }
+  }, [status.isLoaded, status.playing, status.currentTime, player])
+
   const trackPlayOrPause = () => {
     console.log('[TrackPlayer] trackPlayOrPause called, playing:', playing)
 
