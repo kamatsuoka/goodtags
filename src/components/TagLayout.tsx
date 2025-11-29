@@ -34,6 +34,42 @@ type AppActionProps = {
   onPressOut?: () => void
 }
 
+// Memoized component to prevent re-renders during rapid state changes
+const PlayPauseAction = React.memo(
+  ({
+    isPlaying,
+    onPress,
+    disabled,
+    brightenThenFade,
+    styles,
+    theme,
+  }: {
+    isPlaying: boolean
+    onPress: () => void
+    disabled: boolean
+    brightenThenFade: () => void
+    styles: any
+    theme: any
+  }) => {
+    const icon = isPlaying ? 'pause' : 'play'
+    return (
+      <Appbar.Action
+        icon={icon}
+        color={theme.colors.primary}
+        onPress={() => {
+          console.log('[TagLayout] PlayPause pressed:', icon)
+          onPress()
+          // Defer state update to avoid re-render during touch event
+          setTimeout(() => brightenThenFade(), 0)
+        }}
+        disabled={disabled}
+        size={BIG_BUTTON_SIZE}
+        style={styles.dimmableIconHolderStyle}
+      />
+    )
+  },
+)
+
 interface TagLayoutProps {
   tag: Tag
   tagListType: TagListEnum
@@ -182,8 +218,9 @@ export const TagLayout = ({
           color={theme.colors.primary}
           onPress={() => {
             console.log('[TagLayout] AppAction pressed:', props.icon)
-            brightenThenFade()
             props.onPress()
+            // Defer state update to avoid re-render during touch event
+            setTimeout(() => brightenThenFade(), 0)
           }}
           onPressIn={props.onPressIn}
           onPressOut={props.onPressOut}
@@ -194,6 +231,18 @@ export const TagLayout = ({
       )
     },
     [brightenThenFade, styles.dimmableIconHolderStyle, theme.colors.primary],
+  )
+
+  const handlePlayOrPause = useCallback(() => {
+    playOrPause()
+  }, [playOrPause])
+
+  const handleNavigationAction = useCallback(
+    (action: NavigationAction) => {
+      pause()
+      action.onPress()
+    },
+    [pause],
   )
 
   return (
@@ -252,12 +301,13 @@ export const TagLayout = ({
             size={BIG_BUTTON_SIZE}
             style={styles.dimmableIconHolderStyle}
           />
-          <AppAction
-            icon={trackPlaying ? 'pause' : 'play'}
-            onPress={async () => {
-              playOrPause()
-            }}
+          <PlayPauseAction
+            isPlaying={trackPlaying}
+            onPress={handlePlayOrPause}
             disabled={!hasTracks}
+            brightenThenFade={brightenThenFade}
+            styles={styles}
+            theme={theme}
           />
           <Appbar.Content title=" " pointerEvents="none" />
           {navigationActions &&
@@ -265,10 +315,7 @@ export const TagLayout = ({
               <AppAction
                 key={index}
                 icon={action.icon}
-                onPress={async () => {
-                  pause()
-                  action.onPress()
-                }}
+                onPress={() => handleNavigationAction(action)}
                 disabled={action.disabled ? action.disabled() : false}
               />
             ))}
