@@ -109,9 +109,7 @@ export function useTrackPlayer(): TrackPlayerHook {
     const fileType = (selectedTrack as any)?.file_type?.toLowerCase()
     if (fileType === 'mid' || fileType === 'midi') {
       console.warn('[TrackPlayer] Cannot play MIDI file')
-      setError(
-        'MIDI files cannot be played in the app. Please use the tracks menu to find an audio version.',
-      )
+      setError('MIDI files cannot be played in the app')
       return
     }
 
