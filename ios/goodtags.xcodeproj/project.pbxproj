@@ -13,7 +13,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9293EF96BF6C48B5B0E65798 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EEB45ECEECB4E43B28F5478 /* Lato-Regular.ttf */; };
 		9E6261A044C94E4BA06E5E22 /* Vollkorn-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D86FD7D053045F2AF18C828 /* Vollkorn-Regular.ttf */; };
-		BAE7D3D42EDA9A63008A0F42 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = BAE7D3D32EDA9A63008A0F42 /* AppIcon.icon */; };
+		BA658E842EDBAC78008531A1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = BA658E832EDBAC78008531A1 /* AppIcon.icon */; };
 		C11A26F641795766F3736DE6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		D3A22374C113B85D6659510C /* Pods_goodtags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97EFEBF4FB84AC756DD4BFAC /* Pods_goodtags.framework */; };
 		DBC5938AD5AAD03F74BAFD31 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456D1ADD2B39E6270A5591F0 /* ExpoModulesProvider.swift */; };
@@ -33,7 +33,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = goodtags/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97EFEBF4FB84AC756DD4BFAC /* Pods_goodtags.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_goodtags.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Black.ttf"; path = "../src/assets/fonts/Vollkorn-Black.ttf"; sourceTree = "<group>"; };
-		BAE7D3D32EDA9A63008A0F42 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		BA658E832EDBAC78008531A1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -52,12 +52,12 @@
 		13B07FAE1A68108700A75B9A /* goodtags */ = {
 			isa = PBXGroup;
 			children = (
-				BAE7D3D32EDA9A63008A0F42 /* AppIcon.icon */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				BA658E832EDBAC78008531A1 /* AppIcon.icon */,
 			);
 			name = goodtags;
 			sourceTree = "<group>";
@@ -199,9 +199,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				BA658E842EDBAC78008531A1 /* AppIcon.icon in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				C11A26F641795766F3736DE6 /* PrivacyInfo.xcprivacy in Resources */,
-				BAE7D3D42EDA9A63008A0F42 /* AppIcon.icon in Resources */,
 				9293EF96BF6C48B5B0E65798 /* Lato-Regular.ttf in Resources */,
 				034ACB8DBF0647AF8B706A89 /* Vollkorn-Black.ttf in Resources */,
 				9E6261A044C94E4BA06E5E22 /* Vollkorn-Regular.ttf in Resources */,
