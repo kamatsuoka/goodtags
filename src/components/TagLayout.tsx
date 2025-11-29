@@ -82,7 +82,7 @@ const PlayPauseAction = React.memo(
         {isLoading && (
           <View style={spinnerOverlayStyle} pointerEvents="none">
             <ActivityIndicator
-              size={BIG_BUTTON_SIZE + 12}
+              size={BIG_BUTTON_SIZE + 16}
               color={TrackLoadingSpinner}
             />
           </View>
