@@ -5,7 +5,7 @@ import useSelectedTag from '@app/hooks/useSelectedTag'
 import useTagListState from '@app/hooks/useTagListState'
 import { TagState, setTagState } from '@app/modules/visitSlice'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { FavoritesActions } from '../modules/favoritesSlice'
@@ -75,21 +75,6 @@ const TagScreen = ({ navigation }: Props) => {
     dispatch(setSelectedTag({ index, id }))
   }
 
-  function indexValid(index: number) {
-    return index >= 0 && index < allTagIds.length
-  }
-
-  function getMaxIndex(): number {
-    if (selectedTag !== undefined && indexValid(selectedTag.index)) {
-      return allTagIds.length - 1
-    }
-    // may happen when last favorite is removed
-    return 0 // sus
-  }
-
-  const hasPrevTag = () => selectedTag && selectedTag.index > 0
-  const hasNextTag = () => selectedTag && selectedTag.index < getMaxIndex()
-
   async function toggleFavorite(id: number) {
     if (favoritesById[id]) {
       dispatch(FavoritesActions.removeFavorite(id))
@@ -101,22 +86,23 @@ const TagScreen = ({ navigation }: Props) => {
     }
   }
 
-  const navigationActions = [
-    {
-      icon: 'arrow-up',
-      onPress: async () => {
-        selectPrevTag()
+  const navigationActions = useMemo(
+    () => [
+      {
+        icon: 'arrow-up',
+        onPress: () => selectPrevTag(),
+        disabled: () => !selectedTag || selectedTag.index <= 0,
       },
-      disabled: () => !hasPrevTag(),
-    },
-    {
-      icon: 'arrow-down',
-      onPress: async () => {
-        selectNextTag()
+      {
+        icon: 'arrow-down',
+        onPress: () => selectNextTag(),
+        disabled: () =>
+          !selectedTag || selectedTag.index >= allTagIds.length - 1,
       },
-      disabled: () => !hasNextTag(),
-    },
-  ]
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedTag, allTagIds.length],
+  )
 
   return (
     <TagLayout

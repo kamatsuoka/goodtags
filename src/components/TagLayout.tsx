@@ -26,15 +26,7 @@ import TrackMenu from './TrackMenu'
 const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
 
-type AppActionProps = {
-  icon: string | IconSource
-  onPress: () => void
-  disabled?: boolean
-  onPressIn?: () => void
-  onPressOut?: () => void
-}
-
-// Memoized component to prevent re-renders during rapid state changes
+// memoized component to prevent re-renders during rapid state changes
 const PlayPauseAction = React.memo(
   ({
     isPlaying,
@@ -60,6 +52,41 @@ const PlayPauseAction = React.memo(
           console.log('[TagLayout] PlayPause pressed:', icon)
           onPress()
           // Defer state update to avoid re-render during touch event
+          setTimeout(() => brightenThenFade(), 0)
+        }}
+        disabled={disabled}
+        size={BIG_BUTTON_SIZE}
+        style={styles.dimmableIconHolderStyle}
+      />
+    )
+  },
+)
+
+// memoized component for navigation actions (next/prev)
+const NavigationActionButton = React.memo(
+  ({
+    icon,
+    onPress,
+    disabled,
+    brightenThenFade,
+    styles,
+    theme,
+  }: {
+    icon: string | IconSource
+    onPress: () => void
+    disabled: boolean
+    brightenThenFade: () => void
+    styles: any
+    theme: any
+  }) => {
+    return (
+      <Appbar.Action
+        icon={icon}
+        color={theme.colors.primary}
+        onPress={() => {
+          console.log('[TagLayout] Navigation action pressed:', icon)
+          onPress()
+          // defer state update to avoid re-render during touch event
           setTimeout(() => brightenThenFade(), 0)
         }}
         disabled={disabled}
@@ -210,40 +237,9 @@ export const TagLayout = ({
     setTimeout(() => brightenThenFade(), 0)
   }, [noteOnPressOut, brightenThenFade])
 
-  const AppAction = useCallback(
-    (props: AppActionProps) => {
-      return (
-        <Appbar.Action
-          icon={props.icon}
-          color={theme.colors.primary}
-          onPress={() => {
-            console.log('[TagLayout] AppAction pressed:', props.icon)
-            props.onPress()
-            // Defer state update to avoid re-render during touch event
-            setTimeout(() => brightenThenFade(), 0)
-          }}
-          onPressIn={props.onPressIn}
-          onPressOut={props.onPressOut}
-          disabled={props.disabled}
-          size={BIG_BUTTON_SIZE}
-          style={styles.dimmableIconHolderStyle}
-        />
-      )
-    },
-    [brightenThenFade, styles.dimmableIconHolderStyle, theme.colors.primary],
-  )
-
   const handlePlayOrPause = useCallback(() => {
     playOrPause()
   }, [playOrPause])
-
-  const handleNavigationAction = useCallback(
-    (action: NavigationAction) => {
-      pause()
-      action.onPress()
-    },
-    [pause],
-  )
 
   return (
     <BottomSheetModalProvider>
@@ -312,11 +308,17 @@ export const TagLayout = ({
           <Appbar.Content title=" " pointerEvents="none" />
           {navigationActions &&
             navigationActions.map((action, index) => (
-              <AppAction
+              <NavigationActionButton
                 key={index}
                 icon={action.icon}
-                onPress={() => handleNavigationAction(action)}
+                onPress={() => {
+                  pause()
+                  action.onPress()
+                }}
                 disabled={action.disabled ? action.disabled() : false}
+                brightenThenFade={brightenThenFade}
+                styles={styles}
+                theme={theme}
               />
             ))}
         </View>

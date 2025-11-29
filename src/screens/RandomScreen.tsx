@@ -4,7 +4,7 @@
 import { SearchResult } from '@app/lib/models/Tag'
 import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { TagLayout } from '../components/TagLayout'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { FavoritesActions } from '../modules/favoritesSlice'
@@ -40,14 +40,19 @@ const RandomScreen = () => {
     }
   }
 
-  const navigationActions = [
-    {
-      icon: 'shuffle',
-      onPress: async () => {
-        dispatch(getRandomTag())
+  const handleShuffle = useCallback(() => {
+    dispatch(getRandomTag())
+  }, [dispatch])
+
+  const navigationActions = useMemo(
+    () => [
+      {
+        icon: 'shuffle',
+        onPress: handleShuffle,
       },
-    },
-  ]
+    ],
+    [handleShuffle],
+  )
 
   return (
     <TagLayout
