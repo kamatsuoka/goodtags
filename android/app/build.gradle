@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
@@ -80,6 +82,14 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+// Read version from package.json
+def getVersionFromPackageJson() {
+    def packageJson = file("$rootDir/../package.json")
+    def packageJsonText = packageJson.text
+    def packageJsonSlurper = new groovy.json.JsonSlurper()
+    return packageJsonSlurper.parseText(packageJsonText).version
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -91,7 +101,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName getVersionFromPackageJson()
     }
     signingConfigs {
         debug {

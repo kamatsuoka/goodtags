@@ -1,13 +1,14 @@
 {
   "name": "goodtags",
-  "version": "3.0.5",
+  "version": "4.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "sync-version": "node scripts/sync-version.js"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.7",
