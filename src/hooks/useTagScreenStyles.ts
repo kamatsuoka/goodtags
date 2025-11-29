@@ -153,7 +153,6 @@ export const useTagScreenStyles = (
     left: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
     right: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
     backgroundColor: 'transparent',
-    zIndex: 10,
     opacity: fabOpen ? 0 : 1,
   }
 

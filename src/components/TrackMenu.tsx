@@ -23,6 +23,7 @@ export default function TrackMenu(props: TrackMenuProps) {
   const styles = StyleSheet.create({
     outerContainer: {
       paddingHorizontal: Math.max(20, insets.left + 20, insets.right + 20),
+      paddingBottom: Math.max(20, insets.bottom),
       alignItems: 'center',
     },
     container: {
