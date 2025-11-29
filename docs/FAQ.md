@@ -31,10 +31,10 @@ to streamline the app if I hope to make it sustainable for the long term.
 
 So glad you asked. See [transitions](./transitions.md).
 
-## why do the bottom buttons disappear from sheet music view?
+## why do the bottom buttons dim from sheet music view?
 
 The bottom buttons on the sheet music view — play key note, play tracks, navigate up/down in list —
-disappear after a few seconds so you can enjoy the sheet music with fewer distractions.
+dim after a few seconds so you can enjoy the sheet music with fewer distractions.
 
 ## what if I want to use those buttons later?
 
