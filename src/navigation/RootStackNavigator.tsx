@@ -46,7 +46,7 @@ export default function RootStackNavigator() {
 
   const tagOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
-      orientation: autoRotate ? 'landscape_right' : 'all',
+      orientation: autoRotate ? 'landscape' : 'all',
     }),
     [autoRotate],
   )

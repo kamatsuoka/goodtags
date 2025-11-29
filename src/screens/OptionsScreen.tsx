@@ -128,7 +128,7 @@ export default function OptionsScreen() {
           left={renderStatusBarCheckbox}
           title="show status bar"
           titleStyle={styles.listItemTitle}
-          description="show the status bar"
+          description="show the system status bar"
         />
       </View>
     </ScrollView>

@@ -393,7 +393,7 @@ export const TagLayout = ({
             onDismiss={clearError}
             duration={4000}
             action={{
-              label: 'Dismiss',
+              label: 'dismiss',
               onPress: clearError,
             }}
           >
