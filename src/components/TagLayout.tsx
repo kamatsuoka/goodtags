@@ -11,7 +11,14 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
-import { Appbar, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
+import {
+  ActivityIndicator,
+  Appbar,
+  Portal,
+  Snackbar,
+  Text,
+  useTheme,
+} from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import CommonStyles from '../constants/CommonStyles'
 import { useButtonDimming } from '../hooks/useButtonDimming'
@@ -26,10 +33,19 @@ import TrackMenu from './TrackMenu'
 const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
 
+const spinnerContainerStyle = { paddingTop: 5 }
+
+const LoadingSpinner = ({ color }: { color: string }) => (
+  <View style={spinnerContainerStyle}>
+    <ActivityIndicator size={28} color={color} />
+  </View>
+)
+
 // memoized component to prevent re-renders during rapid state changes
 const PlayPauseAction = React.memo(
   ({
     isPlaying,
+    isLoading,
     onPress,
     disabled,
     brightenThenFade,
@@ -37,17 +53,31 @@ const PlayPauseAction = React.memo(
     theme,
   }: {
     isPlaying: boolean
+    isLoading: boolean
     onPress: () => void
     disabled: boolean
     brightenThenFade: () => void
     styles: any
     theme: any
   }) => {
+    if (isLoading) {
+      return (
+        <Appbar.Action
+          icon={LoadingSpinner}
+          iconColor={theme.colors.primary}
+          disabled
+          size={BIG_BUTTON_SIZE}
+          style={styles.dimmableIconHolderStyle}
+        />
+      )
+    }
+
     const icon = isPlaying ? 'pause' : 'play'
     return (
       <Appbar.Action
         icon={icon}
         color={theme.colors.primary}
+        animated={false}
         onPress={() => {
           console.log('[TagLayout] PlayPause pressed:', icon)
           onPress()
@@ -130,8 +160,15 @@ export const TagLayout = ({
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const { hasTracks, hasVideos } = useTagMedia(tag)
-  const { trackPlaying, setTrackUrl, playOrPause, pause, error, clearError } =
-    useTrackPlayer()
+  const {
+    trackPlaying,
+    isLoading,
+    setTrackUrl,
+    playOrPause,
+    pause,
+    error,
+    clearError,
+  } = useTrackPlayer()
 
   // Debug logging for error state
   useEffect(() => {
@@ -299,6 +336,7 @@ export const TagLayout = ({
           />
           <PlayPauseAction
             isPlaying={trackPlaying}
+            isLoading={isLoading}
             onPress={handlePlayOrPause}
             disabled={!hasTracks}
             brightenThenFade={brightenThenFade}
