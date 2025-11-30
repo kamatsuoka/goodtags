@@ -55,15 +55,15 @@ export default function DataScreen() {
       paddingHorizontal: 10,
       width: '100%',
     },
-    sectionTitle: {
-      marginTop: isLandscape ? 0 : 20,
-      marginBottom: 5,
+    title: {
+      marginTop: isLandscape ? 0 : 10,
+      marginBottom: 10,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
       paddingHorizontal: 5,
       borderRadius: 10,
-      marginVertical: 5,
+      marginVertical: 0,
     },
     listItem: {
       height: 50,
@@ -85,6 +85,7 @@ export default function DataScreen() {
       flex: isLandscape ? 1 : undefined,
       width: isLandscape ? undefined : '100%',
       paddingHorizontal: isLandscape ? 5 : 0,
+      marginHorizontal: isLandscape ? 10 : 0,
       marginVertical: 20,
     },
   })
@@ -94,7 +95,9 @@ export default function DataScreen() {
       <ScrollView style={styles.section}>
         <View style={styles.columnsContainer}>
           <View style={styles.column}>
-            <Text variant="titleLarge">faves + labels</Text>
+            <Text variant="titleLarge" style={styles.title}>
+              faves + labels
+            </Text>
             <View style={styles.listHolder}>
               <TouchableOpacity onPress={() => shareFavorites(favorites)}>
                 <List.Item
@@ -179,7 +182,9 @@ export default function DataScreen() {
           </View>
 
           <View style={styles.column}>
-            <Text variant="titleLarge">pdf cache</Text>
+            <Text variant="titleLarge" style={styles.title}>
+              pdf cache
+            </Text>
             <View style={styles.listHolder}>
               <TouchableOpacity
                 onPress={async () => {

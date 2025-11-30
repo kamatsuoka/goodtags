@@ -241,7 +241,7 @@ export default function HomeScreen({
                 }}
               >
                 <List.Item
-                  title="my data"
+                  title="data"
                   left={DataIcon}
                   right={RightIcon}
                   style={styles.listItem}

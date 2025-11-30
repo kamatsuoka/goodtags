@@ -118,7 +118,7 @@ export default function HomeNavigator() {
           name="Data"
           component={DataScreen}
           options={{
-            title: 'my data',
+            title: 'data',
             header: navHeader(false),
             ...homeOrientation,
           }}
