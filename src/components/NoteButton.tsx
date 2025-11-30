@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { ColorValue, StyleSheet, View } from 'react-native'
-import { Text, useTheme } from 'react-native-paper'
+import { useTheme } from 'react-native-paper'
 
 type ComponentProps = {
   note: string
@@ -17,7 +17,7 @@ const getAccidentalIcon = (accidental: string): string | null => {
 }
 
 function noteLabel(note: string): string {
-  return note.length > 0 ? note[0] : '?'
+  return note.length > 0 ? note[0].toLowerCase() : '?'
 }
 
 function getAccidental(note: string): string | null {
@@ -47,6 +47,10 @@ const NoteButton = (props: Props) => {
       color: theme.colors.primary,
       fontWeight: '600',
     },
+    noteIcon: {
+      textAlign: 'center',
+      textAlignVertical: 'center',
+    },
     accidental: {
       position: 'absolute',
       left: props.size * 0.5,
@@ -58,13 +62,19 @@ const NoteButton = (props: Props) => {
     const accidental = getAccidental(props.note)
     const accidentalIconName = accidental ? getAccidentalIcon(accidental) : null
 
-    const noteTextStyle = accidentalIconName
-      ? StyleSheet.compose(styles.noteText, { marginRight: fontSize * 0.4 })
-      : styles.noteText
+    // const noteTextStyle = accidentalIconName
+    //   ? StyleSheet.compose(styles.noteText, { marginRight: fontSize * 0.4 })
+    //   : styles.noteText
 
     return (
       <View style={styles.container}>
-        <Text style={noteTextStyle}>{label}</Text>
+        {/* <Text style={noteTextStyle}>{label}</Text> */}
+        <Icon
+          name={`alpha-${label}` as any}
+          size={fontSize * 2}
+          color={theme.colors.primary}
+          style={styles.noteIcon}
+        />
         {accidentalIconName && (
           <Icon
             name={accidentalIconName as any}
