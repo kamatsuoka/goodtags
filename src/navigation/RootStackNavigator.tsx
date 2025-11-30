@@ -18,13 +18,17 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack'
 import { useMemo } from 'react'
-import { Platform } from 'react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
-import { useAppSelector, useBodyInsets, useHorizontalInset } from '../hooks'
+import { useAppSelector } from '../hooks'
 import TagScreen from '../screens/TagScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import TabNavigator from './TabNavigator'
 import { RootStackParamList } from './navigationParams'
+
+const noHorizontalPadding = {
+  paddingLeft: 0,
+  paddingRight: 0,
+}
 
 /**
  * Navigator stack.
@@ -34,9 +38,6 @@ export default function RootStackNavigator() {
   const lastVisited = useAppSelector(state => state.visit.lastVisited)
   const autoRotate = useAppSelector(state => state.options.autoRotate)
   const serifs = useAppSelector(state => state.options.serifs)
-  const { paddingLeft, paddingRight } = useBodyInsets()
-  const ios = Platform.OS === 'ios'
-  const paddingHorizontal = useHorizontalInset()
 
   const homeOrientation: NativeStackNavigationOptions = useMemo(
     () => ({
@@ -112,10 +113,7 @@ export default function RootStackNavigator() {
               headerTitleStyle: {
                 fontFamily: theme.fonts.titleSmall.fontFamily,
               },
-              contentStyle: {
-                paddingLeft: ios ? paddingLeft : paddingHorizontal,
-                paddingRight: ios ? paddingRight : paddingHorizontal,
-              },
+              contentStyle: noHorizontalPadding,
               headerTitleAlign: 'center',
             }}
           >
@@ -124,10 +122,6 @@ export default function RootStackNavigator() {
               component={AboutScreen}
               options={{
                 headerShown: false,
-                contentStyle: {
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                },
                 ...homeOrientation,
               }}
             />
@@ -137,10 +131,6 @@ export default function RootStackNavigator() {
               options={{
                 title: 'labels',
                 header: navHeader(true),
-                contentStyle: {
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                },
                 ...tagOrientation,
               }}
             />
@@ -150,10 +140,6 @@ export default function RootStackNavigator() {
               options={{
                 title: 'videos',
                 header: navHeader(true),
-                contentStyle: {
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                },
                 ...tagOrientation,
               }}
             />
@@ -164,10 +150,6 @@ export default function RootStackNavigator() {
                 title: 'new label',
                 headerBackTitle: 'cancel',
                 header: navHeader(true),
-                contentStyle: {
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                },
                 orientation: 'all',
               }}
             />
@@ -177,10 +159,6 @@ export default function RootStackNavigator() {
               options={{
                 title: 'logs',
                 header: navHeader(false),
-                contentStyle: {
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                },
                 ...homeOrientation,
               }}
             />

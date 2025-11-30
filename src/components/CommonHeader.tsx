@@ -83,7 +83,10 @@ export default function CommonHeader({
   const backButton = () => {
     if (backType === BackType.Cancel) {
       return (
-        <Text style={styles.cancel} onPress={navigation.goBack}>
+        <Text
+          style={[styles.cancel, { color: theme.colors.onPrimary }]}
+          onPress={navigation.goBack}
+        >
           cancel
         </Text>
       )
