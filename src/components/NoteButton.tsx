@@ -1,4 +1,7 @@
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import {
+  FontAwesome6,
+  MaterialCommunityIcons as Icon,
+} from '@expo/vector-icons'
 import { ColorValue, StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 
@@ -28,9 +31,6 @@ function getAccidental(note: string): string | null {
  * A musical note button that plays the note when pressed.
  */
 const NoteButton = (props: Props) => {
-  /**
-   * Note: on ios simulator, note name appears a couple pixels higher than on a real device
-   */
   const theme = useTheme()
   const fontSize = props.size * 0.7
 
@@ -47,13 +47,9 @@ const NoteButton = (props: Props) => {
       color: theme.colors.primary,
       fontWeight: '600',
     },
-    noteIcon: {
-      textAlign: 'center',
-      textAlignVertical: 'center',
-    },
     accidental: {
       position: 'absolute',
-      left: props.size * 0.5,
+      left: fontSize * 0.85,
     },
   })
 
@@ -62,18 +58,12 @@ const NoteButton = (props: Props) => {
     const accidental = getAccidental(props.note)
     const accidentalIconName = accidental ? getAccidentalIcon(accidental) : null
 
-    // const noteTextStyle = accidentalIconName
-    //   ? StyleSheet.compose(styles.noteText, { marginRight: fontSize * 0.4 })
-    //   : styles.noteText
-
     return (
       <View style={styles.container}>
-        {/* <Text style={noteTextStyle}>{label}</Text> */}
-        <Icon
-          name={`alpha-${label}` as any}
-          size={fontSize * 2}
+        <FontAwesome6
+          name={label as any}
+          size={fontSize}
           color={theme.colors.primary}
-          style={styles.noteIcon}
         />
         {accidentalIconName && (
           <Icon
