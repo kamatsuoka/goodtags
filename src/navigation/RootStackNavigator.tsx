@@ -6,6 +6,7 @@ import { MainTheme, SansSerifTheme } from '@app/lib/theme'
 import AboutScreen from '@app/screens/AboutScreen'
 import { FavoritesScreen } from '@app/screens/FavoritesScreen'
 import LandscapeTransition from '@app/screens/LandscapeTransition'
+import LogsScreen from '@app/screens/LogsScreen'
 import PortraitTransition from '@app/screens/PortraitTransition'
 import RandomScreen from '@app/screens/RandomScreen'
 import {
@@ -168,6 +169,19 @@ export default function RootStackNavigator() {
                   paddingRight: 0,
                 },
                 orientation: 'all',
+              }}
+            />
+            <Stack.Screen
+              name="Logs"
+              component={LogsScreen}
+              options={{
+                title: 'logs',
+                header: navHeader(false),
+                contentStyle: {
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                },
+                ...homeOrientation,
               }}
             />
           </Stack.Group>

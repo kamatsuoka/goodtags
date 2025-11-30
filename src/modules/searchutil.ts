@@ -168,7 +168,7 @@ async function searchDb(
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
-    console.log('tagSql', tagSql, whereVariables, suffixVariables)
+    console.debug('tagSql', tagSql, whereVariables, suffixVariables)
     tagRows = await db.getAllAsync<DbRow>(
       tagSql,
       ...whereVariables,

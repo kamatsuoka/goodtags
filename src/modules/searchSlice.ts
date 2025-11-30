@@ -192,7 +192,6 @@ export const newSearch = createAsyncThunk<
   ThunkApiConfig
 >('search/newSearch', async (params: SearchParams, thunkAPI) => {
   thunkAPI.dispatch(SearchActions.resetResults())
-  console.log('newSearch', thunkAPI.getState().search.results)
   if (params.sortOrder) {
     // just change sort with existing query and filters
     thunkAPI.dispatch(SearchActions.setSortOrder(params.sortOrder))

@@ -21,9 +21,6 @@ export const useTagEffects = (tag: Tag) => {
 
   // set track data into store
   useEffect(() => {
-    console.log('[useTagEffects] setting tracks for tag', tag.id)
     dispatch(setTagTracks(tag))
   }, [dispatch, tag])
-
-  // track cleanup is handled by the audio hook's unmount behavior
 }

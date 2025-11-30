@@ -22,6 +22,7 @@ export type RootStackParamList = {
   PortraitTransition: undefined
   LandscapeTransition: undefined
   Random: undefined
+  Logs: undefined
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

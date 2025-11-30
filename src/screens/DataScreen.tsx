@@ -8,6 +8,7 @@ import {
   pick as pickDocument,
   types,
 } from '@react-native-documents/picker'
+import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import {
   ScrollView,
@@ -31,6 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
  */
 export default function DataScreen() {
   const theme = useTheme()
+  const navigation = useNavigation()
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const dispatch = useAppDispatch()
@@ -216,6 +218,26 @@ export default function DataScreen() {
               </TouchableOpacity>
             </View>
           </View>
+
+          <View style={styles.column}>
+            <Text variant="titleLarge" style={styles.title}>
+              logs
+            </Text>
+            <View style={styles.listHolder}>
+              <TouchableOpacity
+                onPress={async () => {
+                  navigation.navigate('Logs')
+                }}
+              >
+                <List.Item
+                  title="view logs"
+                  left={LogsIcon}
+                  right={RightIcon}
+                  style={styles.listItem}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </ScrollView>
       <Portal>
@@ -237,3 +259,4 @@ const RightIcon = homeIcon('chevron-right')
 const ExportIcon = homeIcon('database-export')
 const ImportIcon = homeIcon('database-import')
 const ClearIcon = homeIcon('broom')
+const LogsIcon = homeIcon('file-document-multiple-outline')

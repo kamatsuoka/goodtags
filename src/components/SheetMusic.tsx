@@ -69,7 +69,7 @@ export default function SheetMusic(props: Props) {
       if (error) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>
-            <Text style={styles.errorText}>Error loading pdf: {error}</Text>
+            <Text style={styles.errorText}>{error}</Text>
             <Button mode="contained" onPress={retry} style={styles.retryButton}>
               Retry
             </Button>
@@ -83,9 +83,6 @@ export default function SheetMusic(props: Props) {
             <View style={pdfStyle}>
               <PdfRendererView
                 source={localPath}
-                onPageChange={(current, total) => {
-                  console.log(`PDF page ${current} of ${total}`)
-                }}
                 onError={() => console.log('PDF render error')}
                 maxZoom={2.0}
                 distanceBetweenPages={16}

@@ -52,7 +52,7 @@ And on the list screens, you can long-press the "g" icon to play a "g".
 
 Cloud sync was honestly a huge amount of (mostly fun) work to develop for v1,
 mainly because I wanted it to work across multiple devices. It added a huge
-amount of complexity to the code overaall. And although I did do some ad hoc
+amount of complexity to the code overall. And although I did do some ad hoc
 testing, I never developed the level of extensive, automated testing you'd
 need to really trust that it works. And sure enough,
 I eventually heard from a disappointed user that they got a new phone,
