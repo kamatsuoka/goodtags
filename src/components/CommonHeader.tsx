@@ -15,6 +15,7 @@ type CommonHeaderProps = {
   title?: string | React.ReactNode
   titleIcon?: ComponentProps<typeof Icon>['name']
   insetHeader?: boolean
+  headerRight?: (props: any) => React.ReactNode
 }
 
 const LOGO_SIZE = 30
@@ -37,6 +38,7 @@ export const navHeader =
         title={title}
         backType={backType}
         insetHeader={insetHeader}
+        headerRight={props.options.headerRight}
       />
     )
   }
@@ -49,6 +51,7 @@ export default function CommonHeader({
   title = '',
   titleIcon,
   insetHeader = false,
+  headerRight,
 }: CommonHeaderProps) {
   const { paddingLeft } = useBodyInsets()
   const headerInset = useHorizontalInset()
@@ -112,7 +115,7 @@ export default function CommonHeader({
       <View style={themedStyles.headerContent}>
         {backButton()}
         {titleComponent}
-        <View style={styles.spacer} />
+        {headerRight ? headerRight({}) : <View style={styles.spacer} />}
       </View>
     </View>
   )

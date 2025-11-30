@@ -1,5 +1,6 @@
 import { useBodyInsets } from '@app/hooks'
-import { useRef, useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { FlatList, Platform, StyleSheet, View } from 'react-native'
 import { Card, Chip, IconButton, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -7,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 interface LogEntry {
   id: string
   timestamp: Date
-  type: 'log' | 'warn' | 'error' | 'info'
+  type: 'log' | 'warn' | 'error' | 'info' | 'debug'
   message: string
   args: any[]
 }
@@ -24,6 +25,7 @@ const originalConsole = {
   warn: console.warn,
   error: console.error,
   info: console.info,
+  debug: console.debug,
 }
 
 // Intercept console methods
@@ -55,10 +57,19 @@ const interceptConsole = () => {
   console.warn = createInterceptor('warn')
   console.error = createInterceptor('error')
   console.info = createInterceptor('info')
+  console.debug = createInterceptor('debug')
 }
 
 // Initialize console interception
 interceptConsole()
+
+const DeleteButton = ({
+  onPress,
+  color,
+}: {
+  onPress: () => void
+  color: string
+}) => <IconButton icon="delete" iconColor={color} onPress={onPress} />
 
 /**
  * Screen displaying the last 100 console logs
@@ -68,8 +79,27 @@ export default function LogsScreen() {
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [logs, setLogs] = useState<LogEntry[]>([...logStorage])
-  const [autoScroll, setAutoScroll] = useState(true)
+  const [_autoScroll, setAutoScroll] = useState(true)
   const flatListRef = useRef<FlatList>(null)
+  const navigation = useNavigation()
+
+  const handleClearLogs = useCallback(() => {
+    logStorage.length = 0
+    setLogs([])
+  }, [])
+
+  const renderHeaderRight = useCallback(
+    () => (
+      <DeleteButton onPress={handleClearLogs} color={theme.colors.onPrimary} />
+    ),
+    [handleClearLogs, theme.colors.onPrimary],
+  )
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: renderHeaderRight,
+    })
+  }, [navigation, renderHeaderRight])
 
   const getLogColor = (type: LogEntry['type']) => {
     switch (type) {
@@ -79,6 +109,8 @@ export default function LogsScreen() {
         return theme.colors.tertiary
       case 'info':
         return theme.colors.primary
+      case 'debug':
+        return theme.colors.secondary
       default:
         return theme.colors.onSurface
     }
@@ -125,13 +157,6 @@ export default function LogsScreen() {
       flex: 1,
       paddingHorizontal: Math.max(paddingLeft, paddingRight, 8),
       paddingBottom: insets.bottom,
-    },
-    actionButtons: {
-      position: 'absolute',
-      top: 0,
-      right: 8,
-      flexDirection: 'row',
-      zIndex: 1,
     },
     header: {
       backgroundColor: theme.colors.primary,
@@ -195,21 +220,6 @@ export default function LogsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.actionButtons}>
-        <IconButton
-          icon={autoScroll ? 'arrow-down-bold' : 'arrow-down-bold-outline'}
-          iconColor={theme.colors.onPrimary}
-          onPress={() => setAutoScroll(!autoScroll)}
-        />
-        <IconButton
-          icon="delete"
-          iconColor={theme.colors.onPrimary}
-          onPress={() => {
-            logStorage.length = 0
-            setLogs([])
-          }}
-        />
-      </View>
       <View style={styles.content}>
         {logs.length === 0 ? (
           <View style={styles.emptyContainer}>
