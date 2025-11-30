@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { ColorValue, Platform, StyleSheet, View } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
+import { ColorValue, StyleSheet, View } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 
 type ComponentProps = {
@@ -11,90 +10,69 @@ type ComponentProps = {
 
 type Props = ComponentProps
 
-const SharpSign = '♯'
-const FlatSign = '♭'
+const getAccidentalIcon = (accidental: string): string | null => {
+  if (accidental === '#') return 'music-accidental-sharp'
+  if (accidental === 'b') return 'music-accidental-flat'
+  return null
+}
 
 function noteLabel(note: string): string {
-  switch (note.length) {
-    case 1:
-      return note
-    case 2:
-      return note[0] + note[1].replace('b', FlatSign).replace('#', SharpSign)
-    default:
-      return '?'
-  }
+  return note.length > 0 ? note[0] : '?'
+}
+
+function getAccidental(note: string): string | null {
+  return note.length > 1 ? note[1] : null
 }
 
 /**
  * A musical note button that plays the note when pressed.
  */
 const NoteButton = (props: Props) => {
+  /**
+   * Note: on ios simulator, note name appears a couple pixels higher than on a real device
+   */
   const theme = useTheme()
-  const [isEmulator, setIsEmulator] = useState(false)
-
-  useEffect(() => {
-    DeviceInfo.isEmulator().then(setIsEmulator)
-  }, [])
-
-  const FONT_MULTIPLIER = 0.8
-  const ACCIDENTAL_FONT_MULTIPLIER = Platform.OS === 'android' ? 1 : 0.6
-  const fontSize = props.size * FONT_MULTIPLIER
-  const accidentalSize = fontSize * ACCIDENTAL_FONT_MULTIPLIER
-
-  // Different positioning for simulator vs real device
-  const getTop = () => {
-    if (Platform.OS === 'android') return -4
-    return isEmulator ? -1 : -5
-  }
-
-  const top = getTop()
-  const accidentalTop = Platform.OS === 'android' ? -4 : -4
+  const fontSize = props.size * 0.7
 
   const styles = StyleSheet.create({
-    label: {
-      fontSize,
-      color: theme.colors.primary,
-      top,
-      letterSpacing: Platform.OS === 'android' ? 5 : -4,
-    },
-    accidental: {
-      fontSize: accidentalSize,
-      color: theme.colors.primary,
-      position: 'relative',
-      top: accidentalTop,
-      paddingRight: Platform.OS === 'ios' && !isEmulator ? 2 : 0,
-    },
-    labelHolder: {
+    container: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'visible',
+      width: props.size,
+      height: props.size,
+    },
+    noteText: {
+      fontSize,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    accidental: {
+      position: 'absolute',
+      left: props.size * 0.5,
     },
   })
+
   if (props.note) {
     const label = noteLabel(props.note)
-    const getLeftOffset = () => {
-      if (Platform.OS !== 'ios' || label.length === 1) return 0
-      return isEmulator ? 3 : -1
-    }
-    const labelHolderStyle = StyleSheet.compose(styles.labelHolder, {
-      left: getLeftOffset(),
-    })
-    return Platform.OS === 'ios' ? (
-      <View style={labelHolderStyle}>
-        <Text style={styles.label}>
-          {label[0]}
-          <Text style={styles.accidental}>
-            {label.length > 1 ? label[1] : ''}
-          </Text>
-        </Text>
-      </View>
-    ) : (
-      <View style={labelHolderStyle}>
-        <Text style={styles.label}>{label[0]}</Text>
-        <Text style={styles.accidental}>
-          {label.length > 1 ? label[1] : ''}
-        </Text>
+    const accidental = getAccidental(props.note)
+    const accidentalIconName = accidental ? getAccidentalIcon(accidental) : null
+
+    const noteTextStyle = accidentalIconName
+      ? StyleSheet.compose(styles.noteText, { marginRight: fontSize * 0.4 })
+      : styles.noteText
+
+    return (
+      <View style={styles.container}>
+        <Text style={noteTextStyle}>{label}</Text>
+        {accidentalIconName && (
+          <Icon
+            name={accidentalIconName as any}
+            size={fontSize}
+            color={theme.colors.primary}
+            style={styles.accidental}
+          />
+        )}
       </View>
     )
   }
