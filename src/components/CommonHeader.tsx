@@ -1,4 +1,4 @@
-import { useBodyInsets, useHorizontalInset } from '@app/hooks'
+import { useBodyInsets, useHeaderHeight, useHorizontalInset } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { getHeaderTitle } from '@react-navigation/elements'
 import { useNavigation } from '@react-navigation/native'
@@ -6,7 +6,6 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import React, { ComponentProps } from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
-import useHeaderHeight from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
 

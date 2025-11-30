@@ -1,4 +1,4 @@
-import useShallowScreen from '@app/hooks/useShallowScreen'
+import { useWindowShape } from '@app/hooks/useWindowShape'
 import HistoryScreen from '@app/screens/HistoryScreen'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import {
@@ -22,7 +22,7 @@ export const FAVORITES_TAB_INDEX = 2 // should match order of tabs below
 export default function TabNavigator() {
   const Tab = createBottomTabNavigator<TabsParamList>()
   const theme = useTheme()
-  const shallowScreen = useShallowScreen()
+  const { shallowScreen } = useWindowShape()
   const insets = useSafeAreaInsets()
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window')
   const isLandscape = windowWidth > windowHeight

@@ -1,6 +1,8 @@
 import { useAppSelector } from '@app/hooks'
 import { usePdfCache } from '@app/hooks/usePdfCache'
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { useWindowShape } from '@app/hooks/useWindowShape'
+
+import { Platform, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import PdfRendererView from 'react-native-pdf-renderer'
@@ -18,11 +20,10 @@ type Props = { uri: string; onPress: () => void }
  */
 export default function SheetMusic(props: Props) {
   const { uri, onPress } = props
-  const { width, height } = useWindowDimensions()
-  const wideMode = width >= height
+  const { landscape } = useWindowShape()
   const doAutoRotate = useAppSelector(state => state.options.autoRotate)
   // on android, sometimes pdfs render before orientation change registers
-  const showPdf = wideMode || !doAutoRotate
+  const showPdf = landscape || !doAutoRotate
   const rawInsets = useSafeAreaInsets()
   const insets =
     Platform.OS === 'android'

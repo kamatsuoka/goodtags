@@ -1,10 +1,17 @@
-// Re-export everything from the main hooks file
-export * from '../hooks'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import type { RootState } from '../store'
+import { store } from '../store'
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export type AppDispatch = typeof store.dispatch
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 // Export individual hook files
-export { default as useCompactVertical } from './useCompactVertical'
-export { default as useFabDownStyle } from './useFabDownStyle'
-export { default as useHeaderHeight } from './useHeaderHeight'
-export { default as useSelectedTag } from './useSelectedTag'
-export { default as useShallowScreen } from './useShallowScreen'
-export { default as useTagListState } from './useTagListState'
+export { useBodyInsets } from './useBodyInsets'
+export { useFabDownStyle } from './useFabDownStyle'
+export { useHeaderHeight } from './useHeaderHeight'
+export { useHorizontalInset } from './useHorizontalInset'
+export { useSelectedTag } from './useSelectedTag'
+export { useTagListState } from './useTagListState'
+export { useWindowShape } from './useWindowShape'

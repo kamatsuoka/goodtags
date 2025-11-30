@@ -15,7 +15,7 @@ import {
   useAppSelector,
   useBodyInsets,
 } from '../hooks'
-import useFabDownStyle from '../hooks/useFabDownStyle'
+import { useFabDownStyle } from '../hooks/useFabDownStyle'
 import {
   PopularActions,
   getPopularTags,

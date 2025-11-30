@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native'
-import useHeaderHeight from './useHeaderHeight'
+import { useHeaderHeight } from './useHeaderHeight'
 
 /**
  * Get os-dependent fab group style
  */
-export default function useFabDownStyle() {
+export function useFabDownStyle() {
   const headerHeight = useHeaderHeight()
   return StyleSheet.create({
     fabGroup: {

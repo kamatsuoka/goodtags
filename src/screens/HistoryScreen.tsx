@@ -9,7 +9,7 @@ import TagList from '../components/TagList'
 import CommonStyles from '../constants/CommonStyles'
 import { SortOrder } from '../constants/Search'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
-import useFabDownStyle from '../hooks/useFabDownStyle'
+import { useFabDownStyle } from '../hooks/useFabDownStyle'
 import { HistoryActions } from '../modules/historySlice'
 import { SORT_ICONS, SORT_LABELS, TagListEnum } from '../modules/tagLists'
 

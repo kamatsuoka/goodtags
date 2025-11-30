@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import useHeaderHeight from '../hooks/useHeaderHeight'
+import { useHeaderHeight } from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
 
@@ -112,7 +112,7 @@ export default function ListHeader({
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: 10,

@@ -1,10 +1,14 @@
 import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
-import { useAppDispatch, useBodyInsets } from '@app/hooks'
-import useShallowScreen from '@app/hooks/useShallowScreen'
+import {
+  useAppDispatch,
+  useBodyInsets,
+  useHeaderHeight,
+  useWindowShape,
+} from '@app/hooks'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
 import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Linking,
   ScrollView,
@@ -25,12 +29,15 @@ export default function HomeScreen({
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
-  const shallow = useShallowScreen()
+  const { shallowScreen } = useWindowShape()
   const dispatch = useAppDispatch()
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
+  const headerHeight = useHeaderHeight()
+
+  const LOGO_SIZE = 28
 
   const styles = StyleSheet.create({
     container: {
@@ -40,13 +47,12 @@ export default function HomeScreen({
     },
     buttonHolder: { alignItems: 'flex-start' },
     logoHolder: {
-      paddingTop: insets.top,
-      paddingBottom: 10,
+      marginBottom: 5,
       paddingHorizontal: 15,
       backgroundColor: theme.colors.primary,
-      justifyContent: 'center',
-      height: 60 + insets.top,
-      marginBottom: 5,
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      height: headerHeight,
     },
     navHolder: {
       flex: 1,
@@ -127,9 +133,9 @@ export default function HomeScreen({
 
   return (
     <View style={styles.container} testID="home_container">
-      {shallow ? null : (
+      {shallowScreen ? null : (
         <View style={styles.logoHolder}>
-          <Logo size={30} dark={false} />
+          <Logo size={LOGO_SIZE} dark={false} />
         </View>
       )}
       <ScrollView

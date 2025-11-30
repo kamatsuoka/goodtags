@@ -1,8 +1,7 @@
 /**
  * Screen for displaying tag sheet music
  */
-import useSelectedTag from '@app/hooks/useSelectedTag'
-import useTagListState from '@app/hooks/useTagListState'
+import { useSelectedTag, useTagListState } from '@app/hooks'
 import { TagState, setTagState } from '@app/modules/visitSlice'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useMemo } from 'react'

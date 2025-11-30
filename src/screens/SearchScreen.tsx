@@ -16,7 +16,7 @@ import TagList from '../components/TagList'
 import CommonStyles from '../constants/CommonStyles'
 import { Collection, MAX_TAGS, SortOrder } from '../constants/Search'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
-import useFabDownStyle from '../hooks/useFabDownStyle'
+import { useFabDownStyle } from '../hooks/useFabDownStyle'
 import {
   InitialFilters,
   SearchActions,

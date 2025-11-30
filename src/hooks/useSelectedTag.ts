@@ -1,11 +1,11 @@
 import { EmptyTag } from '@app/lib/models/Tag'
 import { TagListType } from '@app/modules/tagLists'
-import useTagListState from './useTagListState'
+import { useTagListState } from './useTagListState'
 
 /**
  * Get selected tag
  */
-export default function useSelectedTag(tagListType: TagListType) {
+export function useSelectedTag(tagListType: TagListType) {
   const tagListState = useTagListState(tagListType)
 
   const allTagIds = tagListState.allTagIds

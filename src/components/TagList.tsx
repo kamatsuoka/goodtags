@@ -1,4 +1,4 @@
-import useTagListState from '@app/hooks/useTagListState'
+import { useTagListState } from '@app/hooks'
 import { setTagListType, setTagState, TagState } from '@app/modules/visitSlice'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
