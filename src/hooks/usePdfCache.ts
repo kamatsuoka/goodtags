@@ -5,6 +5,7 @@ interface PdfCacheState {
   localPath: string | null
   isLoading: boolean
   error: string | null
+  retry: () => void
 }
 
 const isPdf = (uri: string) => uri.toLowerCase().endsWith('.pdf')
@@ -28,7 +29,9 @@ export const usePdfCache = (uri: string): PdfCacheState => {
     localPath: null,
     isLoading: false,
     error: null,
+    retry: () => {},
   })
+  const [retryCount, setRetryCount] = useState(0)
 
   const downloadPdf = useCallback(async (pdfUri: string) => {
     if (!isPdf(pdfUri)) {
@@ -36,6 +39,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         localPath: null,
         isLoading: false,
         error: null,
+        retry: () => {},
       })
       return
     }
@@ -46,6 +50,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         localPath: pdfUri,
         isLoading: false,
         error: null,
+        retry: () => {},
       })
       return
     }
@@ -68,6 +73,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
           localPath: cachePath,
           isLoading: false,
           error: null,
+          retry: () => {},
         })
         return
       }
@@ -82,13 +88,17 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         localPath: downloadedFile.uri,
         isLoading: false,
         error: null,
+        retry: () => {},
       })
     } catch (error) {
       console.error('PDF download error:', error)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Download failed'
       setState({
         localPath: null,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Download failed',
+        error: errorMessage,
+        retry: () => setRetryCount(c => c + 1),
       })
     }
   }, [])
@@ -101,9 +111,11 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         localPath: null,
         isLoading: false,
         error: null,
+        retry: () => {},
       })
     }
-  }, [uri, downloadPdf])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uri, retryCount]) // Retry when retryCount changes
 
   return state
 }

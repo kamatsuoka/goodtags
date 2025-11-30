@@ -2,7 +2,7 @@ import { useAppSelector } from '@app/hooks'
 import { usePdfCache } from '@app/hooks/usePdfCache'
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { ActivityIndicator, Text } from 'react-native-paper'
+import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import PdfRendererView from 'react-native-pdf-renderer'
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
@@ -30,7 +30,7 @@ export default function SheetMusic(props: Props) {
       : { top: 0, bottom: 0, left: 0, right: 0 }
 
   // Use the PDF cache hook for handling remote PDF downloads
-  const { localPath, isLoading, error } = usePdfCache(uri)
+  const { localPath, isLoading, error, retry } = usePdfCache(uri)
 
   // Single tap gesture that only fires if not part of a pinch/pan
   const tap = Gesture.Tap()
@@ -70,6 +70,9 @@ export default function SheetMusic(props: Props) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>
             <Text style={styles.errorText}>Error loading PDF: {error}</Text>
+            <Button mode="contained" onPress={retry} style={styles.retryButton}>
+              Retry
+            </Button>
           </View>
         )
       }
@@ -167,5 +170,6 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: 'center' },
   centerContent: { justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 16, textAlign: 'center' },
-  errorText: { textAlign: 'center', color: 'red' },
+  errorText: { textAlign: 'center', color: 'red', marginBottom: 16 },
+  retryButton: { marginTop: 8 },
 })
