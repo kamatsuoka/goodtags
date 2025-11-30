@@ -61,7 +61,7 @@ export default function SheetMusic(props: Props) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>
             <ActivityIndicator size="large" />
-            <Text style={styles.loadingText}>Loading PDF...</Text>
+            <Text style={styles.loadingText}>loading pdf...</Text>
           </View>
         )
       }
@@ -69,7 +69,7 @@ export default function SheetMusic(props: Props) {
       if (error) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>
-            <Text style={styles.errorText}>Error loading PDF: {error}</Text>
+            <Text style={styles.errorText}>Error loading pdf: {error}</Text>
             <Button mode="contained" onPress={retry} style={styles.retryButton}>
               Retry
             </Button>

@@ -1,5 +1,6 @@
 import homeIcon from '@app/components/homeIcon'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { clearPdfCache } from '@app/hooks/usePdfCache'
 import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
 import {
   errorCodes,
@@ -8,7 +9,13 @@ import {
   types,
 } from '@react-native-documents/picker'
 import { useState } from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native'
 import {
   Divider,
   List,
@@ -30,6 +37,9 @@ export default function DataScreen() {
   const favorites = useAppSelector(state => state.favorites)
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
+  const [clearingCache, setClearingCache] = useState(false)
+  const { width, height } = useWindowDimensions()
+  const isLandscape = width > height
 
   const styles = StyleSheet.create({
     container: {
@@ -37,14 +47,17 @@ export default function DataScreen() {
       alignItems: 'flex-start',
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 20),
-      paddingLeft,
-      paddingRight,
+      paddingLeft: Math.max(paddingLeft, 20),
+      paddingRight: Math.max(paddingRight, 20),
+      paddingTop: 10,
     },
     section: {
       paddingHorizontal: 10,
+      width: '100%',
     },
     sectionTitle: {
-      marginTop: 20,
+      marginTop: isLandscape ? 0 : 20,
+      marginBottom: 5,
     },
     listHolder: {
       backgroundColor: theme.colors.surface,
@@ -64,96 +77,142 @@ export default function DataScreen() {
       paddingLeft: insets.left,
       alignItems: 'flex-start',
     },
+    columnsContainer: {
+      flexDirection: isLandscape ? 'row' : 'column',
+      width: '100%',
+    },
+    column: {
+      flex: isLandscape ? 1 : undefined,
+      width: isLandscape ? undefined : '100%',
+      paddingHorizontal: isLandscape ? 5 : 0,
+      marginVertical: 20,
+    },
   })
 
   return (
     <View style={styles.container}>
-      <List.Section style={styles.section}>
-        <ScrollView>
-          <Text variant="titleLarge">faves + labels</Text>
-          <View style={styles.listHolder}>
-            <TouchableOpacity onPress={() => shareFavorites(favorites)}>
-              <List.Item
-                title="backup"
-                left={ExportIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity
-              onPress={async () => {
-                try {
-                  const pickerResults = await pickDocument({
-                    presentationStyle: 'fullScreen',
-                    mode: 'import',
-                    type: [types.json, types.allFiles],
-                  })
-                  const pickerResult = pickerResults[0] // Get first file
-                  console.log(`result from pickDocument: ${pickerResult}`)
-                  if (pickerResult?.error) {
-                    console.error(`error with file: ${pickerResult.error}`)
-                  }
-                  if (pickerResult?.uri) {
-                    try {
-                      const importPayload = await dispatch(
-                        receiveSharedFile(pickerResult.uri),
-                      )
-                      const importResult = importPayload.payload
-                      console.log(`importResult:`, importResult)
-                      if (importPayload.type.endsWith('/rejected')) {
-                        // Handle rejection
-                        const errorMessage =
-                          typeof importResult === 'string'
-                            ? importResult
-                            : 'import failed'
-                        setSnackBarMessage(errorMessage)
-                      } else if (typeof importResult === 'string') {
-                        setSnackBarMessage(importResult)
-                      } else if (importResult?.favorites) {
-                        const favCount = importResult.favorites.length
-                        const labelCount = importResult.receivedLabels.length
-                        setSnackBarMessage(
-                          `imported ${favCount} tag${
-                            favCount !== 1 ? 's' : ''
-                          }` +
-                            ` and ${labelCount} label${
-                              labelCount !== 1 ? 's' : ''
-                            }`,
-                        )
-                      } else {
-                        setSnackBarMessage('import failed')
-                      }
-                    } catch (parseError) {
-                      console.error('Parse error:', parseError)
-                      setSnackBarMessage('invalid file format')
+      <ScrollView style={styles.section}>
+        <View style={styles.columnsContainer}>
+          <View style={styles.column}>
+            <Text variant="titleLarge">faves + labels</Text>
+            <View style={styles.listHolder}>
+              <TouchableOpacity onPress={() => shareFavorites(favorites)}>
+                <List.Item
+                  title="backup"
+                  left={ExportIcon}
+                  right={RightIcon}
+                  style={styles.listItem}
+                />
+              </TouchableOpacity>
+              <Divider />
+              <TouchableOpacity
+                onPress={async () => {
+                  try {
+                    const pickerResults = await pickDocument({
+                      presentationStyle: 'fullScreen',
+                      mode: 'import',
+                      type: [types.json, types.allFiles],
+                    })
+                    const pickerResult = pickerResults[0] // Get first file
+                    console.log(`result from pickDocument: ${pickerResult}`)
+                    if (pickerResult?.error) {
+                      console.error(`error with file: ${pickerResult.error}`)
                     }
-                    setSnackBarVisible(true)
+                    if (pickerResult?.uri) {
+                      try {
+                        const importPayload = await dispatch(
+                          receiveSharedFile(pickerResult.uri),
+                        )
+                        const importResult = importPayload.payload
+                        console.log(`importResult:`, importResult)
+                        if (importPayload.type.endsWith('/rejected')) {
+                          // Handle rejection
+                          const errorMessage =
+                            typeof importResult === 'string'
+                              ? importResult
+                              : 'import failed'
+                          setSnackBarMessage(errorMessage)
+                        } else if (typeof importResult === 'string') {
+                          setSnackBarMessage(importResult)
+                        } else if (importResult?.favorites) {
+                          const favCount = importResult.favorites.length
+                          const labelCount = importResult.receivedLabels.length
+                          setSnackBarMessage(
+                            `imported ${favCount} tag${
+                              favCount !== 1 ? 's' : ''
+                            }` +
+                              ` and ${labelCount} label${
+                                labelCount !== 1 ? 's' : ''
+                              }`,
+                          )
+                        } else {
+                          setSnackBarMessage('import failed')
+                        }
+                      } catch (parseError) {
+                        console.error('Parse error:', parseError)
+                        setSnackBarMessage('invalid file format')
+                      }
+                      setSnackBarVisible(true)
+                    }
+                  } catch (e) {
+                    if (
+                      isErrorWithCode(e) &&
+                      e.code === errorCodes.OPERATION_CANCELED
+                    ) {
+                      console.log('document picker canceled')
+                    } else {
+                      console.error(JSON.stringify(e))
+                      setSnackBarMessage(`import error: ${e}`)
+                      setSnackBarVisible(true)
+                    }
                   }
-                } catch (e) {
-                  if (
-                    isErrorWithCode(e) &&
-                    e.code === errorCodes.OPERATION_CANCELED
-                  ) {
-                    console.log('document picker canceled')
-                  } else {
-                    console.error(JSON.stringify(e))
-                    setSnackBarMessage(`import error: ${e}`)
-                    setSnackBarVisible(true)
-                  }
-                }
-              }}
-            >
-              <List.Item
-                title="restore"
-                left={ImportIcon}
-                right={RightIcon}
-                style={styles.listItem}
-              />
-            </TouchableOpacity>
+                }}
+              >
+                <List.Item
+                  title="restore"
+                  left={ImportIcon}
+                  right={RightIcon}
+                  style={styles.listItem}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </ScrollView>
-      </List.Section>
+
+          <View style={styles.column}>
+            <Text variant="titleLarge">pdf cache</Text>
+            <View style={styles.listHolder}>
+              <TouchableOpacity
+                onPress={async () => {
+                  setClearingCache(true)
+                  try {
+                    await clearPdfCache()
+                    setSnackBarMessage('pdf cache cleared')
+                  } catch (error) {
+                    console.error('Failed to clear pdf cache:', error)
+                    setSnackBarMessage(
+                      `Error clearing cache: ${
+                        error instanceof Error ? error.message : 'Unknown error'
+                      }`,
+                    )
+                  } finally {
+                    setClearingCache(false)
+                    setSnackBarVisible(true)
+                  }
+                }}
+                disabled={clearingCache}
+              >
+                <List.Item
+                  title="clear cache"
+                  left={ClearIcon}
+                  right={RightIcon}
+                  style={styles.listItem}
+                  disabled={clearingCache}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
       <Portal>
         <Snackbar
           visible={snackBarVisible}
@@ -172,3 +231,4 @@ export default function DataScreen() {
 const RightIcon = homeIcon('chevron-right')
 const ExportIcon = homeIcon('database-export')
 const ImportIcon = homeIcon('database-import')
+const ClearIcon = homeIcon('broom')

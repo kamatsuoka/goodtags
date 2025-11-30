@@ -64,7 +64,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
       // Ensure cache directory exists
       const cacheDir = new Directory(Paths.cache, 'pdfs')
       if (!cacheDir.exists) {
-        await cacheDir.create()
+        cacheDir.create()
       }
 
       // Check if file is already cached
@@ -91,9 +91,46 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         retry: () => {},
       })
     } catch (error) {
-      console.error('PDF download error:', error)
-      const errorMessage =
-        error instanceof Error ? error.message : 'Download failed'
+      // console.error('PDF download error:', error)
+
+      // Extract root cause from error
+      let errorMessage = 'Download failed'
+      if (error instanceof Error) {
+        // Start with the main error message
+        errorMessage = error.message
+
+        // Check if there's a cause chain and traverse to the deepest cause
+        let currentError: any = error
+        while (currentError.cause) {
+          currentError = currentError.cause
+          if (currentError.message) {
+            errorMessage = currentError.message
+          }
+        }
+
+        // Extract more specific error patterns from the full message
+        const fullErrorString = String(error)
+
+        // Look for common error patterns and extract the key part
+        if (fullErrorString.includes('UnknownHostException')) {
+          errorMessage = 'Unable to resolve host - check internet connection'
+        } else if (
+          fullErrorString.includes('No address associated with hostname')
+        ) {
+          errorMessage = 'No internet connection'
+        } else if (fullErrorString.includes('status 404')) {
+          errorMessage = 'File not found (404)'
+        } else if (fullErrorString.includes('status 403')) {
+          errorMessage = 'Access forbidden (403)'
+        } else if (fullErrorString.includes('status 500')) {
+          errorMessage = 'Server error (500)'
+        } else if (fullErrorString.includes('Network request failed')) {
+          errorMessage = 'Network request failed - check connection'
+        } else if (fullErrorString.includes('timeout')) {
+          errorMessage = 'Download timeout - try again'
+        }
+      }
+
       setState({
         localPath: null,
         isLoading: false,
