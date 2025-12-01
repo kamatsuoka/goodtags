@@ -3,9 +3,10 @@ import {
   noteForKey,
   useButtonDimming,
   useNotePlayer,
-  useTagEffects,
+  useTagHistory,
   useTagMedia,
   useTagScreenStyles,
+  useTagTracks,
   useTrackPlayer,
 } from '@app/hooks'
 import Tag from '@app/lib/models/Tag'
@@ -190,7 +191,8 @@ export const TagLayout = ({
   const infoSnapPoints = useMemo(() => ['75%', '90%'], [])
   const tracksSnapPoints = useMemo(() => ['75%', '90%'], [])
 
-  useTagEffects(tag)
+  useTagHistory(tag)
+  useTagTracks(tag)
 
   useEffect(() => {
     if (infoVisible) {
