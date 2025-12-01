@@ -302,12 +302,6 @@ export const TagLayout = ({
         />
         <View style={styles.topBarStyle} pointerEvents="box-none">
           <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
-            {/* <Appbar.BackAction
-              color={theme.colors.primary}
-              onPress={onBack}
-              size={SMALL_BUTTON_SIZE}
-              style={styles.backButtonStyle}
-            /> */}
             <BackButton iconColor={theme.colors.primary} onBack={onBack} />
             <View style={styles.themedStyles.idHolder}>
               <Text style={styles.themedStyles.id}># {tag.id}</Text>
