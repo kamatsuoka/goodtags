@@ -1,14 +1,14 @@
 /**
  * Screen for displaying a random tag
  */
+import { TagLayout } from '@app/components/TagLayout'
+import { useAppDispatch, useAppSelector } from '@app/hooks'
 import { SearchResult } from '@app/lib/models/Tag'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { getRandomTag, selectRandomTag } from '@app/modules/randomSlice'
 import { TagListEnum } from '@app/modules/tagLists'
 import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useMemo } from 'react'
-import { TagLayout } from '../components/TagLayout'
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { FavoritesActions } from '../modules/favoritesSlice'
-import { getRandomTag, selectRandomTag } from '../modules/randomSlice'
 
 // Fallback tag to avoid recreating on every render
 const FALLBACK_TAG: SearchResult = {

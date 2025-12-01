@@ -1,28 +1,28 @@
+import { FABDown } from '@app/components/FABDown'
+import ListHeader from '@app/components/ListHeader'
+import TagList from '@app/components/TagList'
+import CommonStyles from '@app/constants/CommonStyles'
+import { SortOrder } from '@app/constants/Search'
+import {
+  AppDispatch,
+  useAppDispatch,
+  useAppSelector,
+  useBodyInsets,
+} from '@app/hooks'
+import { useFabDownStyle } from '@app/hooks/useFabDownStyle'
+import { NewActions, getNewTags, selectNew } from '@app/modules/newSlice'
+import {
+  LoadingState,
+  SORT_ICONS,
+  SORT_LABELS,
+  TagListEnum,
+} from '@app/modules/tagLists'
 import { clearLastVisited } from '@app/modules/visitSlice'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
-import { FABDown } from '../components/FABDown'
-import ListHeader from '../components/ListHeader'
-import TagList from '../components/TagList'
-import CommonStyles from '../constants/CommonStyles'
-import { SortOrder } from '../constants/Search'
-import {
-  AppDispatch,
-  useAppDispatch,
-  useAppSelector,
-  useBodyInsets,
-} from '../hooks'
-import { useFabDownStyle } from '../hooks/useFabDownStyle'
-import { NewActions, getNewTags, selectNew } from '../modules/newSlice'
-import {
-  LoadingState,
-  SORT_ICONS,
-  SORT_LABELS,
-  TagListEnum,
-} from '../modules/tagLists'
 
 /**
  * New tags

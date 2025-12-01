@@ -1,8 +1,8 @@
 /**
  * Keeps track of playing learning tracks.
  */
+import Tag, { Track, TrackPart } from '@app/lib/models/Tag'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Tag, { Track, TrackPart } from '../lib/models/Tag'
 
 type TagTracks = {
   [key in TrackPart]?: Track

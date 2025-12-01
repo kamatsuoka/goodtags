@@ -1,7 +1,7 @@
+import Tag from '@app/lib/models/Tag'
+import { HistoryActions } from '@app/modules/historySlice'
+import { setTagTracks } from '@app/modules/tracksSlice'
 import { useEffect } from 'react'
-import Tag from '../lib/models/Tag'
-import { HistoryActions } from '../modules/historySlice'
-import { setTagTracks } from '../modules/tracksSlice'
 import { useAppDispatch } from './index'
 
 const HISTORY_MIN_VIEW_TIME = 7000

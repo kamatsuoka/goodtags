@@ -1,6 +1,4 @@
-import { useAppSelector } from '@app/hooks'
-import { usePdfCache } from '@app/hooks/usePdfCache'
-import { useWindowShape } from '@app/hooks/useWindowShape'
+import { useAppSelector, usePdfCache, useWindowShape } from '@app/hooks'
 
 import { Platform, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'

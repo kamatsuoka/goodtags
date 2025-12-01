@@ -1,8 +1,8 @@
 // slice for fetching a random tag
+import { SearchParams, SortOrder } from '@app/constants/Search'
+import { SearchResult } from '@app/lib/models/Tag'
+import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { SearchParams, SortOrder } from '../constants/Search'
-import { SearchResult } from '../lib/models/Tag'
-import { RootState } from '../store'
 import { handleError } from './handleError'
 import { countTags, fetchAndConvertTags } from './searchutil'
 import { LoadingState } from './tagLists'

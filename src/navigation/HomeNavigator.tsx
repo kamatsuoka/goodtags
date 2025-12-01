@@ -1,6 +1,7 @@
 import BackButton from '@app/components/BackButton'
 import { navHeader } from '@app/components/CommonHeader'
 import LabelEditor from '@app/components/LabelEditor'
+import { useAppSelector } from '@app/hooks'
 import ClassicScreen from '@app/screens/ClassicScreen'
 import DataScreen from '@app/screens/DataScreen'
 import EasyScreen from '@app/screens/EasyScreen'
@@ -16,7 +17,6 @@ import {
 } from '@react-navigation/native-stack'
 import { useMemo } from 'react'
 import { useTheme } from 'react-native-paper'
-import { useAppSelector } from '../hooks'
 import { HomeNavigatorParamList } from './navigationParams'
 
 const Stack = createNativeStackNavigator<HomeNavigatorParamList>()

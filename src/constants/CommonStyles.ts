@@ -1,5 +1,5 @@
+import { InversePrimaryHighAlpha } from '@app/lib/theme'
 import { StyleSheet } from 'react-native'
-import { InversePrimaryHighAlpha } from '../lib/theme'
 
 export const FAB_GROUP_PADDING_BOTTOM = 35
 

@@ -1,17 +1,17 @@
+import { Collection, Parts, SortOrder } from '@app/constants/Search'
+import {
+  buildTagIds,
+  ConvertedTags,
+  SearchResult,
+  SearchResultsById,
+} from '@app/lib/models/Tag'
+import { RootState } from '@app/store'
 import {
   AnyAction,
   createAsyncThunk,
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import { Collection, Parts, SortOrder } from '../constants/Search'
-import {
-  buildTagIds,
-  ConvertedTags,
-  SearchResult,
-  SearchResultsById,
-} from '../lib/models/Tag'
-import { RootState } from '../store'
 import { handleError } from './handleError'
 import { fetchAndConvertTags, getSearchParams } from './searchutil'
 import { LoadingState, TagListState } from './tagLists'

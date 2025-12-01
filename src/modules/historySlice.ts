@@ -1,8 +1,8 @@
+import { SortOrder } from '@app/constants/Search'
+import Tag from '@app/lib/models/Tag'
+import { RootState } from '@app/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
-import { SortOrder } from '../constants/Search'
-import Tag from '../lib/models/Tag'
-import { RootState } from '../store'
 import { InitialTagListState, sortAlpha, TagListState } from './tagLists'
 
 export type HistoryState = TagListState & {

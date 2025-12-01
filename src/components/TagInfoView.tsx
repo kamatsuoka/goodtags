@@ -1,13 +1,13 @@
+import { useAppDispatch } from '@app/hooks'
+import Tag from '@app/lib/models/Tag'
+import { refreshFavorite } from '@app/modules/favoritesSlice'
+import { TagListType } from '@app/modules/tagLists'
 import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useMemo } from 'react'
 import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { Divider, IconButton, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppDispatch } from '../hooks'
-import Tag from '../lib/models/Tag'
-import { refreshFavorite } from '../modules/favoritesSlice'
-import { TagListType } from '../modules/tagLists'
 import { arranger } from './tagInfo'
 
 const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {

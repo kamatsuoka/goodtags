@@ -1,6 +1,6 @@
 import { DbRow } from '@app/modules/searchutil'
+import parseXml from '@app/util/xmlparser'
 import _ from 'lodash'
-import parseXml from '../../util/xmlparser'
 
 export const CurrentTagVersion = 5
 

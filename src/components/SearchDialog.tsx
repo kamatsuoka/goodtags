@@ -1,3 +1,10 @@
+import { Collection, Parts } from '@app/constants/Search'
+import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import {
+  SearchFilters,
+  newSearch,
+  selectSearchResults,
+} from '@app/modules/searchSlice'
 import { useMemo, useState } from 'react'
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
 import {
@@ -12,13 +19,6 @@ import {
   useTheme,
 } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Collection, Parts } from '../constants/Search'
-import { useAppDispatch, useAppSelector, useBodyInsets } from '../hooks'
-import {
-  SearchFilters,
-  newSearch,
-  selectSearchResults,
-} from '../modules/searchSlice'
 import SearchOptions from './SearchOptions'
 
 type Props = {

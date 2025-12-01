@@ -1,12 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { SearchParams, SortOrder } from '../constants/Search'
+import { SearchParams, SortOrder } from '@app/constants/Search'
 import {
   buildTagIds,
   CurrentTagVersion,
   SearchResult,
   SearchResultsById,
-} from '../lib/models/Tag'
-import { RootState } from '../store'
+} from '@app/lib/models/Tag'
+import { RootState } from '@app/store'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
 import { fetchAndConvertTags } from './searchutil'
 import { LoadingState, sortAlpha, TagListState } from './tagLists'

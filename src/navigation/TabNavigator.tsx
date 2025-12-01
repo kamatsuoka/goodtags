@@ -1,5 +1,8 @@
 import { useWindowShape } from '@app/hooks/useWindowShape'
+import { TabBarActiveColor, TabBarBackground } from '@app/lib/theme'
+import { FavoritesScreen } from '@app/screens/FavoritesScreen'
 import HistoryScreen from '@app/screens/HistoryScreen'
+import SearchScreen from '@app/screens/SearchScreen'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import {
   BottomTabNavigationOptions,
@@ -8,9 +11,6 @@ import {
 import { Dimensions, Platform, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { TabBarActiveColor, TabBarBackground } from '../lib/theme'
-import { FavoritesScreen } from '../screens/FavoritesScreen'
-import SearchScreen from '../screens/SearchScreen'
 import HomeNavigator from './HomeNavigator'
 import { TabsParamList } from './navigationParams'
 

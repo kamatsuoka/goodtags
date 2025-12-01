@@ -1,4 +1,4 @@
-import { useBodyInsets } from '@app/hooks'
+import { useBodyInsets, useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
@@ -10,7 +10,6 @@ import {
 } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useHeaderHeight } from '../hooks/useHeaderHeight'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
 

@@ -1,6 +1,10 @@
 import homeIcon from '@app/components/homeIcon'
-import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
-import { clearPdfCache } from '@app/hooks/usePdfCache'
+import {
+  clearPdfCache,
+  useAppDispatch,
+  useAppSelector,
+  useBodyInsets,
+} from '@app/hooks'
 import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
 import {
   errorCodes,

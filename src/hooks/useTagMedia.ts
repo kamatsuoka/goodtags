@@ -1,4 +1,4 @@
-import Tag from '../lib/models/Tag'
+import Tag from '@app/lib/models/Tag'
 
 type TagMediaHook = {
   hasTracks: boolean
@@ -14,5 +14,3 @@ export function useTagMedia(tag: Tag): TagMediaHook {
 
   return { hasTracks, hasVideos }
 }
-
-export default useTagMedia

@@ -1,4 +1,5 @@
 import { useHorizontalInset } from '@app/hooks'
+import { Video } from '@app/lib/models/Tag'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useRef, useState } from 'react'
@@ -13,7 +14,6 @@ import {
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import YoutubePlayer from 'react-native-youtube-iframe'
-import { Video } from '../lib/models/Tag'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TagVideos'>
 

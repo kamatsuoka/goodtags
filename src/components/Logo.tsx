@@ -1,6 +1,6 @@
+import { LogoFont } from '@app/lib/theme'
 import { StyleSheet, Text, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
-import { LogoFont } from '../lib/theme'
 
 type Props = {
   size: number

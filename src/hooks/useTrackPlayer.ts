@@ -1,7 +1,7 @@
+import { getSelectedTrack } from '@app/modules/tracksSlice'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
 import { useEffect, useState } from 'react'
 import { useAppSelector } from '.'
-import { getSelectedTrack } from '../modules/tracksSlice'
 
 type TrackPlayerHook = {
   trackPlaying: boolean
@@ -180,5 +180,3 @@ export function useTrackPlayer(): TrackPlayerHook {
     clearError,
   }
 }
-
-export default useTrackPlayer

@@ -1,9 +1,9 @@
+import CommonStyles from '@app/constants/CommonStyles'
+import { IdBackground, InversePrimaryLowAlpha } from '@app/lib/theme'
 import { Platform, StyleSheet } from 'react-native'
 import { isTablet } from 'react-native-device-info'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import CommonStyles from '../constants/CommonStyles'
-import { IdBackground, InversePrimaryLowAlpha } from '../lib/theme'
 
 const BUTTON_DIM_OPACITY = 0.5
 const MIN_HORIZONTAL_INSET = 12

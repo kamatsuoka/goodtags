@@ -1,8 +1,8 @@
+import CommonStyles from '@app/constants/CommonStyles'
 import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { Modal, useTheme } from 'react-native-paper'
-import CommonStyles from '../constants/CommonStyles'
 import AboutWithCredits from './AboutWithCredits'
 
 type AboutModalProps = {

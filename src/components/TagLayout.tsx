@@ -1,6 +1,13 @@
-import { useTagEffects } from '@app/hooks/useTagEffects'
-import useTagMedia from '@app/hooks/useTagMedia'
-import useTrackPlayer from '@app/hooks/useTrackPlayer'
+import CommonStyles from '@app/constants/CommonStyles'
+import {
+  noteForKey,
+  useButtonDimming,
+  useNotePlayer,
+  useTagEffects,
+  useTagMedia,
+  useTagScreenStyles,
+  useTrackPlayer,
+} from '@app/hooks'
 import Tag from '@app/lib/models/Tag'
 import { TrackLoadingSpinner } from '@app/lib/theme'
 import { TagListEnum } from '@app/modules/tagLists'
@@ -21,10 +28,6 @@ import {
   useTheme,
 } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import CommonStyles from '../constants/CommonStyles'
-import { useButtonDimming } from '../hooks/useButtonDimming'
-import { noteForKey, useNotePlayer } from '../hooks/useNotePlayer'
-import { useTagScreenStyles } from '../hooks/useTagScreenStyles'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'

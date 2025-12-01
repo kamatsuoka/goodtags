@@ -1,7 +1,7 @@
+import Logo from '@app/components/Logo'
 import { APP_VERSION } from '@app/constants/version'
 import { StyleSheet, View } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
-import Logo from '../components/Logo'
 
 /**
  * About view

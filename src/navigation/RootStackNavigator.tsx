@@ -2,6 +2,7 @@ import { navHeader } from '@app/components/CommonHeader'
 import CreateLabel from '@app/components/CreateLabel'
 import TagLabels from '@app/components/TagLabels'
 import VideoView from '@app/components/VideoView'
+import { useAppSelector } from '@app/hooks'
 import { MainTheme, SansSerifTheme } from '@app/lib/theme'
 import AboutScreen from '@app/screens/AboutScreen'
 import { FavoritesScreen } from '@app/screens/FavoritesScreen'
@@ -9,6 +10,8 @@ import LandscapeTransition from '@app/screens/LandscapeTransition'
 import LogsScreen from '@app/screens/LogsScreen'
 import PortraitTransition from '@app/screens/PortraitTransition'
 import RandomScreen from '@app/screens/RandomScreen'
+import TagScreen from '@app/screens/TagScreen'
+import WelcomeScreen from '@app/screens/WelcomeScreen'
 import {
   NavigationContainer,
   Theme as NavigationTheme,
@@ -19,9 +22,6 @@ import {
 } from '@react-navigation/native-stack'
 import { useMemo } from 'react'
 import { Provider as PaperProvider } from 'react-native-paper'
-import { useAppSelector } from '../hooks'
-import TagScreen from '../screens/TagScreen'
-import WelcomeScreen from '../screens/WelcomeScreen'
 import TabNavigator from './TabNavigator'
 import { RootStackParamList } from './navigationParams'
 

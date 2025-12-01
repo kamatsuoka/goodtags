@@ -1,16 +1,20 @@
 /**
  * Screen for displaying tag sheet music
  */
-import { useSelectedTag, useTagListState } from '@app/hooks'
+import { TagLayout } from '@app/components/TagLayout'
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSelectedTag,
+  useTagListState,
+} from '@app/hooks'
+import { FavoritesActions } from '@app/modules/favoritesSlice'
+import { getSelectedTagSetter, isLabelType } from '@app/modules/tagListUtil'
+import { TagListEnum } from '@app/modules/tagLists'
 import { TagState, setTagState } from '@app/modules/visitSlice'
+import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useMemo } from 'react'
-import { TagLayout } from '../components/TagLayout'
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { FavoritesActions } from '../modules/favoritesSlice'
-import { getSelectedTagSetter, isLabelType } from '../modules/tagListUtil'
-import { TagListEnum } from '../modules/tagLists'
-import { RootStackParamList } from '../navigation/navigationParams'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 

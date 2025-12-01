@@ -1,5 +1,5 @@
-import { SortOrder } from '../constants/Search'
-import { TagsById } from '../lib/models/Tag'
+import { SortOrder } from '@app/constants/Search'
+import { TagsById } from '@app/lib/models/Tag'
 import { SelectedTag } from './tagListUtil'
 
 export type TagListType = TagListEnum | string // support named labels

@@ -1,8 +1,8 @@
 /**
  * utilities for working with tag lists
  */
+import { RootState } from '@app/store'
 import { ActionCreatorWithPayload, createSelector } from '@reduxjs/toolkit'
-import { RootState } from '../store'
 import { ClassicActions, selectClassic } from './classicSlice'
 import { EasyActions, selectEasy } from './easySlice'
 import {

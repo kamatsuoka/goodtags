@@ -1,4 +1,4 @@
-import Tag from '../lib/models/Tag'
+import Tag from '@app/lib/models/Tag'
 
 // utilities for displaying formatted tag details
 

@@ -1,11 +1,11 @@
+import { useAppDispatch, useAppSelector } from '@app/hooks'
+import { TrackPart } from '@app/lib/models/Tag'
+import { setSelectedPart } from '@app/modules/tracksSlice'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Divider, Menu, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { TrackPart } from '../lib/models/Tag'
-import { setSelectedPart } from '../modules/tracksSlice'
 
 type TrackMenuProps = {
   onDismiss: () => void
