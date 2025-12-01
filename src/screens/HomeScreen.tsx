@@ -54,6 +54,9 @@ export default function HomeScreen({
       justifyContent: 'flex-end',
       height: headerHeight,
     },
+    logo: {
+      marginBottom: 8,
+    },
     navHolder: {
       flex: 1,
       width: '100%',
@@ -135,7 +138,7 @@ export default function HomeScreen({
     <View style={styles.container} testID="home_container">
       {shallowScreen ? null : (
         <View style={styles.logoHolder}>
-          <Logo size={LOGO_SIZE} dark={false} />
+          <Logo size={LOGO_SIZE} style={styles.logo} dark={false} />
         </View>
       )}
       <ScrollView

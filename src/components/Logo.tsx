@@ -5,6 +5,7 @@ import { useTheme } from 'react-native-paper'
 type Props = {
   size: number
   dark: boolean
+  style?: object
 }
 
 /**
@@ -20,7 +21,7 @@ const Logo = (props: Props) => {
     },
   })
   return (
-    <View>
+    <View style={props.style}>
       <Text key="logo.2" style={styles.logo}>
         goodtags
       </Text>
