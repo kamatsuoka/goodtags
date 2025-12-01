@@ -130,7 +130,7 @@ export default function RootStackNavigator() {
               component={TagLabels}
               options={{
                 title: 'labels',
-                header: navHeader(true),
+                header: navHeader(),
                 ...tagOrientation,
               }}
             />
@@ -139,7 +139,7 @@ export default function RootStackNavigator() {
               component={VideoView}
               options={{
                 title: 'videos',
-                header: navHeader(true),
+                header: navHeader(),
                 ...tagOrientation,
               }}
             />
@@ -149,7 +149,7 @@ export default function RootStackNavigator() {
               options={{
                 title: 'new label',
                 headerBackTitle: 'cancel',
-                header: navHeader(true),
+                header: navHeader(),
                 orientation: 'all',
               }}
             />
@@ -158,7 +158,7 @@ export default function RootStackNavigator() {
               component={LogsScreen}
               options={{
                 title: 'logs',
-                header: navHeader(false),
+                header: navHeader(),
                 ...homeOrientation,
               }}
             />

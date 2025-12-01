@@ -94,7 +94,7 @@ export default function HomeNavigator() {
           component={LabelsScreen}
           options={{
             title: 'labels',
-            header: navHeader(false),
+            header: navHeader(),
             ...homeOrientation,
           }}
         />
@@ -103,7 +103,7 @@ export default function HomeNavigator() {
           component={LabelEditor}
           options={{
             title: 'edit labels',
-            header: navHeader(false),
+            header: navHeader(),
             ...homeOrientation,
           }}
         />
@@ -112,7 +112,7 @@ export default function HomeNavigator() {
           component={OptionsScreen}
           options={{
             title: 'options',
-            header: navHeader(false),
+            header: navHeader(),
             ...homeOrientation,
           }}
         />
@@ -121,7 +121,7 @@ export default function HomeNavigator() {
           component={DataScreen}
           options={{
             title: 'data',
-            header: navHeader(false),
+            header: navHeader(),
             ...homeOrientation,
           }}
         />

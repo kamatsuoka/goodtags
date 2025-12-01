@@ -29,9 +29,9 @@ import {
   useTheme,
 } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-import BackButton from './BackButton'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
+import SharedHeader, { BackType } from './SharedHeader'
 import SheetMusic from './SheetMusic'
 import TagInfoView from './TagInfoView'
 import TrackMenu from './TrackMenu'
@@ -284,6 +284,32 @@ export const TagLayout = ({
     playOrPause()
   }, [playOrPause])
 
+  const headerRight = useCallback(
+    (_props: any) => (
+      <>
+        <View style={styles.themedStyles.idHolder}>
+          <Text style={styles.themedStyles.id}># {tag.id}</Text>
+        </View>
+        <Appbar.Content title=" " style={styles.baseStyles.topBarSpacer} />
+        <Appbar.Action
+          icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
+          onPress={() => onToggleFavorite(tag.id)}
+          color={theme.colors.primary}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.fabButtonStyle}
+        />
+        <Appbar.Action
+          icon={fabOpen ? 'minus' : 'cog-outline'}
+          onPress={() => setFabOpen(!fabOpen)}
+          color={theme.colors.primary}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.fabButtonStyle}
+        />
+      </>
+    ),
+    [tag.id, favoritesById, onToggleFavorite, fabOpen, styles, theme],
+  )
+
   return (
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
@@ -300,29 +326,12 @@ export const TagLayout = ({
           fabStyle={styles.fabHiddenStyle}
           theme={theme}
         />
-        <View style={styles.topBarStyle} pointerEvents="box-none">
-          <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
-            <BackButton iconColor={theme.colors.primary} onBack={onBack} />
-            <View style={styles.themedStyles.idHolder}>
-              <Text style={styles.themedStyles.id}># {tag.id}</Text>
-            </View>
-            <Appbar.Content title=" " style={styles.baseStyles.topBarSpacer} />
-            <Appbar.Action
-              icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-              onPress={() => onToggleFavorite(tag.id)}
-              color={theme.colors.primary}
-              size={SMALL_BUTTON_SIZE}
-              style={styles.fabButtonStyle}
-            />
-          </View>
-          <Appbar.Action
-            icon={fabOpen ? 'minus' : 'cog-outline'}
-            onPress={() => setFabOpen(!fabOpen)}
-            color={theme.colors.primary}
-            size={SMALL_BUTTON_SIZE}
-            style={styles.fabButtonStyle}
-          />
-        </View>
+        <SharedHeader
+          backType={BackType.Back}
+          onBack={onBack}
+          headerRight={headerRight}
+          absolute
+        />
         <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
           <Appbar.Action
             icon={noteIcon}
