@@ -21,6 +21,8 @@ import { HomeNavigatorParamList } from './navigationParams'
 
 const Stack = createNativeStackNavigator<HomeNavigatorParamList>()
 
+const HeaderBackButton = () => <BackButton />
+
 /**
  * navigator for home screen, which links to collections, labeled lists, etc
  */
@@ -51,7 +53,7 @@ export default function HomeNavigator() {
       <Stack.Screen
         name="Labeled"
         component={LabeledScreen}
-        options={{ headerLeft: BackButton, ...homeOrientation }}
+        options={{ headerLeft: HeaderBackButton, ...homeOrientation }}
       />
       <Stack.Screen
         name="Popular"
@@ -76,7 +78,7 @@ export default function HomeNavigator() {
       <Stack.Group
         screenOptions={{
           headerShown: true,
-          headerLeft: BackButton,
+          headerLeft: HeaderBackButton,
           headerBackVisible: false,
           headerStyle: {
             backgroundColor: theme.colors.inversePrimary,

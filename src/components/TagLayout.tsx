@@ -29,6 +29,7 @@ import {
   useTheme,
 } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
+import BackButton from './BackButton'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
 import SheetMusic from './SheetMusic'
@@ -301,12 +302,13 @@ export const TagLayout = ({
         />
         <View style={styles.topBarStyle} pointerEvents="box-none">
           <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
-            <Appbar.BackAction
+            {/* <Appbar.BackAction
               color={theme.colors.primary}
               onPress={onBack}
               size={SMALL_BUTTON_SIZE}
               style={styles.backButtonStyle}
-            />
+            /> */}
+            <BackButton iconColor={theme.colors.primary} onBack={onBack} />
             <View style={styles.themedStyles.idHolder}>
               <Text style={styles.themedStyles.id}># {tag.id}</Text>
             </View>

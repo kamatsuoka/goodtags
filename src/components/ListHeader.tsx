@@ -1,4 +1,4 @@
-import { useBodyInsets, useHeaderHeight } from '@app/hooks'
+import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
@@ -21,9 +21,6 @@ type ListHeaderProps = {
   titleIcon?: ComponentProps<typeof Icon>['name']
 }
 
-const LOGO_SIZE = 30
-const BUTTON_SIZE = LOGO_SIZE + 10
-
 /**
  * Header to go atop tag list
  */
@@ -33,27 +30,18 @@ export default function ListHeader({
   title = '',
   titleIcon,
 }: ListHeaderProps) {
-  const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const ios = Platform.OS === 'ios'
 
   const themedStyles = StyleSheet.create({
-    logoButton: {
-      width: BUTTON_SIZE,
-      height: BUTTON_SIZE,
-      backgroundColor: 'transparent',
-    },
     header: {
       ...styles.header,
       height: headerHeight,
       paddingTop: insets.top,
+      paddingBottom: 10,
       backgroundColor: theme.colors.primary,
-    },
-    leftSpacer: {
-      ...styles.leftSpacer,
-      left: paddingLeft,
     },
     titleHolder: {
       ...styles.titleHolder,
@@ -99,13 +87,9 @@ export default function ListHeader({
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
       <View style={themedStyles.header}>
-        <TouchableWithoutFeedback>
-          <View style={themedStyles.leftSpacer}>{backButton}</View>
-        </TouchableWithoutFeedback>
-        {maybeWrappedTitle}
-        <TouchableWithoutFeedback>
-          <View style={styles.rightSpacer} />
-        </TouchableWithoutFeedback>
+        <View style={styles.leftSection}>{backButton}</View>
+        <View style={styles.centerSection}>{maybeWrappedTitle}</View>
+        <View style={styles.rightSection} />
       </View>
     </TouchableWithoutFeedback>
   )
@@ -113,37 +97,35 @@ export default function ListHeader({
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'flex-end',
     flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: 'flex-end',
     paddingHorizontal: 10,
-    height: 55,
     marginBottom: 5,
+  },
+  leftSection: {
+    minWidth: 60,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    height: 48,
+  },
+  centerSection: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+  },
+  rightSection: {
+    minWidth: 60,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   spacer: {
     width: 50,
-  },
-  leftSpacer: {
-    position: 'absolute',
-    left: 10,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rightSpacer: {
-    position: 'absolute',
-    right: 10,
-    width: 50,
-  },
-  centerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   titleHolder: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
   },
   title: {
     marginLeft: 5,

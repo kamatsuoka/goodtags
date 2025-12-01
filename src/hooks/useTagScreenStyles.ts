@@ -4,6 +4,7 @@ import { Platform, StyleSheet } from 'react-native'
 import { isTablet } from 'react-native-device-info'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useHeaderHeight } from './useHeaderHeight'
 
 const BUTTON_DIM_OPACITY = 0.5
 const MIN_HORIZONTAL_INSET = 12
@@ -19,7 +20,7 @@ const baseStyles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     backgroundColor: 'transparent',
   },
   topBarRow: {
@@ -69,7 +70,7 @@ const baseStyles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: IdBackground,
-    marginLeft: 14,
+    marginLeft: 0,
   },
   fabButton: {
     backgroundColor: IdBackground,
@@ -92,6 +93,7 @@ export const useTagScreenStyles = (
   const insets = useSafeAreaInsets()
   const ios = Platform.OS === 'ios'
   const iPad = ios && isTablet()
+  const headerHeight = useHeaderHeight()
 
   const themedStyles = StyleSheet.create({
     id: {
@@ -131,9 +133,10 @@ export const useTagScreenStyles = (
 
   const topBarStyle = {
     ...baseStyles.topBar,
-    marginTop: ios ? Math.max(insets.top, 6) : Math.min(insets.top, 40),
-    marginLeft: Math.max(insets.left, ios ? 0 : MIN_HORIZONTAL_INSET),
-    marginRight: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
+    height: headerHeight,
+    paddingTop: insets.top,
+    marginLeft: insets.left + 10,
+    marginRight: insets.right + 10,
   }
 
   const fabGroupStyle = {
