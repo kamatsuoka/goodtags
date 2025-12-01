@@ -10,7 +10,7 @@ import homeIcon from './homeIcon'
 
 export enum BackType {
   Back,
-  Cancel,
+  Close,
   None,
 }
 
@@ -35,7 +35,7 @@ type SharedHeaderProps = {
 export default function SharedHeader({
   title = '',
   titleIcon,
-  backType = BackType.None,
+  backType = BackType.Back,
   onBack,
   backIconColor,
   headerRight,
@@ -59,7 +59,6 @@ export default function SharedHeader({
       paddingBottom: 10,
       flexDirection: 'row',
       alignItems: 'flex-end',
-      marginBottom: 5,
       ...headerStyle,
     },
     center: {
@@ -90,17 +89,11 @@ export default function SharedHeader({
   }
 
   const renderBackButton = () => {
-    if (backType === BackType.Cancel) {
-      return (
-        <Text style={themedStyles.cancel} onPress={onBack}>
-          cancel
-        </Text>
-      )
+    if (backType === BackType.None) {
+      return <View style={styles.spacer} />
     }
-    if (backType === BackType.Back) {
-      return <BackButton onBack={onBack} iconColor={backIconColor} />
-    }
-    return <View style={styles.spacer} />
+    const icon = backType === BackType.Close ? 'close' : 'chevron-left'
+    return <BackButton onBack={onBack} iconColor={backIconColor} icon={icon} />
   }
 
   const renderTitle = () => {

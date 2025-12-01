@@ -1,6 +1,6 @@
 import BackButton from '@app/components/BackButton'
-import { navHeader } from '@app/components/CommonHeader'
 import LabelEditor from '@app/components/LabelEditor'
+import NavHeader from '@app/components/NavHeader'
 import { useAppSelector } from '@app/hooks'
 import ClassicScreen from '@app/screens/ClassicScreen'
 import DataScreen from '@app/screens/DataScreen'
@@ -94,7 +94,7 @@ export default function HomeNavigator() {
           component={LabelsScreen}
           options={{
             title: 'labels',
-            header: navHeader(),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -103,7 +103,7 @@ export default function HomeNavigator() {
           component={LabelEditor}
           options={{
             title: 'edit labels',
-            header: navHeader(),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -112,7 +112,7 @@ export default function HomeNavigator() {
           component={OptionsScreen}
           options={{
             title: 'options',
-            header: navHeader(),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -121,7 +121,7 @@ export default function HomeNavigator() {
           component={DataScreen}
           options={{
             title: 'data',
-            header: navHeader(),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />

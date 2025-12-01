@@ -1,5 +1,5 @@
-import { navHeader } from '@app/components/CommonHeader'
 import CreateLabel from '@app/components/CreateLabel'
+import NavHeader from '@app/components/NavHeader'
 import TagLabels from '@app/components/TagLabels'
 import VideoView from '@app/components/VideoView'
 import { useAppSelector } from '@app/hooks'
@@ -130,7 +130,7 @@ export default function RootStackNavigator() {
               component={TagLabels}
               options={{
                 title: 'labels',
-                header: navHeader(),
+                header: NavHeader,
                 ...tagOrientation,
               }}
             />
@@ -139,7 +139,7 @@ export default function RootStackNavigator() {
               component={VideoView}
               options={{
                 title: 'videos',
-                header: navHeader(),
+                header: NavHeader,
                 ...tagOrientation,
               }}
             />
@@ -149,7 +149,7 @@ export default function RootStackNavigator() {
               options={{
                 title: 'new label',
                 headerBackTitle: 'cancel',
-                header: navHeader(),
+                header: NavHeader,
                 orientation: 'all',
               }}
             />
@@ -158,7 +158,7 @@ export default function RootStackNavigator() {
               component={LogsScreen}
               options={{
                 title: 'logs',
-                header: navHeader(),
+                header: NavHeader,
                 ...homeOrientation,
               }}
             />
