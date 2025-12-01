@@ -1,6 +1,6 @@
 import BackButton from '@app/components/BackButton'
-import { navHeader } from '@app/components/CommonHeader'
 import LabelEditor from '@app/components/LabelEditor'
+import NavHeader from '@app/components/NavHeader'
 import { useAppSelector } from '@app/hooks'
 import ClassicScreen from '@app/screens/ClassicScreen'
 import DataScreen from '@app/screens/DataScreen'
@@ -20,6 +20,8 @@ import { useTheme } from 'react-native-paper'
 import { HomeNavigatorParamList } from './navigationParams'
 
 const Stack = createNativeStackNavigator<HomeNavigatorParamList>()
+
+const HeaderBackButton = () => <BackButton />
 
 /**
  * navigator for home screen, which links to collections, labeled lists, etc
@@ -51,7 +53,7 @@ export default function HomeNavigator() {
       <Stack.Screen
         name="Labeled"
         component={LabeledScreen}
-        options={{ headerLeft: BackButton, ...homeOrientation }}
+        options={{ headerLeft: HeaderBackButton, ...homeOrientation }}
       />
       <Stack.Screen
         name="Popular"
@@ -76,7 +78,7 @@ export default function HomeNavigator() {
       <Stack.Group
         screenOptions={{
           headerShown: true,
-          headerLeft: BackButton,
+          headerLeft: HeaderBackButton,
           headerBackVisible: false,
           headerStyle: {
             backgroundColor: theme.colors.inversePrimary,
@@ -92,7 +94,7 @@ export default function HomeNavigator() {
           component={LabelsScreen}
           options={{
             title: 'labels',
-            header: navHeader(false),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -101,7 +103,7 @@ export default function HomeNavigator() {
           component={LabelEditor}
           options={{
             title: 'edit labels',
-            header: navHeader(false),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -110,7 +112,7 @@ export default function HomeNavigator() {
           component={OptionsScreen}
           options={{
             title: 'options',
-            header: navHeader(false),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />
@@ -119,7 +121,7 @@ export default function HomeNavigator() {
           component={DataScreen}
           options={{
             title: 'data',
-            header: navHeader(false),
+            header: NavHeader,
             ...homeOrientation,
           }}
         />

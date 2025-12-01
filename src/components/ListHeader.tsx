@@ -1,17 +1,7 @@
-import { useBodyInsets, useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
-import {
-  Platform,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
-import { Text, useTheme } from 'react-native-paper'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import BackButton from './BackButton'
-import homeIcon from './homeIcon'
+import SharedHeader, { BackType } from './SharedHeader'
 
 type ListHeaderProps = {
   // reference to FlashList with tags
@@ -20,9 +10,6 @@ type ListHeaderProps = {
   title?: string | React.ReactNode
   titleIcon?: ComponentProps<typeof Icon>['name']
 }
-
-const LOGO_SIZE = 30
-const BUTTON_SIZE = LOGO_SIZE + 10
 
 /**
  * Header to go atop tag list
@@ -33,119 +20,13 @@ export default function ListHeader({
   title = '',
   titleIcon,
 }: ListHeaderProps) {
-  const { paddingLeft } = useBodyInsets()
-  const headerHeight = useHeaderHeight()
-  const insets = useSafeAreaInsets()
-  const theme = useTheme()
-  const ios = Platform.OS === 'ios'
-
-  const themedStyles = StyleSheet.create({
-    logoButton: {
-      width: BUTTON_SIZE,
-      height: BUTTON_SIZE,
-      backgroundColor: 'transparent',
-    },
-    header: {
-      ...styles.header,
-      height: headerHeight,
-      paddingTop: insets.top,
-      backgroundColor: theme.colors.primary,
-    },
-    leftSpacer: {
-      ...styles.leftSpacer,
-      left: paddingLeft,
-    },
-    titleHolder: {
-      ...styles.titleHolder,
-    },
-    title: {
-      ...styles.title,
-      color: theme.colors.onPrimary,
-    },
-    icon: {
-      color: theme.colors.onPrimary,
-      marginRight: 8,
-      marginBottom: ios ? 4 : 0,
-    },
-  })
-
-  const backButton = showBackButton ? (
-    <BackButton />
-  ) : (
-    <View style={styles.spacer} />
-  )
-
-  const maybeWrappedTitle: React.ReactNode =
-    typeof title === 'string' ? (
-      <View style={themedStyles.titleHolder}>
-        {titleIcon
-          ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
-          : null}
-        <Text variant="titleLarge" style={themedStyles.title}>
-          {title}
-        </Text>
-      </View>
-    ) : (
-      title
-    )
-
-  const scrollToTop = async () => {
-    listRef.current!.scrollToIndex({
-      index: 0,
-      animated: true,
-    })
-  }
-
   return (
-    <TouchableWithoutFeedback onPress={scrollToTop}>
-      <View style={themedStyles.header}>
-        <TouchableWithoutFeedback>
-          <View style={themedStyles.leftSpacer}>{backButton}</View>
-        </TouchableWithoutFeedback>
-        {maybeWrappedTitle}
-        <TouchableWithoutFeedback>
-          <View style={styles.rightSpacer} />
-        </TouchableWithoutFeedback>
-      </View>
-    </TouchableWithoutFeedback>
+    <SharedHeader
+      title={title}
+      titleIcon={titleIcon}
+      backType={showBackButton ? BackType.Back : BackType.None}
+      listRef={listRef}
+      enableScrollToTop
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  header: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    height: 55,
-    marginBottom: 5,
-  },
-  spacer: {
-    width: 50,
-  },
-  leftSpacer: {
-    position: 'absolute',
-    left: 10,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rightSpacer: {
-    position: 'absolute',
-    right: 10,
-    width: 50,
-  },
-  centerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titleHolder: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-  },
-  title: {
-    marginLeft: 5,
-  },
-})

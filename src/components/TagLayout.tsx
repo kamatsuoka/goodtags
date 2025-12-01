@@ -31,22 +31,13 @@ import {
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
+import SharedHeader, { BackType } from './SharedHeader'
 import SheetMusic from './SheetMusic'
 import TagInfoView from './TagInfoView'
 import TrackMenu from './TrackMenu'
 
 const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
-
-const spinnerOverlayStyle = {
-  position: 'absolute' as const,
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  justifyContent: 'center' as const,
-  alignItems: 'center' as const,
-}
 
 // memoized component to prevent re-renders during rapid state changes
 const PlayPauseAction = React.memo(
@@ -81,10 +72,10 @@ const PlayPauseAction = React.memo(
           }}
           disabled={disabled}
           size={BIG_BUTTON_SIZE}
-          style={styles.dimmableIconHolderStyle}
+          style={styles.dimmableIconHolder}
         />
         {isLoading && (
-          <View style={spinnerOverlayStyle} pointerEvents="none">
+          <View style={styles.spinnerOverlay} pointerEvents="none">
             <ActivityIndicator
               size={BIG_BUTTON_SIZE + 16}
               color={TrackLoadingSpinner}
@@ -125,7 +116,7 @@ const NavigationActionButton = React.memo(
         }}
         disabled={disabled}
         size={BIG_BUTTON_SIZE}
-        style={styles.dimmableIconHolderStyle}
+        style={styles.dimmableIconHolder}
       />
     )
   },
@@ -283,61 +274,58 @@ export const TagLayout = ({
     playOrPause()
   }, [playOrPause])
 
+  const title = (
+    <View style={styles.idHolder}>
+      <Text style={styles.id}># {tag.id}</Text>
+    </View>
+  )
+
+  const headerRight = useCallback(
+    (_props: any) => (
+      <View style={styles.headerRight}>
+        <Appbar.Content title=" " style={styles.headerSpacer} />
+        <Appbar.Action
+          icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
+          onPress={() => onToggleFavorite(tag.id)}
+          color={theme.colors.primary}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.menuButton}
+        />
+        <Appbar.Action
+          icon={fabOpen ? 'minus' : 'menu'}
+          onPress={() => setFabOpen(!fabOpen)}
+          color={theme.colors.primary}
+          size={SMALL_BUTTON_SIZE}
+          style={styles.menuButton}
+        />
+      </View>
+    ),
+    [tag.id, favoritesById, onToggleFavorite, fabOpen, styles, theme],
+  )
+
   return (
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
         {memoizedSheetMusic}
-        <FABDown
-          icon={fabOpen ? 'minus' : 'cog-outline'}
-          open={fabOpen}
-          actions={fabActions}
-          onStateChange={({ open }) => {
-            dimButtons()
-            setFabOpen(open)
-          }}
-          style={styles.fabGroupStyle}
-          fabStyle={styles.fabHiddenStyle}
-          theme={theme}
-        />
-        <View style={styles.topBarStyle} pointerEvents="box-none">
-          <View style={[styles.baseStyles.topBarRow, styles.topBarLeftStyle]}>
-            <Appbar.BackAction
-              color={theme.colors.primary}
-              onPress={onBack}
-              size={SMALL_BUTTON_SIZE}
-              style={styles.backButtonStyle}
-            />
-            <View style={styles.themedStyles.idHolder}>
-              <Text style={styles.themedStyles.id}># {tag.id}</Text>
-            </View>
-            <Appbar.Content title=" " style={styles.baseStyles.topBarSpacer} />
-            <Appbar.Action
-              icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
-              onPress={() => onToggleFavorite(tag.id)}
-              color={theme.colors.primary}
-              size={SMALL_BUTTON_SIZE}
-              style={styles.fabButtonStyle}
-            />
-          </View>
-          <Appbar.Action
-            icon={fabOpen ? 'minus' : 'cog-outline'}
-            onPress={() => setFabOpen(!fabOpen)}
-            color={theme.colors.primary}
-            size={SMALL_BUTTON_SIZE}
-            style={styles.fabButtonStyle}
+        <View style={styles.headerHolder}>
+          <SharedHeader
+            backType={BackType.Back}
+            onBack={onBack}
+            backIconColor={theme.colors.primary}
+            headerRight={headerRight}
+            headerStyle={styles.header}
+            headerCenterStyle={styles.headerCenter}
+            title={title}
           />
         </View>
-        <View style={styles.bottomActionBarStyle} pointerEvents="box-none">
+        <View style={styles.bottomActionBar} pointerEvents="box-none">
           <Appbar.Action
             icon={noteIcon}
-            onPress={() => {
-              // handler required for onPressIn to be handled
-            }}
             onPressIn={handleNotePressIn}
             onPressOut={handleNotePressOut}
             color={theme.colors.primary}
             size={BIG_BUTTON_SIZE}
-            style={styles.dimmableIconHolderStyle}
+            style={styles.dimmableIconHolder}
           />
           <PlayPauseAction
             isPlaying={trackPlaying}
@@ -365,6 +353,20 @@ export const TagLayout = ({
               />
             ))}
         </View>
+        <Portal>
+          <FABDown
+            icon={fabOpen ? 'minus' : 'cog-outline'}
+            open={fabOpen}
+            actions={fabActions}
+            onStateChange={({ open }) => {
+              dimButtons()
+              setFabOpen(open)
+            }}
+            style={styles.fabGroup}
+            fabStyle={styles.fabHidden}
+            theme={theme}
+          />
+        </Portal>
         <BottomSheetModal
           ref={bottomSheetModalRef}
           snapPoints={infoSnapPoints}
