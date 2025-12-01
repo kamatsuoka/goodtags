@@ -3,7 +3,7 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
 import {
-  Dimensions,
+  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -36,9 +36,8 @@ export default function ListHeader({
   const { paddingLeft } = useBodyInsets()
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
-  const { width, height } = Dimensions.get('window')
-  const isPortrait = height > width
   const theme = useTheme()
+  const ios = Platform.OS === 'ios'
 
   const themedStyles = StyleSheet.create({
     logoButton: {
@@ -58,7 +57,6 @@ export default function ListHeader({
     },
     titleHolder: {
       ...styles.titleHolder,
-      paddingBottom: isPortrait ? 7 : 0,
     },
     title: {
       ...styles.title,
@@ -66,6 +64,8 @@ export default function ListHeader({
     },
     icon: {
       color: theme.colors.onPrimary,
+      marginRight: 8,
+      marginBottom: ios ? 4 : 0,
     },
   })
 
@@ -78,8 +78,10 @@ export default function ListHeader({
   const maybeWrappedTitle: React.ReactNode =
     typeof title === 'string' ? (
       <View style={themedStyles.titleHolder}>
-        {titleIcon ? homeIcon(titleIcon)({ style: themedStyles.icon }) : null}
-        <Text variant="titleMedium" style={themedStyles.title}>
+        {titleIcon
+          ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
+          : null}
+        <Text variant="titleLarge" style={themedStyles.title}>
           {title}
         </Text>
       </View>
