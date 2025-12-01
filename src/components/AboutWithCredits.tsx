@@ -47,7 +47,6 @@ export default function AboutWithCredits() {
     },
     buttonLabel: {
       color: theme.colors.onPrimary,
-      fontSize: 15,
       textDecorationLine: 'underline',
     },
     buttonContent: {
@@ -56,12 +55,10 @@ export default function AboutWithCredits() {
     },
     text2: {
       color: theme.colors.outlineVariant,
-      fontSize: 13,
     },
     buttonLabel2: {
       marginTop: 0,
       color: theme.colors.outlineVariant,
-      fontSize: 13,
       textDecorationLine: 'underline',
     },
     button2: {
@@ -85,7 +82,9 @@ export default function AboutWithCredits() {
         />
       </View>
       <View style={styles.credits}>
-        <Text style={styles.text2}>Content hosted by</Text>
+        <Text style={styles.text2} variant="bodyMedium">
+          Content hosted by
+        </Text>
         <LinkButton
           url="https://www.barbershoptags.com/"
           label="barbershoptags.com"

@@ -13,7 +13,11 @@ export default function AboutBase() {
     text: { color: theme.colors.onPrimary },
   })
 
-  const logoText = (text: string) => <Text style={styles.text}>{text}</Text>
+  const logoText = (text: string) => (
+    <Text style={styles.text} variant="bodyMedium">
+      {text}
+    </Text>
+  )
 
   return (
     <View style={styles.body}>

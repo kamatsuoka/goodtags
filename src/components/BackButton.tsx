@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { IconButton, useTheme } from 'react-native-paper'
 
-export const ICON_SIZE = 34
+export const ICON_SIZE = 38
 export const BUTTON_SIZE = ICON_SIZE + 10
 
 export default function BackButton() {

@@ -104,7 +104,7 @@ export default function CommonHeader({
     typeof title === 'string' ? (
       <View style={styles.titleHolder}>
         {titleIcon ? homeIcon(titleIcon)() : null}
-        <Text variant="titleMedium" style={themedStyles.title}>
+        <Text variant="titleLarge" style={themedStyles.title}>
           {title}
         </Text>
       </View>

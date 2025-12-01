@@ -30,6 +30,7 @@ export default function AboutScreen({ navigation }: Props) {
           onPress={navigation.goBack}
           icon="arrow-left"
           iconColor={theme.colors.onPrimary}
+          size={26}
         />
       </View>
     </View>
