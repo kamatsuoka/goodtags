@@ -1,8 +1,8 @@
+import { useAppDispatch } from '@app/hooks/useAppDispatch'
 import Tag from '@app/lib/models/Tag'
 import { HistoryActions } from '@app/modules/historySlice'
 import { setTagTracks } from '@app/modules/tracksSlice'
 import { useEffect } from 'react'
-import { useAppDispatch } from './index'
 
 const HISTORY_MIN_VIEW_TIME = 7000
 

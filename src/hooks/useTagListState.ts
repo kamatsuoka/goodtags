@@ -1,8 +1,8 @@
+import { useAppSelector } from '@app/hooks/useAppDispatch'
 import { TagListType } from '@app/modules/tagLists'
 import { makeSelectTagState } from '@app/modules/tagListUtil'
 import { RootState } from '@app/store'
 import { useMemo } from 'react'
-import { useAppSelector } from './index'
 
 /**
  * Get tag state for tag list type

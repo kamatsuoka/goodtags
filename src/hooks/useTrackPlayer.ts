@@ -1,7 +1,7 @@
+import { useAppSelector } from '@app/hooks/useAppDispatch'
 import { getSelectedTrack } from '@app/modules/tracksSlice'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
 import { useEffect, useState } from 'react'
-import { useAppSelector } from '.'
 
 type TrackPlayerHook = {
   trackPlaying: boolean
