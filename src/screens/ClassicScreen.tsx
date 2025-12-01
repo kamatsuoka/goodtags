@@ -21,7 +21,6 @@ import {
   SORT_LABELS,
   TagListEnum,
 } from '@app/modules/tagLists'
-import { clearLastVisited } from '@app/modules/visitSlice'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -110,6 +109,7 @@ const ClassicScreen = () => {
         showBackButton={true}
         title="classic"
         titleIcon="pillar"
+        setFabOpen={setFabOpen}
       />
       <View style={themedStyles.listContainer}>
         <TagList
@@ -133,12 +133,10 @@ const ClassicScreen = () => {
         {`error fetching tags: ${error}`}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
         color={theme.colors.onPrimary}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}
-        onLongPress={() => dispatch(clearLastVisited())}
         style={fabStyleSheet.fabGroup}
         fabStyle={CommonStyles.fabDown}
         theme={theme}

@@ -62,7 +62,12 @@ export const FavoritesScreen = () => {
   const emptyMessage = 'tap the heart icon in sheet music to add favorites'
   return (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title="faves" titleIcon="heart-outline" />
+      <ListHeader
+        listRef={listRef}
+        title="faves"
+        titleIcon="heart-outline"
+        setFabOpen={setFabOpen}
+      />
       <View style={styles.listContainer}>
         <TagList
           listRef={listRef}
@@ -71,7 +76,6 @@ export const FavoritesScreen = () => {
         />
       </View>
       <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}

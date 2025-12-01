@@ -76,6 +76,7 @@ const HistoryScreen = () => {
         showBackButton={false}
         title="history"
         titleIcon="history"
+        setFabOpen={setFabOpen}
       />
       <View style={styles.listContainer}>
         <TagList
@@ -85,7 +86,6 @@ const HistoryScreen = () => {
         />
       </View>
       <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}

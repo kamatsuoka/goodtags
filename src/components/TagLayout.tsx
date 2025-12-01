@@ -292,7 +292,7 @@ export const TagLayout = ({
           style={styles.menuButton}
         />
         <Appbar.Action
-          icon={fabOpen ? 'minus' : 'menu'}
+          icon="menu"
           onPress={() => setFabOpen(!fabOpen)}
           color={theme.colors.primary}
           size={SMALL_BUTTON_SIZE}
@@ -355,7 +355,6 @@ export const TagLayout = ({
         </View>
         <Portal>
           <FABDown
-            icon={fabOpen ? 'minus' : 'cog-outline'}
             open={fabOpen}
             actions={fabActions}
             onStateChange={({ open }) => {

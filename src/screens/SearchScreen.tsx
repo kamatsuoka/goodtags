@@ -173,7 +173,11 @@ const SearchScreen = () => {
     />
   ) : (
     <View style={CommonStyles.container}>
-      <ListHeader listRef={listRef} title={queryButton} />
+      <ListHeader
+        listRef={listRef}
+        title={queryButton}
+        setFabOpen={setFabOpen}
+      />
       {filters !== InitialFilters ? (
         <View style={styles.filterHolder}>
           {filterChip(
@@ -232,7 +236,6 @@ const SearchScreen = () => {
         {getErrorMessage()}
       </Snackbar>
       <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}

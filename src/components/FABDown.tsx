@@ -24,12 +24,12 @@ export type Props = {
    * - `icon`: icon to display (required)
    * - `label`: optional label text
    * - `color`: custom icon color of the action item
-   * - `labelTextColor`: custom label text color of the action item
+   * - `labelTextColor`: custom label text color of action items
    * - `style`: pass additional styles for the fab item, for example, `backgroundColor`
-   * - `containerStyle`: pass additional styles for the fab item label container, for example, `backgroundColor` @supported Available in 5.x
+   * - `containerStyle`: pass additional styles for the fab item label container, for example, `backgroundColor`
    * - `labelStyle`: pass additional styles for the fab item label, for example, `fontSize`
    * - `onPress`: callback that is called when `FAB` is pressed (required)
-   * - `size`: size of action item. Defaults to `small`. @supported Available in v5.x
+   * - `size`: size of action item. Defaults to `small`
    * - `testID`: testID to be used on tests
    */
   actions: Array<{
@@ -44,11 +44,6 @@ export type Props = {
     size?: 'small' | 'medium'
     testID?: string
   }>
-  /**
-   * Icon to display for the `FAB`.
-   * You can toggle it based on whether the speed dial is open to display a different icon.
-   */
-  icon: IconSource
   /**
    * Accessibility label for the FAB. This is read by the screen reader when the user taps the FAB.
    */
@@ -65,10 +60,6 @@ export type Props = {
    * Function to execute on pressing the `FAB`.
    */
   onPress?: (e: GestureResponderEvent) => void
-  /**
-   * Function to execute on long-pressing the `FAB`.
-   */
-  onLongPress?: () => void
   /**
    * Whether the speed dial is open.
    */
@@ -92,27 +83,9 @@ export type Props = {
    */
   fabStyle?: StyleProp<ViewStyle>
   /**
-   * @supported Available in v5.x with theme version 3
-   *
-   * Color mappings variant for combinations of container and icon colors.
-   */
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'surface'
-  /**
    * @optional
    */
   theme: MD3Theme
-  /**
-   * Optional label for `FAB`.
-   */
-  label?: string
-  /**
-   * Size of main button
-   */
-  size?: 'small' | 'medium' | 'large'
-  /**
-   * Mode of main button
-   */
-  mode?: 'flat' | 'elevated'
   /**
    * Pass down testID from Group props to FAB.
    */
@@ -124,23 +97,11 @@ export type Props = {
  */
 export const FABDown = ({
   actions,
-  icon,
   open,
-  onPress,
-  onLongPress,
-  accessibilityLabel,
   theme,
   style,
-  fabStyle,
-  visible = true,
-  label,
-  testID,
   onStateChange,
-  color: colorProp,
-  variant = 'primary',
   backdropColor: customBackdropColor,
-  size = 'small',
-  mode = 'flat',
 }: Props) => {
   const { current: backdrop } = React.useRef<Animated.Value>(
     new Animated.Value(0),
@@ -151,7 +112,6 @@ export const FABDown = ({
 
   const [prevActions, setPrevActions] = React.useState<
     | {
-        icon: IconSource
         label?: string
         color?: string
         accessibilityLabel?: string
@@ -204,8 +164,6 @@ export const FABDown = ({
   }, [open, actions, backdrop, scale])
 
   const close = () => onStateChange({ open: false })
-
-  const toggle = () => onStateChange({ open: !open })
 
   const { labelColor, backdropColor, stackedFABBackgroundColor } =
     getFABGroupColors({
@@ -282,27 +240,6 @@ export const FABDown = ({
         />
       </TouchableWithoutFeedback>
       <View pointerEvents="box-none" style={styles.safeArea}>
-        <FAB
-          onPress={e => {
-            onPress?.(e)
-            toggle()
-          }}
-          onLongPress={() => {
-            onLongPress?.()
-          }}
-          icon={icon}
-          color={colorProp}
-          accessibilityLabel={accessibilityLabel}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: open }}
-          style={[styles.fab, fabStyle]}
-          visible={visible}
-          label={label}
-          testID={testID}
-          variant={variant}
-          size={size}
-          mode={mode}
-        />
         <ScrollView pointerEvents={open ? 'box-none' : 'none'}>
           {actions.map((it, i) => {
             const labelTextStyle = {
@@ -395,6 +332,7 @@ FABDown.displayName = 'FAB.GroupDown'
 const styles = StyleSheet.create({
   safeArea: {
     alignItems: 'flex-end',
+    paddingTop: 35,
   },
   container: {
     ...StyleSheet.absoluteFillObject,

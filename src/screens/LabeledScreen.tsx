@@ -69,6 +69,7 @@ export const LabeledScreen = () => {
         title={selectedLabel}
         titleIcon="tag-outline"
         showBackButton={true}
+        setFabOpen={setFabOpen}
       />
       <View style={themedStyles.listContainer}>
         <TagList
@@ -78,7 +79,6 @@ export const LabeledScreen = () => {
         />
       </View>
       <FABDown
-        icon={fabOpen ? 'minus' : 'cog-outline'}
         open={fabOpen}
         actions={fabActions}
         onStateChange={({ open }) => setFabOpen(open)}

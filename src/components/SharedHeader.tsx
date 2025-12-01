@@ -67,7 +67,6 @@ export default function SharedHeader({
     },
     title: {
       color: theme.colors.onPrimary,
-      marginLeft: 5,
     },
     icon: {
       color: theme.colors.onPrimary,
@@ -146,7 +145,7 @@ const styles = StyleSheet.create({
   },
   titleHolder: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
   right: {
