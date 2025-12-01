@@ -15,26 +15,16 @@ export enum BackType {
 }
 
 type SharedHeaderProps = {
-  // Title
   title?: string | React.ReactNode
   titleIcon?: ComponentProps<typeof Icon>['name']
-
-  // Back button
   backType?: BackType
   onBack?: () => void
-
-  // Right side content
+  backIconColor?: string
   headerRight?: (props: any) => React.ReactNode
-
-  // Layout options
-  absolute?: boolean // Position absolute for overlays (TagLayout)
-
-  // List-specific props
   listRef?: React.RefObject<FlashListRef<number> | null>
   enableScrollToTop?: boolean
-
-  // Style overrides
   headerStyle?: any
+  headerCenterStyle?: any
   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto'
 }
 
@@ -47,11 +37,12 @@ export default function SharedHeader({
   titleIcon,
   backType = BackType.None,
   onBack,
+  backIconColor,
   headerRight,
-  absolute = false,
   listRef,
   enableScrollToTop = false,
   headerStyle,
+  headerCenterStyle,
   pointerEvents = 'auto',
 }: SharedHeaderProps) {
   const headerHeight = useHeaderHeight()
@@ -68,22 +59,12 @@ export default function SharedHeader({
       paddingBottom: 10,
       flexDirection: 'row',
       alignItems: 'flex-end',
-      marginBottom: absolute ? 0 : 5,
-      ...(absolute
-        ? {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 100,
-          }
-        : {}),
+      marginBottom: 5,
       ...headerStyle,
     },
-    titleHolder: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+    center: {
+      ...styles.center,
+      ...headerCenterStyle,
     },
     title: {
       color: theme.colors.onPrimary,
@@ -117,7 +98,7 @@ export default function SharedHeader({
       )
     }
     if (backType === BackType.Back) {
-      return <BackButton onBack={onBack} />
+      return <BackButton onBack={onBack} iconColor={backIconColor} />
     }
     return <View style={styles.spacer} />
   }
@@ -125,7 +106,7 @@ export default function SharedHeader({
   const renderTitle = () => {
     if (typeof title === 'string') {
       return (
-        <View style={themedStyles.titleHolder}>
+        <View style={styles.titleHolder}>
           {titleIcon
             ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
             : null}
@@ -140,11 +121,9 @@ export default function SharedHeader({
 
   const content = (
     <View style={themedStyles.header} pointerEvents={pointerEvents}>
-      <View style={styles.leftSection}>{renderBackButton()}</View>
-      <View style={styles.centerSection}>{renderTitle()}</View>
-      <View style={styles.rightSection}>
-        {headerRight ? headerRight({}) : null}
-      </View>
+      <View style={styles.left}>{renderBackButton()}</View>
+      <View style={themedStyles.center}>{renderTitle()}</View>
+      <View style={styles.right}>{headerRight ? headerRight({}) : null}</View>
     </View>
   )
 
@@ -160,19 +139,24 @@ export default function SharedHeader({
 }
 
 const styles = StyleSheet.create({
-  leftSection: {
+  left: {
     minWidth: 60,
     alignItems: 'flex-start',
     justifyContent: 'center',
     height: 48,
   },
-  centerSection: {
+  center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     height: 48,
   },
-  rightSection: {
+  titleHolder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  right: {
     minWidth: 60,
     alignItems: 'flex-end',
     justifyContent: 'center',
