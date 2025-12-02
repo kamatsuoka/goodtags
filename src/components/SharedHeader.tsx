@@ -56,7 +56,6 @@ export default function SharedHeader({
       paddingTop: insets.top,
       paddingLeft: insets.left + 10,
       paddingRight: insets.right + 10,
-      paddingBottom: 10,
       flexDirection: 'row',
       alignItems: 'flex-end',
       ...headerStyle,

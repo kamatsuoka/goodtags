@@ -2,7 +2,7 @@ import { Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useWindowShape } from './useWindowShape'
 
-export const HEADER_HEIGHT = 67
+export const HEADER_HEIGHT = 58
 /**
  * Get os-dependent header height
  */

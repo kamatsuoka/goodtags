@@ -29,11 +29,8 @@ class MainActivity : ReactActivity() {
     // Set status bar to transparent
     window.statusBarColor = android.graphics.Color.TRANSPARENT
     
-    // Allow content to draw behind status bar
-    window.setFlags(
-      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-    )
+    // Set navigation bar to transparent for edge-to-edge
+    window.navigationBarColor = android.graphics.Color.TRANSPARENT
   }
 
   /**

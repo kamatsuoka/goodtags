@@ -39,9 +39,9 @@ const CommonStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'red',
   },
-  greenBox: {
+  cyanBox: {
     borderWidth: 1,
-    borderColor: 'green',
+    borderColor: 'cyan',
   },
   blueBox: {
     borderWidth: 1,

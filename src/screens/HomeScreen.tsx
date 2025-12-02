@@ -2,6 +2,7 @@ import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
 import {
   useAppDispatch,
+  useAppSelector,
   useBodyInsets,
   useHeaderHeight,
   useWindowShape,
@@ -31,6 +32,7 @@ export default function HomeScreen({
   const { paddingLeft, paddingRight } = useBodyInsets()
   const { shallowScreen } = useWindowShape()
   const dispatch = useAppDispatch()
+  const showStatusBar = useAppSelector(state => state.options.showStatusBar)
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const { width, height } = useWindowDimensions()
@@ -45,9 +47,11 @@ export default function HomeScreen({
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 10),
     },
+    statusBarSpacer: {
+      height: shallowScreen && showStatusBar ? insets.top : 0,
+    },
     buttonHolder: { alignItems: 'flex-start' },
     logoHolder: {
-      marginBottom: 5,
       paddingHorizontal: 15,
       backgroundColor: theme.colors.primary,
       alignItems: 'center',
@@ -55,7 +59,7 @@ export default function HomeScreen({
       height: headerHeight,
     },
     logo: {
-      marginBottom: 8,
+      marginBottom: 3,
     },
     navHolder: {
       flex: 1,
@@ -89,11 +93,11 @@ export default function HomeScreen({
     columnsContainer: {
       flexDirection: isLandscape ? 'row' : 'column',
       width: '100%',
+      justifyContent: 'space-between',
     },
     column: {
-      flex: isLandscape ? 1 : undefined,
-      width: isLandscape ? undefined : '100%',
-      paddingHorizontal: isLandscape ? 5 : 0,
+      width: isLandscape ? '32%' : '100%',
+      marginBottom: isLandscape ? 0 : 5,
     },
   })
 
@@ -123,24 +127,26 @@ export default function HomeScreen({
   const themedStyles = StyleSheet.create({
     listContainer: {
       flex: 1,
-      paddingLeft,
+      paddingLeft: shallowScreen ? Math.max(paddingLeft, 30) : paddingLeft,
       paddingRight,
-      paddingTop: 15,
       width: '100%',
     },
     scrollContentContainer: {
-      paddingHorizontal: 15,
+      paddingTop: 10,
+      paddingHorizontal: 20,
       width: '100%',
     },
   })
 
   return (
     <View style={styles.container} testID="home_container">
-      {shallowScreen ? null : (
-        <View style={styles.logoHolder}>
-          <Logo size={LOGO_SIZE} style={styles.logo} dark={false} />
-        </View>
-      )}
+      {/* {shallowScreen ? (
+        <View style={styles.statusBarSpacer} />
+      ) : ( */}
+      <View style={styles.logoHolder}>
+        <Logo size={LOGO_SIZE} style={styles.logo} dark={false} />
+      </View>
+      {/* )} */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={themedStyles.listContainer}
@@ -193,6 +199,8 @@ export default function HomeScreen({
                 />
               </TouchableOpacity>
             </View>
+          </View>
+          <View style={styles.column}>
             <View style={styles.listHolder}>
               <TouchableOpacity
                 onPress={() => {
@@ -202,7 +210,7 @@ export default function HomeScreen({
                 }}
               >
                 <List.Item
-                  title="random"
+                  title="random tag"
                   left={RandomIcon}
                   right={RightIcon}
                   style={styles.listItem}

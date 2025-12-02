@@ -40,10 +40,10 @@ function StatusBarController() {
 
   return (
     <StatusBar
-      barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+      // barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       hidden={!showStatusBar}
       translucent={true}
-      backgroundColor="rgb(38, 94, 167)"
+      // backgroundColor="rgb(38, 94, 167)"
     />
   )
 }
