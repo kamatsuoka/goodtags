@@ -1,5 +1,6 @@
 package com.fogcitysingers.goodtags
 import android.content.res.Configuration
+import android.media.AudioManager
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
@@ -36,6 +37,15 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    
+    // Configure audio manager to reduce overhead when audio is not being used
+    try {
+      val audioManager = getSystemService(AUDIO_SERVICE) as? AudioManager
+      audioManager?.mode = AudioManager.MODE_NORMAL
+    } catch (e: Exception) {
+      // Ignore audio configuration errors
+    }
+    
     loadReactNative(this)
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }

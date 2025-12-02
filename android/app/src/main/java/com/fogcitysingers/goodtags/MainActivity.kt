@@ -6,6 +6,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
+import android.media.AudioManager
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -23,14 +24,21 @@ class MainActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(null)
     
+    // Set audio mode to NORMAL instead of COMMUNICATION to reduce audio subsystem overhead
+    // Only switch to appropriate mode when audio playback is needed
+    volumeControlStream = AudioManager.STREAM_MUSIC
+    
     // Enable edge-to-edge display
     WindowCompat.setDecorFitsSystemWindows(window, false)
     
-    // Set status bar to transparent
+    // Make status bar transparent with light content
     window.statusBarColor = android.graphics.Color.TRANSPARENT
     
-    // Set navigation bar to transparent for edge-to-edge
+    // Make navigation bar transparent  
     window.navigationBarColor = android.graphics.Color.TRANSPARENT
+    
+    // Ensure status bar icons are visible on light backgrounds
+    WindowCompat.getInsetsController(window, window.decorView)?.isAppearanceLightStatusBars = false
   }
 
   /**

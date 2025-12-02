@@ -31,7 +31,14 @@ function App() {
 function StatusBarController() {
   const showStatusBar = useAppSelector(state => state.options.showStatusBar)
 
-  return <StatusBar hidden={!showStatusBar} translucent={true} />
+  return (
+    <StatusBar 
+      hidden={!showStatusBar} 
+      translucent={true}
+      backgroundColor="transparent"
+      barStyle="light-content"
+    />
+  )
 }
 
 function AppContent() {
