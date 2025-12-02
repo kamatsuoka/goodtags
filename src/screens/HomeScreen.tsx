@@ -140,13 +140,9 @@ export default function HomeScreen({
 
   return (
     <View style={styles.container} testID="home_container">
-      {/* {shallowScreen ? (
-        <View style={styles.statusBarSpacer} />
-      ) : ( */}
       <View style={styles.logoHolder}>
         <Logo size={LOGO_SIZE} style={styles.logo} dark={false} />
       </View>
-      {/* )} */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={themedStyles.listContainer}

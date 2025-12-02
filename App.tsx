@@ -3,13 +3,7 @@ import { useAppSelector } from '@app/hooks'
 import RootStackNavigator from '@app/navigation/RootStackNavigator'
 import { persistor, store } from '@app/store'
 import { setAudioModeAsync } from 'expo-audio'
-import {
-  LogBox,
-  StatusBar,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from 'react-native'
+import { LogBox, StatusBar, StyleSheet, View } from 'react-native'
 import ErrorBoundary from 'react-native-error-boundary'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -35,17 +29,9 @@ function App() {
 }
 
 function StatusBarController() {
-  const isDarkMode = useColorScheme() === 'dark'
   const showStatusBar = useAppSelector(state => state.options.showStatusBar)
 
-  return (
-    <StatusBar
-      // barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-      hidden={!showStatusBar}
-      translucent={true}
-      // backgroundColor="rgb(38, 94, 167)"
-    />
-  )
+  return <StatusBar hidden={!showStatusBar} translucent={true} />
 }
 
 function AppContent() {
