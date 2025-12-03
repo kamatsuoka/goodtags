@@ -317,14 +317,18 @@ const favoritesSlice = createSlice({
       state.error = action.payload
     })
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.Favorites &&
-        action.payload.tag
-      ) {
-        const tag = action.payload.tag as Tag
-        console.log(`Refreshing favorite tag ${tag.id} in favorites slice`)
-        if (state.tagsById[tag.id]) {
-          state.tagsById[tag.id] = buildFavorite(tag)
+      if (action.payload?.tag) {
+        const { tag, tagListType } = action.payload
+        const tagId = (tag as Tag).id
+        if (tagListType === TagListEnum.Favorites && state.tagsById[tagId]) {
+          console.log(`Refreshing favorite tag ${tagId} in favorites slice`)
+          state.tagsById[tagId] = buildFavorite(tag as Tag)
+        } else if (
+          !Object.values(TagListEnum).includes(tagListType as TagListEnum) &&
+          state.labeledById[tagId]
+        ) {
+          console.log(`Refreshing tag ${tagId} in label "${tagListType}"`)
+          state.labeledById[tagId] = tag as Tag
         }
       }
     })
