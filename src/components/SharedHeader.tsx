@@ -2,7 +2,12 @@ import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps } from 'react'
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import {
+  Platform,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from './BackButton'
@@ -48,6 +53,7 @@ export default function SharedHeader({
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
   const theme = useTheme()
+  const ios = Platform.OS === 'ios'
 
   const themedStyles = StyleSheet.create({
     header: {
@@ -62,6 +68,7 @@ export default function SharedHeader({
     },
     center: {
       ...styles.center,
+      marginBottom: ios ? 6 : 10,
       ...headerCenterStyle,
     },
     title: {
@@ -70,6 +77,7 @@ export default function SharedHeader({
     icon: {
       color: theme.colors.onPrimary,
       marginRight: 8,
+      // marginBottom: ios ? -10 : 0,
     },
     cancel: {
       color: theme.colors.onPrimary,
@@ -101,7 +109,7 @@ export default function SharedHeader({
           {titleIcon
             ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
             : null}
-          <Text variant="titleLarge" style={themedStyles.title}>
+          <Text variant="titleMedium" style={themedStyles.title}>
             {title}
           </Text>
         </View>
@@ -139,13 +147,13 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     height: 48,
   },
   titleHolder: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   right: {
     minWidth: 60,

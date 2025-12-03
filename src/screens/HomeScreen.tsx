@@ -100,6 +100,7 @@ export default function HomeScreen({
     },
     headerCenterStyle: {
       justifyContent: 'flex-end',
+      marginBottom: 0,
     },
   })
 
