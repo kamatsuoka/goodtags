@@ -9,12 +9,13 @@ import {
   useTagListState,
 } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
-import { getSelectedTagSetter, isLabelType } from '@app/modules/tagListUtil'
-import { TagListEnum } from '@app/modules/tagLists'
+import { refreshTag } from '@app/modules/refreshTagThunk'
+import { getSelectedTagSetter } from '@app/modules/tagListUtil'
+import { TagListEnum, isLabelType } from '@app/modules/tagLists'
 import { TagState, setTagState } from '@app/modules/visitSlice'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tag'>
 
@@ -35,6 +36,14 @@ const TagScreen = ({ navigation }: Props) => {
   )
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
+
+  // Refresh tag data when opening to ensure we have latest metadata
+  useEffect(() => {
+    if (tag?.id) {
+      console.log('[TagScreen] Refreshing tag metadata for tag:', tag.id)
+      dispatch(refreshTag({ id: tag.id, tagListType }))
+    }
+  }, [dispatch, tag?.id, tagListType])
 
   /**
    * Go back to list.

@@ -125,7 +125,6 @@ export async function getDbConnection(): Promise<DbWrapper> {
     dbConnectionPromise[0] = nonNullPromise
     return await nonNullPromise
   } else {
-    console.debug('Using existing DB wrapper')
     return await existing
   }
 }

@@ -294,10 +294,10 @@ export function tagsFromDbRows(
   tagRows: DbRow[],
   trackRows: DbRow[],
   videoRows: DbRow[],
-  count: string,
+  count: number,
   offset: number,
 ): ConvertedTags {
-  const available = parseInt(count, 10)
+  const available = count
   const tracksById = groupByTagId(trackRows, row => row as Track)
   const videosById = groupByTagId(videoRows, row => row as Video)
   const tags = tagRows.map((row, idx) =>

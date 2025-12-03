@@ -150,10 +150,6 @@ async function searchDb(
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =
     buildSqlParts(searchParams)
-  console.debug('whereVariables', whereVariables)
-  console.debug('whereClause', whereClause)
-  console.debug('suffixClauses', suffixClauses)
-  console.debug('suffixVariables', suffixVariables)
   const db = await getDbConnection()
   debugDbPerfLogging('Got db', overallStart)
 
@@ -162,19 +158,18 @@ async function searchDb(
   let tagRows: DbRow[] = []
   let trackRows: DbRow[] = []
   let videoRows: DbRow[] = []
-  let count = '0'
+  let totalCount = 0
 
   const executeQueries = async () => {
     const start = debugDbPerfCurrentTime()
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
-    console.debug('tagSql', tagSql, whereVariables, suffixVariables)
+    console.debug(tagSql, whereVariables, suffixVariables)
     tagRows = await db.getAllAsync<DbRow>(
       tagSql,
       ...whereVariables,
       ...suffixVariables,
     )
-    console.debug('got tagRows.length = ', tagRows.length)
     const tagTime = debugDbPerfCurrentTime()
 
     trackRows = await db.getAllAsync<DbRow>(
@@ -191,7 +186,7 @@ async function searchDb(
     )
     const videoTime = debugDbPerfCurrentTime()
 
-    const count_raw = await db.getAllAsync<{ count: number }>(
+    const totalCountRaw = await db.getAllAsync<{ count: number }>(
       `SELECT COUNT(*) AS count FROM tags${whereClause}`,
       ...whereVariables,
     )
@@ -206,8 +201,14 @@ async function searchDb(
           `total=${countTime - start}`,
       )
     }
-    count = count_raw[0].count.toString()
-    console.debug('raw count', count)
+    totalCount = totalCountRaw[0].count
+
+    if (tagRows.length > 1 && totalCount > 1) {
+      const msg =
+        `got ${tagRows.length}/${totalCount} tags` +
+        (searchParams.offset ? ` (offset ${searchParams.offset})` : '')
+      console.debug(msg)
+    }
   }
 
   if (useTransaction) {
@@ -221,7 +222,7 @@ async function searchDb(
     tagRows,
     trackRows,
     videoRows,
-    count,
+    totalCount,
     searchParams.offset || 0,
   )
 }

@@ -83,3 +83,7 @@ export function sortTagsPosted(tagsById: TagsById, allTagIds: number[]) {
   const posted = (id: number) => tagsById[id]?.posted ?? '1970-01-01'
   allTagIds.sort((id1, id2) => posted(id2).localeCompare(posted(id1)))
 }
+
+export function isLabelType(tagListType: TagListType) {
+  return typeof tagListType === 'string'
+}

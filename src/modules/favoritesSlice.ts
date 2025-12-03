@@ -10,11 +10,13 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import Share from 'react-native-share'
+import { refreshTag } from './refreshTagThunk'
 import { fetchAndConvertTags } from './searchutil'
 import {
   LoadingState,
   sortAlpha,
   sortTagsAlpha,
+  TagListEnum,
   TagListState,
   TagListType,
 } from './tagLists'
@@ -77,6 +79,7 @@ const favoritesSlice = createSlice({
     addFavorite: (state, action: PayloadAction<Tag>) => {
       const tag = action.payload
       const id = tag.id
+      console.log(`Adding favorite tag ${id}`)
       state.tagsById[id] = buildFavorite(tag)
       if (!state.allTagIds.includes(id)) {
         if (state.sortOrder === SortOrder.newest) {
@@ -312,6 +315,18 @@ const favoritesSlice = createSlice({
     builder.addCase(receiveSharedFile.rejected, (state, action) => {
       state.loadingState = LoadingState.failed
       state.error = action.payload
+    })
+    builder.addCase(refreshTag.fulfilled, (state, action) => {
+      if (
+        action.payload?.tagListType === TagListEnum.Favorites &&
+        action.payload.tag
+      ) {
+        const tag = action.payload.tag as Tag
+        console.log(`Refreshing favorite tag ${tag.id} in favorites slice`)
+        if (state.tagsById[tag.id]) {
+          state.tagsById[tag.id] = buildFavorite(tag)
+        }
+      }
     })
   },
 })

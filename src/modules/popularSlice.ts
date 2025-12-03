@@ -8,8 +8,9 @@ import {
 import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
+import { refreshTag } from './refreshTagThunk'
 import { fetchAndConvertTags } from './searchutil'
-import { LoadingState, sortAlpha, TagListState } from './tagLists'
+import { LoadingState, sortAlpha, TagListEnum, TagListState } from './tagLists'
 import { SelectedTag } from './tagListUtil'
 import { ThunkApiConfig } from './thunkApiConfig'
 
@@ -90,6 +91,18 @@ export const popularSlice = createSlice({
     builder.addCase(getPopularTags.rejected, (state, action) => {
       state.loadingState = LoadingState.failed
       state.error = action.payload
+    })
+    builder.addCase(refreshTag.fulfilled, (state, action) => {
+      if (
+        action.payload?.tagListType === TagListEnum.Popular &&
+        action.payload.tag
+      ) {
+        const tag = action.payload.tag as SearchResult
+        console.log(`Refreshing tag ${tag.id} in popular slice`)
+        if (state.tagsById[tag.id]) {
+          state.tagsById[tag.id] = tag
+        }
+      }
     })
   },
 })

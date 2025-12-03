@@ -11,7 +11,10 @@ import { scheduleOnRN } from 'react-native-worklets'
 const isPdf = (uri: string) => uri.toLowerCase().endsWith('.pdf')
 const BACKGROUND_COLOR = '#fcfcff'
 
-type Props = { uri: string; onPress: () => void }
+type Props = {
+  uri: string
+  onPress: () => void
+}
 
 /**
  * Sheet musics viewer. Supports pdfs, gifs, etc.

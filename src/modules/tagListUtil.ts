@@ -14,7 +14,7 @@ import { HistoryActions, selectHistory } from './historySlice'
 import { NewActions, selectNew } from './newSlice'
 import { PopularActions, selectPopular } from './popularSlice'
 import { SearchActions, selectSearchResults } from './searchSlice'
-import { TagListEnum, TagListState, TagListType } from './tagLists'
+import { isLabelType, TagListEnum, TagListState, TagListType } from './tagLists'
 
 export function getTagListSelector(
   tagListType: TagListType,
@@ -47,10 +47,6 @@ export function isFavoriteOrLabel(tagListType: TagListType) {
     return tagListType === TagListEnum.Favorites
   }
   return isLabelType(tagListType)
-}
-
-export function isLabelType(tagListType: TagListType) {
-  return typeof tagListType === 'string'
 }
 
 function getLabeledTagListSelector(label: string) {

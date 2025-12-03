@@ -3,7 +3,13 @@ import Tag from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
-import { InitialTagListState, sortAlpha, TagListState } from './tagLists'
+import { refreshTag } from './refreshTagThunk'
+import {
+  InitialTagListState,
+  sortAlpha,
+  TagListEnum,
+  TagListState,
+} from './tagLists'
 
 export type HistoryState = TagListState & {
   history: number[] // tag ids sorted by date seen, newest first
@@ -72,6 +78,20 @@ const historySlice = createSlice({
         state.sortOrder = SortOrder.newest
       }
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(refreshTag.fulfilled, (state, action) => {
+      if (
+        action.payload?.tagListType === TagListEnum.History &&
+        action.payload.tag
+      ) {
+        const tag = action.payload.tag
+        console.log(`Refreshing tag ${tag.id} in history slice`)
+        if (state.tagsById[tag.id]) {
+          state.tagsById[tag.id] = tag
+        }
+      }
+    })
   },
 })
 

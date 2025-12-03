@@ -176,7 +176,7 @@ const TagList = (props: TagListProps) => {
   )
 
   return (
-    <View style={CommonStyles.container}>
+    <View style={styles.tagListHolder}>
       <FlashList
         ref={listRef}
         data={allTagIds}
@@ -203,6 +203,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingTop: 55,
     textAlign: 'center',
+  },
+  tagListHolder: {
+    ...CommonStyles.container,
+    marginTop: 5,
   },
 })
 
