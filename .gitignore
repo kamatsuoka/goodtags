@@ -78,3 +78,6 @@ yarn-error.log
 .expo
 dist/
 web-build/
+
+# android bundle
+*.aab
