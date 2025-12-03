@@ -18,7 +18,7 @@ jest.mock('@app/store', () => {
   })
   const optionsSlice = createSlice({
     name: 'options',
-    initialState: { autoRotate: false },
+    initialState: { serifs: true, showStatusBar: false, keepAwake: true },
     reducers: {},
   })
   const store = configureStore({

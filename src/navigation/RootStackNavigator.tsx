@@ -6,9 +6,7 @@ import { useAppSelector } from '@app/hooks'
 import { MainTheme, SansSerifTheme } from '@app/lib/theme'
 import AboutScreen from '@app/screens/AboutScreen'
 import { FavoritesScreen } from '@app/screens/FavoritesScreen'
-import LandscapeTransition from '@app/screens/LandscapeTransition'
 import LogsScreen from '@app/screens/LogsScreen'
-import PortraitTransition from '@app/screens/PortraitTransition'
 import RandomScreen from '@app/screens/RandomScreen'
 import TagScreen from '@app/screens/TagScreen'
 import WelcomeScreen from '@app/screens/WelcomeScreen'
@@ -20,7 +18,6 @@ import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack'
-import { useMemo } from 'react'
 import { Provider as PaperProvider } from 'react-native-paper'
 import TabNavigator from './TabNavigator'
 import { RootStackParamList } from './navigationParams'
@@ -36,22 +33,14 @@ const noHorizontalPadding = {
 export default function RootStackNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>()
   const lastVisited = useAppSelector(state => state.visit.lastVisited)
-  const autoRotate = useAppSelector(state => state.options.autoRotate)
   const serifs = useAppSelector(state => state.options.serifs)
+  const homeOrientation: NativeStackNavigationOptions = {
+    orientation: 'all',
+  }
 
-  const homeOrientation: NativeStackNavigationOptions = useMemo(
-    () => ({
-      orientation: autoRotate ? 'portrait_up' : 'all',
-    }),
-    [autoRotate],
-  )
-
-  const tagOrientation: NativeStackNavigationOptions = useMemo(
-    () => ({
-      orientation: autoRotate ? 'landscape' : 'all',
-    }),
-    [autoRotate],
-  )
+  const tagOrientation: NativeStackNavigationOptions = {
+    orientation: 'all',
+  }
 
   /**
    * Notes: setting animation: none combined with freezeOnBlur
@@ -82,16 +71,6 @@ export default function RootStackNavigator() {
             name="Tag"
             component={TagScreen}
             options={tagOrientation}
-          />
-          <Stack.Screen
-            name="PortraitTransition"
-            component={PortraitTransition}
-            options={{ animation: 'none', ...homeOrientation }}
-          />
-          <Stack.Screen
-            name="LandscapeTransition"
-            component={LandscapeTransition}
-            options={{ animation: 'none', ...tagOrientation }}
           />
           <Stack.Screen
             name="Favorites"
