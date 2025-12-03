@@ -34,6 +34,7 @@
     "expo-audio": "^1.0.15",
     "expo-constants": "^18.0.10",
     "expo-file-system": "^19.0.19",
+    "expo-keep-awake": "^15.0.7",
     "expo-sqlite": "^16.0.9",
     "fast-xml-parser": "^5.3.2",
     "html-entities": "^2.6.0",

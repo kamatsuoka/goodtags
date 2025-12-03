@@ -6,6 +6,7 @@ export interface OptionsState {
   autoRotate: boolean
   autoRotateDelay: number
   showStatusBar: boolean
+  keepAwake: boolean
 }
 
 // Define the initial state using that type
@@ -14,6 +15,7 @@ export const initialState: OptionsState = {
   autoRotate: false,
   autoRotateDelay: 200,
   showStatusBar: false,
+  keepAwake: true,
 }
 export const optionsSlice = createSlice({
   name: 'options',
@@ -31,6 +33,9 @@ export const optionsSlice = createSlice({
     },
     setShowStatusBar: (state, action: PayloadAction<boolean>) => {
       state.showStatusBar = action.payload
+    },
+    setKeepAwake: (state, action: PayloadAction<boolean>) => {
+      state.keepAwake = action.payload
     },
   },
 })

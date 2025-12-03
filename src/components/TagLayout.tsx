@@ -1,6 +1,7 @@
 import CommonStyles from '@app/constants/CommonStyles'
 import {
   noteForKey,
+  useAppSelector,
   useButtonDimming,
   useNotePlayer,
   useTagHistory,
@@ -18,6 +19,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
 import {
@@ -147,6 +149,7 @@ export const TagLayout = ({
 }: TagLayoutProps) => {
   const theme = useTheme()
   const navigation = useNavigation()
+  const keepAwakeEnabled = useAppSelector(state => state.options.keepAwake)
   const keyNote = noteForKey(tag.key)
   const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
     useNotePlayer(keyNote)
@@ -184,6 +187,18 @@ export const TagLayout = ({
 
   useTagHistory(tag)
   useTagTracks(tag)
+
+  // Keep screen awake when viewing a tag if setting is enabled
+  useEffect(() => {
+    if (keepAwakeEnabled) {
+      activateKeepAwakeAsync('tag-viewing')
+    }
+    return () => {
+      if (keepAwakeEnabled) {
+        deactivateKeepAwake('tag-viewing')
+      }
+    }
+  }, [keepAwakeEnabled])
 
   useEffect(() => {
     if (infoVisible) {

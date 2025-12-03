@@ -28,6 +28,7 @@ export default function OptionsScreen() {
   const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
   const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
   const showStatusBar = useAppSelector(state => state.options.showStatusBar)
+  const keepAwake = useAppSelector(state => state.options.keepAwake)
   const [delayDraft, setDelayDraft] = useState(autoRotateDelay)
   const dispatch = useAppDispatch()
 
@@ -42,6 +43,10 @@ export default function OptionsScreen() {
   const toggleStatusBar = useCallback(() => {
     dispatch(OptionsActions.setShowStatusBar(!showStatusBar))
   }, [dispatch, showStatusBar])
+
+  const toggleKeepAwake = useCallback(() => {
+    dispatch(OptionsActions.setKeepAwake(!keepAwake))
+  }, [dispatch, keepAwake])
 
   const handleAutoRotateDelay = useCallback(
     (value: number) => {
@@ -107,6 +112,11 @@ export default function OptionsScreen() {
     [showStatusBar, toggleStatusBar],
   )
 
+  const renderKeepAwakeCheckbox = useCallback(
+    () => <CheckBoxComponent selected={keepAwake} onPress={toggleKeepAwake} />,
+    [keepAwake, toggleKeepAwake],
+  )
+
   return (
     <ScrollView style={themedStyles.listContainer}>
       <View style={styles.container}>
@@ -129,6 +139,13 @@ export default function OptionsScreen() {
           title="show status bar"
           titleStyle={styles.listItemTitle}
           description="show the system status bar"
+        />
+        <List.Item
+          left={renderKeepAwakeCheckbox}
+          title="keep screen awake"
+          titleStyle={styles.listItemTitle}
+          description="prevent screen from sleeping while viewing tags"
+          descriptionNumberOfLines={2}
         />
       </View>
     </ScrollView>
