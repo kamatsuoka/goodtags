@@ -8,7 +8,10 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "sync-version": "node scripts/sync-version.js"
+    "sync-version": "node scripts/sync-version.js",
+    "bump-build": "node scripts/bump-build.js",
+    "bump-version": "node scripts/bump-build.js",
+    "deploy:ios": "./scripts/deploy-ios.sh"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.7",
