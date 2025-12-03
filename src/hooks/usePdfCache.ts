@@ -120,7 +120,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         }
       }
 
-      const msg = `${errMsg}: ${pdfUri}`
+      const msg = `${errMsg}\n${pdfUri}`
       console.error(`${errMsg}: ${pdfUri}`)
 
       setState({

@@ -71,9 +71,19 @@ export default function SheetMusic(props: Props) {
       if (error) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>
-            <Text style={styles.errorText}>{error}</Text>
-            <Button mode="contained" onPress={retry} style={styles.retryButton}>
-              Retry
+            <Text style={styles.errorIcon}>⚠️</Text>
+            <Text style={styles.errorTitle}>Unable to load sheet music</Text>
+            <Text style={styles.errorMessage}>{uri}</Text>
+            <Text style={styles.errorMessage}>
+              Check your network connection and try again
+            </Text>
+            <Button
+              mode="contained"
+              onPress={retry}
+              style={styles.retryButton}
+              buttonColor="#6200ee"
+            >
+              <Text style={styles.retryText}>Retry</Text>
             </Button>
           </View>
         )
@@ -149,7 +159,10 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
               <div id="error-container">
                 <div id="error-icon">⚠️</div>
                 <div id="error-title">Unable to load sheet music</div>
-                <div id="error-message">Check your network connection and try again</div>
+                <div id="error-message">
+                  <p>${uri}</p>
+                  Check your network connection and try again
+                </div>
                 <button id="retry-button" onclick="retryLoad()">Retry</button>
               </div>
             \`;
@@ -219,10 +232,10 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
            }
            #retry-button {
              background-color: #6200ee;
+             border-radius: 2px;
              color: white;
              border: none;
              padding: 12px 24px;
-             border-radius: 4px;
              font-size: 16px;
              font-weight: 500;
              cursor: pointer;
@@ -256,6 +269,33 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: 'center' },
   centerContent: { justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 16, textAlign: 'center' },
-  errorText: { textAlign: 'center', color: 'red', marginBottom: 16 },
-  retryButton: { marginTop: 8 },
+  errorIcon: { fontSize: 48, marginBottom: 16, textAlign: 'center' },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 20,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
+  },
+  retryButton: {
+    marginTop: 8,
+    borderRadius: 3,
+  },
+  retryText: {
+    color: 'white',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
+    fontSize: 17,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+  },
 })
