@@ -22,7 +22,7 @@ import {
 import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const LOGO_SIZE = 28
+const LOGO_SIZE = 26
 const logoTitle = <Logo size={LOGO_SIZE} dark={false} />
 
 /**

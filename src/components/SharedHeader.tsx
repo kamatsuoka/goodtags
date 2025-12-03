@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
   },
   titleHolder: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'flex-end',
   },
   right: {
