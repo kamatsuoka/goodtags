@@ -104,8 +104,12 @@ export default function SheetMusic(props: Props) {
           source={source}
           renderError={() => <Text>Unable to load image</Text>}
           onMessage={event => {
-            if (event.nativeEvent?.data === 'click') {
+            const data = event.nativeEvent?.data
+            if (data === 'click') {
               onPress()
+            } else if (data === 'retry') {
+              // Force WebView to reload by updating key
+              retry()
             }
           }}
         />
@@ -128,17 +132,57 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
   return {
     html: `<head>
          <title>sheet music</title>
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
          <script>
+          let imageLoadFailed = false;
+          
           function handleClick() {
+            if (imageLoadFailed) return; // Don't trigger onPress if image failed
             // noinspection JSUnresolvedVariable
             window.ReactNativeWebView.postMessage("click");
           }
+          
+          function handleImageError() {
+            imageLoadFailed = true;
+            const positioner = document.getElementById('positioner');
+            positioner.innerHTML = \`
+              <div id="error-container">
+                <div id="error-icon">⚠️</div>
+                <div id="error-title">Unable to load sheet music</div>
+                <div id="error-message">Check your network connection and try again</div>
+                <button id="retry-button" onclick="retryLoad()">Retry</button>
+              </div>
+            \`;
+          }
+          
+          function retryLoad() {
+            imageLoadFailed = false;
+            const positioner = document.getElementById('positioner');
+            positioner.innerHTML = \`
+              <div id="loading-container">
+                <div id="loading-text">Loading...</div>
+              </div>
+            \`;
+            
+            // Create new image element
+            const img = document.createElement('img');
+            img.id = 'music';
+            img.alt = '${uri}';
+            img.src = '${uri}';
+            img.onerror = handleImageError;
+            img.onload = function() {
+              positioner.innerHTML = '';
+              positioner.appendChild(img);
+            };
+          }
+          
           window.onclick = handleClick;
          </script>
          <style>
            body {
              margin: 0;
              background-color: ${BACKGROUND_COLOR};
+             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
            }
            div#positioner {
              display: flex;
@@ -152,11 +196,54 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
              width: 100%;
              box-shadow: 0 0 1px 1px #eee;
            }
+           #error-container {
+             text-align: center;
+             padding: 20px;
+             max-width: 300px;
+           }
+           #error-icon {
+             font-size: 48px;
+             margin-bottom: 16px;
+           }
+           #error-title {
+             font-size: 18px;
+             font-weight: 600;
+             color: #333;
+             margin-bottom: 8px;
+           }
+           #error-message {
+             font-size: 14px;
+             color: #666;
+             margin-bottom: 20px;
+             line-height: 1.4;
+           }
+           #retry-button {
+             background-color: #6200ee;
+             color: white;
+             border: none;
+             padding: 12px 24px;
+             border-radius: 4px;
+             font-size: 16px;
+             font-weight: 500;
+             cursor: pointer;
+             min-width: 100px;
+           }
+           #retry-button:active {
+             background-color: #3700b3;
+           }
+           #loading-container {
+             text-align: center;
+             padding: 20px;
+           }
+           #loading-text {
+             font-size: 16px;
+             color: #666;
+           }
          </style>
        </head>
        <body>
          <div id="positioner">
-           <img id="music" alt=${uri} src="${uri}"/>
+           <img id="music" alt="${uri}" src="${uri}" onerror="handleImageError()"/>
          </div>
        </body>`,
   }
