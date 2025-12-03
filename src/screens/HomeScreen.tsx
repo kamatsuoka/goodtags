@@ -1,5 +1,6 @@
 import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
+import SharedHeader, { BackType } from '@app/components/SharedHeader'
 import {
   useAppDispatch,
   useAppSelector,
@@ -21,6 +22,9 @@ import {
 import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+const LOGO_SIZE = 28
+const logoTitle = <Logo size={LOGO_SIZE} dark={false} />
+
 /**
  * Home screen
  */
@@ -39,8 +43,6 @@ export default function HomeScreen({
   const isLandscape = width > height
   const headerHeight = useHeaderHeight()
 
-  const LOGO_SIZE = 28
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -57,9 +59,6 @@ export default function HomeScreen({
       alignItems: 'center',
       justifyContent: 'flex-end',
       height: headerHeight,
-    },
-    logo: {
-      marginBottom: 3,
     },
     navHolder: {
       flex: 1,
@@ -98,6 +97,9 @@ export default function HomeScreen({
     column: {
       width: isLandscape ? '32%' : '100%',
       marginBottom: isLandscape ? 0 : 5,
+    },
+    headerCenterStyle: {
+      justifyContent: 'flex-end',
     },
   })
 
@@ -140,9 +142,11 @@ export default function HomeScreen({
 
   return (
     <View style={styles.container} testID="home_container">
-      <View style={styles.logoHolder}>
-        <Logo size={LOGO_SIZE} style={styles.logo} dark={false} />
-      </View>
+      <SharedHeader
+        backType={BackType.None}
+        title={logoTitle}
+        headerCenterStyle={styles.headerCenterStyle}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={themedStyles.listContainer}
