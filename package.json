@@ -11,7 +11,11 @@
     "sync-version": "node scripts/sync-version.js",
     "bump-build": "node scripts/bump-build.js",
     "bump-version": "node scripts/bump-build.js",
-    "deploy:ios": "./scripts/deploy-ios.sh"
+    "bump-android-build": "node scripts/bump-android-build.js",
+    "bump-android-version": "node scripts/bump-android-build.js",
+    "deploy:ios": "./scripts/deploy-ios.sh",
+    "deploy:android": "./scripts/deploy-android.sh",
+    "setup:android-signing": "./scripts/setup-android-signing.sh"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.7",

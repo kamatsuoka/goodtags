@@ -100,7 +100,7 @@ android {
         applicationId "com.fogcitysingers.goodtags"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 104
         versionName getVersionFromPackageJson()
     }
     signingConfigs {
