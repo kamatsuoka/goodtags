@@ -225,12 +225,13 @@ export default function HomeScreen({
             <View style={styles.listHolder}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Labels')
+                  navigation.navigate('About')
                 }}
               >
                 <List.Item
-                  title="labels"
-                  left={LabelsIcon}
+                  title="about"
+                  left={AboutIcon}
+                  testID="about_button"
                   right={RightIcon}
                   style={styles.listItem}
                   titleStyle={styles.listItemTitle}
@@ -255,12 +256,12 @@ export default function HomeScreen({
               <Divider />
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('Data')
+                  navigation.navigate('Labels')
                 }}
               >
                 <List.Item
-                  title="data"
-                  left={DataIcon}
+                  title="labels"
+                  left={LabelsIcon}
                   right={RightIcon}
                   style={styles.listItem}
                   titleStyle={styles.listItemTitle}
@@ -270,13 +271,12 @@ export default function HomeScreen({
               <Divider />
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('About')
+                  navigation.navigate('Data')
                 }}
               >
                 <List.Item
-                  title="about"
-                  left={AboutIcon}
-                  testID="about_button"
+                  title="data"
+                  left={DataIcon}
                   right={RightIcon}
                   style={styles.listItem}
                   titleStyle={styles.listItemTitle}
