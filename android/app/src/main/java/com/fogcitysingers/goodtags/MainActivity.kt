@@ -37,8 +37,14 @@ class MainActivity : ReactActivity() {
     // Make navigation bar transparent  
     window.navigationBarColor = android.graphics.Color.TRANSPARENT
     
-    // Ensure status bar icons are visible on light backgrounds
-    WindowCompat.getInsetsController(window, window.decorView)?.isAppearanceLightStatusBars = false
+    // Configure window insets controller
+    val controller = WindowCompat.getInsetsController(window, window.decorView)
+    controller?.apply {
+      // Ensure status bar icons are visible on light backgrounds
+      isAppearanceLightStatusBars = false
+      // Use dark navigation bar buttons for visibility on light backgrounds
+      isAppearanceLightNavigationBars = true
+    }
   }
 
   /**
