@@ -127,7 +127,6 @@ const TagListItem = React.memo((props: Props) => {
       onPress={props.onPress}
       style={({ pressed }) => [
         {
-          opacity: pressed ? 0.3 : 1,
           backgroundColor: pressed
             ? theme.colors.surfaceVariant
             : 'transparent',
