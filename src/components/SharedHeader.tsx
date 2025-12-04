@@ -77,7 +77,6 @@ export default function SharedHeader({
     icon: {
       color: theme.colors.onPrimary,
       marginRight: 8,
-      // marginBottom: ios ? -10 : 0,
     },
     cancel: {
       color: theme.colors.onPrimary,
@@ -109,7 +108,7 @@ export default function SharedHeader({
           {titleIcon
             ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
             : null}
-          <Text variant="titleMedium" style={themedStyles.title}>
+          <Text variant="titleLarge" style={themedStyles.title}>
             {title}
           </Text>
         </View>
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
   },
   titleHolder: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   right: {
     minWidth: 60,
