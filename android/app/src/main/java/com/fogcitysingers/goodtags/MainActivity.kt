@@ -45,8 +45,8 @@ class MainActivity : ReactActivity() {
     controller?.apply {
       // Ensure status bar icons are visible on light backgrounds
       isAppearanceLightStatusBars = false
-      // Ensure navigation bar icons are visible
-      isAppearanceLightNavigationBars = false
+      // Use dark navigation bar buttons for visibility on light backgrounds
+      isAppearanceLightNavigationBars = true
     }
   }
 
