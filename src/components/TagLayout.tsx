@@ -192,9 +192,7 @@ export const TagLayout = ({
   useEffect(() => {
     if (keepAwakeEnabled) {
       activateKeepAwakeAsync('tag-viewing')
-    }
-    return () => {
-      if (keepAwakeEnabled) {
+      return () => {
         deactivateKeepAwake('tag-viewing')
       }
     }
