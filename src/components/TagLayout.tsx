@@ -1,6 +1,7 @@
 import CommonStyles from '@app/constants/CommonStyles'
 import {
   noteForKey,
+  useAppSelector,
   useButtonDimming,
   useNotePlayer,
   useTagHistory,
@@ -18,11 +19,12 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
 import {
   ActivityIndicator,
-  Appbar,
+  IconButton,
   Portal,
   Snackbar,
   Text,
@@ -61,9 +63,9 @@ const PlayPauseAction = React.memo(
     const icon = isPlaying ? 'pause' : 'play'
     return (
       <View>
-        <Appbar.Action
+        <IconButton
           icon={icon}
-          color={theme.colors.primary}
+          iconColor={theme.colors.primary}
           onPress={() => {
             console.log('[TagLayout] PlayPause pressed:', icon)
             onPress()
@@ -105,9 +107,9 @@ const NavigationActionButton = React.memo(
     theme: any
   }) => {
     return (
-      <Appbar.Action
+      <IconButton
         icon={icon}
-        color={theme.colors.primary}
+        iconColor={theme.colors.primary}
         onPress={() => {
           console.log('[TagLayout] Navigation action pressed:', icon)
           onPress()
@@ -147,6 +149,7 @@ export const TagLayout = ({
 }: TagLayoutProps) => {
   const theme = useTheme()
   const navigation = useNavigation()
+  const keepAwakeEnabled = useAppSelector(state => state.options.keepAwake)
   const keyNote = noteForKey(tag.key)
   const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
     useNotePlayer(keyNote)
@@ -184,6 +187,16 @@ export const TagLayout = ({
 
   useTagHistory(tag)
   useTagTracks(tag)
+
+  // Keep screen awake when viewing a tag if setting is enabled
+  useEffect(() => {
+    if (keepAwakeEnabled) {
+      activateKeepAwakeAsync('tag-viewing')
+      return () => {
+        deactivateKeepAwake('tag-viewing')
+      }
+    }
+  }, [keepAwakeEnabled])
 
   useEffect(() => {
     if (infoVisible) {
@@ -283,18 +296,18 @@ export const TagLayout = ({
   const headerRight = useCallback(
     (_props: any) => (
       <View style={styles.headerRight}>
-        <Appbar.Content title=" " style={styles.headerSpacer} />
-        <Appbar.Action
+        <View style={styles.headerSpacer} />
+        <IconButton
           icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
           onPress={() => onToggleFavorite(tag.id)}
-          color={theme.colors.primary}
+          iconColor={theme.colors.primary}
           size={SMALL_BUTTON_SIZE}
           style={styles.menuButton}
         />
-        <Appbar.Action
+        <IconButton
           icon="menu"
           onPress={() => setFabOpen(!fabOpen)}
-          color={theme.colors.primary}
+          iconColor={theme.colors.primary}
           size={SMALL_BUTTON_SIZE}
           style={styles.menuButton}
         />
@@ -319,11 +332,11 @@ export const TagLayout = ({
           />
         </View>
         <View style={styles.bottomActionBar} pointerEvents="box-none">
-          <Appbar.Action
+          <IconButton
             icon={noteIcon}
             onPressIn={handleNotePressIn}
             onPressOut={handleNotePressOut}
-            color={theme.colors.primary}
+            iconColor={theme.colors.primary}
             size={BIG_BUTTON_SIZE}
             style={styles.dimmableIconHolder}
           />
@@ -336,7 +349,7 @@ export const TagLayout = ({
             styles={styles}
             theme={theme}
           />
-          <Appbar.Content title=" " pointerEvents="none" />
+          <View style={styles.headerSpacer} pointerEvents="none" />
           {navigationActions &&
             navigationActions.map((action, index) => (
               <NavigationActionButton

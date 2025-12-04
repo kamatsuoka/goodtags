@@ -1,4 +1,4 @@
-import { useAppSelector, usePdfCache, useWindowShape } from '@app/hooks'
+import { usePdfCache } from '@app/hooks'
 
 import { Platform, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -21,10 +21,6 @@ type Props = {
  */
 export default function SheetMusic(props: Props) {
   const { uri, onPress } = props
-  const { landscape } = useWindowShape()
-  const doAutoRotate = useAppSelector(state => state.options.autoRotate)
-  // on android, sometimes pdfs render before orientation change registers
-  const showPdf = landscape || !doAutoRotate
   const rawInsets = useSafeAreaInsets()
   const insets =
     Platform.OS === 'android'
@@ -55,10 +51,6 @@ export default function SheetMusic(props: Props) {
 
   if (uri) {
     if (isPdf(uri)) {
-      if (!showPdf) {
-        return null
-      }
-
       if (isLoading) {
         return (
           <View style={[pdfStyle, styles.centerContent]}>

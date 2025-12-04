@@ -5843,7 +5843,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-keep-awake@npm:~15.0.7":
+"expo-keep-awake@npm:^15.0.7, expo-keep-awake@npm:~15.0.7":
   version: 15.0.7
   resolution: "expo-keep-awake@npm:15.0.7"
   peerDependencies:
@@ -6525,6 +6525,7 @@ __metadata:
     expo-audio: "npm:^1.0.15"
     expo-constants: "npm:^18.0.10"
     expo-file-system: "npm:^19.0.19"
+    expo-keep-awake: "npm:^15.0.7"
     expo-sqlite: "npm:^16.0.9"
     fast-xml-parser: "npm:^5.3.2"
     html-entities: "npm:^2.6.0"

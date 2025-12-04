@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
 import { OptionsActions } from '@app/modules/optionsSlice'
-import Slider from '@react-native-community/slider'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import { Checkbox, List, Text } from 'react-native-paper'
+import { Checkbox, List } from 'react-native-paper'
 
 const CheckBoxComponent = ({
   selected,
@@ -25,51 +24,21 @@ const CheckBoxComponent = ({
 export default function OptionsScreen() {
   const { paddingLeft, paddingRight } = useBodyInsets()
   const serifsSelected = useAppSelector(state => state.options.serifs)
-  const autoRotateSelected = useAppSelector(state => state.options.autoRotate)
-  const autoRotateDelay = useAppSelector(state => state.options.autoRotateDelay)
   const showStatusBar = useAppSelector(state => state.options.showStatusBar)
-  const [delayDraft, setDelayDraft] = useState(autoRotateDelay)
+  const keepAwake = useAppSelector(state => state.options.keepAwake)
   const dispatch = useAppDispatch()
 
   const toggleSerifs = useCallback(() => {
     dispatch(OptionsActions.setSerifs(!serifsSelected))
   }, [dispatch, serifsSelected])
 
-  const toggleAutoRotate = useCallback(() => {
-    dispatch(OptionsActions.setAutoRotate(!autoRotateSelected))
-  }, [dispatch, autoRotateSelected])
-
   const toggleStatusBar = useCallback(() => {
     dispatch(OptionsActions.setShowStatusBar(!showStatusBar))
   }, [dispatch, showStatusBar])
 
-  const handleAutoRotateDelay = useCallback(
-    (value: number) => {
-      dispatch(OptionsActions.setAutoRotateDelay(value))
-    },
-    [dispatch],
-  )
-
-  const autoRotateDelaySlider = (
-    <View style={styles.delayHolder}>
-      <View style={styles.sliderHolder}>
-        <Text style={styles.delayText}>
-          delay (increase if auto-rotate glitches)
-        </Text>
-        <Slider
-          value={delayDraft}
-          onValueChange={setDelayDraft}
-          onSlidingComplete={handleAutoRotateDelay}
-          step={10}
-          style={styles.slider}
-          minimumValue={200}
-          maximumValue={1000}
-          maximumTrackTintColor="#aaaaaa"
-        />
-        <Text style={styles.sliderValue}>{delayDraft}</Text>
-      </View>
-    </View>
-  )
+  const toggleKeepAwake = useCallback(() => {
+    dispatch(OptionsActions.setKeepAwake(!keepAwake))
+  }, [dispatch, keepAwake])
 
   const themedStyles = useMemo(
     () =>
@@ -90,21 +59,16 @@ export default function OptionsScreen() {
     [serifsSelected, toggleSerifs],
   )
 
-  const renderAutoRotateCheckbox = useCallback(
-    () => (
-      <CheckBoxComponent
-        selected={autoRotateSelected}
-        onPress={toggleAutoRotate}
-      />
-    ),
-    [autoRotateSelected, toggleAutoRotate],
-  )
-
   const renderStatusBarCheckbox = useCallback(
     () => (
       <CheckBoxComponent selected={showStatusBar} onPress={toggleStatusBar} />
     ),
     [showStatusBar, toggleStatusBar],
+  )
+
+  const renderKeepAwakeCheckbox = useCallback(
+    () => <CheckBoxComponent selected={keepAwake} onPress={toggleKeepAwake} />,
+    [keepAwake, toggleKeepAwake],
   )
 
   return (
@@ -117,18 +81,17 @@ export default function OptionsScreen() {
           description="use serif fonts"
         />
         <List.Item
-          left={renderAutoRotateCheckbox}
-          title="auto-rotate"
-          titleStyle={styles.listItemTitle}
-          description="automatically rotate to optimal orientation"
-          descriptionNumberOfLines={2}
-        />
-        {autoRotateSelected ? autoRotateDelaySlider : null}
-        <List.Item
           left={renderStatusBarCheckbox}
           title="show status bar"
           titleStyle={styles.listItemTitle}
           description="show the system status bar"
+        />
+        <List.Item
+          left={renderKeepAwakeCheckbox}
+          title="keep screen awake"
+          titleStyle={styles.listItemTitle}
+          description="prevent screen from sleeping while viewing tags"
+          descriptionNumberOfLines={2}
         />
       </View>
     </ScrollView>

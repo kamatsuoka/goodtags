@@ -9,7 +9,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { RefObject, useCallback, useRef } from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import TagListItem from './TagListItem'
 
@@ -40,7 +40,6 @@ const TagList = (props: TagListProps) => {
   const loadingState = tagListState.loadingState
 
   const setSelectedTag = getSelectedTagSetter(props.tagListType)
-  const autoRotate = useAppSelector(state => state.options.autoRotate)
   const tagState = useAppSelector(state => state.visit.tagState)
 
   const { listRef } = props
@@ -155,17 +154,12 @@ const TagList = (props: TagListProps) => {
             dispatch(setSelectedTag({ index: tagData.index, id: tag.id }))
             dispatch(setTagListType(props.tagListType))
             dispatch(setTagState(TagState.opening))
-            if (autoRotate && Platform.OS === 'ios') {
-              navigation.navigate('PortraitTransition')
-            } else {
-              navigation.navigate('Tag')
-            }
+            navigation.navigate('Tag')
           }}
         />
       )
     },
     [
-      autoRotate,
       dispatch,
       navigation,
       props.tagListType,

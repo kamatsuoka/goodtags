@@ -1,7 +1,6 @@
 import BackButton from '@app/components/BackButton'
 import LabelEditor from '@app/components/LabelEditor'
 import NavHeader from '@app/components/NavHeader'
-import { useAppSelector } from '@app/hooks'
 import ClassicScreen from '@app/screens/ClassicScreen'
 import DataScreen from '@app/screens/DataScreen'
 import EasyScreen from '@app/screens/EasyScreen'
@@ -15,7 +14,6 @@ import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack'
-import { useMemo } from 'react'
 import { useTheme } from 'react-native-paper'
 import { HomeNavigatorParamList } from './navigationParams'
 
@@ -27,15 +25,10 @@ const HeaderBackButton = () => <BackButton />
  * navigator for home screen, which links to collections, labeled lists, etc
  */
 export default function HomeNavigator() {
-  const autoRotate = useAppSelector(state => state.options.autoRotate)
   const theme = useTheme()
-  //  const insets = useSafeAreaInsets()
-  const homeOrientation: NativeStackNavigationOptions = useMemo(
-    () => ({
-      orientation: autoRotate ? 'portrait_up' : 'all',
-    }),
-    [autoRotate],
-  )
+  const homeOrientation: NativeStackNavigationOptions = {
+    orientation: 'all',
+  }
 
   /**
    * Notes: setting animation: none combined with freezeOnBlur
