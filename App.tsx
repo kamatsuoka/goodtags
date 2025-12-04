@@ -36,14 +36,16 @@ function StatusBarController() {
   // Control status bar visibility using custom native module on Android
   // to avoid breaking edge-to-edge mode
   useEffect(() => {
-    if (Platform.OS === 'android' && StatusBarModule) {
-      StatusBarModule.setHidden(!showStatusBar)
+    if (Platform.OS === 'android') {
+      if (StatusBarModule) {
+        StatusBarModule.setHidden(!showStatusBar)
+      }
+      StatusBar.setTranslucent(true)
+      StatusBar.setBackgroundColor('transparent')
     } else {
       // iOS: use standard API
       StatusBar.setHidden(!showStatusBar, 'none')
     }
-    StatusBar.setTranslucent(true)
-    StatusBar.setBackgroundColor('transparent')
     StatusBar.setBarStyle('light-content')
   }, [showStatusBar])
 

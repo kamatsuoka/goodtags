@@ -8,6 +8,10 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 
+/**
+ * A React Native module to control the visibility of the status bar on android.
+ * Older android devices may not fully support edge-to-edge mode when hiding the status bar.
+ */
 class StatusBarModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String {
