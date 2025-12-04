@@ -122,7 +122,20 @@ const TagListItem = React.memo((props: Props) => {
     return content
   }
 
-  return <Pressable onPress={props.onPress}>{content}</Pressable>
+  return (
+    <Pressable
+      onPress={props.onPress}
+      style={({ pressed }) => [
+        {
+          backgroundColor: pressed
+            ? theme.colors.surfaceVariant
+            : 'transparent',
+        },
+      ]}
+    >
+      {content}
+    </Pressable>
+  )
 })
 
 const styles = StyleSheet.create({

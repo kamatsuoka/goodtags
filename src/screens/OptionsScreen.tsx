@@ -79,12 +79,14 @@ export default function OptionsScreen() {
           title="serifs"
           titleStyle={styles.listItemTitle}
           description="use serif fonts"
+          onPress={toggleSerifs}
         />
         <List.Item
           left={renderStatusBarCheckbox}
           title="show status bar"
           titleStyle={styles.listItemTitle}
           description="show the system status bar"
+          onPress={toggleStatusBar}
         />
         <List.Item
           left={renderKeepAwakeCheckbox}
@@ -92,6 +94,7 @@ export default function OptionsScreen() {
           titleStyle={styles.listItemTitle}
           description="prevent screen from sleeping while viewing tags"
           descriptionNumberOfLines={2}
+          onPress={toggleKeepAwake}
         />
       </View>
     </ScrollView>
