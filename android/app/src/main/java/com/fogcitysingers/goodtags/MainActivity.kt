@@ -7,10 +7,13 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ReactActivity() {
 
@@ -37,8 +40,14 @@ class MainActivity : ReactActivity() {
     // Make navigation bar transparent  
     window.navigationBarColor = android.graphics.Color.TRANSPARENT
     
-    // Ensure status bar icons are visible on light backgrounds
-    WindowCompat.getInsetsController(window, window.decorView)?.isAppearanceLightStatusBars = false
+    // Configure window insets controller
+    val controller = WindowCompat.getInsetsController(window, window.decorView)
+    controller?.apply {
+      // Ensure status bar icons are visible on light backgrounds
+      isAppearanceLightStatusBars = false
+      // Ensure navigation bar icons are visible
+      isAppearanceLightNavigationBars = false
+    }
   }
 
   /**
