@@ -79,5 +79,6 @@ yarn-error.log
 dist/
 web-build/
 
-# android bundle
+# android deployment
 *.aab
+keystore.properties
