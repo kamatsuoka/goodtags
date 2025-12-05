@@ -2,6 +2,8 @@ import { InversePrimaryHighAlpha } from '@app/lib/theme'
 import { StyleSheet } from 'react-native'
 
 export const FAB_GROUP_PADDING_BOTTOM = 35
+export const HEADER_BUTTON_SIZE = 48
+export const SMALL_ICON_SIZE = 26
 
 const CommonStyles = StyleSheet.create({
   container: {

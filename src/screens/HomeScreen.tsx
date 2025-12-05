@@ -5,7 +5,6 @@ import {
   useAppDispatch,
   useAppSelector,
   useBodyInsets,
-  useHeaderHeight,
   useWindowShape,
 } from '@app/hooks'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
@@ -41,7 +40,6 @@ export default function HomeScreen({
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
-  const headerHeight = useHeaderHeight()
 
   const styles = StyleSheet.create({
     container: {
@@ -53,13 +51,6 @@ export default function HomeScreen({
       height: shallowScreen && showStatusBar ? insets.top : 0,
     },
     buttonHolder: { alignItems: 'flex-start' },
-    logoHolder: {
-      paddingHorizontal: 15,
-      backgroundColor: theme.colors.primary,
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      height: headerHeight,
-    },
     navHolder: {
       flex: 1,
       width: '100%',
@@ -99,7 +90,6 @@ export default function HomeScreen({
       marginBottom: isLandscape ? 0 : 5,
     },
     headerCenterStyle: {
-      justifyContent: 'flex-end',
       marginBottom: 0,
     },
   })

@@ -1,4 +1,4 @@
-import CommonStyles from '@app/constants/CommonStyles'
+import CommonStyles, { HEADER_BUTTON_SIZE } from '@app/constants/CommonStyles'
 import { InversePrimaryLowAlpha } from '@app/lib/theme'
 import { Platform, StyleSheet } from 'react-native'
 import { isTablet } from 'react-native-device-info'
@@ -16,17 +16,22 @@ const baseStyles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   headerCenter: {
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    marginBottom: 10,
   },
   headerRight: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
   },
   headerSpacer: {
     flex: 1,
     pointerEvents: 'none',
   },
   menuButton: {
+    width: HEADER_BUTTON_SIZE,
+    height: HEADER_BUTTON_SIZE,
     backgroundColor: 'transparent',
     margin: 0,
   },
@@ -105,6 +110,7 @@ export const useTagScreenStyles = (
       marginRight: 7,
     },
     idHolder: {
+      justifyContent: 'flex-start',
       backgroundColor: theme.colors.primary,
       minWidth: iPad ? 80 : 50,
       borderRadius: iPad ? 12 : 8,
@@ -126,10 +132,6 @@ export const useTagScreenStyles = (
       paddingTop: ios
         ? Math.max(insets.top + 10, 10)
         : Math.max(10, insets.top * 0.8),
-    },
-    favoriteButton: {
-      ...baseStyles.menuButton,
-      marginRight: 16,
     },
     bottomActionBar: {
       ...baseStyles.actionBar,
