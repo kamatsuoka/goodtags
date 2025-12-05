@@ -302,7 +302,8 @@ export const TagLayout = ({
           onPress={() => onToggleFavorite(tag.id)}
           iconColor={theme.colors.primary}
           size={SMALL_BUTTON_SIZE}
-          style={styles.menuButton}
+          style={styles.favoriteButton}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 8 }}
         />
         <IconButton
           icon="menu"
@@ -310,6 +311,7 @@ export const TagLayout = ({
           iconColor={theme.colors.primary}
           size={SMALL_BUTTON_SIZE}
           style={styles.menuButton}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 12 }}
         />
       </View>
     ),

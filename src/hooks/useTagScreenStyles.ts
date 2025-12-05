@@ -24,9 +24,11 @@ const baseStyles = StyleSheet.create({
   },
   headerSpacer: {
     flex: 1,
+    pointerEvents: 'none',
   },
   menuButton: {
     backgroundColor: 'transparent',
+    margin: 0,
   },
   buttonHolder: {
     position: 'absolute',
@@ -125,7 +127,10 @@ export const useTagScreenStyles = (
         ? Math.max(insets.top + 10, 10)
         : Math.max(10, insets.top * 0.8),
     },
-
+    favoriteButton: {
+      ...baseStyles.menuButton,
+      marginRight: 16,
+    },
     bottomActionBar: {
       ...baseStyles.actionBar,
       position: 'absolute' as const,
