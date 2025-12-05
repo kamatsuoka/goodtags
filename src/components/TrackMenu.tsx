@@ -33,17 +33,18 @@ export default function TrackMenu(props: TrackMenuProps) {
       maxWidth: '100%',
     },
     title: {
-      paddingLeft: 26,
       paddingTop: 10,
     },
     divider: {
+      width: 75,
       marginVertical: 10,
-      marginLeft: 10,
-      marginRight: 12,
       backgroundColor: theme.colors.outline,
     },
     hiddenDot: {
       color: theme.colors.background,
+    },
+    part: {
+      marginLeft: -29,
     },
   })
 
@@ -81,6 +82,7 @@ export default function TrackMenu(props: TrackMenuProps) {
             key={part}
             onPress={() => playPart(part)}
             title={itemTitle(part)}
+            style={styles.part}
           />
         ))}
       </View>
