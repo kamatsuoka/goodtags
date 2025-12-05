@@ -38,7 +38,7 @@ import SheetMusic from './SheetMusic'
 import TagInfoView from './TagInfoView'
 import TrackMenu from './TrackMenu'
 
-const SMALL_BUTTON_SIZE = 26
+const SMALL_BUTTON_SIZE = 32
 const BIG_BUTTON_SIZE = 40
 
 // memoized component to prevent re-renders during rapid state changes
@@ -320,7 +320,10 @@ export const TagLayout = ({
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
         {memoizedSheetMusic}
-        <View style={styles.headerHolder}>
+        <View
+          style={styles.headerHolder}
+          pointerEvents={infoVisible || tracksVisible ? 'none' : 'auto'}
+        >
           <SharedHeader
             backType={BackType.Back}
             onBack={onBack}

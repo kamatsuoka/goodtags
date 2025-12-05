@@ -26,7 +26,7 @@ const baseStyles = StyleSheet.create({
     flex: 1,
   },
   menuButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'transparent',
   },
   buttonHolder: {
     position: 'absolute',
