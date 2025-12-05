@@ -1,9 +1,9 @@
+import { HEADER_BUTTON_SIZE } from '@app/constants/CommonStyles'
 import { useNavigation } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { IconButton, useTheme } from 'react-native-paper'
 
 export const ICON_SIZE = 42
-export const BUTTON_SIZE = ICON_SIZE + 6
 
 type BackButtonProps = {
   iconColor?: string
@@ -21,8 +21,8 @@ export default function BackButton({
 
   const themedStyles = StyleSheet.create({
     button: {
-      width: BUTTON_SIZE,
-      height: BUTTON_SIZE,
+      width: HEADER_BUTTON_SIZE,
+      height: HEADER_BUTTON_SIZE,
       backgroundColor: 'transparent',
       marginTop: 2,
     },
@@ -37,6 +37,7 @@ export default function BackButton({
       mode="contained"
       onPress={() => (onBack ? onBack() : navigation.goBack())}
       testID="logo_button"
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { usePdfCache } from '@app/hooks'
+import { useHeaderHeight, usePdfCache } from '@app/hooks'
 
 import { Platform, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -29,12 +29,17 @@ export default function SheetMusic(props: Props) {
 
   // Use the PDF cache hook for handling remote PDF downloads
   const { localPath, isLoading, error, retry } = usePdfCache(uri)
+  const headerHeight = useHeaderHeight()
 
   // Single tap gesture that only fires if not part of a pinch/pan
+  // and doesn't interfere with header buttons
   const tap = Gesture.Tap()
     .maxDuration(250)
-    .onEnd(() => {
-      scheduleOnRN(onPress)
+    .onEnd(event => {
+      // Don't handle taps in the header area to avoid blocking header button touches
+      if (event.y > headerHeight) {
+        scheduleOnRN(onPress)
+      }
     })
 
   // Allow simultaneous gestures so PDF viewer can handle pinch/pan

@@ -1,4 +1,4 @@
-import CommonStyles from '@app/constants/CommonStyles'
+import CommonStyles, { SMALL_ICON_SIZE } from '@app/constants/CommonStyles'
 import {
   noteForKey,
   useAppSelector,
@@ -38,7 +38,6 @@ import SheetMusic from './SheetMusic'
 import TagInfoView from './TagInfoView'
 import TrackMenu from './TrackMenu'
 
-const SMALL_BUTTON_SIZE = 26
 const BIG_BUTTON_SIZE = 40
 
 // memoized component to prevent re-renders during rapid state changes
@@ -74,7 +73,6 @@ const PlayPauseAction = React.memo(
           }}
           disabled={disabled}
           size={BIG_BUTTON_SIZE}
-          style={styles.dimmableIconHolder}
         />
         {isLoading && (
           <View style={styles.spinnerOverlay} pointerEvents="none">
@@ -296,20 +294,21 @@ export const TagLayout = ({
   const headerRight = useCallback(
     (_props: any) => (
       <View style={styles.headerRight}>
-        <View style={styles.headerSpacer} />
         <IconButton
           icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
           onPress={() => onToggleFavorite(tag.id)}
           iconColor={theme.colors.primary}
-          size={SMALL_BUTTON_SIZE}
+          size={SMALL_ICON_SIZE}
           style={styles.menuButton}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 8 }}
         />
         <IconButton
           icon="menu"
           onPress={() => setFabOpen(!fabOpen)}
           iconColor={theme.colors.primary}
-          size={SMALL_BUTTON_SIZE}
+          size={SMALL_ICON_SIZE}
           style={styles.menuButton}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 12 }}
         />
       </View>
     ),
@@ -320,7 +319,10 @@ export const TagLayout = ({
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
         {memoizedSheetMusic}
-        <View style={styles.headerHolder}>
+        <View
+          style={styles.headerHolder}
+          pointerEvents={infoVisible || tracksVisible ? 'none' : 'auto'}
+        >
           <SharedHeader
             backType={BackType.Back}
             onBack={onBack}

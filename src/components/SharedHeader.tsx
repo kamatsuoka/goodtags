@@ -1,3 +1,4 @@
+import { HEADER_BUTTON_SIZE } from '@app/constants/CommonStyles'
 import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
@@ -77,7 +78,6 @@ export default function SharedHeader({
     icon: {
       color: theme.colors.onPrimary,
       marginRight: 8,
-      // marginBottom: ios ? -10 : 0,
     },
     cancel: {
       color: theme.colors.onPrimary,
@@ -109,7 +109,7 @@ export default function SharedHeader({
           {titleIcon
             ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
             : null}
-          <Text variant="titleMedium" style={themedStyles.title}>
+          <Text variant="titleLarge" style={themedStyles.title}>
             {title}
           </Text>
         </View>
@@ -140,25 +140,28 @@ export default function SharedHeader({
 const styles = StyleSheet.create({
   left: {
     minWidth: 60,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    height: HEADER_BUTTON_SIZE,
   },
   center: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: 48,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    height: HEADER_BUTTON_SIZE,
   },
   titleHolder: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   right: {
+    flexDirection: 'row',
     minWidth: 60,
     alignItems: 'flex-end',
-    justifyContent: 'center',
-    height: 48,
+    justifyContent: 'flex-end',
+    height: HEADER_BUTTON_SIZE,
   },
   spacer: {
     width: 50,

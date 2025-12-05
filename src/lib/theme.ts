@@ -89,7 +89,7 @@ const customFontSizes = {
   headlineLarge: { fontSize: 34 },
   headlineMedium: { fontSize: 30 },
   headlineSmall: { fontSize: 26 },
-  titleLarge: { fontSize: 24 },
+  titleLarge: { fontSize: 21 },
   titleMedium: { fontSize: 18 },
   titleSmall: { fontSize: 16 },
   labelLarge: { fontSize: 16 },
