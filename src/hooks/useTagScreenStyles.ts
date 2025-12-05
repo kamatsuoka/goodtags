@@ -34,6 +34,7 @@ const baseStyles = StyleSheet.create({
     height: HEADER_BUTTON_SIZE,
     backgroundColor: 'transparent',
     margin: 0,
+    borderRadius: HEADER_BUTTON_SIZE / 2,
   },
   buttonHolder: {
     position: 'absolute',
