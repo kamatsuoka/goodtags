@@ -1,40 +1,27 @@
-import { useAppDispatch } from '@app/hooks'
 import Tag from '@app/lib/models/Tag'
-import { refreshFavorite } from '@app/modules/favoritesSlice'
 import { TagListType } from '@app/modules/tagLists'
-import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useMemo } from 'react'
 import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native'
-import { Divider, IconButton, Text, useTheme } from 'react-native-paper'
+import { Divider, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { arranger } from './tagInfo'
 
 const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
-  const { tag, tagListType } = props
+  const { tag } = props
   const theme = useTheme()
-  const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
 
-  const themedStyles = StyleSheet.create({
-    outerContainer: {
+  const outerContainerPadding = useMemo(
+    () => ({
       paddingHorizontal: isLandscape
         ? Math.max(60, insets.left + 20, insets.right + 20)
         : Math.max(20, insets.left + 20, insets.right + 20),
-      alignItems: 'center',
-    },
-    innerContainer: {
-      paddingTop: 10,
-      paddingBottom: 50,
-      maxWidth: '95%',
-    },
-    divider: {
-      marginVertical: 10,
-      backgroundColor: theme.colors.outlineVariant,
-    },
-  })
+    }),
+    [isLandscape, insets.left, insets.right],
+  )
 
   const items: [string, string | number | undefined][] = useMemo(() => {
     return [
@@ -48,20 +35,18 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   }, [tag])
 
   return (
-    <BottomSheetView style={themedStyles.outerContainer}>
-      <View style={themedStyles.innerContainer}>
-        <View style={styles.titleHolder}>
-          <Text style={styles.infoTitle} variant="titleLarge">
-            {tag.title}
-          </Text>
-          {isFavoriteOrLabel(tagListType) ? (
-            <IconButton
-              icon="refresh"
-              onPress={() => dispatch(refreshFavorite(tag.id))}
-            />
-          ) : null}
-        </View>
-        <Divider bold style={themedStyles.divider} />
+    <BottomSheetView style={[styles.outerContainer, outerContainerPadding]}>
+      <View style={styles.innerContainer}>
+        <Text style={styles.infoTitle} variant="titleLarge">
+          {tag.title}
+        </Text>
+        <Divider
+          bold
+          style={[
+            styles.divider,
+            { backgroundColor: theme.colors.outlineVariant },
+          ]}
+        />
         <View style={styles.listContainer}>
           <InfoItems items={items} />
           <TracksInfo tag={tag} />
@@ -138,13 +123,19 @@ function truncateLyrics(lyrics: string): string {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    alignItems: 'center',
+  },
+  divider: {
+    marginVertical: 10,
+  },
   listContainer: {
     paddingTop: 10,
   },
-  titleHolder: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  innerContainer: {
+    paddingTop: 10,
+    paddingBottom: 50,
+    maxWidth: '95%',
   },
   infoTitle: {
     marginLeft: 3,

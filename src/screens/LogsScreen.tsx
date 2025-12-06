@@ -13,13 +13,13 @@ interface LogEntry {
   args: any[]
 }
 
-const MAX_LOGS = 100
+const MAX_LOGS = 25
 
-// Global log storage
+// global log storage
 const logStorage: LogEntry[] = []
 let logIdCounter = 0
 
-// Store original console methods
+// store original console methods
 const originalConsole = {
   log: console.log,
   warn: console.warn,
@@ -28,14 +28,13 @@ const originalConsole = {
   debug: console.debug,
 }
 
-// Intercept console methods
+// intercept console methods
 const interceptConsole = () => {
   const createInterceptor = (type: LogEntry['type']) => {
     return (...args: any[]) => {
-      // Call original method
+      // call original method
       originalConsole[type](...args)
 
-      // Store log entry
       const entry: LogEntry = {
         id: `log-${logIdCounter++}`,
         timestamp: new Date(),
@@ -46,7 +45,7 @@ const interceptConsole = () => {
 
       logStorage.push(entry)
 
-      // Keep only last MAX_LOGS entries
+      // keep only last MAX_LOGS entries
       if (logStorage.length > MAX_LOGS) {
         logStorage.shift()
       }
@@ -60,7 +59,7 @@ const interceptConsole = () => {
   console.debug = createInterceptor('debug')
 }
 
-// Initialize console interception
+// initialize console interception
 interceptConsole()
 
 const DeleteButton = ({
@@ -79,7 +78,6 @@ export default function LogsScreen() {
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [logs, setLogs] = useState<LogEntry[]>([...logStorage])
-  const [_autoScroll, setAutoScroll] = useState(true)
   const flatListRef = useRef<FlatList>(null)
   const navigation = useNavigation()
 
@@ -88,11 +86,27 @@ export default function LogsScreen() {
     setLogs([])
   }, [])
 
+  const scrollToBottom = useCallback(() => {
+    if (logs.length > 0) {
+      flatListRef.current?.scrollToEnd({ animated: true })
+    }
+  }, [logs.length])
+
   const renderHeaderRight = useCallback(
     () => (
-      <DeleteButton onPress={handleClearLogs} color={theme.colors.onPrimary} />
+      <View style={styles.headerButtons}>
+        <IconButton
+          icon="arrow-down"
+          iconColor={theme.colors.onPrimary}
+          onPress={scrollToBottom}
+        />
+        <DeleteButton
+          onPress={handleClearLogs}
+          color={theme.colors.onPrimary}
+        />
+      </View>
     ),
-    [handleClearLogs, theme.colors.onPrimary],
+    [handleClearLogs, scrollToBottom, theme.colors.onPrimary],
   )
 
   useLayoutEffect(() => {
@@ -132,100 +146,49 @@ export default function LogsScreen() {
       <Card.Content style={styles.logContent}>
         <View style={styles.logHeader}>
           <Chip
-            // icon={getLogIcon(item.type)}
             style={[
               styles.typeChip,
               { backgroundColor: getLogColor(item.type) },
             ]}
-            textStyle={styles.typeChipText}
+            textStyle={[styles.typeChipText, { color: theme.colors.onPrimary }]}
           >
             {item.type.toUpperCase()}
           </Chip>
-          <Text style={styles.timestamp}>{formatTime(item.timestamp)}</Text>
+          <Text
+            style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}
+          >
+            {formatTime(item.timestamp)}
+          </Text>
         </View>
-        <Text style={styles.logMessage}>{item.message}</Text>
+        <Text style={[styles.logMessage, { color: theme.colors.onSurface }]}>
+          {item.message}
+        </Text>
       </Card.Content>
     </Card>
   )
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Math.max(paddingLeft, paddingRight, 8),
-      paddingBottom: insets.bottom,
-    },
-    header: {
-      backgroundColor: theme.colors.primary,
-    },
-    listContent: {
-      paddingVertical: 8,
-    },
-    logCard: {
-      marginVertical: 4,
-      elevation: 2,
-    },
-    logContent: {
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-    },
-    logHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 4,
-    },
-    typeChip: {
-      height: 24,
-    },
-    typeChipText: {
-      fontSize: 10,
-      fontWeight: 'bold',
-      color: theme.colors.onPrimary,
-      marginVertical: 0,
-    },
-    timestamp: {
-      fontSize: 12,
-      color: theme.colors.onSurfaceVariant,
-      fontFamily: Platform.select({
-        ios: 'Menlo',
-        android: 'monospace',
-        default: 'monospace',
-      }),
-    },
-    logMessage: {
-      fontSize: 13,
-      color: theme.colors.onSurface,
-      fontFamily: Platform.select({
-        ios: 'Menlo',
-        android: 'monospace',
-        default: 'monospace',
-      }),
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 32,
-    },
-    emptyText: {
-      fontSize: 16,
-      color: theme.colors.onSurfaceVariant,
-      textAlign: 'center',
-    },
-  })
-
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          paddingHorizontal: Math.max(paddingLeft, paddingRight, 8),
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View style={styles.content}>
         {logs.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              No console logs yet.{'\n\n'}
-              Navigate around the app to see logs appear here.
+            <Text
+              style={[
+                styles.emptyText,
+                { color: theme.colors.onSurfaceVariant },
+                theme.fonts.bodyLarge,
+              ]}
+            >
+              no console logs yet
             </Text>
           </View>
         ) : (
@@ -235,10 +198,69 @@ export default function LogsScreen() {
             renderItem={renderLogItem}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.listContent}
-            onScrollBeginDrag={() => setAutoScroll(false)}
           />
         )}
       </View>
     </View>
   )
 }
+
+const FONT_FAMILY = Platform.select({
+  ios: 'Menlo',
+  android: 'monospace',
+  default: 'monospace',
+})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+  },
+  listContent: {
+    paddingVertical: 8,
+  },
+  logCard: {
+    marginVertical: 4,
+    elevation: 2,
+    borderRadius: 0,
+  },
+  logContent: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  logHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  typeChip: {
+    height: 24,
+  },
+  typeChipText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginVertical: 0,
+  },
+  timestamp: {
+    fontSize: 12,
+    fontFamily: FONT_FAMILY,
+  },
+  logMessage: {
+    fontSize: 13,
+    fontFamily: FONT_FAMILY,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyText: {
+    textAlign: 'center',
+  },
+})

@@ -7,14 +7,19 @@ import {
   useBodyInsets,
   useWindowShape,
 } from '@app/hooks'
+import { useListStyles } from '@app/hooks/useListStyles'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
-import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
-import React, { useEffect, useState } from 'react'
+import {
+  HomeNavigatorParamList,
+  HomeNavigatorScreenProps,
+  RootStackParamList,
+} from '@app/navigation/navigationParams'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Linking,
+  Pressable,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native'
@@ -23,6 +28,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const LOGO_SIZE = 26
 const logoTitle = <Logo size={LOGO_SIZE} dark={false} />
+
+type HomeItemProps = {
+  title: string
+  leftIcon: (props?: any) => React.ReactNode
+  dest?: keyof HomeNavigatorParamList | keyof RootStackParamList
+  onPress?: () => void
+  testID?: string
+}
 
 /**
  * Home screen
@@ -40,12 +53,22 @@ export default function HomeScreen({
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
+  const { listStyles, pressableStyle } = useListStyles()
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 10),
+    },
+    listContainer: {
+      flex: 1,
+      width: '100%',
+    },
+    scrollContentContainer: {
+      paddingTop: 10,
+      paddingHorizontal: 20,
+      width: '100%',
     },
     statusBarSpacer: {
       height: shallowScreen && showStatusBar ? insets.top : 0,
@@ -58,22 +81,6 @@ export default function HomeScreen({
       paddingVertical: 5,
     },
     subheader: { marginLeft: 0, paddingBottom: 5, marginBottom: 0 },
-    listHolder: {
-      backgroundColor: theme.colors.surface,
-      paddingHorizontal: 5,
-      borderRadius: 10,
-      marginVertical: 5,
-    },
-    listItem: {
-      height: 56,
-      flexDirection: 'row',
-      paddingLeft: 5,
-      paddingRight: 5,
-      paddingVertical: 4,
-    },
-    listItemTitle: {
-      fontSize: 18,
-    },
     listItemContent: {
       paddingVertical: 4,
     },
@@ -93,6 +100,41 @@ export default function HomeScreen({
       marginBottom: 0,
     },
   })
+
+  /**
+   * A pressable list item for the home screen
+   */
+  const HomeItem = React.useCallback(
+    ({ title, leftIcon, dest, onPress, testID }: HomeItemProps) => {
+      const handlePress =
+        onPress ||
+        (() => {
+          if (dest) {
+            navigation.navigate(dest, undefined as never)
+          }
+        })
+      return (
+        <Pressable onPress={handlePress} style={pressableStyle}>
+          <List.Item
+            title={title}
+            left={leftIcon}
+            right={RightIcon}
+            style={listStyles.listItem}
+            titleStyle={theme.fonts.bodyLarge}
+            contentStyle={styles.listItemContent}
+            testID={testID}
+          />
+        </Pressable>
+      )
+    },
+    [
+      navigation,
+      listStyles,
+      pressableStyle,
+      theme.fonts.bodyLarge,
+      styles.listItemContent,
+    ],
+  )
 
   useEffect(() => {
     const handleOpenUrl = async (event: { url: string }) => {
@@ -117,19 +159,13 @@ export default function HomeScreen({
     return () => subscription.remove()
   }, [dispatch])
 
-  const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
+  const listContainerStyles = useMemo(
+    () => ({
       paddingLeft: shallowScreen ? Math.max(paddingLeft, 30) : paddingLeft,
       paddingRight,
-      width: '100%',
-    },
-    scrollContentContainer: {
-      paddingTop: 10,
-      paddingHorizontal: 20,
-      width: '100%',
-    },
-  })
+    }),
+    [shallowScreen, paddingLeft, paddingRight],
+  )
 
   return (
     <View style={styles.container} testID="home_container">
@@ -140,139 +176,44 @@ export default function HomeScreen({
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={themedStyles.listContainer}
-        contentContainerStyle={themedStyles.scrollContentContainer}
+        style={[styles.listContainer, listContainerStyles]}
+        contentContainerStyle={styles.scrollContentContainer}
       >
         <View style={styles.columnsContainer}>
           <View style={styles.column}>
-            <View style={styles.listHolder}>
-              <TouchableOpacity onPress={() => navigation.navigate('Popular')}>
-                <List.Item
-                  title="popular"
-                  left={PopularIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+            <View style={listStyles.listHolder}>
+              <HomeItem title="popular" leftIcon={PopularIcon} dest="Popular" />
               <Divider />
-              <TouchableOpacity onPress={() => navigation.navigate('Classic')}>
-                <List.Item
-                  title="classic"
-                  left={ClassicIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="classic" leftIcon={ClassicIcon} dest="Classic" />
               <Divider />
-              <TouchableOpacity onPress={() => navigation.navigate('Easy')}>
-                <List.Item
-                  title="easy"
-                  left={EasyIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="easy" leftIcon={EasyIcon} dest="Easy" />
               <Divider />
-              <TouchableOpacity onPress={() => navigation.navigate('New')}>
-                <List.Item
-                  title="new"
-                  left={NewIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="new" leftIcon={NewIcon} dest="New" />
             </View>
           </View>
           <View style={styles.column}>
-            <View style={styles.listHolder}>
-              <TouchableOpacity
-                onPress={() => {
-                  const parent = navigation.getParent()
-                  const root = parent?.getParent()
-                  root?.navigate('Random' as never)
-                }}
-              >
-                <List.Item
-                  title="random tag"
-                  left={RandomIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+            <View style={listStyles.listHolder}>
+              <HomeItem
+                title="random tag"
+                leftIcon={RandomIcon}
+                dest="Random"
+              />
             </View>
           </View>
           <View style={styles.column}>
-            <View style={styles.listHolder}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('About')
-                }}
-              >
-                <List.Item
-                  title="about"
-                  left={AboutIcon}
-                  testID="about_button"
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+            <View style={listStyles.listHolder}>
+              <HomeItem
+                title="about"
+                leftIcon={AboutIcon}
+                dest="About"
+                testID="about_button"
+              />
               <Divider />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Options')
-                }}
-              >
-                <List.Item
-                  title="options"
-                  left={OptionsIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="options" leftIcon={OptionsIcon} dest="Options" />
               <Divider />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Labels')
-                }}
-              >
-                <List.Item
-                  title="labels"
-                  left={LabelsIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="labels" leftIcon={LabelsIcon} dest="Labels" />
               <Divider />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Data')
-                }}
-              >
-                <List.Item
-                  title="data"
-                  left={DataIcon}
-                  right={RightIcon}
-                  style={styles.listItem}
-                  titleStyle={styles.listItemTitle}
-                  contentStyle={styles.listItemContent}
-                />
-              </TouchableOpacity>
+              <HomeItem title="data" leftIcon={DataIcon} dest="Data" />
             </View>
           </View>
         </View>
@@ -290,11 +231,11 @@ export default function HomeScreen({
   )
 }
 
-const PopularIcon = homeIcon('star')
+export const PopularIcon = homeIcon('star')
 const ClassicIcon = homeIcon('pillar')
 const EasyIcon = homeIcon('teddy-bear')
 const NewIcon = homeIcon('leaf')
-const RightIcon = homeIcon('chevron-right')
+export const RightIcon = homeIcon('chevron-right')
 const LabelsIcon = homeIcon('tag-multiple-outline')
 const AboutIcon = homeIcon('information-outline')
 const OptionsIcon = homeIcon('cog-outline')

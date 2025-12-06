@@ -1,9 +1,9 @@
-// import {StackParamList} from "@app/navigation/navigationParams"
 import homeIcon from '@app/components/homeIcon'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
+import { useListStyles } from '@app/hooks/useListStyles'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { HomeNavigatorScreenProps } from '@app/navigation/navigationParams'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Divider, List, useTheme } from 'react-native-paper'
 
 /**
@@ -16,6 +16,7 @@ export default function LabelsScreen({
   const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
   const dispatch = useAppDispatch()
+  const { listStyles, pressableStyle } = useListStyles()
 
   const styles = StyleSheet.create({
     container: {
@@ -30,18 +31,6 @@ export default function LabelsScreen({
     },
     section: {
       paddingHorizontal: 10,
-    },
-    listHolder: {
-      backgroundColor: theme.colors.surface,
-      borderRadius: 10,
-      marginVertical: 5,
-      paddingHorizontal: 10,
-    },
-    listItem: {
-      height: 50,
-      flexDirection: 'row',
-      paddingLeft: 5,
-      paddingRight: 0,
     },
     emptyText: {
       color: theme.colors.outline,
@@ -66,23 +55,25 @@ export default function LabelsScreen({
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <List.Section style={styles.section}>
-          <View style={styles.listHolder}>
+          <View style={listStyles.listHolder}>
             {labels.length > 0 ? (
               labels.map((label, index) => (
                 <View key={`label_${index}`}>
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => {
                       dispatch(FavoritesActions.selectLabel(label))
                       navigation.navigate('Labeled', { label })
                     }}
+                    style={pressableStyle}
                   >
                     <List.Item
                       title={label}
                       left={LabelIcon}
                       right={RightIcon}
-                      style={styles.listItem}
+                      style={listStyles.listItem}
+                      titleStyle={theme.fonts.bodyLarge}
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                   {index === labels.length - 1 ? null : <Divider />}
                 </View>
               ))
@@ -90,7 +81,7 @@ export default function LabelsScreen({
               <List.Item
                 title="no labels yet"
                 titleStyle={styles.emptyText}
-                style={styles.listItem}
+                style={listStyles.listItem}
               />
             )}
           </View>

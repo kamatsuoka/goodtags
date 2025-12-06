@@ -5,6 +5,7 @@ import {
   useAppSelector,
   useBodyInsets,
 } from '@app/hooks'
+import { useListStyles } from '@app/hooks/useListStyles'
 import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
 import {
   errorCodes,
@@ -15,9 +16,9 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native'
@@ -46,6 +47,7 @@ export default function DataScreen() {
   const [clearingCache, setClearingCache] = useState(false)
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
+  const { listStyles, pressableStyle } = useListStyles()
 
   const styles = StyleSheet.create({
     container: {
@@ -104,17 +106,22 @@ export default function DataScreen() {
             <Text variant="titleLarge" style={styles.title}>
               faves + labels
             </Text>
-            <View style={styles.listHolder}>
-              <TouchableOpacity onPress={() => shareFavorites(favorites)}>
+            <View style={listStyles.listHolder}>
+              <Pressable
+                onPress={() => shareFavorites(favorites)}
+                style={pressableStyle}
+              >
                 <List.Item
                   title="backup"
                   left={ExportIcon}
                   right={RightIcon}
-                  style={styles.listItem}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
-              </TouchableOpacity>
+              </Pressable>
               <Divider />
-              <TouchableOpacity
+              <Pressable
+                style={pressableStyle}
                 onPress={async () => {
                   try {
                     const pickerResults = await pickDocument({
@@ -181,9 +188,10 @@ export default function DataScreen() {
                   title="restore"
                   left={ImportIcon}
                   right={RightIcon}
-                  style={styles.listItem}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -191,8 +199,9 @@ export default function DataScreen() {
             <Text variant="titleLarge" style={styles.title}>
               pdf cache
             </Text>
-            <View style={styles.listHolder}>
-              <TouchableOpacity
+            <View style={listStyles.listHolder}>
+              <Pressable
+                style={pressableStyle}
                 onPress={async () => {
                   setClearingCache(true)
                   try {
@@ -216,10 +225,11 @@ export default function DataScreen() {
                   title="clear cache"
                   left={ClearIcon}
                   right={RightIcon}
-                  style={styles.listItem}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                   disabled={clearingCache}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -227,8 +237,9 @@ export default function DataScreen() {
             <Text variant="titleLarge" style={styles.title}>
               logs
             </Text>
-            <View style={styles.listHolder}>
-              <TouchableOpacity
+            <View style={listStyles.listHolder}>
+              <Pressable
+                style={pressableStyle}
                 onPress={async () => {
                   navigation.navigate('Logs')
                 }}
@@ -237,9 +248,10 @@ export default function DataScreen() {
                   title="view logs"
                   left={LogsIcon}
                   right={RightIcon}
-                  style={styles.listItem}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>

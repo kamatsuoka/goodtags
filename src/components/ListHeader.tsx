@@ -17,6 +17,7 @@ type ListHeaderProps = {
   title?: string | React.ReactNode
   titleIcon?: ComponentProps<typeof Icon>['name']
   setFabOpen: (open: boolean) => void
+  headerCenterStyle?: any
 }
 
 /**
@@ -28,6 +29,7 @@ export default function ListHeader({
   title = '',
   titleIcon,
   setFabOpen,
+  headerCenterStyle,
 }: ListHeaderProps) {
   const theme = useTheme()
   const headerRight = useCallback(
@@ -53,6 +55,7 @@ export default function ListHeader({
       listRef={listRef}
       enableScrollToTop
       headerRight={headerRight}
+      headerCenterStyle={headerCenterStyle}
     />
   )
 }

@@ -30,14 +30,6 @@ export default function CreateLabel({ route }: Props) {
     }
   }
 
-  const themedStyles = StyleSheet.create({
-    warning: {
-      color: theme.colors.error,
-      marginLeft: 12,
-      marginTop: 8,
-    },
-  })
-
   return (
     <View style={styles.container}>
       <View style={styles.inputAndMessage}>
@@ -54,7 +46,10 @@ export default function CreateLabel({ route }: Props) {
           style={[styles.textInput]}
         />
         {labelAlreadyExists(draft.trim()) ? (
-          <Text style={themedStyles.warning} variant="labelSmall">
+          <Text
+            style={[styles.warning, { color: theme.colors.error }]}
+            variant="labelSmall"
+          >
             label already exists
           </Text>
         ) : null}
@@ -83,5 +78,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: 250,
+  },
+  warning: {
+    marginLeft: 12,
+    marginTop: 8,
   },
 })

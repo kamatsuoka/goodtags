@@ -25,53 +25,22 @@ type Props = ComponentProps
 const TagListItem = React.memo((props: Props) => {
   const theme = useTheme()
 
-  const themedStyles = StyleSheet.create({
-    listItem: {
-      flex: 1,
-      flexDirection: 'row',
-      paddingHorizontal: 0,
-      paddingVertical: 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderWidth: 0,
-      borderBottomWidth: 1,
-      borderColor: theme.colors.outlineVariant,
-    },
-    title: {
-      color: theme.colors.primary,
-      overflow: 'hidden',
-      marginRight: 0,
-      textAlign: 'left',
-      fontSize: 18,
-    },
-    arranger: {
-      color: theme.colors.secondary,
-      fontSize: 13,
-    },
-    downloads: {
-      color: theme.colors.outline,
-      fontSize: 12,
-    },
-    downloadIcon: {
-      color: theme.colors.outline,
-    },
-    id: {
-      color: theme.colors.primary,
-      fontSize: 18,
-      textAlign: 'left',
-      width: 69,
-    },
-    aka: {
-      color: theme.colors.secondary,
-      fontSize: 12,
-    },
-  })
-
   const renderDownloads = (tag: Tag) => {
     return isFavoriteOrLabel(props.tagListType) ? null : (
       <>
-        <Text style={themedStyles.downloads}>
-          <Icon name="download" size={14} style={themedStyles.downloadIcon} />
+        <Text
+          style={[
+            theme.fonts.labelSmall,
+            {
+              color: theme.colors.outline,
+            },
+          ]}
+        >
+          <Icon
+            name="download"
+            size={14}
+            style={{ color: theme.colors.outline }}
+          />
           {(tag as SearchResult).downloaded}
         </Text>
       </>
@@ -81,7 +50,14 @@ const TagListItem = React.memo((props: Props) => {
   const tag = props.tag
 
   const content = (
-    <View style={themedStyles.listItem}>
+    <View
+      style={[
+        styles.listItem,
+        {
+          borderColor: theme.colors.outlineVariant,
+        },
+      ]}
+    >
       <View style={styles.dotHolder}>
         <Text testID={`tagleft_${tag.id}`} style={styles.selectedDot}>
           {props.selected ? '•' : ''}
@@ -92,12 +68,23 @@ const TagListItem = React.memo((props: Props) => {
           <Text
             testID={`title_${tag.id}`}
             numberOfLines={1}
-            style={themedStyles.title}
+            style={[
+              styles.title,
+              theme.fonts.bodyLarge,
+              {
+                color: theme.colors.primary,
+              },
+            ]}
           >
             {tag.title}&nbsp;
             <Text
               numberOfLines={1}
-              style={themedStyles.aka}
+              style={[
+                theme.fonts.labelSmall,
+                {
+                  color: theme.colors.secondary,
+                },
+              ]}
               ellipsizeMode="tail"
             >
               {tag.aka ? `aka ${tag.aka}` : null}
@@ -106,13 +93,28 @@ const TagListItem = React.memo((props: Props) => {
         </View>
         <View style={styles.metadataContainer}>
           <View style={styles.metadataLeft}>
-            <Text numberOfLines={1} style={themedStyles.arranger}>
+            <Text
+              numberOfLines={1}
+              style={[
+                theme.fonts.labelSmall,
+                { color: theme.colors.secondary },
+              ]}
+            >
               {arranger(tag)}
               &nbsp;
               {renderDownloads(tag)}
             </Text>
           </View>
-          <TagId id={tag.id} style={themedStyles.id} />
+          <TagId
+            id={tag.id}
+            style={[
+              styles.id,
+              theme.fonts.bodyLarge,
+              {
+                color: theme.colors.primary,
+              },
+            ]}
+          />
         </View>
       </View>
     </View>
@@ -149,6 +151,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
   },
+  listItem: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingHorizontal: 0,
+    paddingVertical: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0,
+    borderBottomWidth: 1,
+  },
   tagIcon: {
     alignSelf: 'center',
     paddingTop: 10,
@@ -174,8 +186,16 @@ const styles = StyleSheet.create({
   },
   selectedDot: {
     alignSelf: 'flex-start',
-    fontSize: 14,
     width: 8,
+  },
+  id: {
+    textAlign: 'left',
+    width: 69,
+  },
+  title: {
+    overflow: 'hidden',
+    marginRight: 0,
+    textAlign: 'left',
   },
 })
 

@@ -206,14 +206,6 @@ export const FABDown = ({
   )
 
   const { top, bottom, right, left } = useSafeAreaInsets()
-  const themedStyles = StyleSheet.create({
-    containerPaddings: {
-      paddingTop: top,
-      paddingBottom: bottom,
-      paddingRight: right,
-      paddingLeft: left,
-    },
-  })
 
   if (actions.length !== prevActions?.length) {
     animations.current = actions.map(
@@ -225,7 +217,16 @@ export const FABDown = ({
   return (
     <View
       pointerEvents="box-none"
-      style={[styles.container, themedStyles.containerPaddings, style]}
+      style={[
+        styles.container,
+        {
+          paddingTop: top,
+          paddingBottom: bottom,
+          paddingRight: right,
+          paddingLeft: left,
+        },
+        style,
+      ]}
     >
       <TouchableWithoutFeedback accessibilityRole="button" onPress={close}>
         <Animated.View

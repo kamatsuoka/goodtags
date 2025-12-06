@@ -2,7 +2,7 @@ import { useHorizontalInset } from '@app/hooks'
 import { Video } from '@app/lib/models/Tag'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   Dimensions,
   FlatList,
@@ -46,53 +46,14 @@ const VideoView = ({ route }: Props) => {
     itemVisiblePercentThreshold: 50,
   }).current
 
-  const themedStyles = StyleSheet.create({
-    container: {
-      flex: 1,
+  const containerDynamicStyles = useMemo(
+    () => ({
       backgroundColor: theme.colors.background,
       paddingHorizontal,
       paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
-    },
-    videoCard: {
-      width: screen.width - paddingHorizontal * 2,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingVertical: 10,
-    },
-    videoInfo: {
-      marginTop: 16,
-      alignItems: 'center',
-    },
-    videoCounter: {
-      fontSize: 14,
-      color: theme.colors.outline,
-    },
-    backButton: {
-      alignSelf: 'flex-start',
-      margin: 15,
-    },
-    webView: {
-      elevation: 0,
-      borderRadius: 12,
-    },
-    indicatorContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      paddingVertical: 12,
-    },
-    indicator: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      marginHorizontal: 4,
-    },
-    placeholder: {
-      backgroundColor: theme.colors.surfaceVariant,
-      borderRadius: 12,
-      borderWidth: 2,
-      borderColor: theme.colors.outline,
-    },
-  })
+    }),
+    [theme.colors.background, paddingHorizontal, insets.bottom],
+  )
 
   function getVideoSize() {
     const availableWidth = screen.width - paddingHorizontal * 2
@@ -116,7 +77,13 @@ const VideoView = ({ route }: Props) => {
   const videoSize = getVideoSize()
 
   const renderVideo = ({ item, index }: { item: Video; index: number }) => (
-    <View style={themedStyles.videoCard} key={`video-card-${index}`}>
+    <View
+      style={[
+        styles.videoCard,
+        { width: screen.width - paddingHorizontal * 2 },
+      ]}
+      key={`video-card-${index}`}
+    >
       {index === currentIndex ? (
         <YoutubePlayer
           height={videoSize.height}
@@ -126,7 +93,7 @@ const VideoView = ({ route }: Props) => {
           onChangeState={(state: string) => {
             setPlaying(state === 'playing')
           }}
-          webViewStyle={themedStyles.webView}
+          webViewStyle={styles.webView}
           webViewProps={{
             containerStyle: {
               borderRadius: 12,
@@ -138,8 +105,10 @@ const VideoView = ({ route }: Props) => {
       ) : (
         <View
           style={[
-            themedStyles.placeholder,
+            styles.placeholder,
             {
+              backgroundColor: theme.colors.surfaceVariant,
+              borderColor: theme.colors.outline,
               height: videoSize.height,
               width: videoSize.width,
             },
@@ -150,12 +119,12 @@ const VideoView = ({ route }: Props) => {
   )
 
   const renderIndicators = () => (
-    <View style={themedStyles.indicatorContainer}>
+    <View style={styles.indicatorContainer}>
       {tag.videos.map((_, index) => (
         <View
           key={index}
           style={[
-            themedStyles.indicator,
+            styles.indicator,
             {
               backgroundColor:
                 index === currentIndex
@@ -169,7 +138,7 @@ const VideoView = ({ route }: Props) => {
   )
 
   return (
-    <View style={themedStyles.container}>
+    <View style={[styles.container, containerDynamicStyles]}>
       <FlatList
         ref={flatListRef}
         data={tag.videos}
@@ -189,5 +158,46 @@ const VideoView = ({ route }: Props) => {
 }
 
 const VIDEO_ASPECT_RATIO = 16 / 9
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  videoCard: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  videoInfo: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  videoCounter: {
+    fontSize: 14,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    margin: 15,
+  },
+  webView: {
+    elevation: 0,
+    borderRadius: 12,
+  },
+  indicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: 12,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  placeholder: {
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+})
 
 export default VideoView

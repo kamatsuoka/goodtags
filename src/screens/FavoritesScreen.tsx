@@ -6,7 +6,7 @@ import { SortOrder } from '@app/constants/Search'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { useFabDownStyle } from '@app/hooks/useFabDownStyle'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
-import { SORT_ICONS, TagListEnum } from '@app/modules/tagLists'
+import { SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useRef, useState } from 'react'
@@ -33,23 +33,16 @@ export const FavoritesScreen = () => {
     }, []),
   )
 
-  const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
+  const sortOptions = [SortOrder.alpha, SortOrder.newest, SortOrder.id]
+  const otherOrders = sortOptions.filter(order => order !== sortOrder)
 
-  const iconLabel =
-    sortOrder === SortOrder.newest
-      ? 'sort alphabetically'
-      : 'sort by recently added'
-
-  const fabActions = [
-    {
-      icon: SORT_ICONS[otherOrder],
-      label: iconLabel,
-      onPress: async () => {
-        dispatch(FavoritesActions.toggleSortOrder())
-      },
+  const fabActions = otherOrders.map(order => ({
+    icon: SORT_ICONS[order],
+    label: SORT_LABELS[order],
+    onPress: async () => {
+      dispatch(FavoritesActions.setSortOrder(order))
     },
-  ]
+  }))
 
   const styles = StyleSheet.create({
     listContainer: {

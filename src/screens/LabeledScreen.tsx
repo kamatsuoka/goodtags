@@ -9,8 +9,8 @@ import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { SORT_ICONS } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
-import { useCallback, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 
 /**
@@ -37,11 +37,10 @@ export const LabeledScreen = () => {
   )
 
   const order = labeledSortOrder
-  const otherOrder =
-    order === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
+  const otherOrder = order === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
 
   const iconLabel =
-    order === SortOrder.newest ? 'sort alphabetically' : 'sort by id'
+    order === SortOrder.id ? 'sort alphabetically' : 'sort by id'
 
   const fabActions = [
     {
@@ -53,13 +52,13 @@ export const LabeledScreen = () => {
     },
   ]
 
-  const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
+  const listContainerPadding = useMemo(
+    () => ({
       paddingLeft,
       paddingRight,
-    },
-  })
+    }),
+    [paddingLeft, paddingRight],
+  )
 
   const emptyMessage = 'no tags with this label yet'
   return (
@@ -71,7 +70,7 @@ export const LabeledScreen = () => {
         showBackButton={true}
         setFabOpen={setFabOpen}
       />
-      <View style={themedStyles.listContainer}>
+      <View style={[CommonStyles.listContainer, listContainerPadding]}>
         <TagList
           listRef={listRef}
           emptyMessage={emptyMessage}

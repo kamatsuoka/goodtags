@@ -22,7 +22,7 @@ import {
 } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import {
   ActivityIndicator,
@@ -58,16 +58,13 @@ const SearchScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const fabStyleSheet = useFabDownStyle()
 
-  const themedStyles = StyleSheet.create({
-    compactSearchLabelEmpty: {
-      color: theme.colors.secondary,
-    },
-    listHolder: {
-      flex: 1,
+  const listHolderPadding = useMemo(
+    () => ({
       paddingLeft,
       paddingRight,
-    },
-  })
+    }),
+    [paddingLeft, paddingRight],
+  )
 
   useFocusEffect(
     useCallback(() => {
@@ -154,12 +151,18 @@ const SearchScreen = () => {
     <Button
       icon="magnify"
       mode="elevated"
-      contentStyle={styles.compactSearchContent}
+      contentStyle={[
+        styles.compactSearchContent,
+        {
+          backgroundColor: theme.colors.primary,
+        },
+      ]}
+      textColor={theme.colors.onPrimary}
       onPress={() => {
         return setSearchMenuVisible(true)
       }}
       style={styles.compactSearchBar}
-      labelStyle={styles.compactSearchLabel}
+      labelStyle={[theme.fonts.titleMedium, styles.compactSearchLabel]}
     >
       {query}
     </Button>
@@ -177,6 +180,7 @@ const SearchScreen = () => {
         listRef={listRef}
         title={queryButton}
         setFabOpen={setFabOpen}
+        headerCenterStyle={styles.headerCenter}
       />
       {filters !== InitialFilters ? (
         <View style={styles.filterHolder}>
@@ -197,7 +201,7 @@ const SearchScreen = () => {
           )}
         </View>
       ) : null}
-      <View style={themedStyles.listHolder}>
+      <View style={[CommonStyles.listContainer, listHolderPadding]}>
         <TagList
           listRef={listRef}
           loadMore={(numTags: number) => loadMore(numTags)}
@@ -223,7 +227,11 @@ const SearchScreen = () => {
             return setSearchMenuVisible(true)
           }}
           style={styles.compactSearchBar}
-          labelStyle={themedStyles.compactSearchLabelEmpty}
+          labelStyle={[
+            theme.fonts.titleMedium,
+            styles.compactSearchLabel,
+            { color: theme.colors.secondary },
+          ]}
         >
           {'new search'}
         </Button>
@@ -249,6 +257,9 @@ const SearchScreen = () => {
 }
 
 const styles = StyleSheet.create({
+  headerCenter: {
+    marginBottom: 1,
+  },
   filterHolder: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -262,15 +273,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   compactSearchBar: {
+    padding: 0,
     marginHorizontal: 5,
-    margin: 5,
+    margin: 0,
     maxWidth: 200,
   },
   compactSearchContent: {
-    height: 40,
+    height: 35,
   },
   compactSearchLabel: {
-    fontSize: 16,
+    marginVertical: 0,
   },
   container: {
     justifyContent: 'flex-start',
