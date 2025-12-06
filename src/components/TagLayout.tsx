@@ -193,8 +193,9 @@ export const TagLayout = ({
       return () => {
         deactivateKeepAwake('tag-viewing')
       }
+    } else {
+      deactivateKeepAwake('tag-viewing')
     }
-    deactivateKeepAwake('tag-viewing')
   }, [keepAwakeEnabled])
 
   useEffect(() => {
