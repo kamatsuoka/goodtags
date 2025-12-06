@@ -37,11 +37,10 @@ export const LabeledScreen = () => {
   )
 
   const order = labeledSortOrder
-  const otherOrder =
-    order === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
+  const otherOrder = order === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
 
   const iconLabel =
-    order === SortOrder.newest ? 'sort alphabetically' : 'sort by id'
+    order === SortOrder.id ? 'sort alphabetically' : 'sort by id'
 
   const fabActions = [
     {

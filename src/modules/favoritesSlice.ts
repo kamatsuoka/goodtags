@@ -72,6 +72,13 @@ function sortNewest(state: FavoritesState) {
   )
 }
 
+/**
+ * Sorts favorites list by id
+ */
+function sortById(state: FavoritesState) {
+  state.allTagIds.sort((id1, id2) => id1 - id2)
+}
+
 const favoritesSlice = createSlice({
   name: 'favorites',
   initialState: InitialState,
@@ -142,24 +149,22 @@ const favoritesSlice = createSlice({
     setSelectedLabeledTag: (state, action: PayloadAction<SelectedTag>) => {
       state.labeledSelectedTag = action.payload
     },
-    toggleSortOrder: state => {
+    setSortOrder: (state, action: PayloadAction<SortOrder>) => {
       state.selectedTag = undefined
-      if (state.sortOrder === SortOrder.newest) {
-        // switch to alphabetical
+      const newOrder = action.payload
+      if (newOrder === SortOrder.alpha) {
         sortAlpha(state)
-        state.sortOrder = SortOrder.alpha
-      } else {
-        // switch to newest
+      } else if (newOrder === SortOrder.newest) {
         sortNewest(state)
-        state.sortOrder = SortOrder.newest
+      } else if (newOrder === SortOrder.id) {
+        sortById(state)
       }
+      state.sortOrder = newOrder
     },
     toggleLabeledSortOrder: state => {
       state.selectedTag = undefined
       state.labeledSortOrder =
-        state.labeledSortOrder === SortOrder.newest
-          ? SortOrder.alpha
-          : SortOrder.newest
+        state.labeledSortOrder === SortOrder.id ? SortOrder.alpha : SortOrder.id
     },
     createLabel: (state, action: PayloadAction<string>) => {
       const label = action.payload.trim()
@@ -390,7 +395,7 @@ export const selectLabelState = (
     if (favs.labeledSortOrder === SortOrder.alpha) {
       sortTagsAlpha(favs.labeledById, allTagIds)
     } else {
-      allTagIds.sort((id1, id2) => id2 - id1)
+      allTagIds.sort((id1, id2) => id1 - id2)
     }
   }
   return {
