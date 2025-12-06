@@ -22,7 +22,7 @@ import {
 } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import {
   ActivityIndicator,
@@ -58,16 +58,13 @@ const SearchScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const fabStyleSheet = useFabDownStyle()
 
-  const themedStyles = StyleSheet.create({
-    compactSearchLabelEmpty: {
-      color: theme.colors.secondary,
-    },
-    listHolder: {
-      flex: 1,
+  const listHolderPadding = useMemo(
+    () => ({
       paddingLeft,
       paddingRight,
-    },
-  })
+    }),
+    [paddingLeft, paddingRight],
+  )
 
   useFocusEffect(
     useCallback(() => {
@@ -197,7 +194,7 @@ const SearchScreen = () => {
           )}
         </View>
       ) : null}
-      <View style={themedStyles.listHolder}>
+      <View style={[CommonStyles.listContainer, listHolderPadding]}>
         <TagList
           listRef={listRef}
           loadMore={(numTags: number) => loadMore(numTags)}
@@ -223,7 +220,10 @@ const SearchScreen = () => {
             return setSearchMenuVisible(true)
           }}
           style={styles.compactSearchBar}
-          labelStyle={themedStyles.compactSearchLabelEmpty}
+          labelStyle={[
+            styles.compactSearchLabel,
+            { color: theme.colors.secondary },
+          ]}
         >
           {'new search'}
         </Button>

@@ -9,6 +9,9 @@ const CommonStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  listContainer: {
+    flex: 1,
+  },
   title: {
     fontSize: 18,
   },

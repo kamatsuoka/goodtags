@@ -14,18 +14,14 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
 
-  const themedStyles = StyleSheet.create({
-    outerContainer: {
+  const outerContainerPadding = useMemo(
+    () => ({
       paddingHorizontal: isLandscape
         ? Math.max(60, insets.left + 20, insets.right + 20)
         : Math.max(20, insets.left + 20, insets.right + 20),
-      alignItems: 'center',
-    },
-    divider: {
-      marginVertical: 10,
-      backgroundColor: theme.colors.outlineVariant,
-    },
-  })
+    }),
+    [isLandscape, insets.left, insets.right],
+  )
 
   const items: [string, string | number | undefined][] = useMemo(() => {
     return [
@@ -39,12 +35,18 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   }, [tag])
 
   return (
-    <BottomSheetView style={themedStyles.outerContainer}>
+    <BottomSheetView style={[styles.outerContainer, outerContainerPadding]}>
       <View style={styles.innerContainer}>
         <Text style={styles.infoTitle} variant="titleLarge">
           {tag.title}
         </Text>
-        <Divider bold style={themedStyles.divider} />
+        <Divider
+          bold
+          style={[
+            styles.divider,
+            { backgroundColor: theme.colors.outlineVariant },
+          ]}
+        />
         <View style={styles.listContainer}>
           <InfoItems items={items} />
           <TracksInfo tag={tag} />
@@ -121,6 +123,12 @@ function truncateLyrics(lyrics: string): string {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    alignItems: 'center',
+  },
+  divider: {
+    marginVertical: 10,
+  },
   listContainer: {
     paddingTop: 10,
   },

@@ -14,7 +14,7 @@ import {
   HomeNavigatorScreenProps,
   RootStackParamList,
 } from '@app/navigation/navigationParams'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Linking,
   Pressable,
@@ -60,6 +60,15 @@ export default function HomeScreen({
       flex: 1,
       backgroundColor: theme.colors.secondaryContainer,
       paddingBottom: Math.max(insets.bottom, 10),
+    },
+    listContainer: {
+      flex: 1,
+      width: '100%',
+    },
+    scrollContentContainer: {
+      paddingTop: 10,
+      paddingHorizontal: 20,
+      width: '100%',
     },
     statusBarSpacer: {
       height: shallowScreen && showStatusBar ? insets.top : 0,
@@ -150,19 +159,13 @@ export default function HomeScreen({
     return () => subscription.remove()
   }, [dispatch])
 
-  const themedStyles = StyleSheet.create({
-    listContainer: {
-      flex: 1,
+  const listContainerStyles = useMemo(
+    () => ({
       paddingLeft: shallowScreen ? Math.max(paddingLeft, 30) : paddingLeft,
       paddingRight,
-      width: '100%',
-    },
-    scrollContentContainer: {
-      paddingTop: 10,
-      paddingHorizontal: 20,
-      width: '100%',
-    },
-  })
+    }),
+    [shallowScreen, paddingLeft, paddingRight],
+  )
 
   return (
     <View style={styles.container} testID="home_container">
@@ -173,8 +176,8 @@ export default function HomeScreen({
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={themedStyles.listContainer}
-        contentContainerStyle={themedStyles.scrollContentContainer}
+        style={[styles.listContainer, listContainerStyles]}
+        contentContainerStyle={styles.scrollContentContainer}
       >
         <View style={styles.columnsContainer}>
           <View style={styles.column}>

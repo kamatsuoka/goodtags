@@ -20,7 +20,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
 
 /**
@@ -84,15 +84,11 @@ const NewScreen = () => {
     [dispatch],
   )
 
-  const themedStyles = useMemo(
-    () =>
-      StyleSheet.create({
-        listContainer: {
-          flex: 1,
-          paddingLeft,
-          paddingRight,
-        },
-      }),
+  const listContainerPadding = useMemo(
+    () => ({
+      paddingLeft,
+      paddingRight,
+    }),
     [paddingLeft, paddingRight],
   )
 
@@ -105,7 +101,7 @@ const NewScreen = () => {
         titleIcon="leaf"
         setFabOpen={setFabOpen}
       />
-      <View style={themedStyles.listContainer}>
+      <View style={[CommonStyles.listContainer, listContainerPadding]}>
         <TagList
           tagListType={TagListEnum.New}
           emptyMessage={

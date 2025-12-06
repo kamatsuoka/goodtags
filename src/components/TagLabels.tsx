@@ -6,6 +6,7 @@ import { TagListType } from '@app/modules/tagLists'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useMemo } from 'react'
 import { Platform, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Checkbox, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -59,20 +60,16 @@ const TagLabels = () => {
   const insets = useSafeAreaInsets()
   const paddingHorizontal = useHorizontalInset()
 
-  const themedStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      margin: 10,
-      marginHorizontal: 15,
-      borderRadius: 15,
-      justifyContent: 'space-between',
+  const containerPadding = useMemo(
+    () => ({
       paddingHorizontal,
       paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
-    },
-  })
+    }),
+    [paddingHorizontal, insets.bottom],
+  )
 
   return (
-    <View style={themedStyles.container}>
+    <View style={[styles.container, containerPadding]}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.listContainer}>
           {labels.map((label, index) => (
@@ -99,6 +96,13 @@ const TagLabels = () => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+    marginHorizontal: 15,
+    borderRadius: 15,
+    justifyContent: 'space-between',
+  },
   scrollView: {
     flex: 1,
   },

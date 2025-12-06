@@ -1,3 +1,4 @@
+import CommonStyles from '@app/constants/CommonStyles'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
 import { OptionsActions } from '@app/modules/optionsSlice'
@@ -40,15 +41,11 @@ export default function OptionsScreen() {
     dispatch(OptionsActions.setKeepAwake(!keepAwake))
   }, [dispatch, keepAwake])
 
-  const themedStyles = useMemo(
-    () =>
-      StyleSheet.create({
-        listContainer: {
-          flex: 1,
-          paddingLeft,
-          paddingRight,
-        },
-      }),
+  const listContainerPadding = useMemo(
+    () => ({
+      paddingLeft,
+      paddingRight,
+    }),
     [paddingLeft, paddingRight],
   )
 
@@ -72,7 +69,7 @@ export default function OptionsScreen() {
   )
 
   return (
-    <ScrollView style={themedStyles.listContainer}>
+    <ScrollView style={[CommonStyles.listContainer, listContainerPadding]}>
       <View style={styles.container}>
         <List.Item
           left={renderSerifsCheckbox}

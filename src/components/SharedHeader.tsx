@@ -2,7 +2,7 @@ import { HEADER_BUTTON_SIZE } from '@app/constants/CommonStyles'
 import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, useMemo } from 'react'
 import {
   Platform,
   StyleSheet,
@@ -56,23 +56,25 @@ export default function SharedHeader({
   const theme = useTheme()
   const ios = Platform.OS === 'ios'
 
-  const themedStyles = StyleSheet.create({
-    header: {
+  const headerDynamicStyles = useMemo(
+    () => ({
       backgroundColor: theme.colors.primary,
       height: headerHeight,
       paddingTop: insets.top,
       paddingLeft: insets.left + 10,
       paddingRight: insets.right + 10,
-      flexDirection: 'row',
-      alignItems: 'flex-end',
       ...headerStyle,
-    },
-    center: {
-      ...styles.center,
+    }),
+    [theme.colors.primary, headerHeight, insets, headerStyle],
+  )
+
+  const centerDynamicStyles = useMemo(
+    () => ({
       marginBottom: ios ? 6 : 10,
       ...headerCenterStyle,
-    },
-  })
+    }),
+    [ios, headerCenterStyle],
+  )
 
   const scrollToTop = () => {
     if (listRef?.current && enableScrollToTop) {
@@ -111,9 +113,12 @@ export default function SharedHeader({
   }
 
   const content = (
-    <View style={themedStyles.header} pointerEvents={pointerEvents}>
+    <View
+      style={[styles.header, headerDynamicStyles]}
+      pointerEvents={pointerEvents}
+    >
       <View style={styles.left}>{renderBackButton()}</View>
-      <View style={themedStyles.center}>{renderTitle()}</View>
+      <View style={[styles.center, centerDynamicStyles]}>{renderTitle()}</View>
       <View style={styles.right}>{headerRight ? headerRight({}) : null}</View>
     </View>
   )
@@ -130,6 +135,10 @@ export default function SharedHeader({
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
   left: {
     minWidth: 60,
     flexDirection: 'row',
