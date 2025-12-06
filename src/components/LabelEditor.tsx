@@ -1,13 +1,7 @@
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { useState } from 'react'
-import {
-  Alert,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native'
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
@@ -38,6 +32,10 @@ export default function LabelEditor() {
       paddingBottom: Platform.OS === 'android' ? 7 + insets.bottom : 7,
       paddingLeft,
       paddingRight,
+    },
+    itemText: {
+      ...styles.itemText,
+      fontSize: theme.fonts.bodyLarge.fontSize,
     },
   })
 
@@ -111,7 +109,7 @@ export default function LabelEditor() {
                 }}
                 maxLength={32}
                 dense
-                style={styles.itemText}
+                style={themedStyles.itemText}
               />
               <IconButton
                 icon="trash-can-outline"
@@ -121,15 +119,17 @@ export default function LabelEditor() {
             </>
           ) : (
             <>
-              <Text style={styles.itemText}>{item}</Text>
+              <Text style={styles.itemText} variant="bodyLarge">
+                {item}
+              </Text>
               {labelToEdit ? null : (
-                <TouchableOpacity onPress={() => {}} onPressIn={drag}>
+                <Pressable onPress={() => {}} onPressIn={drag}>
                   <IconButton
                     icon="drag-vertical"
                     size={20}
                     iconColor="black"
                   />
-                </TouchableOpacity>
+                </Pressable>
               )}
             </>
           )}

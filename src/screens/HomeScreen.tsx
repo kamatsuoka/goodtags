@@ -72,9 +72,6 @@ export default function HomeScreen({
       paddingVertical: 5,
     },
     subheader: { marginLeft: 0, paddingBottom: 5, marginBottom: 0 },
-    listItemTitle: {
-      fontSize: 18,
-    },
     listItemContent: {
       paddingVertical: 4,
     },
@@ -114,7 +111,7 @@ export default function HomeScreen({
             left={leftIcon}
             right={RightIcon}
             style={listStyles.listItem}
-            titleStyle={styles.listItemTitle}
+            titleStyle={theme.fonts.bodyLarge}
             contentStyle={styles.listItemContent}
             testID={testID}
           />
@@ -125,7 +122,7 @@ export default function HomeScreen({
       navigation,
       listStyles,
       pressableStyle,
-      styles.listItemTitle,
+      theme.fonts.bodyLarge,
       styles.listItemContent,
     ],
   )

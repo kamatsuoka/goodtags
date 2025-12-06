@@ -71,6 +71,7 @@ export default function LabelsScreen({
                       left={LabelIcon}
                       right={RightIcon}
                       style={listStyles.listItem}
+                      titleStyle={theme.fonts.bodyLarge}
                     />
                   </Pressable>
                   {index === labels.length - 1 ? null : <Divider />}

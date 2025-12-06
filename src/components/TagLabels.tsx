@@ -17,6 +17,7 @@ const LabelSelector = (props: {
   selected: boolean
 }) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
   const { tag, label, tagListType, selected } = props
   return (
     <View style={styles.labelSelector}>
@@ -24,6 +25,10 @@ const LabelSelector = (props: {
         mode="android" // lack of placeholder on ios is confusing
         status={selected ? 'checked' : 'unchecked'}
         label={label}
+        labelStyle={[
+          styles.checkboxLabel,
+          { fontSize: theme.fonts.bodyLarge.fontSize },
+        ]}
         onPress={() => {
           selected
             ? dispatch(
@@ -59,6 +64,7 @@ const TagLabels = () => {
     container: {
       flex: 1,
       margin: 10,
+      marginHorizontal: 15,
       borderRadius: 15,
       justifyContent: 'space-between',
       paddingHorizontal,
@@ -119,6 +125,9 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingLeft: 0,
     marginLeft: 0,
+  },
+  checkboxLabel: {
+    marginLeft: 5,
   },
   createButton: {
     alignSelf: 'flex-start',

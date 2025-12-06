@@ -10,7 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { RefObject, useCallback, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, useTheme } from 'react-native-paper'
 import TagListItem from './TagListItem'
 
 export type TagListProps = {
@@ -31,7 +31,7 @@ const TagList = (props: TagListProps) => {
     min: 0,
   })
   const dispatch = useAppDispatch()
-
+  const theme = useTheme()
   const tagListState = useTagListState(props.tagListType)
 
   const allTagIds = tagListState.allTagIds
@@ -108,7 +108,11 @@ const TagList = (props: TagListProps) => {
 
   const listEmptyComponent = () => {
     if (props.emptyMessage) {
-      return <Text style={styles.emptyMessage}>{props.emptyMessage}</Text>
+      return (
+        <Text style={[styles.emptyMessage, theme.fonts.bodyLarge]}>
+          {props.emptyMessage}
+        </Text>
+      )
     } else {
       return null
     }
