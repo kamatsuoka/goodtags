@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native'
 import {
   NestableDraggableFlatList,
@@ -23,21 +23,14 @@ export default function LabelEditor() {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
 
-  const themedStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'space-between',
-      height: '100%',
-      paddingTop: 7,
-      paddingBottom: Platform.OS === 'android' ? 7 + insets.bottom : 7,
+  const containerPadding = useMemo(
+    () => ({
       paddingLeft,
       paddingRight,
-    },
-    itemText: {
-      ...styles.itemText,
-      fontSize: theme.fonts.bodyLarge.fontSize,
-    },
-  })
+      paddingBottom: Platform.OS === 'android' ? 7 + insets.bottom : 7,
+    }),
+    [paddingLeft, paddingRight, insets.bottom],
+  )
 
   // start editing
   const startEditing = (label: string) => {
@@ -109,7 +102,7 @@ export default function LabelEditor() {
                 }}
                 maxLength={32}
                 dense
-                style={themedStyles.itemText}
+                style={[styles.itemText, theme.fonts.bodyLarge]}
               />
               <IconButton
                 icon="trash-can-outline"
@@ -119,7 +112,10 @@ export default function LabelEditor() {
             </>
           ) : (
             <>
-              <Text style={styles.itemText} variant="bodyLarge">
+              <Text
+                style={[styles.itemText, theme.fonts.bodyLarge]}
+                variant="bodyLarge"
+              >
                 {item}
               </Text>
               {labelToEdit ? null : (
@@ -139,7 +135,7 @@ export default function LabelEditor() {
   }
 
   return (
-    <View style={themedStyles.container}>
+    <View style={[styles.container, containerPadding]}>
       <NestableScrollContainer keyboardShouldPersistTaps="handled">
         <NestableDraggableFlatList
           keyboardShouldPersistTaps="handled"
@@ -156,6 +152,12 @@ export default function LabelEditor() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    height: '100%',
+    paddingTop: 7,
+  },
   header: {
     height: 35,
   },
@@ -187,11 +189,5 @@ const styles = StyleSheet.create({
   itemText: {
     flexGrow: 1,
     marginLeft: 5,
-  },
-  title: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 40,
   },
 })

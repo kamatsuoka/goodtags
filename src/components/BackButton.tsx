@@ -19,21 +19,12 @@ export default function BackButton({
   const theme = useTheme()
   const navigation = useNavigation()
 
-  const themedStyles = StyleSheet.create({
-    button: {
-      width: HEADER_BUTTON_SIZE,
-      height: HEADER_BUTTON_SIZE,
-      backgroundColor: 'transparent',
-      marginTop: 2,
-    },
-  })
-
   return (
     <IconButton
       icon={icon}
       iconColor={iconColor ?? theme.colors.onPrimary}
       size={icon === 'close' ? ICON_SIZE - 10 : ICON_SIZE}
-      style={themedStyles.button}
+      style={styles.button}
       mode="contained"
       onPress={() => (onBack ? onBack() : navigation.goBack())}
       testID="logo_button"
@@ -41,3 +32,12 @@ export default function BackButton({
     />
   )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    width: HEADER_BUTTON_SIZE,
+    height: HEADER_BUTTON_SIZE,
+    backgroundColor: 'transparent',
+    marginTop: 2,
+  },
+})

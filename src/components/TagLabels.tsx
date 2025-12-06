@@ -56,7 +56,6 @@ const TagLabels = () => {
   const selectedLabels = useAppSelector(
     state => state.favorites.labelsByTagId[tag.id],
   )
-  const theme = useTheme()
   const insets = useSafeAreaInsets()
   const paddingHorizontal = useHorizontalInset()
 
@@ -69,11 +68,6 @@ const TagLabels = () => {
       justifyContent: 'space-between',
       paddingHorizontal,
       paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
-    },
-    divider: {
-      marginTop: 10,
-      marginHorizontal: 10,
-      backgroundColor: theme.colors.outline,
     },
   })
 

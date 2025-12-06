@@ -37,14 +37,6 @@ const SearchOptions = ({
 }: Props) => {
   const theme = useTheme()
 
-  const themedStyles = StyleSheet.create({
-    optionsContainer: {
-      minWidth: 120,
-      paddingTop: 10,
-      paddingBottom: 5,
-    },
-  })
-
   return (
     <Surface style={styles.container}>
       <View style={[styles.titleContainer, titleStyle]}>
@@ -61,7 +53,7 @@ const SearchOptions = ({
         {infoButton}
       </View>
       <Divider bold />
-      <View style={themedStyles.optionsContainer}>{children}</View>
+      <View style={styles.optionsContainer}>{children}</View>
     </Surface>
   )
 }
@@ -80,6 +72,11 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingLeft: 8,
+  },
+  optionsContainer: {
+    minWidth: 120,
+    paddingTop: 10,
+    paddingBottom: 5,
   },
 })
 

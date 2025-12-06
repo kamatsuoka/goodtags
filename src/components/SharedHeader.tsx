@@ -72,17 +72,6 @@ export default function SharedHeader({
       marginBottom: ios ? 6 : 10,
       ...headerCenterStyle,
     },
-    title: {
-      color: theme.colors.onPrimary,
-    },
-    icon: {
-      color: theme.colors.onPrimary,
-      marginRight: 8,
-    },
-    cancel: {
-      color: theme.colors.onPrimary,
-      marginBottom: 12,
-    },
   })
 
   const scrollToTop = () => {
@@ -107,9 +96,12 @@ export default function SharedHeader({
       return (
         <View style={styles.titleHolder}>
           {titleIcon
-            ? homeIcon(titleIcon, 22)({ style: themedStyles.icon })
+            ? homeIcon(
+                titleIcon,
+                22,
+              )({ style: [styles.icon, { color: theme.colors.onPrimary }] })
             : null}
-          <Text variant="titleLarge" style={themedStyles.title}>
+          <Text variant="titleLarge" style={{ color: theme.colors.onPrimary }}>
             {title}
           </Text>
         </View>
@@ -165,5 +157,8 @@ const styles = StyleSheet.create({
   },
   spacer: {
     width: 50,
+  },
+  icon: {
+    marginRight: 8,
   },
 })

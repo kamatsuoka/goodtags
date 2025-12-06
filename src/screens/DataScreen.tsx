@@ -116,6 +116,7 @@ export default function DataScreen() {
                   left={ExportIcon}
                   right={RightIcon}
                   style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
               </Pressable>
               <Divider />
@@ -188,6 +189,7 @@ export default function DataScreen() {
                   left={ImportIcon}
                   right={RightIcon}
                   style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
               </Pressable>
             </View>
@@ -224,6 +226,7 @@ export default function DataScreen() {
                   left={ClearIcon}
                   right={RightIcon}
                   style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                   disabled={clearingCache}
                 />
               </Pressable>
@@ -246,6 +249,7 @@ export default function DataScreen() {
                   left={LogsIcon}
                   right={RightIcon}
                   style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
                 />
               </Pressable>
             </View>

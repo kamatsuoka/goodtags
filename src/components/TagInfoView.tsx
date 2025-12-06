@@ -21,11 +21,6 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
         : Math.max(20, insets.left + 20, insets.right + 20),
       alignItems: 'center',
     },
-    innerContainer: {
-      paddingTop: 10,
-      paddingBottom: 50,
-      maxWidth: '95%',
-    },
     divider: {
       marginVertical: 10,
       backgroundColor: theme.colors.outlineVariant,
@@ -45,7 +40,7 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
 
   return (
     <BottomSheetView style={themedStyles.outerContainer}>
-      <View style={themedStyles.innerContainer}>
+      <View style={styles.innerContainer}>
         <Text style={styles.infoTitle} variant="titleLarge">
           {tag.title}
         </Text>
@@ -128,6 +123,11 @@ function truncateLyrics(lyrics: string): string {
 const styles = StyleSheet.create({
   listContainer: {
     paddingTop: 10,
+  },
+  innerContainer: {
+    paddingTop: 10,
+    paddingBottom: 50,
+    maxWidth: '95%',
   },
   infoTitle: {
     marginLeft: 3,
