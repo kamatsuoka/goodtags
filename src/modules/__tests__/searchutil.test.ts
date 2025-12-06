@@ -210,8 +210,8 @@ describe('searchutil', () => {
     })
 
     it('builds AND clause for multiple conditions', () => {
-      const result = buildWhereClause(false, ['tags.parts = ?'])
-      expect(result).toBe(' WHERE tags.parts = ?')
+      const result = buildWhereClause(false, ['tags.id = ?', 'tags.parts = ?'])
+      expect(result).toBe(' WHERE tags.id = ? AND tags.parts = ?')
     })
 
     it('handles id search with single condition', () => {
@@ -324,7 +324,7 @@ describe('searchutil', () => {
       })
 
       expect(result.whereClause).toContain(' WHERE tags.id = ? OR (')
-      expect(result.whereVariables).toEqual([123, 'test*', '%test%'])
+      expect(result.whereVariables).toEqual([123, '%test%'])
     })
 
     it('builds ORDER BY for alpha sort', () => {

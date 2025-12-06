@@ -229,21 +229,24 @@ async function searchDb(
 /**
  * Builds the where clause.
  *
- * If the query looks like an id, searchParams.id will be set.
+ * If the query looks like an id, isIdSearch will be true.
  * We will search EITHER for that id, OR for tags with other conditions,
  * including the id-like query as a text search.
  *
  * Assumes that the id condition is the first element of whereClauseParts.
  *
- * @param hasId Whether searchParams.id is defined
+ * @param isIdSearch is searchParams.id defined?
  * @param whereClauseParts parts of where clause, must have id condition first if applicable
  * @returns complete where clause
  */
-export function buildWhereClause(hasId: boolean, whereClauseParts: string[]) {
+export function buildWhereClause(
+  isIdSearch: boolean,
+  whereClauseParts: string[],
+) {
   if (whereClauseParts.length === 0) {
     return ''
   }
-  if (hasId) {
+  if (isIdSearch) {
     const idQuery = ` WHERE ${whereClauseParts[0]}`
     if (whereClauseParts.length === 1) {
       return idQuery // simple id lookup
@@ -264,8 +267,9 @@ export function buildSqlParts(searchParams: SearchParams) {
   const whereClauseParts = []
   const whereVariables = []
 
-  // NOTE: whereClauseParts for id must be first if applicable
-  if (searchParams.id !== undefined) {
+  const isIdSearch = searchParams.id !== undefined
+  if (isIdSearch) {
+    // NOTE: whereClauseParts for id must be first
     whereClauseParts.push('tags.id = ?')
     whereVariables.push(searchParams.id)
   }
@@ -273,11 +277,18 @@ export function buildSqlParts(searchParams: SearchParams) {
     whereClauseParts.push(`tags.id in (${searchParams.ids.toString()})`)
   }
   if (searchParams.query !== undefined && searchParams.query !== '') {
-    whereClauseParts.push(
-      '(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)',
-    )
-    whereVariables.push(`${searchParams.query}*`)
-    whereVariables.push(`%${searchParams.query}%`)
+    if (isIdSearch) {
+      // when searching by id, only match query in title
+      whereClauseParts.push('tags.title LIKE ?')
+      whereVariables.push(`%${searchParams.query}%`)
+    } else {
+      // normal text search uses fts and partial matching
+      whereClauseParts.push(
+        '(tags.id IN (SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?) OR tags.title LIKE ?)',
+      )
+      whereVariables.push(`${searchParams.query}*`)
+      whereVariables.push(`%${searchParams.query}%`)
+    }
   }
   if (searchParams.parts !== undefined) {
     whereClauseParts.push('tags.parts = ?')
@@ -298,10 +309,7 @@ export function buildSqlParts(searchParams: SearchParams) {
       "tags.sheet_music_alt IS NOT NULL AND tags.sheet_music_alt != ''",
     )
   }
-  const whereClause = buildWhereClause(
-    searchParams.id !== undefined,
-    whereClauseParts,
-  )
+  const whereClause = buildWhereClause(isIdSearch, whereClauseParts)
 
   let suffixClauses = ''
   const suffixVariables = []
