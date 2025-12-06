@@ -151,12 +151,18 @@ const SearchScreen = () => {
     <Button
       icon="magnify"
       mode="elevated"
-      contentStyle={styles.compactSearchContent}
+      contentStyle={[
+        styles.compactSearchContent,
+        {
+          backgroundColor: theme.colors.primary,
+        },
+      ]}
+      textColor={theme.colors.onPrimary}
       onPress={() => {
         return setSearchMenuVisible(true)
       }}
       style={styles.compactSearchBar}
-      labelStyle={styles.compactSearchLabel}
+      labelStyle={[theme.fonts.titleMedium, styles.compactSearchLabel]}
     >
       {query}
     </Button>
@@ -174,6 +180,7 @@ const SearchScreen = () => {
         listRef={listRef}
         title={queryButton}
         setFabOpen={setFabOpen}
+        headerCenterStyle={styles.headerCenter}
       />
       {filters !== InitialFilters ? (
         <View style={styles.filterHolder}>
@@ -221,6 +228,7 @@ const SearchScreen = () => {
           }}
           style={styles.compactSearchBar}
           labelStyle={[
+            theme.fonts.titleMedium,
             styles.compactSearchLabel,
             { color: theme.colors.secondary },
           ]}
@@ -249,6 +257,9 @@ const SearchScreen = () => {
 }
 
 const styles = StyleSheet.create({
+  headerCenter: {
+    marginBottom: 1,
+  },
   filterHolder: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -262,15 +273,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   compactSearchBar: {
+    padding: 0,
     marginHorizontal: 5,
-    margin: 5,
+    margin: 0,
     maxWidth: 200,
   },
   compactSearchContent: {
-    height: 40,
+    height: 35,
   },
   compactSearchLabel: {
-    fontSize: 16,
+    marginVertical: 0,
   },
   container: {
     justifyContent: 'flex-start',
