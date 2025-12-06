@@ -44,12 +44,9 @@ export function getSearchParams(
 ): SearchParams {
   const trimQuery = state.query.trim()
   const cleanQuery = trimQuery.replace(/[^a-zA-Z0-9]/g, ' ').trim()
-  if (isId(cleanQuery)) {
-    // treat numeric query as request for tag by id (rip 1776 tag)
-    return { id: toInteger(cleanQuery) }
-  }
 
   return {
+    id: isId(cleanQuery) ? toInteger(cleanQuery) : undefined,
     collection: state.filters.collection,
     sortBy: state.sortOrder,
     limit: Search.TAGS_PER_QUERY,
@@ -96,7 +93,9 @@ function apply<T, R>(
   return value === undefined ? undefined : transformer(value)
 }
 
-function buildApiQueryParams(searchParams: SearchParams): ApiQueryParams {
+export function buildApiQueryParams(
+  searchParams: SearchParams,
+): ApiQueryParams {
   return {
     q: searchParams.query,
     // API uses 1-based indexing
@@ -228,13 +227,44 @@ async function searchDb(
 }
 
 /**
+ * Builds the where clause.
+ *
+ * If the query looks like an id, searchParams.id will be set.
+ * We will search EITHER for that id, OR for tags with other conditions,
+ * including the id-like query as a text search.
+ *
+ * Assumes that the id condition is the first element of whereClauseParts.
+ *
+ * @param hasId Whether searchParams.id is defined
+ * @param whereClauseParts parts of where clause, must have id condition first if applicable
+ * @returns complete where clause
+ */
+export function buildWhereClause(hasId: boolean, whereClauseParts: string[]) {
+  if (whereClauseParts.length === 0) {
+    return ''
+  }
+  if (hasId) {
+    const idQuery = ` WHERE ${whereClauseParts[0]}`
+    if (whereClauseParts.length === 1) {
+      return idQuery // simple id lookup
+    } else {
+      // id OR the AND of remaining conditions
+      const remainingParts = whereClauseParts.slice(1)
+      return `${idQuery} OR (${remainingParts.join(' AND ')})`
+    }
+  }
+  return ` WHERE ${whereClauseParts.join(' AND ')}`
+}
+
+/**
  * Given search params, constructs the where clauses+variables (" WHERE ...") and the suffix
  * clauses+variables (order, limit, offset).
  */
-function buildSqlParts(searchParams: SearchParams) {
+export function buildSqlParts(searchParams: SearchParams) {
   const whereClauseParts = []
   const whereVariables = []
 
+  // NOTE: whereClauseParts for id must be first if applicable
   if (searchParams.id !== undefined) {
     whereClauseParts.push('tags.id = ?')
     whereVariables.push(searchParams.id)
@@ -268,10 +298,10 @@ function buildSqlParts(searchParams: SearchParams) {
       "tags.sheet_music_alt IS NOT NULL AND tags.sheet_music_alt != ''",
     )
   }
-  const whereClause =
-    whereClauseParts.length === 0
-      ? ''
-      : ` WHERE ${whereClauseParts.join(' AND ')}`
+  const whereClause = buildWhereClause(
+    searchParams.id !== undefined,
+    whereClauseParts,
+  )
 
   let suffixClauses = ''
   const suffixVariables = []
