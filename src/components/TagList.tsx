@@ -175,7 +175,7 @@ const TagList = (props: TagListProps) => {
         ref={listRef}
         data={allTagIds}
         extraData={selectedTag}
-        keyExtractor={(item, index) => 'key' + index}
+        keyExtractor={(_, index) => 'key' + index}
         ListEmptyComponent={listEmptyComponent}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
