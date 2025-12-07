@@ -66,17 +66,17 @@ const historySlice = createSlice({
     setSelectedTag: (state, action) => {
       state.selectedTag = action.payload
     },
-    toggleSortOrder: state => {
+    setSortOrder: (state, action: PayloadAction<SortOrder>) => {
       state.selectedTag = undefined
-      if (state.sortOrder === SortOrder.newest) {
-        // switch to alphabetical
+      const newOrder = action.payload
+      if (newOrder === SortOrder.alpha) {
         sortAlpha(state)
-        state.sortOrder = SortOrder.alpha
-      } else {
-        // switch to newest
+      } else if (newOrder === SortOrder.newest) {
         state.allTagIds = [...state.history]
-        state.sortOrder = SortOrder.newest
+      } else if (newOrder === SortOrder.id) {
+        state.allTagIds.sort((id1, id2) => id1 - id2)
       }
+      state.sortOrder = newOrder
     },
   },
   extraReducers: builder => {

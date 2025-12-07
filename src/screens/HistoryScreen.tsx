@@ -41,17 +41,17 @@ const HistoryScreen = () => {
     }, [dispatch, lastModified]),
   )
 
-  const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.newest : SortOrder.alpha
+  const sortOptions = [SortOrder.alpha, SortOrder.newest, SortOrder.id]
+  const otherOrders = sortOptions.filter(order => order !== sortOrder)
 
   const fabActions = [
-    {
-      icon: SORT_ICONS[otherOrder],
-      label: SORT_LABELS[otherOrder],
+    ...otherOrders.map(order => ({
+      icon: SORT_ICONS[order],
+      label: SORT_LABELS[order],
       onPress: async () => {
-        dispatch(HistoryActions.toggleSortOrder())
+        dispatch(HistoryActions.setSortOrder(order))
       },
-    },
+    })),
     {
       icon: 'broom',
       label: 'clear history',
