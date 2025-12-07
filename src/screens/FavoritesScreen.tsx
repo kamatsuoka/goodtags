@@ -36,7 +36,7 @@ export const FavoritesScreen = () => {
   const sortOptions = [SortOrder.alpha, SortOrder.newest, SortOrder.id]
   const otherOrders = sortOptions.filter(order => order !== sortOrder)
 
-  const confirmClear = () => {
+  const confirmRemoveAll = () => {
     Alert.alert(
       'remove all favorites?',
       '',
@@ -66,7 +66,7 @@ export const FavoritesScreen = () => {
     {
       icon: 'broom',
       label: 'remove all favorites',
-      onPress: async () => confirmClear(),
+      onPress: async () => confirmRemoveAll(),
     },
   ]
 
