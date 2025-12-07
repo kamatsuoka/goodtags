@@ -48,7 +48,7 @@ export default function LabelEditor() {
     stopEditing()
     Alert.alert(
       'delete label?',
-      label,
+      '',
       [
         {
           text: 'cancel',
