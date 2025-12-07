@@ -10,7 +10,7 @@ import { SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 
 /**
@@ -36,13 +36,39 @@ export const FavoritesScreen = () => {
   const sortOptions = [SortOrder.alpha, SortOrder.newest, SortOrder.id]
   const otherOrders = sortOptions.filter(order => order !== sortOrder)
 
-  const fabActions = otherOrders.map(order => ({
-    icon: SORT_ICONS[order],
-    label: SORT_LABELS[order],
-    onPress: async () => {
-      dispatch(FavoritesActions.setSortOrder(order))
+  const confirmClear = () => {
+    Alert.alert(
+      'remove all favorites?',
+      '',
+      [
+        {
+          text: 'cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'remove all',
+          style: 'destructive',
+          onPress: () => dispatch(FavoritesActions.resetFavorites()),
+        },
+      ],
+      { cancelable: true },
+    )
+  }
+
+  const fabActions = [
+    ...otherOrders.map(order => ({
+      icon: SORT_ICONS[order],
+      label: SORT_LABELS[order],
+      onPress: async () => {
+        dispatch(FavoritesActions.setSortOrder(order))
+      },
+    })),
+    {
+      icon: 'broom',
+      label: 'remove all favorites',
+      onPress: async () => confirmClear(),
     },
-  }))
+  ]
 
   const styles = StyleSheet.create({
     listContainer: {
@@ -52,7 +78,7 @@ export const FavoritesScreen = () => {
     },
   })
 
-  const emptyMessage = 'tap the heart icon in sheet music to add favorites'
+  const emptyMessage = 'to add favorites,\ntap the heart icon in sheet music'
   return (
     <View style={CommonStyles.container}>
       <ListHeader
