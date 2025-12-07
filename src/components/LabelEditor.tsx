@@ -25,8 +25,8 @@ export default function LabelEditor() {
 
   const containerPadding = useMemo(
     () => ({
-      paddingLeft,
-      paddingRight,
+      paddingLeft: paddingLeft + 15,
+      paddingRight: paddingRight + 10,
       paddingBottom: Platform.OS === 'android' ? 7 + insets.bottom : 7,
     }),
     [paddingLeft, paddingRight, insets.bottom],
