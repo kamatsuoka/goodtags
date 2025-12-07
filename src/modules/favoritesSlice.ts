@@ -601,24 +601,11 @@ export const receiveSharedFile = createAsyncThunk<
   console.info(`importing favorites from ${url}`)
   try {
     const fs = ReactNativeBlobUtil.fs
-    // TODO: support reading stream
-    // if (url.startsWith("content://")) {
-    //   const stream = await fs.readStream(url, "utf8")
-    //   let data = ""
-    //   stream.onData(chunk => (data += chunk))
-    //   stream.onEnd(() => {
-    //     try {
-    //       return await receiveData(data)
-    //     } catch (e) {
-    //       console.error(e) // TODO: show error in app
-    //     }
-    //   })
-    //   stream.onError(e => {
-    //     throw e
-    //   })
-    //   stream.open()
-    // } else
-    if (url.startsWith('/') || url.startsWith('file://')) {
+    if (url.startsWith('content://')) {
+      // handle content:// uris (e.g., from google drive, file pickers on android)
+      const data = await fs.readFile(url, 'utf8')
+      return await receiveData(data)
+    } else if (url.startsWith('/') || url.startsWith('file://')) {
       const path = url.startsWith('file://') ? url.slice(7) : url
       if (!(await fs.exists(path))) {
         throw new Error(`unable to find file ${path}`)
