@@ -15,14 +15,7 @@ import {
   RootStackParamList,
 } from '@app/navigation/navigationParams'
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-  Linking,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from 'react-native'
+import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -51,8 +44,7 @@ export default function HomeScreen({
   const showStatusBar = useAppSelector(state => state.options.showStatusBar)
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
-  const { width, height } = useWindowDimensions()
-  const isLandscape = width > height
+  const { landscape } = useWindowShape()
   const { listStyles, pressableStyle } = useListStyles()
 
   const styles = StyleSheet.create({
@@ -88,13 +80,13 @@ export default function HomeScreen({
       marginTop: 4,
     },
     columnsContainer: {
-      flexDirection: isLandscape ? 'row' : 'column',
+      flexDirection: landscape ? 'row' : 'column',
       width: '100%',
       justifyContent: 'space-between',
     },
     column: {
-      width: isLandscape ? '32%' : '100%',
-      marginBottom: isLandscape ? 0 : 5,
+      width: landscape ? '32%' : '100%',
+      marginBottom: landscape ? 0 : 5,
     },
     headerCenterStyle: {
       marginBottom: 0,

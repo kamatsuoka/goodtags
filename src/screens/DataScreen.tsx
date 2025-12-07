@@ -4,18 +4,13 @@ import {
   useAppSelector,
   useBodyInsets,
   useDataImport,
+  useWindowShape,
 } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
 import { shareFavorites } from '@app/modules/favoritesSlice'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import {
   Divider,
   List,
@@ -39,8 +34,7 @@ export default function DataScreen() {
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const [clearingCache, setClearingCache] = useState(false)
-  const { width, height } = useWindowDimensions()
-  const isLandscape = width > height
+  const { landscape } = useWindowShape()
   const { listStyles, pressableStyle } = useListStyles()
 
   const styles = StyleSheet.create({
@@ -58,7 +52,7 @@ export default function DataScreen() {
       width: '100%',
     },
     title: {
-      marginTop: isLandscape ? 0 : 10,
+      marginTop: landscape ? 0 : 10,
       marginBottom: 10,
     },
     listHolder: {
@@ -80,14 +74,14 @@ export default function DataScreen() {
       alignItems: 'flex-start',
     },
     columnsContainer: {
-      flexDirection: isLandscape ? 'row' : 'column',
+      flexDirection: landscape ? 'row' : 'column',
       width: '100%',
     },
     column: {
-      flex: isLandscape ? 1 : undefined,
-      width: isLandscape ? undefined : '100%',
-      paddingHorizontal: isLandscape ? 5 : 0,
-      marginHorizontal: isLandscape ? 10 : 0,
+      flex: landscape ? 1 : undefined,
+      width: landscape ? undefined : '100%',
+      paddingHorizontal: landscape ? 5 : 0,
+      marginHorizontal: landscape ? 10 : 0,
       marginVertical: 20,
     },
   })

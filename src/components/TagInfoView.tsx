@@ -1,8 +1,9 @@
+import { useWindowShape } from '@app/hooks/useWindowShape'
 import Tag from '@app/lib/models/Tag'
 import { TagListType } from '@app/modules/tagLists'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useMemo } from 'react'
-import { Linking, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Linking, StyleSheet, View } from 'react-native'
 import { Divider, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { arranger } from './tagInfo'
@@ -11,16 +12,15 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
   const { tag } = props
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { width, height } = useWindowDimensions()
-  const isLandscape = width > height
+  const { landscape } = useWindowShape()
 
   const outerContainerPadding = useMemo(
     () => ({
-      paddingHorizontal: isLandscape
+      paddingHorizontal: landscape
         ? Math.max(60, insets.left + 20, insets.right + 20)
         : Math.max(20, insets.left + 20, insets.right + 20),
     }),
-    [isLandscape, insets.left, insets.right],
+    [landscape, insets.left, insets.right],
   )
 
   const items: [string, string | number | undefined][] = useMemo(() => {
