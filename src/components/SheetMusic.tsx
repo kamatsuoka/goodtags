@@ -14,13 +14,14 @@ const BACKGROUND_COLOR = '#fcfcff'
 type Props = {
   uri: string
   onPress: () => void
+  landscape?: boolean
 }
 
 /**
  * Sheet musics viewer. Supports pdfs, gifs, etc.
  */
 export default function SheetMusic(props: Props) {
-  const { uri, onPress } = props
+  const { uri, onPress, landscape = false } = props
   const rawInsets = useSafeAreaInsets()
   const insets =
     Platform.OS === 'android'
@@ -48,8 +49,8 @@ export default function SheetMusic(props: Props) {
   const pdfStyle = {
     ...styles.pdf,
     elevation: 0,
-    paddingTop: insets.top,
-    paddingBottom: insets.bottom,
+    paddingTop: landscape ? insets.top : 0,
+    paddingBottom: landscape ? insets.bottom : 0,
     paddingLeft: insets.left,
     paddingRight: insets.right,
   }
@@ -104,7 +105,7 @@ export default function SheetMusic(props: Props) {
 
       return null
     } else {
-      const source = imageSource(uri, insets)
+      const source = imageSource(uri, insets, landscape)
       return (
         <WebView
           key={uri}
@@ -135,7 +136,11 @@ export default function SheetMusic(props: Props) {
  * HTML page for viewing non-pdf images in WebView.
  * Designed for landscape or wide screens, puts music full width.
  */
-function imageSource(uri: string, insets: EdgeInsets): { html: string } {
+function imageSource(
+  uri: string,
+  insets: EdgeInsets,
+  landscape: boolean,
+): { html: string } {
   return {
     html: `<head>
          <title>sheet music</title>
@@ -199,7 +204,10 @@ function imageSource(uri: string, insets: EdgeInsets): { html: string } {
              min-height: 100vh;
              align-items: center;
              justify-content: center;
-             padding: ${insets.top}px ${insets.right}px ${insets.bottom}px ${insets.left}px;
+             padding-top: ${landscape ? insets.top : 0}px;
+             padding-right: ${insets.right}px;
+             padding-bottom: ${landscape ? insets.bottom : 0}px;
+             padding-left: ${insets.left}px;
            }
            img#music {
              object-fit: contain;

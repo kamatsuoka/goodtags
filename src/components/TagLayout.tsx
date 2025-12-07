@@ -9,6 +9,7 @@ import {
   useTagScreenStyles,
   useTagTracks,
   useTrackPlayer,
+  useWindowShape,
 } from '@app/hooks'
 import Tag from '@app/lib/models/Tag'
 import { TrackLoadingSpinner } from '@app/lib/theme'
@@ -73,6 +74,7 @@ const PlayPauseAction = React.memo(
           }}
           disabled={disabled}
           size={BIG_BUTTON_SIZE}
+          style={styles.dimmableIconHolder}
         />
         {isLoading && (
           <View style={styles.spinnerOverlay} pointerEvents="none">
@@ -266,9 +268,17 @@ export const TagLayout = ({
     [keyNote],
   )
 
+  const { landscape } = useWindowShape()
+
   const memoizedSheetMusic = useMemo(
-    () => <SheetMusic uri={tag.uri} onPress={brightenThenFade} />,
-    [brightenThenFade, tag.uri],
+    () => (
+      <SheetMusic
+        uri={tag.uri}
+        onPress={brightenThenFade}
+        landscape={landscape}
+      />
+    ),
+    [brightenThenFade, tag.uri, landscape],
   )
 
   const handleNotePressIn = useCallback(() => {
@@ -320,7 +330,6 @@ export const TagLayout = ({
   return (
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
-        {memoizedSheetMusic}
         <View
           style={styles.headerHolder}
           pointerEvents={infoVisible || tracksVisible ? 'none' : 'auto'}
@@ -335,6 +344,7 @@ export const TagLayout = ({
             title={title}
           />
         </View>
+        {memoizedSheetMusic}
         <View style={styles.bottomActionBar} pointerEvents="box-none">
           <IconButton
             icon={noteIcon}
