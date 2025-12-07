@@ -1,18 +1,12 @@
 import homeIcon from '@app/components/homeIcon'
 import {
   clearPdfCache,
-  useAppDispatch,
   useAppSelector,
   useBodyInsets,
+  useDataImport,
 } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
-import { receiveSharedFile, shareFavorites } from '@app/modules/favoritesSlice'
-import {
-  errorCodes,
-  isErrorWithCode,
-  pick as pickDocument,
-  types,
-} from '@react-native-documents/picker'
+import { shareFavorites } from '@app/modules/favoritesSlice'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import {
@@ -40,8 +34,8 @@ export default function DataScreen() {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
-  const dispatch = useAppDispatch()
   const favorites = useAppSelector(state => state.favorites)
+  const { handleImport } = useDataImport()
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const [clearingCache, setClearingCache] = useState(false)
@@ -123,64 +117,10 @@ export default function DataScreen() {
               <Pressable
                 style={pressableStyle}
                 onPress={async () => {
-                  try {
-                    const pickerResults = await pickDocument({
-                      presentationStyle: 'fullScreen',
-                      mode: 'import',
-                      type: [types.json, types.allFiles],
-                    })
-                    const pickerResult = pickerResults[0] // Get first file
-                    console.log(`result from pickDocument: ${pickerResult}`)
-                    if (pickerResult?.error) {
-                      console.error(`error with file: ${pickerResult.error}`)
-                    }
-                    if (pickerResult?.uri) {
-                      try {
-                        const importPayload = await dispatch(
-                          receiveSharedFile(pickerResult.uri),
-                        )
-                        const importResult = importPayload.payload
-                        console.log(`importResult:`, importResult)
-                        if (importPayload.type.endsWith('/rejected')) {
-                          // Handle rejection
-                          const errorMessage =
-                            typeof importResult === 'string'
-                              ? importResult
-                              : 'import failed'
-                          setSnackBarMessage(errorMessage)
-                        } else if (typeof importResult === 'string') {
-                          setSnackBarMessage(importResult)
-                        } else if (importResult?.favorites) {
-                          const favCount = importResult.favorites.length
-                          const labelCount = importResult.receivedLabels.length
-                          setSnackBarMessage(
-                            `imported ${favCount} tag${
-                              favCount !== 1 ? 's' : ''
-                            }` +
-                              ` and ${labelCount} label${
-                                labelCount !== 1 ? 's' : ''
-                              }`,
-                          )
-                        } else {
-                          setSnackBarMessage('import failed')
-                        }
-                      } catch (parseError) {
-                        console.error('Parse error:', parseError)
-                        setSnackBarMessage('invalid file format')
-                      }
-                      setSnackBarVisible(true)
-                    }
-                  } catch (e) {
-                    if (
-                      isErrorWithCode(e) &&
-                      e.code === errorCodes.OPERATION_CANCELED
-                    ) {
-                      console.log('document picker canceled')
-                    } else {
-                      console.error(JSON.stringify(e))
-                      setSnackBarMessage(`import error: ${e}`)
-                      setSnackBarVisible(true)
-                    }
+                  const { message, showSnackBar } = await handleImport()
+                  if (showSnackBar) {
+                    setSnackBarMessage(message)
+                    setSnackBarVisible(true)
                   }
                 }}
               >
