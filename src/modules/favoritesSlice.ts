@@ -305,6 +305,14 @@ const favoritesSlice = createSlice({
           }
           if (action.payload.receivedLabels?.length > 0) {
             action.payload.receivedLabels.forEach(receivedLabel => {
+              // Create the label even if it has no tags
+              if (!state.labels.includes(receivedLabel.label)) {
+                favoritesSlice.caseReducers.createLabel(state, {
+                  payload: receivedLabel.label,
+                  type: 'createLabel',
+                })
+              }
+              // Add tags to the label if there are any
               receivedLabel.tags.forEach(tag => {
                 favoritesSlice.caseReducers.addLabel(state, {
                   payload: { tag: tag, label: receivedLabel.label },
