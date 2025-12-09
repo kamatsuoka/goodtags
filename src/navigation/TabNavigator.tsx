@@ -1,5 +1,5 @@
 import { useWindowShape } from '@app/hooks/useWindowShape'
-import { TabBarActiveColor, TabBarBackground } from '@app/lib/theme'
+import { TabBarActiveColor } from '@app/lib/theme'
 import { FavoritesScreen } from '@app/screens/FavoritesScreen'
 import HistoryScreen from '@app/screens/HistoryScreen'
 import SearchScreen from '@app/screens/SearchScreen'
@@ -33,7 +33,7 @@ export default function TabNavigator() {
 
   const containerStyle = {
     flex: 1,
-    backgroundColor: TabBarBackground,
+    backgroundColor: 'transparent',
   }
   const minHeight = ios ? 50 : 60
   // beside-icon vs below-icon
