@@ -96,7 +96,15 @@ export default function DataScreen() {
             </Text>
             <View style={listStyles.listHolder}>
               <Pressable
-                onPress={() => shareFavorites(favorites)}
+                onPress={async () => {
+                  const { message, showSnackBar } = await shareFavorites(
+                    favorites,
+                  )
+                  if (showSnackBar) {
+                    setSnackBarMessage(message)
+                    setSnackBarVisible(true)
+                  }
+                }}
                 style={pressableStyle}
               >
                 <List.Item

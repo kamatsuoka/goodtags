@@ -138,7 +138,7 @@ export default function RootStackNavigator() {
               options={{
                 title: 'logs',
                 header: NavHeader,
-                ...homeOrientation,
+                orientation: 'portrait',
               }}
             />
           </Stack.Group>

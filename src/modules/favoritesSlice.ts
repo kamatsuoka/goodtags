@@ -424,7 +424,14 @@ export const selectLabel = (state: RootState, label: string): TagListState => {
   }
 }
 
-export const shareFavorites = async (favorites: FavoritesState) => {
+interface ShareResult {
+  message: string
+  showSnackBar: boolean
+}
+
+export const shareFavorites = async (
+  favorites: FavoritesState,
+): Promise<ShareResult> => {
   try {
     const path: string = await writeFavoritesToFile(favorites)
     console.info(`wrote favorites to ${path}`)
@@ -433,8 +440,22 @@ export const shareFavorites = async (favorites: FavoritesState) => {
       type: 'application/json',
     })
     console.info(response)
+    const favCount = favorites.allTagIds.length
+    const labelCount = favorites.labels.length
+    const message =
+      `exported ${favCount} favorite${favCount !== 1 ? 's' : ''}` +
+      ` and ${labelCount} label${labelCount !== 1 ? 's' : ''}`
+    return { message, showSnackBar: true }
   } catch (e) {
     console.info(`error sharing favorites: ${e}`)
+    if (e && typeof e === 'object' && 'message' in e) {
+      const errorMessage = (e as Error).message
+      // User canceled the share dialog
+      if (errorMessage.includes('User did not share')) {
+        return { message: '', showSnackBar: false }
+      }
+    }
+    return { message: `backup error: ${e}`, showSnackBar: true }
   }
 }
 
