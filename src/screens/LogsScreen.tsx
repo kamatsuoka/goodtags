@@ -1,7 +1,9 @@
+import SharedHeader, { BackType } from '@app/components/SharedHeader'
 import { useBodyInsets } from '@app/hooks'
 import { useNavigation } from '@react-navigation/native'
+import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { FlatList, Platform, StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { Card, Chip, IconButton, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -64,11 +66,20 @@ interceptConsole()
 
 const DeleteButton = ({
   onPress,
+  onLongPress,
   color,
 }: {
   onPress: () => void
+  onLongPress?: () => void
   color: string
-}) => <IconButton icon="delete" iconColor={color} onPress={onPress} />
+}) => (
+  <IconButton
+    icon="delete"
+    iconColor={color}
+    onPress={onPress}
+    onLongPress={onLongPress}
+  />
+)
 
 /**
  * Screen displaying the last 100 console logs
@@ -78,7 +89,7 @@ export default function LogsScreen() {
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [logs, setLogs] = useState<LogEntry[]>([...logStorage])
-  const flatListRef = useRef<FlatList>(null)
+  const listRef = useRef<FlashListRef<LogEntry>>(null)
   const navigation = useNavigation()
 
   const handleClearLogs = useCallback(() => {
@@ -86,34 +97,51 @@ export default function LogsScreen() {
     setLogs([])
   }, [])
 
-  const scrollToBottom = useCallback(() => {
-    if (logs.length > 0) {
-      flatListRef.current?.scrollToEnd({ animated: true })
+  const generateDummyLogs = useCallback(() => {
+    if (__DEV__) {
+      const types: LogEntry['type'][] = ['log', 'warn', 'info', 'debug']
+      const messages = [
+        'Fetching user data',
+        'Network request completed',
+        'Cache miss',
+        'Processing response',
+        'Updating state',
+        'Rendering component',
+        'API call failed',
+        'Retrying request',
+        'Connection timeout',
+        'Invalid parameter',
+      ]
+
+      for (let i = 0; i < 20; i++) {
+        const type = types[Math.floor(Math.random() * types.length)]
+        const message = messages[Math.floor(Math.random() * messages.length)]
+        console[type](`[Test ${i + 1}] ${message}`)
+      }
+
+      // Update the local state to reflect the new logs
+      setLogs([...logStorage])
     }
-  }, [logs.length])
+  }, [])
 
   const renderHeaderRight = useCallback(
     () => (
       <View style={styles.headerButtons}>
-        <IconButton
-          icon="arrow-down"
-          iconColor={theme.colors.onPrimary}
-          onPress={scrollToBottom}
-        />
         <DeleteButton
           onPress={handleClearLogs}
+          onLongPress={generateDummyLogs}
           color={theme.colors.onPrimary}
         />
       </View>
     ),
-    [handleClearLogs, scrollToBottom, theme.colors.onPrimary],
+    [handleClearLogs, generateDummyLogs, theme.colors.onPrimary],
   )
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: renderHeaderRight,
+      headerShown: false,
     })
-  }, [navigation, renderHeaderRight])
+  }, [navigation])
 
   const getLogColor = (type: LogEntry['type']) => {
     switch (type) {
@@ -173,12 +201,26 @@ export default function LogsScreen() {
         styles.container,
         {
           backgroundColor: theme.colors.background,
-          paddingHorizontal: Math.max(paddingLeft, paddingRight, 8),
-          paddingBottom: insets.bottom,
         },
       ]}
     >
-      <View style={styles.content}>
+      <SharedHeader
+        title="logs"
+        backType={BackType.Back}
+        onBack={() => navigation.goBack()}
+        headerRight={renderHeaderRight}
+        listRef={listRef}
+        enableScrollToTop={true}
+      />
+      <View
+        style={[
+          styles.content,
+          {
+            paddingHorizontal: Math.max(paddingLeft, paddingRight, 8),
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
         {logs.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text
@@ -192,12 +234,16 @@ export default function LogsScreen() {
             </Text>
           </View>
         ) : (
-          <FlatList
-            ref={flatListRef}
+          <FlashList
+            ref={listRef}
             data={logs}
             renderItem={renderLogItem}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.listContent}
+            maintainVisibleContentPosition={{
+              autoscrollToBottomThreshold: 0.2,
+              startRenderingFromBottom: true,
+            }}
           />
         )}
       </View>

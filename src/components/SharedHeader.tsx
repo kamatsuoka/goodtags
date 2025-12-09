@@ -27,7 +27,7 @@ type SharedHeaderProps = {
   onBack?: () => void
   backIconColor?: string
   headerRight?: (props: any) => React.ReactNode
-  listRef?: React.RefObject<FlashListRef<number> | null>
+  listRef?: React.RefObject<FlashListRef<any> | null>
   enableScrollToTop?: boolean
   headerStyle?: any
   headerCenterStyle?: any
