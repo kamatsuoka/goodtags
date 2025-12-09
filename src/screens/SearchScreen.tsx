@@ -134,8 +134,6 @@ const SearchScreen = () => {
     visible ? (
       <Chip
         icon={icon}
-        // elevated={true}
-        onPress={() => setSearchMenuVisible(true)}
         textStyle={{ color: theme.colors.primary }}
         style={styles.filterButton}
       >
@@ -147,27 +145,6 @@ const SearchScreen = () => {
     setSearchMenuVisible(false)
   }
 
-  const queryButton = (
-    <Button
-      icon="magnify"
-      mode="elevated"
-      contentStyle={[
-        styles.compactSearchContent,
-        {
-          backgroundColor: theme.colors.primary,
-        },
-      ]}
-      textColor={theme.colors.onPrimary}
-      onPress={() => {
-        return setSearchMenuVisible(true)
-      }}
-      style={styles.compactSearchBar}
-      labelStyle={[theme.fonts.titleMedium, styles.compactSearchLabel]}
-    >
-      {query}
-    </Button>
-  )
-
   return searchMenuVisible ? (
     <SearchDialog
       query={query}
@@ -176,31 +153,44 @@ const SearchScreen = () => {
     />
   ) : (
     <View style={CommonStyles.container}>
-      <ListHeader
-        listRef={listRef}
-        title={queryButton}
-        setFabOpen={setFabOpen}
-        headerCenterStyle={styles.headerCenter}
-      />
-      {filters !== InitialFilters ? (
-        <View style={styles.filterHolder}>
-          {filterChip(
-            filters.collection !== Collection.ALL,
-            'playlist-check',
-            filters.collection.toString(),
-          )}
-          {filterChip(
-            filters.learningTracks !== InitialFilters.learningTracks,
-            'filter-check-outline',
-            'tracks',
-          )}
-          {filterChip(
-            filters.parts && filters.parts !== InitialFilters.parts,
-            'account-multiple-check-outline',
-            `${filters.parts} parts`,
-          )}
+      <ListHeader listRef={listRef} title="" setFabOpen={setFabOpen} />
+      {query ? (
+        <View style={styles.searchBarHolder} pointerEvents="box-none">
+          <Button
+            icon="magnify"
+            mode="elevated"
+            contentStyle={styles.compactSearchContent}
+            onPress={() => setSearchMenuVisible(true)}
+            style={styles.compactSearchBar}
+            labelStyle={[
+              theme.fonts.titleMedium,
+              styles.compactSearchLabel,
+              { color: theme.colors.secondary },
+            ]}
+          >
+            {query}
+          </Button>
         </View>
       ) : null}
+      {/* {filters !== InitialFilters ? ( */}
+      <View style={styles.filterHolder} pointerEvents="box-none">
+        {filterChip(
+          filters.collection !== Collection.ALL,
+          'playlist-check',
+          filters.collection.toString(),
+        )}
+        {filterChip(
+          filters.learningTracks !== InitialFilters.learningTracks,
+          'filter-check-outline',
+          'tracks',
+        )}
+        {filterChip(
+          filters.parts && filters.parts !== InitialFilters.parts,
+          'account-multiple-check-outline',
+          `${filters.parts} parts`,
+        )}
+      </View>
+      {/* ) : null} */}
       <View style={[CommonStyles.listContainer, listHolderPadding]}>
         <TagList
           listRef={listRef}
@@ -257,8 +247,11 @@ const SearchScreen = () => {
 }
 
 const styles = StyleSheet.create({
-  headerCenter: {
-    marginBottom: 1,
+  searchBarHolder: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -20,
   },
   filterHolder: {
     flexDirection: 'row',
@@ -276,10 +269,11 @@ const styles = StyleSheet.create({
     padding: 0,
     marginHorizontal: 5,
     margin: 0,
+    minWidth: 150,
     maxWidth: 200,
   },
   compactSearchContent: {
-    height: 35,
+    height: 40,
   },
   compactSearchLabel: {
     marginVertical: 0,
@@ -302,11 +296,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
     pointerEvents: 'box-none',
-  },
-  statusText: {
-    paddingTop: 2,
-    fontSize: 15,
-    alignSelf: 'center',
   },
   spinner: {
     height: 60,
