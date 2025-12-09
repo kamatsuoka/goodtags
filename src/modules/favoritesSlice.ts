@@ -443,11 +443,14 @@ export const shareFavorites = async (
   try {
     const path: string = await writeFavoritesToFile(favorites)
     console.info(`wrote favorites to ${path}`)
-    const response = await Share.open({
+    const { success } = await Share.open({
       url: `file://${path}`,
       type: 'application/json',
     })
-    console.info(response)
+    // by default, failOnCancel is true and react-native-share
+    // throws an error if user cancels share dialog;
+    // log success result anyway
+    console.info(`share success: ${success}`)
     const favCount = favorites.allTagIds.length
     const labelCount = favorites.labels.length
     const message =
@@ -455,7 +458,6 @@ export const shareFavorites = async (
       ` and ${labelCount} label${labelCount !== 1 ? 's' : ''}`
     return { message, showSnackBar: true }
   } catch (e) {
-    console.info(`error sharing favorites: ${e}`)
     if (e && typeof e === 'object' && 'message' in e) {
       const errorMessage = (e as Error).message
       // User canceled the share dialog
@@ -463,7 +465,9 @@ export const shareFavorites = async (
         return { message: '', showSnackBar: false }
       }
     }
-    return { message: `backup error: ${e}`, showSnackBar: true }
+    const message = `backup error: ${e}`
+    console.error(message)
+    return { message, showSnackBar: true }
   }
 }
 
