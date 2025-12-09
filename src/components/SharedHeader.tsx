@@ -29,6 +29,7 @@ type SharedHeaderProps = {
   headerRight?: (props: any) => React.ReactNode
   listRef?: React.RefObject<FlashListRef<any> | null>
   enableScrollToTop?: boolean
+  inverted?: boolean
   headerStyle?: any
   headerCenterStyle?: any
   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto'
@@ -47,6 +48,7 @@ export default function SharedHeader({
   headerRight,
   listRef,
   enableScrollToTop = false,
+  inverted = false,
   headerStyle,
   headerCenterStyle,
   pointerEvents = 'auto',
@@ -78,10 +80,16 @@ export default function SharedHeader({
 
   const scrollToTop = () => {
     if (listRef?.current && enableScrollToTop) {
-      listRef.current.scrollToIndex({
-        index: 0,
-        animated: true,
-      })
+      if (inverted) {
+        // For inverted lists, scroll to the end (which appears at the top)
+        listRef.current.scrollToEnd({ animated: true })
+      } else {
+        // For normal lists, scroll to offset 0
+        listRef.current.scrollToOffset({
+          offset: 0,
+          animated: true,
+        })
+      }
     }
   }
 
