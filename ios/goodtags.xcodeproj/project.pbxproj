@@ -34,6 +34,7 @@
 		97EFEBF4FB84AC756DD4BFAC /* Pods_goodtags.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_goodtags.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Black.ttf"; path = "../src/assets/fonts/Vollkorn-Black.ttf"; sourceTree = "<group>"; };
 		BA658E832EDBAC78008531A1 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		BA95FFFC2EE9F97C00A0256E /* goodtags.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = goodtags.entitlements; path = goodtags/goodtags.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -52,6 +53,7 @@
 		13B07FAE1A68108700A75B9A /* goodtags */ = {
 			isa = PBXGroup;
 			children = (
+				BA95FFFC2EE9F97C00A0256E /* goodtags.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -235,9 +237,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -297,9 +303,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-goodtags/Pods-goodtags-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -327,6 +337,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = goodtags/goodtags.entitlements;
 				CURRENT_PROJECT_VERSION = 107;
 				DEVELOPMENT_TEAM = PXJ9SVB29P;
 				ENABLE_BITCODE = NO;
@@ -358,6 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = goodtags/goodtags.entitlements;
 				CURRENT_PROJECT_VERSION = 107;
 				DEVELOPMENT_TEAM = PXJ9SVB29P;
 				INFOPLIST_FILE = goodtags/Info.plist;
