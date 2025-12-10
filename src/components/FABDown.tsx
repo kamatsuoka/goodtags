@@ -216,7 +216,7 @@ export const FABDown = ({
 
   return (
     <View
-      pointerEvents="box-none"
+      pointerEvents={open ? 'box-none' : 'none'}
       style={[
         styles.container,
         {

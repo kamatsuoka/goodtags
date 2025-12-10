@@ -155,7 +155,7 @@ const SearchScreen = () => {
     <View style={CommonStyles.container}>
       <ListHeader listRef={listRef} title="" setFabOpen={setFabOpen} />
       {query ? (
-        <View style={styles.searchBarHolder} pointerEvents="box-none">
+        <View style={styles.searchButtonHolder} pointerEvents="box-none">
           <Button
             icon="magnify"
             mode="elevated"
@@ -172,7 +172,6 @@ const SearchScreen = () => {
           </Button>
         </View>
       ) : null}
-      {/* {filters !== InitialFilters ? ( */}
       <View style={styles.filterHolder} pointerEvents="box-none">
         {filterChip(
           filters.collection !== Collection.ALL,
@@ -190,7 +189,6 @@ const SearchScreen = () => {
           `${filters.parts} parts`,
         )}
       </View>
-      {/* ) : null} */}
       <View style={[CommonStyles.listContainer, listHolderPadding]}>
         <TagList
           listRef={listRef}
@@ -247,7 +245,7 @@ const SearchScreen = () => {
 }
 
 const styles = StyleSheet.create({
-  searchBarHolder: {
+  searchButtonHolder: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

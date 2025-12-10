@@ -3,12 +3,7 @@ import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps, useMemo } from 'react'
-import {
-  Platform,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
+import { Platform, Pressable, StyleSheet, View } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from './BackButton'
@@ -133,9 +128,9 @@ export default function SharedHeader({
 
   if (enableScrollToTop) {
     return (
-      <TouchableWithoutFeedback onPress={scrollToTop}>
-        {content}
-      </TouchableWithoutFeedback>
+      <Pressable onPress={scrollToTop}>
+        <View collapsable={false}>{content}</View>
+      </Pressable>
     )
   }
 
