@@ -81,4 +81,5 @@ web-build/
 
 # android deployment
 *.aab
+*.ab
 keystore.properties
