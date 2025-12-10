@@ -53,7 +53,7 @@ export function useDataImport() {
             const favCount = importResult.favorites.length
             const labelCount = importResult.receivedLabels.length
             const message =
-              `imported ${favCount} favorites${favCount !== 1 ? 's' : ''}` +
+              `imported ${favCount} favorite${favCount !== 1 ? 's' : ''}` +
               ` and ${labelCount} label${labelCount !== 1 ? 's' : ''}`
             return { message, showSnackBar: true }
           } else {
