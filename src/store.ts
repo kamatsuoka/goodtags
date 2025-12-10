@@ -51,10 +51,12 @@ const persistConfig = {
   stateReconciler: autoMergeLevel2,
   version: _.max(Object.keys(MIGRATIONS).map(key => parseInt(key, 10))) ?? -1,
   // The types for `createMigrate` seem just quite wrong, in particular the migration function arg/return type
-  migrate: createMigrate(MIGRATIONS as unknown as MigrationManifest),
+  migrate: createMigrate(MIGRATIONS as unknown as MigrationManifest, {
+    debug: true,
+  }),
 }
 
-console.log(`persistConfig.version=${persistConfig.version}`)
+console.log(`[Redux Persist] persistConfig.version=${persistConfig.version}`)
 
 const persistedReducer = persistReducer<AppState, AnyAction>(
   persistConfig,
@@ -70,7 +72,16 @@ const store = configureStore({
     }),
 })
 
-const persistor = persistStore(store)
+const persistor = persistStore(store, null, () => {
+  console.log('[Redux Persist] Rehydration complete')
+  // Log a sample of the rehydrated state to verify data is present
+  const state = store.getState()
+  console.log(
+    '[Redux Persist] Favorites count:',
+    state.favorites?.allTagIds?.length ?? 0,
+  )
+  console.log('[Redux Persist] Labels:', state.favorites?.labels?.length ?? 0)
+})
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

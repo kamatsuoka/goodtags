@@ -70,7 +70,15 @@ function AppContent() {
     <GestureHandlerRootView style={[styles.container, CommonStyles.container]}>
       <ErrorBoundary>
         <ReactReduxProvider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
+          <PersistGate
+            loading={null}
+            persistor={persistor}
+            onBeforeLift={() => {
+              console.log(
+                '[PersistGate] About to render app - rehydration should be complete',
+              )
+            }}
+          >
             <StatusBarController />
             <RootStackNavigator />
           </PersistGate>
