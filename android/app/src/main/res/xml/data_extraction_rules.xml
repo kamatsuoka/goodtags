@@ -2,7 +2,7 @@
 <data-extraction-rules>
     <cloud-backup>
         <!-- Include user data in cloud backups for Android 12+ -->
-        <include domain="sharedpref" />
+        <include domain="sharedpref" path="."/>
         <include domain="database" />
         <include domain="file" />
         
