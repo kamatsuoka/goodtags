@@ -73,20 +73,23 @@ const store = configureStore({
 })
 
 // Add debugging before persistStore to check what's in AsyncStorage
-AsyncStorage.getItem('persist:root')
-  .then(data => {
-    console.log('[Redux Persist] Raw AsyncStorage data exists:', !!data)
-    if (data) {
-      console.log('[Redux Persist] Data size:', data.length, 'bytes')
-      try {
-        const parsed = JSON.parse(data)
-        console.log('[Redux Persist] Persisted keys:', Object.keys(parsed))
-      } catch (e) {
-        console.error('[Redux Persist] Failed to parse stored data:', e)
+// Only run this outside of test environments
+if (process.env.NODE_ENV !== 'test') {
+  AsyncStorage.getItem('persist:root')
+    .then(data => {
+      console.log('[Redux Persist] Raw AsyncStorage data exists:', !!data)
+      if (data) {
+        console.log('[Redux Persist] Data size:', data.length, 'bytes')
+        try {
+          const parsed = JSON.parse(data)
+          console.log('[Redux Persist] Persisted keys:', Object.keys(parsed))
+        } catch (e) {
+          console.error('[Redux Persist] Failed to parse stored data:', e)
+        }
       }
-    }
-  })
-  .catch(e => console.error('[Redux Persist] Error reading AsyncStorage:', e))
+    })
+    .catch(e => console.error('[Redux Persist] Error reading AsyncStorage:', e))
+}
 
 const persistor = persistStore(store, null, () => {
   console.log('[Redux Persist] Rehydration complete')
