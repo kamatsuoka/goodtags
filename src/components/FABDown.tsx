@@ -26,7 +26,7 @@ export type Props = {
    * - `color`: custom icon color of the action item
    * - `labelTextColor`: custom label text color of action items
    * - `style`: pass additional styles for the fab item, for example, `backgroundColor`
-   * - `containerStyle`: pass additional styles for the fab item label container, for example, `backgroundColor`
+   * - `containerStyle`: pass additional styles for fab item label container, e.g. `backgroundColor`
    * - `labelStyle`: pass additional styles for the fab item label, for example, `fontSize`
    * - `onPress`: callback that is called when `FAB` is pressed (required)
    * - `size`: size of action item. Defaults to `small`

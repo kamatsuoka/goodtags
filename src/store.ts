@@ -33,10 +33,9 @@ const rootReducer = combineReducers({
 
 export type AppState = ReturnType<typeof rootReducer>
 
-// NOTE! This should be an append-only "list" with each addition having the next incremental integer.
-//
-// In particular, the only time it *might* be safe to mutate (or remove) existing migrations is when the migrations
-// haven't made it out to any users devices yet (eg before deployment).
+// NOTE! This should be an append-only "list" with each addition having the next incremental integer
+// In particular, the only time it *might* be safe to mutate (or remove) existing migrations
+// is when the migrations haven't made it out to any users devices yet (e.g. before deployment)
 const MIGRATIONS = {
   0: (state: AppState) => {
     state.search.filters.offline = true
@@ -50,7 +49,8 @@ const persistConfig = {
   storage: AsyncStorage,
   stateReconciler: autoMergeLevel2,
   version: _.max(Object.keys(MIGRATIONS).map(key => parseInt(key, 10))) ?? -1,
-  // The types for `createMigrate` seem just quite wrong, in particular the migration function arg/return type
+  // redux-persist types expect PersistedState (with _persist property), but migrations actually
+  // receive the full app state. double cast needed to bridge this type system mismatch.
   migrate: createMigrate(MIGRATIONS as unknown as MigrationManifest, {
     debug: true,
   }),

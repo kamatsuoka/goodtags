@@ -72,7 +72,9 @@ export type ApiQueryParams = {
   Parts?: number
 }
 
-/** This is *kinda* like Kotlin's `.apply`/`.let`, useful for transforming maybe null values in arbitrary ways */
+/**
+ * kinda like Kotlin's `.apply`/`.let`, useful for transforming maybe null values in arbitrary ways
+ */
 function apply<T, R>(value: T | undefined, transformer: (value: T) => R): R | undefined {
   return value === undefined ? undefined : transformer(value)
 }
@@ -129,8 +131,8 @@ async function searchDb(
   const db = await getDbConnection()
   debugDbPerfLogging('Got db', overallStart)
 
-  // This is kinda a gross API. We can't return anything out of the transaction (and it's generally recommended to use
-  // a transaction), so we have to declare these variables here and mutate them within the transaction function >.>
+  // expo-sqlite's withTransactionAsync returns void, so can't return values from callback
+  // declare variables here and mutate within transaction
   let tagRows: DbRow[] = []
   let trackRows: DbRow[] = []
   let videoRows: DbRow[] = []
@@ -144,15 +146,16 @@ async function searchDb(
     tagRows = await db.getAllAsync<DbRow>(tagSql, ...whereVariables, ...suffixVariables)
     const tagTime = debugDbPerfCurrentTime()
 
+    const subSelect = `(SELECT id FROM tags${whereClause}${suffixClauses})`
     trackRows = await db.getAllAsync<DbRow>(
-      `SELECT * FROM tracks WHERE tracks.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      `SELECT * FROM tracks WHERE tracks.tag_id IN ${subSelect}`,
       ...whereVariables,
       ...suffixVariables,
     )
     const trackTime = debugDbPerfCurrentTime()
 
     videoRows = await db.getAllAsync<DbRow>(
-      `SELECT * FROM videos WHERE videos.tag_id IN (SELECT id FROM tags${whereClause}${suffixClauses})`,
+      `SELECT * FROM videos WHERE videos.tag_id IN ${subSelect}`,
       ...whereVariables,
       ...suffixVariables,
     )

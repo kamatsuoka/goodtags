@@ -8,13 +8,12 @@ import {
   VALID_SCHEMA_VERSION,
 } from '@app/constants/sql'
 import getUrl from '@app/modules/getUrl'
-import { Buffer } from 'buffer'
 import { Asset } from 'expo-asset'
 import { Directory, File, Paths } from 'expo-file-system'
-import { copyAsync, EncodingType } from 'expo-file-system/legacy'
+import { copyAsync } from 'expo-file-system/legacy'
 import * as SQLite from 'expo-sqlite'
 
-// These are the parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
+// These are parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
 export interface InnerDb {
   withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
@@ -23,19 +22,22 @@ export interface InnerDb {
 type ReplaceDbCallback = () => Promise<InnerDb>
 
 /**
- * The point of this class is to give access to the underlying database while also allowing it to be safely replaced on
- * the fly. In particular, just writing to the file might cause corrupted reads if a query is ongoing simultaneously
- * (which could be possible because both the queries and the writing are async and can therefore give up control),
- * and just moving a new file atomically into place likely wouldn't get used because the underlying DB handle would be
- * pointing at the old file descriptor.
+ * Point of this class is to give access to underlying database while also allowing
+ * it to be safely replaced on fly. In particular, just writing to file might cause
+ * corrupted reads if a query is ongoing simultaneously (which could be possible because
+ * both queries and writing are async and can therefore give up control), and just moving
+ * a new file atomically into place likely wouldn't get used because underlying DB handle
+ * would be pointing at old file descriptor.
  *
- * This class exposes a single entry point of `runTransactionAsync` and keeps track of how many active calls there are to
- * that method. When a request comes in to replace the underlying database, it waits for all transactions to end then
- * runs the replacement callback (which presumably changes things on disk). While the replacement callback is running,
- * new calls to `runTransactionAsync` will wait until the replacement is finished, at which point pending and subsequent
- * transactions will use the new DB.
+ * This class exposes a single entry point of `runTransactionAsync` and keeps track of
+ * how many active calls there are to that method. When a request comes in to replace
+ * underlying database, it waits for all transactions to end then runs replacement
+ * callback (which presumably changes things on disk). While replacement callback is
+ * running, new calls to `runTransactionAsync` will wait until replacement is finished,
+ * at which point pending and subsequent transactions will use new DB.
  *
- * It is expected that instances of this class act a singleton points of access for a given DB path.
+ * It is expected that instances of this class act a singleton points of access for
+ * a given DB path.
  */
 export class DbWrapper {
   private db: InnerDb
@@ -68,11 +70,12 @@ export class DbWrapper {
   }
 
   async queueDbReplacement(replaceDbCallback: ReplaceDbCallback) {
-    // Note: If this method is called multiple times while a replacement is in progress the first call will make
-    // progress first, which means it'll likely "win" by setting the callback, but if it's also able to immediately
-    // start the replacement the subsequent calls may remain in the while loop and effectively be "queued".
-    // Having multiple replacements simultaneously seems very unlikely to happen at all so it's not worth turning the
-    // `pendingReplaceDbCallback` into an actual queue.
+    // Note: If this method is called multiple times while a replacement is in progress,
+    // first call will make progress first, which means it'll likely "win" by setting callback,
+    // but if it's also able to immediately start replacement, subsequent calls may
+    // remain in while loop and effectively be "queued".
+    // Having multiple replacements simultaneously seems very unlikely to happen at all
+    // so it's not worth turning the `pendingReplaceDbCallback` into an actual queue.
     while (this.replaceDbInProgress != null) {
       await this.replaceDbInProgress
     }
@@ -89,7 +92,7 @@ export class DbWrapper {
       this.replaceDbInProgress == null
     ) {
       const replaceDbCallback = this.pendingReplaceDbCallback
-      // This allows others to wait until the replacement is done
+      // This allows others to wait until replacement is done
       this.replaceDbInProgress = (async () => {
         this.db.closeAsync()
         this.db = await replaceDbCallback()
@@ -101,25 +104,26 @@ export class DbWrapper {
 }
 
 /**
- * Used to kick off the process of creating the DB and checking for updates, which can be done before we actually need
- * access to the DB object itself.
+ * Kick off process of creating db and checking for updates,
+ * which can be done before we actually need access to db object itself.
  */
 export function warmupDb() {
   getDbConnection().then(/* Ignore, let run in background */)
 }
 
-// Singleton with our database. Is an array because assigning to a global wasn't updating the value on subsequent usages.
+// Singleton with our db.
+// Is an array because assigning to a global wasn't updating value on subsequent usages.
 const dbConnectionPromise: [Promise<DbWrapper> | null] = [null]
 
 /**
- * On the first call will kick off initializing the SQL database and resolve to the DB once done. Subsequent calls
- * will wait for that initialization (if it's in progress) or immediately resolve to the DB (if it's done).
+ * On first call will kick off initializing SQL db and resolve to db once done. Subsequent calls
+ * will wait for that init (if it's in progress) or immediately resolve to db (if it's done).
  */
 export async function getDbConnection(): Promise<DbWrapper> {
   const [existing] = dbConnectionPromise
   if (existing == null) {
-    // Initialize the database. We *must* immediately set dbConnectionPromise (before, eg, awaiting anything)
-    // to avoid race conditions.
+    // Initializ database. We *must* immediately set dbConnectionPromise
+    // (before, eg, awaiting anything) to avoid race conditions.
     console.debug('Initializing new DB wrapper')
     const nonNullPromise = initializeDbConnection()
     dbConnectionPromise[0] = nonNullPromise
@@ -132,11 +136,11 @@ export async function getDbConnection(): Promise<DbWrapper> {
 const SQLITE_DIR = 'SQLite'
 
 /**
- * Create the DB wrapper. Copies from the app storage if needed before creating the wrapper and kicks off a check of
- * the remote DB after creating and returning the wrapper.
+ * Create db wrapper. Copies from app storage if needed before creating wrapper
+ * and kicks off a check of remote DB after creating and returning wrapper.
  */
 async function initializeDbConnection(): Promise<DbWrapper> {
-  // The "SQLite" directory is required and assumed by SQLite.openDatabase
+  // "SQLite" directory is required and assumed by SQLite.openDatabase
   const sqlDir = `${Paths.document.uri}${SQLITE_DIR}/`
   const currentSqlPath = sqlDir + TAGS_DB_NAME
   const currentManifestPath = sqlDir + MANIFEST_NAME
@@ -150,12 +154,13 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     sqlDirectory.create()
   }
 
-  // Initialize the DB from local storage if needed
+  // Initialize DB from local storage if needed
   if (await shouldCopyFromApp(currentSqlPath, currentManifestPath, appManifestObject)) {
     console.debug('Copying DB from app storage')
-    // To avoid getting into a bad state if the app dies mid-copy, we write to temp files and then move the files into
-    // place. There's still potential for a race condition where we've moved one file but not the other, but the
-    // consequences should be much less bad (eg unlikely to brick the app).
+    // To avoid getting into a bad state if app dies mid-copy,
+    // write to temp files and then move files into place.
+    // There's still potential for a race condition where we've moved one file but not other,
+    // but consequences should be much less bad (eg unlikely to brick app).
 
     // In dev mode, assets are served via HTTP by Metro bundler, so use downloadFileAsync
     // In prod mode, assets are local asset:// URIs, so use legacy copyAsync which handles asset URIs
@@ -187,12 +192,13 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     console.debug('Not copying DB from app storage, current DB already new enough')
   }
 
-  // Note we intentionally are just using the basename and not the full path.
+  // Note we intentionally are just using basename and not full path.
   const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME)
   const dbWrapper = new DbWrapper(db)
 
-  // We've updated based on local data, but we should also check the server for updates. Kick this off once per app
-  // open, the first time we load the DB (which should be roughly when the app is opened).
+  // We've updated based on local data, but should also check server for updates
+  // Kick this off once per app open, first time we load DB
+  // (which should be roughly when app is opened)
   backgroundCheckForRemoteUpdates(
     dbWrapper,
     currentSqlPath,
@@ -204,7 +210,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   return dbWrapper
 }
 
-/** Whether we should copy the SQL and manifest from the app's built-in assets */
+/** Whether we should copy SQL and manifest from app's built-in assets */
 async function shouldCopyFromApp(
   currentSqlPath: string,
   currentManifestPath: string,
@@ -215,7 +221,7 @@ async function shouldCopyFromApp(
     return true
   }
 
-  // If they're present, see if the app manifest is newer
+  // If they're present, see if app manifest is newer
   const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
   const appGeneratedAt = appManifestContents.generated_at_epoch_seconds
   return appGeneratedAt > currentGeneratedAt
@@ -229,7 +235,7 @@ async function generatedAtFromPath(manifestPath: string): Promise<number> {
 }
 
 /**
- * Checks for a newer DB on the server and downloads it if so, replacing the backing DB in the wrapper.
+ * Checks db on server and downloads it if newer, replacing backing db in wrapper
  */
 async function backgroundCheckForRemoteUpdates(
   dbWrapper: DbWrapper,
@@ -242,7 +248,7 @@ async function backgroundCheckForRemoteUpdates(
 
   // Assume we have a current manifest by this point
   const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
-  // Get the generated at for the remote manifest
+  // Get generated at for remote manifest
   const remoteManifestContents = await getUrl<DbManifest>(remoteManifestUrl)
   const remoteGeneratedAt = remoteManifestContents.generated_at_epoch_seconds
 
@@ -261,25 +267,23 @@ async function backgroundCheckForRemoteUpdates(
   const remoteSqlUrl = `${REMOTE_ASSET_BASE_URL}/${remoteSqlName}`
 
   // Go ahead and download/write out both
-  // To avoid race conditions, first write out to temp files then move into place, as when copying from the app files.
-  // It's important to set the Accept-Encoding header since that should result in over-the-wire transfer sizes
-  // being reduced by ~4x
+  // To avoid race conditions, first write out to temp files,
+  // then move into place, as when copying from app files.
+  // It's important to set Accept-Encoding header since that should result in
+  // over-the-wire transfer sizes being reduced by ~4x
   console.debug('Downloading remote DB')
   const responseBuffer = await getUrl<ArrayBuffer>(remoteSqlUrl, {
-    // "stream" isn't a valid type in React Native apparently so we need to save it all to an in-memory buffer.
+    // "stream" isn't a valid type in React Native so we need to save it all to an in-memory buffer
     responseType: 'arraybuffer',
     headers: { 'Accept-Encoding': 'gzip' },
   })
-  // This is *wild*, the API has no way to write binary content to a file, have to b64 encode it first and write
-  // as a string >.>
-  const responseBase64 = Buffer.from(responseBuffer).toString('base64')
   const tmpSqlFile = new File(tmpSqlPath)
-  tmpSqlFile.write(responseBase64, { encoding: EncodingType.Base64 })
+  tmpSqlFile.write(new Uint8Array(responseBuffer))
 
   const tmpManifestFile = new File(tmpManifestPath)
   tmpManifestFile.write(JSON.stringify(remoteManifestContents))
 
-  // Actually queue up the replacement
+  // Actually queue up replacement
   dbWrapper
     .queueDbReplacement(async () => {
       // Delete existing files before moving (move doesn't overwrite)
