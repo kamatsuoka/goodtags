@@ -10,9 +10,7 @@
     "test": "jest",
     "sync-version": "node scripts/sync-version.js",
     "bump-ios-build": "node scripts/bump-ios-build.js",
-    "bump-ios-version": "node scripts/bump-ios-build.js",
     "bump-android-build": "node scripts/bump-android-build.js",
-    "bump-android-version": "node scripts/bump-android-build.js",
     "deploy:ios": "./scripts/deploy-ios.sh",
     "deploy:android": "./scripts/deploy-android.sh",
     "setup:android-signing": "./scripts/setup-android-signing.sh"
