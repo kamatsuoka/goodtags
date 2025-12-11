@@ -11,7 +11,9 @@ repos:
     hooks:
       - id: eslint
         name: eslint
-        entry: yarn run eslint src
+        entry: yarn run eslint
         language: system
-        pass_filenames: false
+        types: [file]
+        files: \.(ts|tsx|js|jsx)$
+        pass_filenames: true
         verbose: true

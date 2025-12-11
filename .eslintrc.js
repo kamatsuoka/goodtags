@@ -8,6 +8,17 @@ module.exports = {
     'prettier/prettier': ['error'],
     'react/react-in-jsx-scope': 'off',
     'prefer-const': 'error',
+    'max-len': [
+      'warn',
+      {
+        code: 100,
+        ignoreUrls: true,
+        // ignoreStrings: true,
+        // ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
+        ignoreComments: false,
+      },
+    ],
   },
   overrides: [
     {
@@ -18,6 +29,20 @@ module.exports = {
         'no-shadow': 'off',
         'no-undef': 'off',
         semi: ['error', 'never'],
+      },
+    },
+    {
+      files: ['*.js'],
+      rules: {
+        'max-len': [
+          'warn',
+          {
+            code: 100,
+            ignoreUrls: true,
+            ignoreRegExpLiterals: true,
+            ignoreComments: false,
+          },
+        ],
       },
     },
   ],
