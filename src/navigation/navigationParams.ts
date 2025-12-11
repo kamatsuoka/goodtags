@@ -25,8 +25,10 @@ export type RootStackParamList = {
   Logs: undefined
 }
 
-export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>
+export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
+  RootStackParamList,
+  T
+>
 
 export type TabsParamList = {
   Search: undefined
@@ -35,11 +37,10 @@ export type TabsParamList = {
   History: undefined
 }
 
-export type TabsScreenProps<T extends keyof TabsParamList> =
-  CompositeScreenProps<
-    BottomTabScreenProps<TabsParamList, T>,
-    RootStackScreenProps<keyof RootStackParamList>
-  >
+export type TabsScreenProps<T extends keyof TabsParamList> = CompositeScreenProps<
+  BottomTabScreenProps<TabsParamList, T>,
+  RootStackScreenProps<keyof RootStackParamList>
+>
 
 export type HomeNavigatorParamList = {
   Home: undefined
@@ -54,11 +55,10 @@ export type HomeNavigatorParamList = {
   Data: undefined
 }
 
-export type HomeNavigatorScreenProps<T extends keyof HomeNavigatorParamList> =
-  CompositeScreenProps<
-    NativeStackScreenProps<HomeNavigatorParamList, T>,
-    TabsScreenProps<keyof TabsParamList>
-  >
+export type HomeNavigatorScreenProps<T extends keyof HomeNavigatorParamList> = CompositeScreenProps<
+  NativeStackScreenProps<HomeNavigatorParamList, T>,
+  TabsScreenProps<keyof TabsParamList>
+>
 
 declare global {
   namespace ReactNavigation {

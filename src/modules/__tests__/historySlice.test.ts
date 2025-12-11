@@ -28,10 +28,7 @@ const tag12 = buildTag(12)
  *
  * @param tags tags *in the order in which they were added*
  */
-function unincorporatedHistoryState(
-  tags: Tag[],
-  timestamp: string,
-): HistoryState {
+function unincorporatedHistoryState(tags: Tag[], timestamp: string): HistoryState {
   const history = tags.map(t => t.id).reverse() // history starts with most recent
   return {
     tagsById: Object.fromEntries(tags.map(t => [t.id, t])),
@@ -66,10 +63,7 @@ function incorporatedHistoryState(
   return state
 }
 
-function addTagsToHistory(
-  tags: Tag[],
-  initialState: HistoryState = InitialState,
-) {
+function addTagsToHistory(tags: Tag[], initialState: HistoryState = InitialState) {
   let reducedState = initialState
   let timestamp = ''
   const date = new Date()
@@ -95,20 +89,14 @@ describe('history reducer', () => {
       timestamp: timestamp,
     })
     const reducedState = historyReducer(InitialState, action)
-    const expectedState: HistoryState = unincorporatedHistoryState(
-      [tag12],
-      timestamp,
-    )
+    const expectedState: HistoryState = unincorporatedHistoryState([tag12], timestamp)
     expect(reducedState).toEqual(expectedState)
   })
   it('should add several tags to the history', () => {
     const tags = Array.from(Array(5).keys()).map(i => buildTag(i))
     const { reducedState, timestamp } = addTagsToHistory(tags)
     // expect history to show tags in reverse order (starting with last tag added)
-    const expectedState: HistoryState = unincorporatedHistoryState(
-      tags,
-      timestamp,
-    )
+    const expectedState: HistoryState = unincorporatedHistoryState(tags, timestamp)
     expect(reducedState).toEqual(expectedState)
   })
   it('should incorporate tags to displayed tag list', () => {
@@ -129,15 +117,8 @@ describe('history reducer', () => {
     }
     const tags = Array.from(Array(5).keys()).map(i => buildTag(i))
     const { reducedState, timestamp } = addTagsToHistory(tags, initialState)
-    const incorporatedState = historyReducer(
-      reducedState,
-      HistoryActions.incorporateHistory(),
-    )
-    const expectedState = incorporatedHistoryState(
-      tags,
-      timestamp,
-      SortOrder.alpha,
-    )
+    const incorporatedState = historyReducer(reducedState, HistoryActions.incorporateHistory())
+    const expectedState = incorporatedHistoryState(tags, timestamp, SortOrder.alpha)
     expect(incorporatedState).toEqual(expectedState)
   })
   it('should kick out old history when adding more than MAX_HISTORY', () => {

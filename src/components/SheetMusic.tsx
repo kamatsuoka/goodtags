@@ -23,10 +23,7 @@ type Props = {
 export default function SheetMusic(props: Props) {
   const { uri, onPress, landscape = false } = props
   const rawInsets = useSafeAreaInsets()
-  const insets =
-    Platform.OS === 'android'
-      ? rawInsets
-      : { top: 0, bottom: 0, left: 0, right: 0 }
+  const insets = Platform.OS === 'android' ? rawInsets : { top: 0, bottom: 0, left: 0, right: 0 }
 
   // Use the PDF cache hook for handling remote PDF downloads
   const { localPath, isLoading, error, retry } = usePdfCache(uri)
@@ -72,9 +69,7 @@ export default function SheetMusic(props: Props) {
             <Text style={styles.errorIcon}>⚠️</Text>
             <Text style={styles.errorTitle}>Unable to load sheet music</Text>
             <Text style={styles.errorMessage}>{uri}</Text>
-            <Text style={styles.errorMessage}>
-              Check your network connection and try again
-            </Text>
+            <Text style={styles.errorMessage}>Check your network connection and try again</Text>
             <Button
               mode="contained"
               onPress={retry}
@@ -136,11 +131,7 @@ export default function SheetMusic(props: Props) {
  * HTML page for viewing non-pdf images in WebView.
  * Designed for landscape or wide screens, puts music full width.
  */
-function imageSource(
-  uri: string,
-  insets: EdgeInsets,
-  landscape: boolean,
-): { html: string } {
+function imageSource(uri: string, insets: EdgeInsets, landscape: boolean): { html: string } {
   return {
     html: `<head>
          <title>sheet music</title>

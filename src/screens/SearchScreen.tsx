@@ -14,23 +14,12 @@ import {
   newSearch,
   selectSearchResults,
 } from '@app/modules/searchSlice'
-import {
-  LoadingState,
-  SORT_ICONS,
-  SORT_LABELS,
-  TagListEnum,
-} from '@app/modules/tagLists'
+import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import {
-  ActivityIndicator,
-  Button,
-  Chip,
-  Snackbar,
-  useTheme,
-} from 'react-native-paper'
+import { ActivityIndicator, Button, Chip, Snackbar, useTheme } from 'react-native-paper'
 
 /**
  * List of search results.
@@ -39,17 +28,11 @@ const SearchScreen = () => {
   const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [searchMenuVisible, setSearchMenuVisible] = useState(true)
-  const loadingState = useAppSelector(
-    state => selectSearchResults(state).loadingState,
-  )
+  const loadingState = useAppSelector(state => selectSearchResults(state).loadingState)
   const error = useAppSelector(state => selectSearchResults(state).error)
-  const sortOrder = useAppSelector(
-    state => selectSearchResults(state).sortOrder,
-  )
+  const sortOrder = useAppSelector(state => selectSearchResults(state).sortOrder)
   const listRef = useRef<FlashListRef<number> | null>(null)
-  const moreAvailable = useAppSelector(
-    state => state.search.results.moreAvailable,
-  )
+  const moreAvailable = useAppSelector(state => state.search.results.moreAvailable)
   const dispatch = useAppDispatch()
   // set draft values of filters, not persisted until search executed
   const filters = useAppSelector(state => state.search.filters)
@@ -79,9 +62,7 @@ const SearchScreen = () => {
    */
   const loadMore = async (numTags: number): Promise<boolean> => {
     const shouldLoadMore =
-      numTags < MAX_TAGS &&
-      moreAvailable &&
-      loadingState !== LoadingState.pending
+      numTags < MAX_TAGS && moreAvailable && loadingState !== LoadingState.pending
     if (shouldLoadMore) {
       const morePayload = await dispatch(moreSearch())
       if (
@@ -127,16 +108,11 @@ const SearchScreen = () => {
   ]
 
   const getErrorMessage = () => `error fetching tags: ${error}`
-  const setIdle = () =>
-    dispatch(SearchActions.setLoadingState(LoadingState.idle))
+  const setIdle = () => dispatch(SearchActions.setLoadingState(LoadingState.idle))
 
   const filterChip = (visible: boolean, icon: string, label: string) =>
     visible ? (
-      <Chip
-        icon={icon}
-        textStyle={{ color: theme.colors.primary }}
-        style={styles.filterButton}
-      >
+      <Chip icon={icon} textStyle={{ color: theme.colors.primary }} style={styles.filterButton}>
         {label.toLowerCase()}
       </Chip>
     ) : null
@@ -146,11 +122,7 @@ const SearchScreen = () => {
   }
 
   return searchMenuVisible ? (
-    <SearchDialog
-      query={query}
-      filters={filters}
-      dismiss={dismissSearchDialog}
-    />
+    <SearchDialog query={query} filters={filters} dismiss={dismissSearchDialog} />
   ) : (
     <View style={CommonStyles.container}>
       <ListHeader listRef={listRef} title="" setFabOpen={setFabOpen} />

@@ -19,12 +19,7 @@ describe('TagListItem', () => {
       uri: 'https://www.barbershoptags.com/tags/Lost.jpg',
     }
     const { getByTestId } = render(
-      <TagListItem
-        tag={tag}
-        tagListType={TagListEnum.SearchResults}
-        index={3}
-        selected={true}
-      />,
+      <TagListItem tag={tag} tagListType={TagListEnum.SearchResults} index={3} selected={true} />,
     )
     expect(getByTestId('tagleft_1809').props.children).toEqual('•')
   })

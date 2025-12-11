@@ -40,13 +40,7 @@ const TagInfoView = (props: { tag: Tag; tagListType: TagListType }) => {
         <Text style={styles.infoTitle} variant="titleLarge">
           {tag.title}
         </Text>
-        <Divider
-          bold
-          style={[
-            styles.divider,
-            { backgroundColor: theme.colors.outlineVariant },
-          ]}
-        />
+        <Divider bold style={[styles.divider, { backgroundColor: theme.colors.outlineVariant }]} />
         <View style={styles.listContainer}>
           <InfoItems items={items} />
           <TracksInfo tag={tag} />
@@ -61,9 +55,7 @@ function InfoItems(props: { items: [string, string | number | undefined][] }) {
   return items ? (
     <>
       {items.map(([key, value], id) =>
-        value ? (
-          <InfoItem infoName={key} infoValue={value} key={`infoitem${id}`} />
-        ) : null,
+        value ? <InfoItem infoName={key} infoValue={value} key={`infoitem${id}`} /> : null,
       )}
     </>
   ) : null
@@ -94,21 +86,19 @@ function TracksInfo(props: { tag: Tag }) {
   return null
 }
 
-const InfoItem = React.memo(
-  (props: { infoName: string; infoValue: string | number }) => {
-    const { infoName, infoValue } = props
-    return (
-      <View style={styles.infoItemRow}>
-        <Text style={styles.infoName} numberOfLines={1}>
-          {infoName}:{' '}
-        </Text>
-        <Text style={styles.infoValue} numberOfLines={2}>
-          {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
-        </Text>
-      </View>
-    )
-  },
-)
+const InfoItem = React.memo((props: { infoName: string; infoValue: string | number }) => {
+  const { infoName, infoValue } = props
+  return (
+    <View style={styles.infoItemRow}>
+      <Text style={styles.infoName} numberOfLines={1}>
+        {infoName}:{' '}
+      </Text>
+      <Text style={styles.infoValue} numberOfLines={2}>
+        {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
+      </Text>
+    </View>
+  )
+})
 
 const MAX_LENGTH = 80
 

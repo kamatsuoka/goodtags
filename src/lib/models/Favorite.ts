@@ -4,10 +4,7 @@ export interface Favorite extends Tag {
   addedDate: string
 }
 
-export function buildFavorite(
-  t: Tag,
-  addedDate: string = new Date().toISOString(),
-): Favorite {
+export function buildFavorite(t: Tag, addedDate: string = new Date().toISOString()): Favorite {
   if ('addedDate' in t) {
     // already a Favorite, just copy it
     return { ...t } as Favorite

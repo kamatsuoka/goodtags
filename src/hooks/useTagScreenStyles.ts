@@ -95,10 +95,7 @@ const baseStyles = StyleSheet.create({
   },
 })
 
-export const useTagScreenStyles = (
-  buttonsDimmed: boolean,
-  fabOpen: boolean,
-) => {
+export const useTagScreenStyles = (buttonsDimmed: boolean, fabOpen: boolean) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const { landscape } = useWindowShape()
@@ -132,9 +129,7 @@ export const useTagScreenStyles = (
     },
     fabGroup: {
       ...baseStyles.fabGroup,
-      paddingTop: ios
-        ? Math.max(insets.top + 10, 10)
-        : Math.max(10, insets.top * 0.8),
+      paddingTop: ios ? Math.max(insets.top + 10, 10) : Math.max(10, insets.top * 0.8),
     },
     bottomActionBar: landscape
       ? {

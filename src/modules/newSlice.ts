@@ -1,21 +1,11 @@
 import { SearchParams, SortOrder } from '@app/constants/Search'
-import {
-  buildTagIds,
-  SearchResult,
-  SearchResultsById,
-} from '@app/lib/models/Tag'
+import { buildTagIds, SearchResult, SearchResultsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
 import { refreshTag } from './refreshTagThunk'
 import { fetchAndConvertTags } from './searchutil'
-import {
-  LoadingState,
-  sortAlpha,
-  sortPosted,
-  TagListEnum,
-  TagListState,
-} from './tagLists'
+import { LoadingState, sortAlpha, sortPosted, TagListEnum, TagListState } from './tagLists'
 import { SelectedTag } from './tagListUtil'
 import { ThunkApiConfig } from './thunkApiConfig'
 
@@ -82,10 +72,7 @@ export const newSlice = createSlice({
       state.error = action.payload
     })
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.New &&
-        action.payload.tag
-      ) {
+      if (action.payload?.tagListType === TagListEnum.New && action.payload.tag) {
         const tag = action.payload.tag as SearchResult
         console.log(`Refreshing tag ${tag.id} in new slice`)
         if (state.tagsById[tag.id]) {
@@ -107,29 +94,25 @@ export const NewSearchParams: SearchParams = {
  *
  * @param refresh fetch tags even if already loaded
  */
-export const getNewTags = createAsyncThunk<
-  SearchResult[] | undefined,
-  boolean,
-  ThunkApiConfig
->('new/getNewTags', async (refresh: boolean, thunkAPI) => {
-  const state = thunkAPI.getState().new
-  if (refresh || state.allTagIds.length === 0) {
-    try {
-      const fetchResult = await fetchAndConvertTags(
-        NewSearchParams,
-        false /* useApi */,
-      )
-      console.log(`getNewTags fetched ${fetchResult.tags.length} tags`)
-      return fetchResult.tags
-    } catch (error) {
-      const payload = await handleError(error, `getNewTags`)
-      return thunkAPI.rejectWithValue(payload)
+export const getNewTags = createAsyncThunk<SearchResult[] | undefined, boolean, ThunkApiConfig>(
+  'new/getNewTags',
+  async (refresh: boolean, thunkAPI) => {
+    const state = thunkAPI.getState().new
+    if (refresh || state.allTagIds.length === 0) {
+      try {
+        const fetchResult = await fetchAndConvertTags(NewSearchParams, false /* useApi */)
+        console.log(`getNewTags fetched ${fetchResult.tags.length} tags`)
+        return fetchResult.tags
+      } catch (error) {
+        const payload = await handleError(error, `getNewTags`)
+        return thunkAPI.rejectWithValue(payload)
+      }
+    } else {
+      // reuse existing values
+      return undefined
     }
-  } else {
-    // reuse existing values
-    return undefined
-  }
-})
+  },
+)
 
 export const selectNew = (state: RootState): TagListState => {
   return {

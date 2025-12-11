@@ -72,14 +72,7 @@ const DeleteButton = ({
   onPress: () => void
   onLongPress?: () => void
   color: string
-}) => (
-  <IconButton
-    icon="delete"
-    iconColor={color}
-    onPress={onPress}
-    onLongPress={onLongPress}
-  />
-)
+}) => <IconButton icon="delete" iconColor={color} onPress={onPress} onLongPress={onLongPress} />
 
 /**
  * Screen displaying the last 100 console logs
@@ -168,29 +161,20 @@ export default function LogsScreen() {
   }
 
   const renderLogItem = ({ item }: { item: LogEntry }) => (
-    <Card
-      style={[styles.logCard, { backgroundColor: theme.colors.surfaceVariant }]}
-    >
+    <Card style={[styles.logCard, { backgroundColor: theme.colors.surfaceVariant }]}>
       <Card.Content style={styles.logContent}>
         <View style={styles.logHeader}>
           <Chip
-            style={[
-              styles.typeChip,
-              { backgroundColor: getLogColor(item.type) },
-            ]}
+            style={[styles.typeChip, { backgroundColor: getLogColor(item.type) }]}
             textStyle={[styles.typeChipText, { color: theme.colors.onPrimary }]}
           >
             {item.type.toUpperCase()}
           </Chip>
-          <Text
-            style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}
-          >
+          <Text style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}>
             {formatTime(item.timestamp)}
           </Text>
         </View>
-        <Text style={[styles.logMessage, { color: theme.colors.onSurface }]}>
-          {item.message}
-        </Text>
+        <Text style={[styles.logMessage, { color: theme.colors.onSurface }]}>{item.message}</Text>
       </Card.Content>
     </Card>
   )

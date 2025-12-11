@@ -2,12 +2,7 @@
  * Screen for displaying tag sheet music
  */
 import { TagLayout } from '@app/components/TagLayout'
-import {
-  useAppDispatch,
-  useAppSelector,
-  useSelectedTag,
-  useTagListState,
-} from '@app/hooks'
+import { useAppDispatch, useAppSelector, useSelectedTag, useTagListState } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { refreshTag } from '@app/modules/refreshTagThunk'
 import { getSelectedTagSetter } from '@app/modules/tagListUtil'
@@ -31,9 +26,7 @@ const TagScreen = ({ navigation }: Props) => {
   const selectedTag = tagListState.selectedTag
   const tag = useSelectedTag(tagListType)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
-  const delabeledSelectedTag = useAppSelector(
-    state => state.favorites.strandedTag,
-  )
+  const delabeledSelectedTag = useAppSelector(state => state.favorites.strandedTag)
 
   const setSelectedTag = getSelectedTagSetter(tagListType)
 
@@ -108,8 +101,7 @@ const TagScreen = ({ navigation }: Props) => {
       {
         icon: 'arrow-down',
         onPress: () => selectNextTag(),
-        disabled: () =>
-          !selectedTag || selectedTag.index >= allTagIds.length - 1,
+        disabled: () => !selectedTag || selectedTag.index >= allTagIds.length - 1,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

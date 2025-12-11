@@ -4,10 +4,7 @@ import { FavoritesScreen } from '@app/screens/FavoritesScreen'
 import HistoryScreen from '@app/screens/HistoryScreen'
 import SearchScreen from '@app/screens/SearchScreen'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
-import {
-  BottomTabNavigationOptions,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs'
+import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Dimensions, Platform, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -69,10 +66,7 @@ export default function TabNavigator() {
 
   return (
     <View style={containerStyle}>
-      <Tab.Navigator
-        initialRouteName="HomeNavigator"
-        screenOptions={screenOptions}
-      >
+      <Tab.Navigator initialRouteName="HomeNavigator" screenOptions={screenOptions}>
         <Tab.Screen
           name="HomeNavigator"
           component={HomeNavigator}

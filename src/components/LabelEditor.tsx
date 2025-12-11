@@ -15,8 +15,7 @@ const ITEM_HEIGHT = 60
 export default function LabelEditor() {
   const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)
-  const setLabels = (items: string[]) =>
-    dispatch(FavoritesActions.setLabels(items))
+  const setLabels = (items: string[]) => dispatch(FavoritesActions.setLabels(items))
   const [draftLabel, setDraftLabel] = useState('')
   const [labelToEdit, setLabelToEdit] = useState('')
   const dispatch = useAppDispatch()
@@ -73,9 +72,7 @@ export default function LabelEditor() {
         style={[
           styles.itemHolder,
           {
-            backgroundColor: isActive
-              ? theme.colors.secondaryContainer
-              : theme.colors.onSecondary,
+            backgroundColor: isActive ? theme.colors.secondaryContainer : theme.colors.onSecondary,
           },
         ]}
       >
@@ -95,9 +92,7 @@ export default function LabelEditor() {
                 onChangeText={(newLabel: string) => setDraftLabel(newLabel)}
                 onSubmitEditing={() => {
                   const newLabel = draftLabel.trim()
-                  newLabel &&
-                    newLabel !== labelToEdit &&
-                    renameLabel(item, newLabel)
+                  newLabel && newLabel !== labelToEdit && renameLabel(item, newLabel)
                   stopEditing()
                 }}
                 maxLength={32}
@@ -112,19 +107,12 @@ export default function LabelEditor() {
             </>
           ) : (
             <>
-              <Text
-                style={[styles.itemText, theme.fonts.bodyLarge]}
-                variant="bodyLarge"
-              >
+              <Text style={[styles.itemText, theme.fonts.bodyLarge]} variant="bodyLarge">
                 {item}
               </Text>
               {labelToEdit ? null : (
                 <Pressable onPress={() => {}} onPressIn={drag}>
-                  <IconButton
-                    icon="drag-vertical"
-                    size={20}
-                    iconColor="black"
-                  />
+                  <IconButton icon="drag-vertical" size={20} iconColor="black" />
                 </Pressable>
               )}
             </>

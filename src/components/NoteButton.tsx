@@ -1,7 +1,4 @@
-import {
-  FontAwesome6,
-  MaterialCommunityIcons as Icon,
-} from '@expo/vector-icons'
+import { FontAwesome6, MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { ColorValue, StyleSheet, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 
@@ -60,11 +57,7 @@ const NoteButton = (props: Props) => {
 
     return (
       <View style={styles.container}>
-        <FontAwesome6
-          name={label as any}
-          size={fontSize}
-          color={theme.colors.primary}
-        />
+        <FontAwesome6 name={label as any} size={fontSize} color={theme.colors.primary} />
         {accidentalIconName && (
           <Icon
             name={accidentalIconName as any}

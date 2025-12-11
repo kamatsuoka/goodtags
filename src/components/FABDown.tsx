@@ -103,9 +103,7 @@ export const FABDown = ({
   onStateChange,
   backdropColor: customBackdropColor,
 }: Props) => {
-  const { current: backdrop } = React.useRef<Animated.Value>(
-    new Animated.Value(0),
-  )
+  const { current: backdrop } = React.useRef<Animated.Value>(new Animated.Value(0))
   const animations = React.useRef<Animated.Value[]>(
     actions.map(() => new Animated.Value(open ? 1 : 0)),
   )
@@ -165,11 +163,10 @@ export const FABDown = ({
 
   const close = () => onStateChange({ open: false })
 
-  const { labelColor, backdropColor, stackedFABBackgroundColor } =
-    getFABGroupColors({
-      theme,
-      customBackdropColor,
-    })
+  const { labelColor, backdropColor, stackedFABBackgroundColor } = getFABGroupColors({
+    theme,
+    customBackdropColor,
+  })
 
   const backdropOpacity = open
     ? backdrop.interpolate({
@@ -247,11 +244,9 @@ export const FABDown = ({
               color: it.labelTextColor ?? labelColor,
               ...theme.fonts.titleMedium,
             }
-            const marginHorizontal =
-              typeof it.size === 'undefined' || it.size === 'small' ? 24 : 16
+            const marginHorizontal = typeof it.size === 'undefined' || it.size === 'small' ? 24 : 16
             const accessLabel = it.label
-            const actionSize =
-              typeof it.size !== 'undefined' ? it.size : 'small'
+            const actionSize = typeof it.size !== 'undefined' ? it.size : 'small'
 
             return (
               <View
@@ -286,10 +281,7 @@ export const FABDown = ({
                         ] as StyleProp<ViewStyle>
                       }
                     >
-                      <Text
-                        variant="titleMedium"
-                        style={[labelTextStyle, it.labelStyle]}
-                      >
+                      <Text variant="titleMedium" style={[labelTextStyle, it.labelStyle]}>
                         {it.label}
                       </Text>
                     </Card>

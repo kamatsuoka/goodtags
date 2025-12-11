@@ -39,11 +39,7 @@ test('renders TagList empty state', () => {
   const { getByText } = render(
     <Provider store={store}>
       <NavigationContainer>
-        <TagList
-          emptyMessage="No tags"
-          tagListType={TagListEnum.History}
-          listRef={listRef}
-        />
+        <TagList emptyMessage="No tags" tagListType={TagListEnum.History} listRef={listRef} />
       </NavigationContainer>
     </Provider>,
   )

@@ -1,7 +1,4 @@
-import {
-  HEADER_BUTTON_SIZE,
-  SMALL_ICON_SIZE,
-} from '@app/constants/CommonStyles'
+import { HEADER_BUTTON_SIZE, SMALL_ICON_SIZE } from '@app/constants/CommonStyles'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import { ComponentProps, useCallback } from 'react'

@@ -79,10 +79,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
       }
 
       // Download the file
-      const downloadedFile = await File.downloadFileAsync(
-        pdfUri,
-        new File(cachePath),
-      )
+      const downloadedFile = await File.downloadFileAsync(pdfUri, new File(cachePath))
 
       setState({
         localPath: downloadedFile.uri,
@@ -103,9 +100,7 @@ export const usePdfCache = (uri: string): PdfCacheState => {
         // Look for common error patterns and extract the key part
         if (fullErrorString.includes('UnknownHostException')) {
           errMsg = 'Unable to resolve host - check internet connection'
-        } else if (
-          fullErrorString.includes('No address associated with hostname')
-        ) {
+        } else if (fullErrorString.includes('No address associated with hostname')) {
           errMsg = 'No internet connection'
         } else if (fullErrorString.includes('status 404')) {
           errMsg = 'File not found (404)'

@@ -6,17 +6,8 @@ import React, { useCallback, useMemo } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Checkbox, List } from 'react-native-paper'
 
-const CheckBoxComponent = ({
-  selected,
-  onPress,
-}: {
-  selected: boolean
-  onPress: () => void
-}) => (
-  <Checkbox.Android
-    status={selected ? 'checked' : 'unchecked'}
-    onPress={onPress}
-  />
+const CheckBoxComponent = ({ selected, onPress }: { selected: boolean; onPress: () => void }) => (
+  <Checkbox.Android status={selected ? 'checked' : 'unchecked'} onPress={onPress} />
 )
 
 /**
@@ -50,16 +41,12 @@ export default function OptionsScreen() {
   )
 
   const renderSerifsCheckbox = useCallback(
-    () => (
-      <CheckBoxComponent selected={serifsSelected} onPress={toggleSerifs} />
-    ),
+    () => <CheckBoxComponent selected={serifsSelected} onPress={toggleSerifs} />,
     [serifsSelected, toggleSerifs],
   )
 
   const renderStatusBarCheckbox = useCallback(
-    () => (
-      <CheckBoxComponent selected={showStatusBar} onPress={toggleStatusBar} />
-    ),
+    () => <CheckBoxComponent selected={showStatusBar} onPress={toggleStatusBar} />,
     [showStatusBar, toggleStatusBar],
   )
 

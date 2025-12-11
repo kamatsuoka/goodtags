@@ -39,9 +39,7 @@ describe('StatusBarModule', () => {
 
     it('should call setHidden with false', () => {
       StatusBarModule?.setHidden(false)
-      expect(NativeModules.StatusBarModule.setHidden).toHaveBeenCalledWith(
-        false,
-      )
+      expect(NativeModules.StatusBarModule.setHidden).toHaveBeenCalledWith(false)
     })
   })
 

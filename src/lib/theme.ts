@@ -2,11 +2,7 @@ import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native'
-import {
-  MD3LightTheme,
-  adaptNavigationTheme,
-  configureFonts,
-} from 'react-native-paper'
+import { MD3LightTheme, adaptNavigationTheme, configureFonts } from 'react-native-paper'
 
 import merge from 'deepmerge'
 import { Platform } from 'react-native'
@@ -107,9 +103,7 @@ export const MainTheme = {
       Object.entries(customFontSizes).map(([key, value]) => [
         key,
         {
-          ...configureFonts({ config: fontConfig })[
-            key as keyof typeof customFontSizes
-          ],
+          ...configureFonts({ config: fontConfig })[key as keyof typeof customFontSizes],
           ...value,
         },
       ]),
@@ -128,9 +122,7 @@ export const SansSerifTheme = {
       Object.entries(customFontSizes).map(([key, value]) => [
         key,
         {
-          ...configureFonts({ config: sansFontConfig })[
-            key as keyof typeof customFontSizes
-          ],
+          ...configureFonts({ config: sansFontConfig })[key as keyof typeof customFontSizes],
           ...value,
         },
       ]),

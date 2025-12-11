@@ -46,10 +46,7 @@ export default function CreateLabel({ route }: Props) {
           style={[styles.textInput]}
         />
         {labelAlreadyExists(draft.trim()) ? (
-          <Text
-            style={[styles.warning, { color: theme.colors.error }]}
-            variant="labelSmall"
-          >
+          <Text style={[styles.warning, { color: theme.colors.error }]} variant="labelSmall">
             label already exists
           </Text>
         ) : null}

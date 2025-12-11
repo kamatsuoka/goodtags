@@ -101,10 +101,7 @@ export default function SharedHeader({
       return (
         <View style={styles.titleHolder}>
           {titleIcon
-            ? homeIcon(
-                titleIcon,
-                22,
-              )({ style: [styles.icon, { color: theme.colors.onPrimary }] })
+            ? homeIcon(titleIcon, 22)({ style: [styles.icon, { color: theme.colors.onPrimary }] })
             : null}
           <Text variant="titleLarge" style={{ color: theme.colors.onPrimary }}>
             {title}
@@ -116,10 +113,7 @@ export default function SharedHeader({
   }
 
   const content = (
-    <View
-      style={[styles.header, headerDynamicStyles]}
-      pointerEvents={pointerEvents}
-    >
+    <View style={[styles.header, headerDynamicStyles]} pointerEvents={pointerEvents}>
       <View style={styles.left}>{renderBackButton()}</View>
       <View style={[styles.center, centerDynamicStyles]}>{renderTitle()}</View>
       <View style={styles.right}>{headerRight ? headerRight({}) : null}</View>

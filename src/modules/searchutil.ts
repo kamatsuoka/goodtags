@@ -1,15 +1,5 @@
-import {
-  Collection,
-  Parts,
-  Search,
-  SearchParams,
-  SortOrder,
-} from '@app/constants/Search'
-import {
-  ConvertedTags,
-  tagsFromApiResponse,
-  tagsFromDbRows,
-} from '@app/lib/models/Tag'
+import { Collection, Parts, Search, SearchParams, SortOrder } from '@app/constants/Search'
+import { ConvertedTags, tagsFromApiResponse, tagsFromDbRows } from '@app/lib/models/Tag'
 import { getDbConnection } from '@app/modules/sqlUtil'
 import { toInteger } from 'lodash'
 import getUrl from './getUrl'
@@ -38,10 +28,7 @@ export const PARTS_PARAMS = {
   [Parts.six]: 6,
 }
 
-export function getSearchParams(
-  state: SearchState,
-  start: number,
-): SearchParams {
+export function getSearchParams(state: SearchState, start: number): SearchParams {
   const trimQuery = state.query.trim()
   const cleanQuery = trimQuery.replace(/[^a-zA-Z0-9]/g, ' ').trim()
 
@@ -86,26 +73,18 @@ export type ApiQueryParams = {
 }
 
 /** This is *kinda* like Kotlin's `.apply`/`.let`, useful for transforming maybe null values in arbitrary ways */
-function apply<T, R>(
-  value: T | undefined,
-  transformer: (value: T) => R,
-): R | undefined {
+function apply<T, R>(value: T | undefined, transformer: (value: T) => R): R | undefined {
   return value === undefined ? undefined : transformer(value)
 }
 
-export function buildApiQueryParams(
-  searchParams: SearchParams,
-): ApiQueryParams {
+export function buildApiQueryParams(searchParams: SearchParams): ApiQueryParams {
   return {
     q: searchParams.query,
     // API uses 1-based indexing
     start: apply(searchParams.offset, offset => offset + 1),
     id: searchParams.id,
     n: searchParams.limit,
-    Collection: apply(
-      searchParams.collection,
-      collection => COLLECTION_PARAMS[collection],
-    ),
+    Collection: apply(searchParams.collection, collection => COLLECTION_PARAMS[collection]),
     Sortby: apply(searchParams.sortBy, sortBy => SORTBY_PARAMS[sortBy]),
     SheetMusic: searchParams.requireSheetMusic ? 'Yes' : undefined,
     Learning: searchParams.requireLearningTracks ? 'Yes' : undefined,
@@ -136,9 +115,7 @@ function debugDbPerfLogging(label: string, start: number) {
  */
 export async function countTags(): Promise<number> {
   const db = await getDbConnection()
-  const countRaw = await db.getAllAsync<{ count: number }>(
-    `SELECT COUNT(*) AS count FROM tags`,
-  )
+  const countRaw = await db.getAllAsync<{ count: number }>(`SELECT COUNT(*) AS count FROM tags`)
   return countRaw[0].count
 }
 
@@ -164,11 +141,7 @@ async function searchDb(
     debugDbPerfLogging('Txn start', overallStart)
     const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
     console.debug(tagSql, whereVariables, suffixVariables)
-    tagRows = await db.getAllAsync<DbRow>(
-      tagSql,
-      ...whereVariables,
-      ...suffixVariables,
-    )
+    tagRows = await db.getAllAsync<DbRow>(tagSql, ...whereVariables, ...suffixVariables)
     const tagTime = debugDbPerfCurrentTime()
 
     trackRows = await db.getAllAsync<DbRow>(
@@ -217,13 +190,7 @@ async function searchDb(
   }
 
   debugDbPerfLogging('Db done, parsing rows', overallStart)
-  return tagsFromDbRows(
-    tagRows,
-    trackRows,
-    videoRows,
-    totalCount,
-    searchParams.offset || 0,
-  )
+  return tagsFromDbRows(tagRows, trackRows, videoRows, totalCount, searchParams.offset || 0)
 }
 
 /**
@@ -239,10 +206,7 @@ async function searchDb(
  * @param whereClauseParts parts of where clause, must have id condition first if applicable
  * @returns complete where clause
  */
-export function buildWhereClause(
-  isIdSearch: boolean,
-  whereClauseParts: string[],
-) {
+export function buildWhereClause(isIdSearch: boolean, whereClauseParts: string[]) {
   if (whereClauseParts.length === 0) {
     return ''
   }
@@ -294,10 +258,7 @@ export function buildSqlParts(searchParams: SearchParams) {
     whereClauseParts.push('tags.parts = ?')
     whereVariables.push(searchParams.parts)
   }
-  if (
-    searchParams.collection !== undefined &&
-    searchParams.collection !== Collection.ALL
-  ) {
+  if (searchParams.collection !== undefined && searchParams.collection !== Collection.ALL) {
     whereClauseParts.push('tags.collection = ?')
     whereVariables.push(COLLECTION_PARAMS[searchParams.collection])
   }
@@ -305,9 +266,7 @@ export function buildSqlParts(searchParams: SearchParams) {
     whereClauseParts.push('tags.id IN (SELECT tag_id FROM tracks)')
   }
   if (searchParams.requireSheetMusic) {
-    whereClauseParts.push(
-      "tags.sheet_music_alt IS NOT NULL AND tags.sheet_music_alt != ''",
-    )
+    whereClauseParts.push("tags.sheet_music_alt IS NOT NULL AND tags.sheet_music_alt != ''")
   }
   const whereClause = buildWhereClause(isIdSearch, whereClauseParts)
 

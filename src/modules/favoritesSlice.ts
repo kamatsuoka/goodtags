@@ -1,10 +1,6 @@
 import { SortOrder } from '@app/constants/Search'
 import { buildFavorite, FavoritesById } from '@app/lib/models/Favorite'
-import Tag, {
-  IdsByString,
-  StringsByNumber,
-  TagsById,
-} from '@app/lib/models/Tag'
+import Tag, { IdsByString, StringsByNumber, TagsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
@@ -67,9 +63,7 @@ export const InitialState: FavoritesState = {
 function sortNewest(state: FavoritesState) {
   const addedTime = (id: number) =>
     state.tagsById[id].addedDate ? state.tagsById[id].addedDate : '0'
-  state.allTagIds.sort(
-    (id1, id2) => -addedTime(id1).localeCompare(addedTime(id2)),
-  )
+  state.allTagIds.sort((id1, id2) => -addedTime(id1).localeCompare(addedTime(id2)))
 }
 
 /**
@@ -121,10 +115,7 @@ const favoritesSlice = createSlice({
       delete state.tagsById[tagId]
       _.pull(state.allTagIds, tagId)
       // what tag to display when last tag in list is unfavorited?
-      if (
-        state.selectedTag &&
-        state.selectedTag.index > state.allTagIds.length - 1
-      ) {
+      if (state.selectedTag && state.selectedTag.index > state.allTagIds.length - 1) {
         if (state.selectedTag.index > 0) {
           state.selectedTag.index -= 1
         } else {
@@ -198,11 +189,7 @@ const favoritesSlice = createSlice({
       }>,
     ) => {
       const { id, label, tagListType } = action.payload
-      if (
-        tagListType === label &&
-        state.selectedLabel === label &&
-        state.labeledById[id]
-      ) {
+      if (tagListType === label && state.selectedLabel === label && state.labeledById[id]) {
         // removing currently select label from tag while in label list
         // need to handle this case carefully, since tag will be "stranded"
         state.strandedTag = { tag: state.labeledById[id], label }
@@ -219,10 +206,7 @@ const favoritesSlice = createSlice({
       // that has had its label for the currently selected label removed
       delete state.strandedTag
     },
-    renameLabel: (
-      state,
-      action: PayloadAction<{ oldLabel: string; newLabel: string }>,
-    ) => {
+    renameLabel: (state, action: PayloadAction<{ oldLabel: string; newLabel: string }>) => {
       const { oldLabel, newLabel } = action.payload
       const tagIds = state.tagIdsByLabel[oldLabel]
       if (tagIds) {
@@ -273,18 +257,12 @@ const favoritesSlice = createSlice({
     builder.addCase(refreshFavorite.pending, state => {
       state.loadingState = LoadingState.pending
     })
-    builder.addCase(
-      refreshFavorite.fulfilled,
-      (state, action: PayloadAction<Tag | undefined>) => {
-        if (action.payload) {
-          favoritesSlice.caseReducers.addFavorite(
-            state,
-            action as PayloadAction<Tag>,
-          )
-        }
-        state.loadingState = LoadingState.succeeded
-      },
-    )
+    builder.addCase(refreshFavorite.fulfilled, (state, action: PayloadAction<Tag | undefined>) => {
+      if (action.payload) {
+        favoritesSlice.caseReducers.addFavorite(state, action as PayloadAction<Tag>)
+      }
+      state.loadingState = LoadingState.succeeded
+    })
     builder.addCase(refreshFavorite.rejected, (state, action) => {
       state.loadingState = LoadingState.failed
       state.error = action.payload
@@ -351,19 +329,18 @@ const favoritesSlice = createSlice({
 /**
  * Refreshes a favorite.
  */
-export const refreshFavorite = createAsyncThunk<
-  Tag | undefined,
-  number,
-  ThunkApiConfig
->('favorites/refresh', async (id, thunkAPI) => {
-  try {
-    const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
-    const { tags } = convertedTags
-    return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
-  } catch (e) {
-    return thunkAPI.rejectWithValue(`Unable to download tag with id ${id}`)
-  }
-})
+export const refreshFavorite = createAsyncThunk<Tag | undefined, number, ThunkApiConfig>(
+  'favorites/refresh',
+  async (id, thunkAPI) => {
+    try {
+      const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
+      const { tags } = convertedTags
+      return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
+    } catch (e) {
+      return thunkAPI.rejectWithValue(`Unable to download tag with id ${id}`)
+    }
+  },
+)
 
 export const selectFavorites = (state: RootState): TagListState => {
   const favs = state.favorites
@@ -377,10 +354,7 @@ export const selectFavorites = (state: RootState): TagListState => {
   }
 }
 
-export const selectLabelState = (
-  favs: FavoritesState,
-  label: string,
-): TagListState => {
+export const selectLabelState = (favs: FavoritesState, label: string): TagListState => {
   const ids = favs.tagIdsByLabel[label]
   const allTagIds = ids ? [...ids] : []
   if (
@@ -437,9 +411,7 @@ interface ShareResult {
   showSnackBar: boolean
 }
 
-export const shareFavorites = async (
-  favorites: FavoritesState,
-): Promise<ShareResult> => {
+export const shareFavorites = async (favorites: FavoritesState): Promise<ShareResult> => {
   try {
     const path: string = await writeFavoritesToFile(favorites)
     console.info(`wrote favorites to ${path}`)
@@ -487,11 +459,7 @@ export interface SharedData {
   date: string
 }
 
-const buildLabeledTags = (
-  label: string,
-  tagIds: number[],
-  tagsById: TagsById,
-) => {
+const buildLabeledTags = (label: string, tagIds: number[], tagsById: TagsById) => {
   const tags = tagIds.map(id => {
     const tag = tagsById[id]
     return { id, title: tag.title }
@@ -505,12 +473,10 @@ const buildLabeledTags = (
  * @param favoritesById Map of tag id to favorite
  */
 const buildSharedData = (favorites: FavoritesState): SharedData => {
-  const sharedFavorites = Object.entries(favorites.tagsById).map(
-    ([id, tag]) => ({
-      id: Number(id),
-      title: tag.title,
-    }),
-  )
+  const sharedFavorites = Object.entries(favorites.tagsById).map(([id, tag]) => ({
+    id: Number(id),
+    title: tag.title,
+  }))
 
   const labels = Object.entries(favorites.tagIdsByLabel).map(([label, ids]) =>
     buildLabeledTags(label, ids, favorites.labeledById),
@@ -527,9 +493,7 @@ const writeFavoritesToString = (favorites: FavoritesState): string => {
   return JSON.stringify(filedata, null, 2)
 }
 
-const writeFavoritesToFile = async (
-  favorites: FavoritesState,
-): Promise<string> => {
+const writeFavoritesToFile = async (favorites: FavoritesState): Promise<string> => {
   const fs = ReactNativeBlobUtil.fs
   const dir = fs.dirs.CacheDir + '/goodtags'
   const dirExists = await fs.isDir(dir)
@@ -588,68 +552,66 @@ function getImportErrorMessage(url: string): string {
  * @see builder.addCase(receiveSharedFile.fulfilled, ...) above
  * for code that actually processes imported data
  */
-export const receiveSharedFile = createAsyncThunk<
-  ReceivedData,
-  string,
-  ThunkApiConfig
->('favorites/import', async (url, thunkAPI) => {
-  async function receiveData(data: string) {
+export const receiveSharedFile = createAsyncThunk<ReceivedData, string, ThunkApiConfig>(
+  'favorites/import',
+  async (url, thunkAPI) => {
+    async function receiveData(data: string) {
+      try {
+        const sharedObj = JSON.parse(data)
+        const sharedData = sharedObj as SharedData
+        if (sharedData.favorites === undefined && sharedData.labels === undefined)
+          throw new Error('no favorites or labels found')
+        const favoriteIds = sharedData.favorites.map(f => f.id) || []
+        const { tags: favorites } = await fetchAndConvertTags(
+          { ids: favoriteIds },
+          false,
+          undefined,
+          false, // Don't use transaction to avoid nesting issues
+        )
+        const receivedLabels = await Promise.all(
+          sharedData.labels.map(async sharedLabel => {
+            const tagIds = sharedLabel.tags.map(t => t.id)
+            const { tags } = await fetchAndConvertTags(
+              { ids: tagIds },
+              false,
+              undefined,
+              false, // Don't use transaction to avoid nesting issues
+            )
+            return { label: sharedLabel.label, tags }
+          }),
+        )
+        return {
+          favorites,
+          receivedLabels,
+        }
+      } catch (e) {
+        console.error('Error importing favorites:', e)
+        return thunkAPI.rejectWithValue(
+          getImportErrorMessage(url) + `: ${e instanceof Error ? e.message : String(e)}`,
+        )
+      }
+    }
+
+    console.info(`importing favorites from ${url}`)
     try {
-      const sharedObj = JSON.parse(data)
-      const sharedData = sharedObj as SharedData
-      if (sharedData.favorites === undefined && sharedData.labels === undefined)
-        throw new Error('no favorites or labels found')
-      const favoriteIds = sharedData.favorites.map(f => f.id) || []
-      const { tags: favorites } = await fetchAndConvertTags(
-        { ids: favoriteIds },
-        false,
-        undefined,
-        false, // Don't use transaction to avoid nesting issues
-      )
-      const receivedLabels = await Promise.all(
-        sharedData.labels.map(async sharedLabel => {
-          const tagIds = sharedLabel.tags.map(t => t.id)
-          const { tags } = await fetchAndConvertTags(
-            { ids: tagIds },
-            false,
-            undefined,
-            false, // Don't use transaction to avoid nesting issues
-          )
-          return { label: sharedLabel.label, tags }
-        }),
-      )
-      return {
-        favorites,
-        receivedLabels,
+      const fs = ReactNativeBlobUtil.fs
+      if (url.startsWith('content://')) {
+        // handle content:// uris (e.g., from google drive, file pickers on android)
+        const data = await fs.readFile(url, 'utf8')
+        return await receiveData(data)
+      } else if (url.startsWith('/') || url.startsWith('file://')) {
+        const path = url.startsWith('file://') ? url.slice(7) : url
+        if (!(await fs.exists(path))) {
+          throw new Error(`unable to find file ${path}`)
+        }
+        const data = await fs.readFile(path, 'utf8')
+        return await receiveData(data)
+      } else {
+        throw new Error(`unknown url type: ${url}`)
       }
     } catch (e) {
-      console.error('Error importing favorites:', e)
-      return thunkAPI.rejectWithValue(
-        getImportErrorMessage(url) +
-          `: ${e instanceof Error ? e.message : String(e)}`,
-      )
+      console.error(e)
+      return thunkAPI.rejectWithValue(getImportErrorMessage(url))
     }
-  }
-
-  console.info(`importing favorites from ${url}`)
-  try {
-    const fs = ReactNativeBlobUtil.fs
-    if (url.startsWith('content://')) {
-      // handle content:// uris (e.g., from google drive, file pickers on android)
-      const data = await fs.readFile(url, 'utf8')
-      return await receiveData(data)
-    } else if (url.startsWith('/') || url.startsWith('file://')) {
-      const path = url.startsWith('file://') ? url.slice(7) : url
-      if (!(await fs.exists(path))) {
-        throw new Error(`unable to find file ${path}`)
-      }
-      const data = await fs.readFile(path, 'utf8')
-      return await receiveData(data)
-    } else {
-      throw new Error(`unknown url type: ${url}`)
-    }
-  } catch (e) {
-    console.error(e)
-    return thunkAPI.rejectWithValue(getImportErrorMessage(url))
-  }
-})
+  },
+)

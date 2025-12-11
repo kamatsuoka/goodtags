@@ -48,26 +48,10 @@ export default function HomeNavigator() {
         component={LabeledScreen}
         options={{ headerLeft: HeaderBackButton, ...homeOrientation }}
       />
-      <Stack.Screen
-        name="Popular"
-        component={PopularScreen}
-        options={homeOrientation}
-      />
-      <Stack.Screen
-        name="Classic"
-        component={ClassicScreen}
-        options={homeOrientation}
-      />
-      <Stack.Screen
-        name="Easy"
-        component={EasyScreen}
-        options={homeOrientation}
-      />
-      <Stack.Screen
-        name="New"
-        component={NewScreen}
-        options={homeOrientation}
-      />
+      <Stack.Screen name="Popular" component={PopularScreen} options={homeOrientation} />
+      <Stack.Screen name="Classic" component={ClassicScreen} options={homeOrientation} />
+      <Stack.Screen name="Easy" component={EasyScreen} options={homeOrientation} />
+      <Stack.Screen name="New" component={NewScreen} options={homeOrientation} />
       <Stack.Group
         screenOptions={{
           headerShown: true,

@@ -38,6 +38,5 @@ export const visitSlice = createSlice({
   },
 })
 
-export const { setLastVisited, clearLastVisited, setTagState, setTagListType } =
-  visitSlice.actions
+export const { setLastVisited, clearLastVisited, setTagState, setTagListType } = visitSlice.actions
 export default visitSlice.reducer

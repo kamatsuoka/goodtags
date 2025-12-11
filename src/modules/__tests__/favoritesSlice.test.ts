@@ -70,11 +70,7 @@ function singleFavStateWithLabel(fav: Favorite, label: string): FavoritesState {
   }
 }
 
-function singleLabeledState(
-  tag: Tag,
-  label: string,
-  otherLabels: string[] = [],
-): FavoritesState {
+function singleLabeledState(tag: Tag, label: string, otherLabels: string[] = []): FavoritesState {
   const tagId = tag.id
   const tagIdsByLabel = { [label]: [tagId] }
   otherLabels.forEach(l => (tagIdsByLabel[l] = []))
@@ -165,14 +161,8 @@ describe('favorites reducer', () => {
   it('should rename a label', () => {
     const label1 = 'organic'
     const label2 = 'fresh'
-    const state1 = reducer(
-      InitialState,
-      addLabel({ tag: fav12, label: label1 }),
-    )
-    const state2 = reducer(
-      state1,
-      renameLabel({ oldLabel: label1, newLabel: label2 }),
-    )
+    const state1 = reducer(InitialState, addLabel({ tag: fav12, label: label1 }))
+    const state2 = reducer(state1, renameLabel({ oldLabel: label1, newLabel: label2 }))
     expect(state2).toEqual(singleLabeledState(fav12, label2))
   })
   it('should add labels idempotently', () => {
@@ -223,10 +213,7 @@ describe('favorites reducer', () => {
   it('should remove a label idempotently', () => {
     const label1 = 'organic'
     const label2 = 'fresh'
-    const state2 = reducer(
-      InitialState,
-      addLabel({ tag: fav12, label: label1 }),
-    )
+    const state2 = reducer(InitialState, addLabel({ tag: fav12, label: label1 }))
     const state3 = reducer(state2, addLabel({ tag: fav12, label: label2 }))
     expect(state3.labelsByTagId).toEqual({ [fav12.id]: [label1, label2] })
     expect(state3.tagIdsByLabel).toEqual({
@@ -255,10 +242,7 @@ describe('favorites reducer', () => {
   it('should delete a label', () => {
     const label1 = 'organic'
     const label2 = 'fresh'
-    const state2 = reducer(
-      InitialState,
-      addLabel({ tag: fav12, label: label1 }),
-    )
+    const state2 = reducer(InitialState, addLabel({ tag: fav12, label: label1 }))
     const state3 = reducer(state2, addLabel({ tag: fav12, label: label2 }))
     const state4 = reducer(state3, deleteLabel(label1))
     expect(state4).toEqual(singleLabeledState(fav12, label2))
@@ -267,10 +251,7 @@ describe('favorites reducer', () => {
   })
   it('should delete labels idempotently', () => {
     const label1 = 'organic'
-    const state2 = reducer(
-      InitialState,
-      addLabel({ tag: fav12, label: label1 }),
-    )
+    const state2 = reducer(InitialState, addLabel({ tag: fav12, label: label1 }))
     const state4 = reducer(state2, deleteLabel(label1))
     const state5 = reducer(state4, deleteLabel(label1))
     expect(state5).toEqual(InitialState)
@@ -278,10 +259,7 @@ describe('favorites reducer', () => {
   it('should clear labels', () => {
     const label1 = 'organic'
     const label2 = 'fresh'
-    const state2 = reducer(
-      InitialState,
-      addLabel({ tag: fav12, label: label1 }),
-    )
+    const state2 = reducer(InitialState, addLabel({ tag: fav12, label: label1 }))
     const state3 = reducer(state2, addLabel({ tag: fav12, label: label2 }))
     const state4 = reducer(state3, clearLabels())
     expect(state4).toEqual(InitialState)

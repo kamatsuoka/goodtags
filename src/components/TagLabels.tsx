@@ -26,10 +26,7 @@ const LabelSelector = (props: {
         mode="android" // lack of placeholder on ios is confusing
         status={selected ? 'checked' : 'unchecked'}
         label={label}
-        labelStyle={[
-          styles.checkboxLabel,
-          { fontSize: theme.fonts.bodyLarge.fontSize },
-        ]}
+        labelStyle={[styles.checkboxLabel, { fontSize: theme.fonts.bodyLarge.fontSize }]}
         onPress={() => {
           selected
             ? dispatch(
@@ -52,11 +49,8 @@ const TagLabels = () => {
   const tagListType = useAppSelector(state => state.visit.tagListType)
   const tag = useSelectedTag(tagListType)
   const labels = useAppSelector(state => state.favorites.labels)
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-  const selectedLabels = useAppSelector(
-    state => state.favorites.labelsByTagId[tag.id],
-  )
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const selectedLabels = useAppSelector(state => state.favorites.labelsByTagId[tag.id])
   const insets = useSafeAreaInsets()
   const paddingHorizontal = useHorizontalInset()
 

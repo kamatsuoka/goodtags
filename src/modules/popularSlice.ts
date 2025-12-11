@@ -93,10 +93,7 @@ export const popularSlice = createSlice({
       state.error = action.payload
     })
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.Popular &&
-        action.payload.tag
-      ) {
+      if (action.payload?.tagListType === TagListEnum.Popular && action.payload.tag) {
         const tag = action.payload.tag as SearchResult
         console.log(`Refreshing tag ${tag.id} in popular slice`)
         if (state.tagsById[tag.id]) {
@@ -110,17 +107,13 @@ export const popularSlice = createSlice({
 /**
  * Checks if any tags have an outdated version
  */
-function outdatedSearchResults(
-  tagsById: SearchResultsById,
-  allTagIds: Array<number>,
-): boolean {
+function outdatedSearchResults(tagsById: SearchResultsById, allTagIds: Array<number>): boolean {
   for (const id of allTagIds) {
     const tag = tagsById[id]
     if (!tag) {
       console.warn(`tag ${id} not found in cache`)
     } else {
-      if (tag.version === undefined || tag.version < CurrentTagVersion)
-        return true
+      if (tag.version === undefined || tag.version < CurrentTagVersion) return true
     }
   }
   return false
@@ -138,32 +131,28 @@ export const PopularSearchParams: SearchParams = {
  *
  * @param refresh fetch tags even if already loaded
  */
-export const getPopularTags = createAsyncThunk<
-  SearchResult[] | undefined,
-  boolean,
-  ThunkApiConfig
->('popular/getPopularTags', async (refresh: boolean, thunkAPI) => {
-  const state = thunkAPI.getState().popular
-  if (
-    refresh ||
-    state.allTagIds.length === 0 ||
-    outdatedSearchResults(state.tagsById, state.allTagIds)
-  ) {
-    try {
-      const fetchResult = await fetchAndConvertTags(
-        PopularSearchParams,
-        false /* useApi */,
-      )
-      return fetchResult.tags
-    } catch (error) {
-      const payload = await handleError(error, `getPopularTags`)
-      return thunkAPI.rejectWithValue(payload)
+export const getPopularTags = createAsyncThunk<SearchResult[] | undefined, boolean, ThunkApiConfig>(
+  'popular/getPopularTags',
+  async (refresh: boolean, thunkAPI) => {
+    const state = thunkAPI.getState().popular
+    if (
+      refresh ||
+      state.allTagIds.length === 0 ||
+      outdatedSearchResults(state.tagsById, state.allTagIds)
+    ) {
+      try {
+        const fetchResult = await fetchAndConvertTags(PopularSearchParams, false /* useApi */)
+        return fetchResult.tags
+      } catch (error) {
+        const payload = await handleError(error, `getPopularTags`)
+        return thunkAPI.rejectWithValue(payload)
+      }
+    } else {
+      // reuse existing values
+      return undefined
     }
-  } else {
-    // reuse existing values
-    return undefined
-  }
-})
+  },
+)
 
 export const selectPopular = (state: RootState): TagListState => {
   return {

@@ -1,12 +1,7 @@
 import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
 import SharedHeader, { BackType } from '@app/components/SharedHeader'
-import {
-  useAppDispatch,
-  useAppSelector,
-  useBodyInsets,
-  useWindowShape,
-} from '@app/hooks'
+import { useAppDispatch, useAppSelector, useBodyInsets, useWindowShape } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
 import {
@@ -33,9 +28,7 @@ type HomeItemProps = {
 /**
  * Home screen
  */
-export default function HomeScreen({
-  navigation,
-}: HomeNavigatorScreenProps<'Home'>) {
+export default function HomeScreen({ navigation }: HomeNavigatorScreenProps<'Home'>) {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
@@ -119,13 +112,7 @@ export default function HomeScreen({
         </Pressable>
       )
     },
-    [
-      navigation,
-      listStyles,
-      pressableStyle,
-      theme.fonts.bodyLarge,
-      styles.listItemContent,
-    ],
+    [navigation, listStyles, pressableStyle, theme.fonts.bodyLarge, styles.listItemContent],
   )
 
   useEffect(() => {
@@ -185,21 +172,12 @@ export default function HomeScreen({
           </View>
           <View style={styles.column}>
             <View style={listStyles.listHolder}>
-              <HomeItem
-                title="random tag"
-                leftIcon={RandomIcon}
-                dest="Random"
-              />
+              <HomeItem title="random tag" leftIcon={RandomIcon} dest="Random" />
             </View>
           </View>
           <View style={styles.column}>
             <View style={listStyles.listHolder}>
-              <HomeItem
-                title="about"
-                leftIcon={AboutIcon}
-                dest="About"
-                testID="about_button"
-              />
+              <HomeItem title="about" leftIcon={AboutIcon} dest="About" testID="about_button" />
               <Divider />
               <HomeItem title="options" leftIcon={OptionsIcon} dest="Options" />
               <Divider />

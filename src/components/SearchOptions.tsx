@@ -1,13 +1,7 @@
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { ComponentProps } from 'react'
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
-import {
-  Divider,
-  MD3TypescaleKey,
-  Surface,
-  Text,
-  useTheme,
-} from 'react-native-paper'
+import { Divider, MD3TypescaleKey, Surface, Text, useTheme } from 'react-native-paper'
 
 type Props = {
   title: string
@@ -41,11 +35,7 @@ const SearchOptions = ({
     <Surface style={styles.container}>
       <View style={[styles.titleContainer, titleStyle]}>
         <View style={rightStyle}>
-          <Icon
-            name={icon}
-            size={iconSize || 24}
-            color={iconColor || theme.colors.primary}
-          />
+          <Icon name={icon} size={iconSize || 24} color={iconColor || theme.colors.primary} />
         </View>
         <Text style={styles.title} numberOfLines={1} variant={titleVariant}>
           {title}

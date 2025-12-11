@@ -3,20 +3,10 @@ import ListHeader from '@app/components/ListHeader'
 import TagList from '@app/components/TagList'
 import CommonStyles from '@app/constants/CommonStyles'
 import { SortOrder } from '@app/constants/Search'
-import {
-  AppDispatch,
-  useAppDispatch,
-  useAppSelector,
-  useBodyInsets,
-} from '@app/hooks'
+import { AppDispatch, useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { useFabDownStyle } from '@app/hooks/useFabDownStyle'
 import { EasyActions, getEasyTags, selectEasy } from '@app/modules/easySlice'
-import {
-  LoadingState,
-  SORT_ICONS,
-  SORT_LABELS,
-  TagListEnum,
-} from '@app/modules/tagLists'
+import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -49,8 +39,7 @@ const EasyScreen = () => {
     dispatch(getEasyTags(false))
   }, [dispatch])
 
-  const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
+  const otherOrder = sortOrder === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
 
   const fabActions = useMemo(
     () => [
@@ -104,9 +93,7 @@ const EasyScreen = () => {
       <View style={[CommonStyles.listContainer, listContainerPadding]}>
         <TagList
           tagListType={TagListEnum.Easy}
-          emptyMessage={
-            loadingState === LoadingState.succeeded ? 'no tags found' : ''
-          }
+          emptyMessage={loadingState === LoadingState.succeeded ? 'no tags found' : ''}
           listRef={listRef}
         />
       </View>

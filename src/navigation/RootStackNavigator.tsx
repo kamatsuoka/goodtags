@@ -10,10 +10,7 @@ import LogsScreen from '@app/screens/LogsScreen'
 import RandomScreen from '@app/screens/RandomScreen'
 import TagScreen from '@app/screens/TagScreen'
 import WelcomeScreen from '@app/screens/WelcomeScreen'
-import {
-  NavigationContainer,
-  Theme as NavigationTheme,
-} from '@react-navigation/native'
+import { NavigationContainer, Theme as NavigationTheme } from '@react-navigation/native'
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
@@ -62,26 +59,10 @@ export default function RootStackNavigator() {
           screenOptions={screenOptions}
         >
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen
-            name="Tabs"
-            component={TabNavigator}
-            options={homeOrientation}
-          />
-          <Stack.Screen
-            name="Tag"
-            component={TagScreen}
-            options={tagOrientation}
-          />
-          <Stack.Screen
-            name="Favorites"
-            component={FavoritesScreen}
-            options={homeOrientation}
-          />
-          <Stack.Screen
-            name="Random"
-            component={RandomScreen}
-            options={tagOrientation}
-          />
+          <Stack.Screen name="Tabs" component={TabNavigator} options={homeOrientation} />
+          <Stack.Screen name="Tag" component={TagScreen} options={tagOrientation} />
+          <Stack.Screen name="Favorites" component={FavoritesScreen} options={homeOrientation} />
+          <Stack.Screen name="Random" component={RandomScreen} options={tagOrientation} />
           <Stack.Group
             screenOptions={{
               headerShown: true,

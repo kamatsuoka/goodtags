@@ -9,9 +9,7 @@ export default async function getUrl<T = string>(
   baseUrl: string,
   config?: AxiosRequestConfig<any>,
 ): Promise<T> {
-  console.debug(
-    `getUrl.e2e: baseUrl=${baseUrl}, config = ${JSON.stringify(config)}`,
-  )
+  console.debug(`getUrl.e2e: baseUrl=${baseUrl}, config = ${JSON.stringify(config)}`)
   if (config?.params === PopularSearchParams) {
     return popularXml as T
   }

@@ -1,9 +1,5 @@
 import { Collection, SearchParams, SortOrder } from '@app/constants/Search'
-import {
-  buildTagIds,
-  SearchResult,
-  SearchResultsById,
-} from '@app/lib/models/Tag'
+import { buildTagIds, SearchResult, SearchResultsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
@@ -82,10 +78,7 @@ export const classicSlice = createSlice({
       state.error = action.payload
     })
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.Classic &&
-        action.payload.tag
-      ) {
+      if (action.payload?.tagListType === TagListEnum.Classic && action.payload.tag) {
         const tag = action.payload.tag as SearchResult
         console.log(`Refreshing tag ${tag.id} in classic slice`)
         if (state.tagsById[tag.id]) {
@@ -107,28 +100,27 @@ export const ClassicSearchParams: SearchParams = {
  *
  * @param refresh fetch tags even if already loaded
  */
-export const getClassicTags = createAsyncThunk<
-  SearchResult[] | undefined,
-  boolean,
-  ThunkApiConfig
->('classic/getClassicTags', async (refresh: boolean, thunkAPI) => {
-  const state = thunkAPI.getState().classic
-  if (refresh || state.allTagIds.length === 0) {
-    try {
-      const fetchResult = await fetchAndConvertTags(
-        { ...ClassicSearchParams, sortBy: state.sortOrder },
-        false /* useApi */,
-      )
-      return fetchResult.tags
-    } catch (error) {
-      const payload = await handleError(error, `getClassicTags`)
-      return thunkAPI.rejectWithValue(payload)
+export const getClassicTags = createAsyncThunk<SearchResult[] | undefined, boolean, ThunkApiConfig>(
+  'classic/getClassicTags',
+  async (refresh: boolean, thunkAPI) => {
+    const state = thunkAPI.getState().classic
+    if (refresh || state.allTagIds.length === 0) {
+      try {
+        const fetchResult = await fetchAndConvertTags(
+          { ...ClassicSearchParams, sortBy: state.sortOrder },
+          false /* useApi */,
+        )
+        return fetchResult.tags
+      } catch (error) {
+        const payload = await handleError(error, `getClassicTags`)
+        return thunkAPI.rejectWithValue(payload)
+      }
+    } else {
+      // reuse existing values
+      return undefined
     }
-  } else {
-    // reuse existing values
-    return undefined
-  }
-})
+  },
+)
 
 export const selectClassic = (state: RootState): TagListState => {
   return {

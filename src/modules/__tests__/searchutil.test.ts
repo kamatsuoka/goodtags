@@ -1,9 +1,4 @@
-import {
-  Collection,
-  Parts,
-  SearchParams,
-  SortOrder,
-} from '@app/constants/Search'
+import { Collection, Parts, SearchParams, SortOrder } from '@app/constants/Search'
 import { SearchState } from '../searchSlice'
 import {
   buildApiQueryParams,
@@ -220,21 +215,12 @@ describe('searchutil', () => {
     })
 
     it('builds OR clause for id search with multiple conditions', () => {
-      const result = buildWhereClause(true, [
-        'tags.id = ?',
-        'tags.title LIKE ?',
-        'tags.parts = ?',
-      ])
-      expect(result).toBe(
-        ' WHERE tags.id = ? OR (tags.title LIKE ? AND tags.parts = ?)',
-      )
+      const result = buildWhereClause(true, ['tags.id = ?', 'tags.title LIKE ?', 'tags.parts = ?'])
+      expect(result).toBe(' WHERE tags.id = ? OR (tags.title LIKE ? AND tags.parts = ?)')
     })
 
     it('creates proper OR structure with id and other filters', () => {
-      const result = buildWhereClause(true, [
-        'tags.id = ?',
-        'tags.collection = ?',
-      ])
+      const result = buildWhereClause(true, ['tags.id = ?', 'tags.collection = ?'])
       expect(result).toBe(' WHERE tags.id = ? OR (tags.collection = ?)')
     })
   })
@@ -295,9 +281,7 @@ describe('searchutil', () => {
     it('builds WHERE clause for learning tracks filter', () => {
       const result = buildSqlParts({ requireLearningTracks: true })
 
-      expect(result.whereClause).toContain(
-        'tags.id IN (SELECT tag_id FROM tracks)',
-      )
+      expect(result.whereClause).toContain('tags.id IN (SELECT tag_id FROM tracks)')
     })
 
     it('builds WHERE clause for sheet music filter', () => {
@@ -342,9 +326,7 @@ describe('searchutil', () => {
     it('builds ORDER BY for newest sort', () => {
       const result = buildSqlParts({ sortBy: SortOrder.newest })
 
-      expect(result.suffixClauses).toBe(
-        ' ORDER BY tags.posted DESC, tags.id DESC',
-      )
+      expect(result.suffixClauses).toBe(' ORDER BY tags.posted DESC, tags.id DESC')
     })
 
     it('builds LIMIT clause', () => {

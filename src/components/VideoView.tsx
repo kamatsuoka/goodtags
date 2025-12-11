@@ -3,14 +3,7 @@ import { Video } from '@app/lib/models/Tag'
 import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useMemo, useRef, useState } from 'react'
-import {
-  Dimensions,
-  FlatList,
-  Platform,
-  StyleSheet,
-  View,
-  ViewToken,
-} from 'react-native'
+import { Dimensions, FlatList, Platform, StyleSheet, View, ViewToken } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import YoutubePlayer from 'react-native-youtube-iframe'
@@ -32,15 +25,13 @@ const VideoView = ({ route }: Props) => {
   const screen = Dimensions.get('window')
   const deviceAspectRatio = screen.width / screen.height
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
-        const newIndex = viewableItems[0].index
-        setCurrentIndex(newIndex)
-        setPlaying(false)
-      }
-    },
-  ).current
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+      const newIndex = viewableItems[0].index
+      setCurrentIndex(newIndex)
+      setPlaying(false)
+    }
+  }).current
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
@@ -78,10 +69,7 @@ const VideoView = ({ route }: Props) => {
 
   const renderVideo = ({ item, index }: { item: Video; index: number }) => (
     <View
-      style={[
-        styles.videoCard,
-        { width: screen.width - paddingHorizontal * 2 },
-      ]}
+      style={[styles.videoCard, { width: screen.width - paddingHorizontal * 2 }]}
       key={`video-card-${index}`}
     >
       {index === currentIndex ? (
@@ -127,9 +115,7 @@ const VideoView = ({ route }: Props) => {
             styles.indicator,
             {
               backgroundColor:
-                index === currentIndex
-                  ? theme.colors.primary
-                  : theme.colors.surfaceVariant,
+                index === currentIndex ? theme.colors.primary : theme.colors.surfaceVariant,
             },
           ]}
         />

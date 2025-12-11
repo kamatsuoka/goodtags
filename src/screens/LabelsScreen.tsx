@@ -9,9 +9,7 @@ import { Button, Divider, List, useTheme } from 'react-native-paper'
 /**
  * List of labels for navigating to labeled tags
  */
-export default function LabelsScreen({
-  navigation,
-}: HomeNavigatorScreenProps<'Labels'>) {
+export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'Labels'>) {
   const theme = useTheme()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const labels = useAppSelector(state => state.favorites.labels)

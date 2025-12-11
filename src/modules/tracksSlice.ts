@@ -22,10 +22,7 @@ export const initialState: TracksState = {
  * Gets the to play based on the selected part,
  * falling back to All Parts if available, or the first track in the list.
  */
-export function getSelectedTrack(
-  tagTracks: TagTracks,
-  selectedPart: TrackPart,
-): Track | undefined {
+export function getSelectedTrack(tagTracks: TagTracks, selectedPart: TrackPart): Track | undefined {
   if (tagTracks && Object.entries(tagTracks).length > 0) {
     if (selectedPart && tagTracks[selectedPart]) {
       return tagTracks[selectedPart]

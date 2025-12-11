@@ -173,9 +173,7 @@ describe('parseXml', () => {
     expect(parseInt(parsed.tags.attr.available, 10)).toEqual(5451)
     expect(parsed.tags.tag.length).toEqual(3)
     expect(parsed.tags.tag[0].Arranger).toEqual('Soren Wohlers')
-    expect(parsed.tags.tag[1].Title).toEqual(
-      'Last Night was the End of the World',
-    )
+    expect(parsed.tags.tag[1].Title).toEqual('Last Night was the End of the World')
     expect(parsed.tags.tag[2].videos.video.length).toEqual(2)
   })
   it('should convert xml entities', () => {

@@ -4,12 +4,7 @@ import { RootState } from '@app/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
 import { refreshTag } from './refreshTagThunk'
-import {
-  InitialTagListState,
-  sortAlpha,
-  TagListEnum,
-  TagListState,
-} from './tagLists'
+import { InitialTagListState, sortAlpha, TagListEnum, TagListState } from './tagLists'
 
 export type HistoryState = TagListState & {
   history: number[] // tag ids sorted by date seen, newest first
@@ -28,10 +23,7 @@ const historySlice = createSlice({
   name: 'history',
   initialState: InitialState,
   reducers: {
-    addHistory: (
-      state,
-      action: PayloadAction<{ tag: Tag; timestamp?: string }>,
-    ) => {
+    addHistory: (state, action: PayloadAction<{ tag: Tag; timestamp?: string }>) => {
       // adds tag to history but does not change tagsById since that
       // would wreak havoc with history while viewing tags from history
       const tag = action.payload.tag
@@ -81,10 +73,7 @@ const historySlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.History &&
-        action.payload.tag
-      ) {
+      if (action.payload?.tagListType === TagListEnum.History && action.payload.tag) {
         const tag = action.payload.tag
         console.log(`Refreshing tag ${tag.id} in history slice`)
         if (state.tagsById[tag.id]) {

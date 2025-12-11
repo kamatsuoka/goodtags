@@ -11,8 +11,7 @@ export default async function getUrl<T = string>(
     const msg =
       response.statusText ||
       `${response.status}` ||
-      `got undefined status from ${response.request.url} ` +
-        `with config ${configDebugString}`
+      `got undefined status from ${response.request.url} ` + `with config ${configDebugString}`
     throw Error(msg)
   }
   return response.data

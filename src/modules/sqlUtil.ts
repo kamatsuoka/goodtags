@@ -151,13 +151,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   }
 
   // Initialize the DB from local storage if needed
-  if (
-    await shouldCopyFromApp(
-      currentSqlPath,
-      currentManifestPath,
-      appManifestObject,
-    )
-  ) {
+  if (await shouldCopyFromApp(currentSqlPath, currentManifestPath, appManifestObject)) {
     console.debug('Copying DB from app storage')
     // To avoid getting into a bad state if the app dies mid-copy, we write to temp files and then move the files into
     // place. There's still potential for a race condition where we've moved one file but not the other, but the
@@ -190,9 +184,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     tmpSqlFile.move(new File(currentSqlPath))
     tmpManifestFile.move(new File(currentManifestPath))
   } else {
-    console.debug(
-      'Not copying DB from app storage, current DB already new enough',
-    )
+    console.debug('Not copying DB from app storage, current DB already new enough')
   }
 
   // Note we intentionally are just using the basename and not the full path.
@@ -219,10 +211,7 @@ async function shouldCopyFromApp(
   appManifestContents: DbManifest,
 ): Promise<boolean> {
   // If either are missing, we should obviously copy
-  if (
-    !new File(currentSqlPath).exists ||
-    !new File(currentManifestPath).exists
-  ) {
+  if (!new File(currentSqlPath).exists || !new File(currentManifestPath).exists) {
     return true
   }
 
@@ -263,12 +252,9 @@ async function backgroundCheckForRemoteUpdates(
     return
   }
 
-  const remoteSqlName =
-    remoteManifestContents.db_name_by_version[VALID_SCHEMA_VERSION]
+  const remoteSqlName = remoteManifestContents.db_name_by_version[VALID_SCHEMA_VERSION]
   if (remoteSqlName == null) {
-    console.debug(
-      `Unable to find remote DB with valid schema version of ${VALID_SCHEMA_VERSION}`,
-    )
+    console.debug(`Unable to find remote DB with valid schema version of ${VALID_SCHEMA_VERSION}`)
     return
   }
 

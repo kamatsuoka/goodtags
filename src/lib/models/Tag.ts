@@ -119,21 +119,15 @@ export function buildTag(
 
 function extractTracks(xmlTag: XmlTag): Tracks {
   return _.compact(
-    [
-      TrackPart.AllParts,
-      TrackPart.Tenor,
-      TrackPart.Lead,
-      TrackPart.Bari,
-      TrackPart.Bass,
-    ].map(part => extractTrack(part, xmlTag)),
+    [TrackPart.AllParts, TrackPart.Tenor, TrackPart.Lead, TrackPart.Bari, TrackPart.Bass].map(
+      part => extractTrack(part, xmlTag),
+    ),
   )
 }
 
 function extractVideos(xmlTag: XmlTag): Array<Video> {
   if (xmlTag.videos?.video) {
-    const videos = Array.isArray(xmlTag.videos.video)
-      ? xmlTag.videos.video
-      : [xmlTag.videos.video]
+    const videos = Array.isArray(xmlTag.videos.video) ? xmlTag.videos.video : [xmlTag.videos.video]
     return videos.map(extractVideo)
   } else return []
 }
@@ -215,12 +209,7 @@ export function tagFromApiXml(t: XmlTag): SearchResult {
   return tag
 }
 
-function tagFromDbRow(
-  row: DbRow,
-  tracks: Track[],
-  videos: Video[],
-  idx: number,
-): SearchResult {
+function tagFromDbRow(row: DbRow, tracks: Track[], videos: Video[], idx: number): SearchResult {
   const tag = buildTag(
     row.id,
     row.title,
@@ -281,8 +270,7 @@ export function tagsFromApiResponse(responseText: string): ConvertedTags {
   const xmlTags = xmlObj.tags.tag || []
   const rawTags: XmlTag[] = Array.isArray(xmlTags) ? xmlTags : [xmlTags]
   const tags: SearchResult[] = rawTags.map((t: XmlTag) => tagFromApiXml(t))
-  const highestIndex: number =
-    tags.length > 0 ? tags[tags.length - 1].searchResultIndex : 0
+  const highestIndex: number = tags.length > 0 ? tags[tags.length - 1].searchResultIndex : 0
   return {
     available,
     tags,
@@ -312,10 +300,7 @@ export function tagsFromDbRows(
   }
 }
 
-function groupByTagId<T>(
-  rows: DbRow[],
-  transform: (row: DbRow) => T,
-): { [id: string]: T[] } {
+function groupByTagId<T>(rows: DbRow[], transform: (row: DbRow) => T): { [id: string]: T[] } {
   const byId: { [id: string]: T[] } = {}
   rows.forEach(({ tag_id, ...row }) => {
     const group: T[] = byId[tag_id] || []

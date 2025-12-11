@@ -23,14 +23,7 @@ import { useNavigation } from '@react-navigation/native'
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
-import {
-  ActivityIndicator,
-  IconButton,
-  Portal,
-  Snackbar,
-  Text,
-  useTheme,
-} from 'react-native-paper'
+import { ActivityIndicator, IconButton, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
@@ -78,10 +71,7 @@ const PlayPauseAction = React.memo(
         />
         {isLoading && (
           <View style={styles.spinnerOverlay} pointerEvents="none">
-            <ActivityIndicator
-              size={BIG_BUTTON_SIZE + 16}
-              color={TrackLoadingSpinner}
-            />
+            <ActivityIndicator size={BIG_BUTTON_SIZE + 16} color={TrackLoadingSpinner} />
           </View>
         )}
       </View>
@@ -151,22 +141,14 @@ export const TagLayout = ({
   const navigation = useNavigation()
   const keepAwakeEnabled = useAppSelector(state => state.options.keepAwake)
   const keyNote = noteForKey(tag.key)
-  const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } =
-    useNotePlayer(keyNote)
+  const { onPressIn: noteOnPressIn, onPressOut: noteOnPressOut } = useNotePlayer(keyNote)
 
   const [tracksVisible, setTracksVisible] = useState(false)
   const [infoVisible, setInfoVisible] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
   const { hasTracks, hasVideos } = useTagMedia(tag)
-  const {
-    trackPlaying,
-    isLoading,
-    setTrackUrl,
-    playOrPause,
-    pause,
-    error,
-    clearError,
-  } = useTrackPlayer()
+  const { trackPlaying, isLoading, setTrackUrl, playOrPause, pause, error, clearError } =
+    useTrackPlayer()
 
   // Debug logging for error state
   useEffect(() => {
@@ -175,8 +157,7 @@ export const TagLayout = ({
     }
   }, [error])
 
-  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } =
-    useButtonDimming()
+  const { buttonsDimmed, brightenButtons, dimButtons, brightenThenFade } = useButtonDimming()
 
   const styles = useTagScreenStyles(buttonsDimmed, fabOpen)
 
@@ -262,22 +243,14 @@ export const TagLayout = ({
   }
 
   const noteIcon = useCallback(
-    (props: { size: number; color: ColorValue }) => (
-      <NoteButton note={keyNote} {...props} />
-    ),
+    (props: { size: number; color: ColorValue }) => <NoteButton note={keyNote} {...props} />,
     [keyNote],
   )
 
   const { landscape } = useWindowShape()
 
   const memoizedSheetMusic = useMemo(
-    () => (
-      <SheetMusic
-        uri={tag.uri}
-        onPress={brightenThenFade}
-        landscape={landscape}
-      />
-    ),
+    () => <SheetMusic uri={tag.uri} onPress={brightenThenFade} landscape={landscape} />,
     [brightenThenFade, tag.uri, landscape],
   )
 
@@ -415,10 +388,7 @@ export const TagLayout = ({
           backdropComponent={renderBackdrop}
           android_keyboardInputMode="adjustResize"
         >
-          <TrackMenu
-            onDismiss={() => setTracksVisible(false)}
-            setTrackUrl={setTrackUrl}
-          />
+          <TrackMenu onDismiss={() => setTracksVisible(false)} setTrackUrl={setTrackUrl} />
         </BottomSheetModal>
         <Portal>
           <Snackbar

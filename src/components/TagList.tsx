@@ -24,8 +24,7 @@ export type TagListProps = {
  * List of tags
  */
 const TagList = (props: TagListProps) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const visibleIndex = useRef({
     max: 0,
     min: 0,
@@ -49,12 +48,7 @@ const TagList = (props: TagListProps) => {
     if (selectedTag) {
       const i = selectedTag.index
       const numTags = allTagIds?.length
-      if (
-        listRef.current &&
-        i < numTags &&
-        i >= 0 &&
-        allTagIds[i] === selectedTag.id
-      ) {
+      if (listRef.current && i < numTags && i >= 0 && allTagIds[i] === selectedTag.id) {
         if (i < visibleIndex.current.min) {
           listRef.current.scrollToIndex({
             index: i,
@@ -82,17 +76,14 @@ const TagList = (props: TagListProps) => {
     }, [dispatch, scrollToSelectedTag, tagState]),
   )
 
-  const onViewableItemsChanged = useCallback(
-    (items: { viewableItems: Array<any> }) => {
-      if (items.viewableItems?.length > 0) {
-        visibleIndex.current = {
-          min: items.viewableItems[0].index,
-          max: items.viewableItems[items.viewableItems.length - 1].index,
-        }
+  const onViewableItemsChanged = useCallback((items: { viewableItems: Array<any> }) => {
+    if (items.viewableItems?.length > 0) {
+      visibleIndex.current = {
+        min: items.viewableItems[0].index,
+        max: items.viewableItems[items.viewableItems.length - 1].index,
       }
-    },
-    [],
-  )
+    }
+  }, [])
 
   const viewabilityConfig = useRef({
     waitForInteraction: true,
@@ -108,11 +99,7 @@ const TagList = (props: TagListProps) => {
 
   const listEmptyComponent = () => {
     if (props.emptyMessage) {
-      return (
-        <Text style={[styles.emptyMessage, theme.fonts.bodyLarge]}>
-          {props.emptyMessage}
-        </Text>
-      )
+      return <Text style={[styles.emptyMessage, theme.fonts.bodyLarge]}>{props.emptyMessage}</Text>
     } else {
       return null
     }
@@ -163,14 +150,7 @@ const TagList = (props: TagListProps) => {
         />
       )
     },
-    [
-      dispatch,
-      navigation,
-      props.tagListType,
-      selectedTag,
-      setSelectedTag,
-      tagsById,
-    ],
+    [dispatch, navigation, props.tagListType, selectedTag, setSelectedTag, tagsById],
   )
 
   return (

@@ -1,9 +1,5 @@
 import { Collection, SearchParams, SortOrder } from '@app/constants/Search'
-import {
-  buildTagIds,
-  SearchResult,
-  SearchResultsById,
-} from '@app/lib/models/Tag'
+import { buildTagIds, SearchResult, SearchResultsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
@@ -82,10 +78,7 @@ export const easySlice = createSlice({
       state.error = action.payload
     })
     builder.addCase(refreshTag.fulfilled, (state, action) => {
-      if (
-        action.payload?.tagListType === TagListEnum.Easy &&
-        action.payload.tag
-      ) {
+      if (action.payload?.tagListType === TagListEnum.Easy && action.payload.tag) {
         const tag = action.payload.tag as SearchResult
         console.log(`Refreshing tag ${tag.id} in easy slice`)
         if (state.tagsById[tag.id]) {
@@ -107,28 +100,27 @@ export const EasySearchParams: SearchParams = {
  *
  * @param refresh fetch tags even if already loaded
  */
-export const getEasyTags = createAsyncThunk<
-  SearchResult[] | undefined,
-  boolean,
-  ThunkApiConfig
->('easy/getEasyTags', async (refresh: boolean, thunkAPI) => {
-  const state = thunkAPI.getState().easy
-  if (refresh || state.allTagIds.length === 0) {
-    try {
-      const fetchResult = await fetchAndConvertTags(
-        { ...EasySearchParams, sortBy: state.sortOrder },
-        false /* useApi */,
-      )
-      return fetchResult.tags
-    } catch (error) {
-      const payload = await handleError(error, `getEasyTags`)
-      return thunkAPI.rejectWithValue(payload)
+export const getEasyTags = createAsyncThunk<SearchResult[] | undefined, boolean, ThunkApiConfig>(
+  'easy/getEasyTags',
+  async (refresh: boolean, thunkAPI) => {
+    const state = thunkAPI.getState().easy
+    if (refresh || state.allTagIds.length === 0) {
+      try {
+        const fetchResult = await fetchAndConvertTags(
+          { ...EasySearchParams, sortBy: state.sortOrder },
+          false /* useApi */,
+        )
+        return fetchResult.tags
+      } catch (error) {
+        const payload = await handleError(error, `getEasyTags`)
+        return thunkAPI.rejectWithValue(payload)
+      }
+    } else {
+      // reuse existing values
+      return undefined
     }
-  } else {
-    // reuse existing values
-    return undefined
-  }
-})
+  },
+)
 
 export const selectEasy = (state: RootState): TagListState => {
   return {

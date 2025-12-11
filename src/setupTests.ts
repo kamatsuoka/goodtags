@@ -21,9 +21,7 @@ jest.mock('redux-persist', () => {
 })
 
 // Mock only the modules we directly rely on that are problematic in Node.
-jest.mock('react-native-reanimated', () =>
-  require('react-native-reanimated/mock'),
-)
+jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'))
 
 // Expo module mocks (enough for tests using sqlUtil etc.)
 jest.mock('expo-asset', () => ({
@@ -46,12 +44,10 @@ jest.mock('expo-file-system', () => {
     move: jest.fn(),
     delete: jest.fn(),
   }))
-  mockFileConstructor.downloadFileAsync = jest.fn(
-    async (_url, destination) => ({
-      uri: destination.uri || '/mock-downloaded-file/',
-      exists: true,
-    }),
-  )
+  mockFileConstructor.downloadFileAsync = jest.fn(async (_url, destination) => ({
+    uri: destination.uri || '/mock-downloaded-file/',
+    exists: true,
+  }))
 
   return {
     documentDirectory: '/data/',
@@ -102,9 +98,7 @@ jest.mock('@shopify/flash-list', () => {
   return {
     FlashList: ({ data = [], ListEmptyComponent, renderItem }: any) => {
       if (!data || data.length === 0) {
-        return ListEmptyComponent
-          ? ListEmptyComponent()
-          : React.createElement(React.Fragment, null)
+        return ListEmptyComponent ? ListEmptyComponent() : React.createElement(React.Fragment, null)
       }
       return React.createElement(
         React.Fragment,

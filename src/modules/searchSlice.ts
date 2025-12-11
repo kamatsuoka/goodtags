@@ -1,17 +1,7 @@
 import { Collection, Parts, SortOrder } from '@app/constants/Search'
-import {
-  buildTagIds,
-  ConvertedTags,
-  SearchResult,
-  SearchResultsById,
-} from '@app/lib/models/Tag'
+import { buildTagIds, ConvertedTags, SearchResult, SearchResultsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
-import {
-  AnyAction,
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit'
+import { AnyAction, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { handleError } from './handleError'
 import { fetchAndConvertTags, getSearchParams } from './searchutil'
 import { LoadingState, TagListState } from './tagLists'
@@ -125,8 +115,7 @@ export const searchSlice = createSlice({
         const { tagsById, allTagIds } = buildTagIds(action.payload.tags)
         state.results.tagsById = tagsById
         state.results.allTagIds = allTagIds
-        state.results.moreAvailable =
-          action.payload.highestIndex < action.payload.available - 1
+        state.results.moreAvailable = action.payload.highestIndex < action.payload.available - 1
         state.loadingState = LoadingState.succeeded
         state.selectedTag = undefined
       })
@@ -134,8 +123,7 @@ export const searchSlice = createSlice({
         const { tagsById, allTagIds } = buildTagIds(action.payload.tags)
         state.results.tagsById = { ...state.results.tagsById, ...tagsById }
         state.results.allTagIds = state.results.allTagIds.concat(allTagIds)
-        state.results.moreAvailable =
-          action.payload.highestIndex < action.payload.available - 1
+        state.results.moreAvailable = action.payload.highestIndex < action.payload.available - 1
         state.loadingState = LoadingState.succeeded
       })
       .addCase(newSearch.pending, state => {
@@ -146,13 +134,10 @@ export const searchSlice = createSlice({
         state.loadingState = LoadingState.morePending
         state.error = undefined
       })
-      .addMatcher(
-        isSearchAction('/rejected'),
-        (state, action: PayloadAction<string>) => {
-          state.loadingState = LoadingState.failed
-          state.error = action.payload
-        },
-      )
+      .addMatcher(isSearchAction('/rejected'), (state, action: PayloadAction<string>) => {
+        state.loadingState = LoadingState.failed
+        state.error = action.payload
+      })
   },
 })
 
@@ -161,16 +146,10 @@ function isSearchAction(actionType: string) {
     action.type.startsWith('search/') && action.type.endsWith(actionType)
 }
 
-async function fetchTags(
-  state: SearchState,
-  start: number,
-): Promise<SearchPayload> {
+async function fetchTags(state: SearchState, start: number): Promise<SearchPayload> {
   const useApi = !state.filters.offline
   const searchParams = getSearchParams(state, start)
-  const fetchResult: ConvertedTags = await fetchAndConvertTags(
-    searchParams,
-    useApi,
-  )
+  const fetchResult: ConvertedTags = await fetchAndConvertTags(searchParams, useApi)
   const available = fetchResult.available
   const tags = fetchResult.tags
   const highestIndex = fetchResult.highestIndex
@@ -186,47 +165,43 @@ async function fetchTags(
 /**
  * Do a new search, either setting query + filters or setting sort order
  */
-export const newSearch = createAsyncThunk<
-  SearchPayload,
-  SearchParams,
-  ThunkApiConfig
->('search/newSearch', async (params: SearchParams, thunkAPI) => {
-  thunkAPI.dispatch(SearchActions.resetResults())
-  if (params.sortOrder) {
-    // just change sort with existing query and filters
-    thunkAPI.dispatch(SearchActions.setSortOrder(params.sortOrder))
-  } else {
-    // sort with new query and/or filters
-    if (params.query !== undefined)
-      thunkAPI.dispatch(SearchActions.setQuery(params.query))
-    if (params.filters !== undefined)
-      thunkAPI.dispatch(SearchActions.setFilters(params.filters))
-  }
-  try {
-    return await fetchTags(thunkAPI.getState().search, 0)
-  } catch (error) {
-    const payload = await handleError(error, `search/newSearch`)
-    return thunkAPI.rejectWithValue(payload)
-  }
-})
+export const newSearch = createAsyncThunk<SearchPayload, SearchParams, ThunkApiConfig>(
+  'search/newSearch',
+  async (params: SearchParams, thunkAPI) => {
+    thunkAPI.dispatch(SearchActions.resetResults())
+    if (params.sortOrder) {
+      // just change sort with existing query and filters
+      thunkAPI.dispatch(SearchActions.setSortOrder(params.sortOrder))
+    } else {
+      // sort with new query and/or filters
+      if (params.query !== undefined) thunkAPI.dispatch(SearchActions.setQuery(params.query))
+      if (params.filters !== undefined) thunkAPI.dispatch(SearchActions.setFilters(params.filters))
+    }
+    try {
+      return await fetchTags(thunkAPI.getState().search, 0)
+    } catch (error) {
+      const payload = await handleError(error, `search/newSearch`)
+      return thunkAPI.rejectWithValue(payload)
+    }
+  },
+)
 
 /**
  * Search for more results using existing query, filters, and sort order
  */
-export const moreSearch = createAsyncThunk<
-  SearchPayload,
-  undefined,
-  ThunkApiConfig
->('search/moreSearch', async (_, thunkAPI) => {
-  try {
-    const searchState = thunkAPI.getState().search
-    const start = searchState.results.allTagIds.length
-    return await fetchTags(searchState, start)
-  } catch (error) {
-    const payload = await handleError(error, `search/moreSearch`)
-    return thunkAPI.rejectWithValue(payload)
-  }
-})
+export const moreSearch = createAsyncThunk<SearchPayload, undefined, ThunkApiConfig>(
+  'search/moreSearch',
+  async (_, thunkAPI) => {
+    try {
+      const searchState = thunkAPI.getState().search
+      const start = searchState.results.allTagIds.length
+      return await fetchTags(searchState, start)
+    } catch (error) {
+      const payload = await handleError(error, `search/moreSearch`)
+      return thunkAPI.rejectWithValue(payload)
+    }
+  },
+)
 
 export const SearchActions = searchSlice.actions
 export default searchSlice.reducer

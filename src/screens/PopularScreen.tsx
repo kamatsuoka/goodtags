@@ -10,17 +10,8 @@ import {
   useBodyInsets,
   useFabDownStyle,
 } from '@app/hooks'
-import {
-  PopularActions,
-  getPopularTags,
-  selectPopular,
-} from '@app/modules/popularSlice'
-import {
-  LoadingState,
-  SORT_ICONS,
-  SORT_LABELS,
-  TagListEnum,
-} from '@app/modules/tagLists'
+import { PopularActions, getPopularTags, selectPopular } from '@app/modules/popularSlice'
+import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -35,9 +26,7 @@ const PopularScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const theme = useTheme()
-  const loadingState = useAppSelector(
-    state => selectPopular(state).loadingState,
-  )
+  const loadingState = useAppSelector(state => selectPopular(state).loadingState)
   const error = useAppSelector(state => selectPopular(state).error)
   const sortOrder = useAppSelector(state => selectPopular(state).sortOrder)
   const listRef = useRef<FlashListRef<number> | null>(null)
@@ -55,8 +44,7 @@ const PopularScreen = () => {
     dispatch(getPopularTags(false))
   }, [dispatch])
 
-  const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.downloads : SortOrder.alpha
+  const otherOrder = sortOrder === SortOrder.alpha ? SortOrder.downloads : SortOrder.alpha
 
   const fabActions = useMemo(
     () => [
@@ -110,9 +98,7 @@ const PopularScreen = () => {
       <View style={[CommonStyles.listContainer, listContainerPadding]}>
         <TagList
           tagListType={TagListEnum.Popular}
-          emptyMessage={
-            loadingState === LoadingState.succeeded ? 'no tags found' : ''
-          }
+          emptyMessage={loadingState === LoadingState.succeeded ? 'no tags found' : ''}
           listRef={listRef}
         />
       </View>

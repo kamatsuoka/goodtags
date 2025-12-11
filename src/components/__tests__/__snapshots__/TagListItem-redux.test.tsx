@@ -29,12 +29,7 @@ describe('TagListItem', () => {
       tracks: [],
     }
     const rendered = render(
-      <TagListItem
-        tag={tag}
-        tagListType={TagListEnum.SearchResults}
-        index={3}
-        selected={true}
-      />,
+      <TagListItem tag={tag} tagListType={TagListEnum.SearchResults} index={3} selected={true} />,
     )
     const textComponent = rendered.getByTestId('tagleft_1809')
     expect(textComponent.props.children).toEqual('•')

@@ -10,14 +10,7 @@ export { BackType }
  */
 export default function NavHeader(props: NativeStackHeaderProps) {
   const title = getHeaderTitle(props.options, props.route.name)
-  const backType =
-    props.options.headerBackTitle === 'cancel' ? BackType.Close : BackType.Back
+  const backType = props.options.headerBackTitle === 'cancel' ? BackType.Close : BackType.Back
 
-  return (
-    <SharedHeader
-      title={title}
-      backType={backType}
-      headerRight={props.options.headerRight}
-    />
-  )
+  return <SharedHeader title={title} backType={backType} headerRight={props.options.headerRight} />
 }

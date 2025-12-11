@@ -57,14 +57,11 @@ export default function TrackMenu(props: TrackMenuProps) {
     onDismiss()
   }
 
-  const displayName = (part: string) =>
-    `${part}`.replace('AllParts', 'All Parts')
+  const displayName = (part: string) => `${part}`.replace('AllParts', 'All Parts')
 
   const itemTitle = (part: string) => (
     <Text>
-      <Text style={part === selectedPart.toString() ? {} : styles.hiddenDot}>
-        •&nbsp;&nbsp;
-      </Text>
+      <Text style={part === selectedPart.toString() ? {} : styles.hiddenDot}>•&nbsp;&nbsp;</Text>
       <Text>{displayName(part)}</Text>
     </Text>
   )

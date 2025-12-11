@@ -15,9 +15,7 @@ const store = mockStore(INITIAL_STATE)
 
 const reduxRender = (ui: ReactElement, options: any = {}) =>
   render(ui, {
-    wrapper: ({ children }) => (
-      <ReactReduxProvider store={store}>{children}</ReactReduxProvider>
-    ),
+    wrapper: ({ children }) => <ReactReduxProvider store={store}>{children}</ReactReduxProvider>,
     ...options,
   })
 

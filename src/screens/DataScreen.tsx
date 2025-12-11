@@ -11,14 +11,7 @@ import { shareFavorites } from '@app/modules/favoritesSlice'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
-import {
-  Divider,
-  List,
-  Portal,
-  Snackbar,
-  Text,
-  useTheme,
-} from 'react-native-paper'
+import { Divider, List, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
@@ -97,9 +90,7 @@ export default function DataScreen() {
             <View style={listStyles.listHolder}>
               <Pressable
                 onPress={async () => {
-                  const { message, showSnackBar } = await shareFavorites(
-                    favorites,
-                  )
+                  const { message, showSnackBar } = await shareFavorites(favorites)
                   if (showSnackBar) {
                     setSnackBarMessage(message)
                     setSnackBarVisible(true)

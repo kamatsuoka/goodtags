@@ -36,11 +36,7 @@ const TagListItem = React.memo((props: Props) => {
             },
           ]}
         >
-          <Icon
-            name="download"
-            size={14}
-            style={{ color: theme.colors.outline }}
-          />
+          <Icon name="download" size={14} style={{ color: theme.colors.outline }} />
           {(tag as SearchResult).downloaded}
         </Text>
       </>
@@ -95,10 +91,7 @@ const TagListItem = React.memo((props: Props) => {
           <View style={styles.metadataLeft}>
             <Text
               numberOfLines={1}
-              style={[
-                theme.fonts.labelSmall,
-                { color: theme.colors.secondary },
-              ]}
+              style={[theme.fonts.labelSmall, { color: theme.colors.secondary }]}
             >
               {arranger(tag)}
               &nbsp;
@@ -129,9 +122,7 @@ const TagListItem = React.memo((props: Props) => {
       onPress={props.onPress}
       style={({ pressed }) => [
         {
-          backgroundColor: pressed
-            ? theme.colors.surfaceVariant
-            : 'transparent',
+          backgroundColor: pressed ? theme.colors.surfaceVariant : 'transparent',
         },
       ]}
     >

@@ -58,10 +58,7 @@ const persistConfig = {
 
 console.log(`[Redux Persist] persistConfig.version=${persistConfig.version}`)
 
-const persistedReducer = persistReducer<AppState, AnyAction>(
-  persistConfig,
-  rootReducer,
-)
+const persistedReducer = persistReducer<AppState, AnyAction>(persistConfig, rootReducer)
 
 const store = configureStore({
   reducer: persistedReducer,
@@ -95,10 +92,7 @@ const persistor = persistStore(store, null, () => {
   console.log('[Redux Persist] Rehydration complete')
   // Log a sample of the rehydrated state to verify data is present
   const state = store.getState()
-  console.log(
-    '[Redux Persist] Favorites count:',
-    state.favorites?.allTagIds?.length ?? 0,
-  )
+  console.log('[Redux Persist] Favorites count:', state.favorites?.allTagIds?.length ?? 0)
   console.log('[Redux Persist] Labels:', state.favorites?.labels?.length ?? 0)
 })
 

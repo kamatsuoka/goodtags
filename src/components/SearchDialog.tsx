@@ -1,10 +1,6 @@
 import { Collection, Parts } from '@app/constants/Search'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
-import {
-  SearchFilters,
-  newSearch,
-  selectSearchResults,
-} from '@app/modules/searchSlice'
+import { SearchFilters, newSearch, selectSearchResults } from '@app/modules/searchSlice'
 import { useMemo, useState } from 'react'
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
 import {
@@ -74,11 +70,8 @@ export default function SearchDialog(props: Props) {
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
-  const allTagIds = useAppSelector(
-    state => selectSearchResults(state).allTagIds,
-  )
-  const [modeExplanationDialogVisible, setModeExplanationDialogVisible] =
-    useState(false)
+  const allTagIds = useAppSelector(state => selectSearchResults(state).allTagIds)
+  const [modeExplanationDialogVisible, setModeExplanationDialogVisible] = useState(false)
 
   const dynamicStyles = useMemo(
     () =>
@@ -137,10 +130,7 @@ export default function SearchDialog(props: Props) {
             >
               {Object.values(Collection).map(value => {
                 return (
-                  <View
-                    key={`collection_${value}`}
-                    style={staticStyles.optionsContainer}
-                  >
+                  <View key={`collection_${value}`} style={staticStyles.optionsContainer}>
                     <RadioButton.Item
                       label={value.toLowerCase()}
                       labelStyle={staticStyles.optionText}
@@ -197,10 +187,7 @@ export default function SearchDialog(props: Props) {
             >
               {Object.values(Parts).map(value => {
                 return (
-                  <View
-                    key={`parts_${value}`}
-                    style={staticStyles.optionsContainer}
-                  >
+                  <View key={`parts_${value}`} style={staticStyles.optionsContainer}>
                     <RadioButton.Item
                       label={value.toLowerCase()}
                       labelStyle={staticStyles.optionText}
@@ -254,15 +241,12 @@ export default function SearchDialog(props: Props) {
           <Dialog.Title>Search mode</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">
-              The newer offline search is faster but may not show the same
-              results, and results may be slightly less up-to-date. Note this is
-              just for searching; viewing a non-favorited individual tag still
-              requires internet.
+              The newer offline search is faster but may not show the same results, and results may
+              be slightly less up-to-date. Note this is just for searching; viewing a non-favorited
+              individual tag still requires internet.
             </Text>
             <Dialog.Actions>
-              <Button onPress={() => setModeExplanationDialogVisible(false)}>
-                Ok
-              </Button>
+              <Button onPress={() => setModeExplanationDialogVisible(false)}>Ok</Button>
             </Dialog.Actions>
           </Dialog.Content>
         </Dialog>

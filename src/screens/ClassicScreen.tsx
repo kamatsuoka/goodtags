@@ -10,17 +10,8 @@ import {
   useBodyInsets,
   useFabDownStyle,
 } from '@app/hooks'
-import {
-  ClassicActions,
-  getClassicTags,
-  selectClassic,
-} from '@app/modules/classicSlice'
-import {
-  LoadingState,
-  SORT_ICONS,
-  SORT_LABELS,
-  TagListEnum,
-} from '@app/modules/tagLists'
+import { ClassicActions, getClassicTags, selectClassic } from '@app/modules/classicSlice'
+import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules/tagLists'
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -35,9 +26,7 @@ const ClassicScreen = () => {
   const [fabOpen, setFabOpen] = useState(false)
   const dispatch: AppDispatch = useAppDispatch()
   const theme = useTheme()
-  const loadingState = useAppSelector(
-    state => selectClassic(state).loadingState,
-  )
+  const loadingState = useAppSelector(state => selectClassic(state).loadingState)
   const error = useAppSelector(state => selectClassic(state).error)
   const sortOrder = useAppSelector(state => selectClassic(state).sortOrder)
   const listRef = useRef<FlashListRef<number> | null>(null)
@@ -55,8 +44,7 @@ const ClassicScreen = () => {
     dispatch(getClassicTags(false))
   }, [dispatch])
 
-  const otherOrder =
-    sortOrder === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
+  const otherOrder = sortOrder === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
 
   const fabActions = useMemo(
     () => [
@@ -110,9 +98,7 @@ const ClassicScreen = () => {
       <View style={[CommonStyles.listContainer, listContainerPadding]}>
         <TagList
           tagListType={TagListEnum.Classic}
-          emptyMessage={
-            loadingState === LoadingState.succeeded ? 'no tags found' : ''
-          }
+          emptyMessage={loadingState === LoadingState.succeeded ? 'no tags found' : ''}
           listRef={listRef}
         />
       </View>

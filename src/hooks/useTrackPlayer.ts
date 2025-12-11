@@ -20,10 +20,7 @@ type TrackPlayerHook = {
  */
 export function useTrackPlayer(): TrackPlayerHook {
   const tracksState = useAppSelector(state => state.tracks)
-  const selectedTrack = getSelectedTrack(
-    tracksState.tagTracks,
-    tracksState.selectedPart,
-  )
+  const selectedTrack = getSelectedTrack(tracksState.tagTracks, tracksState.selectedPart)
 
   const player = useAudioPlayer(null, { downloadFirst: true })
   const status = useAudioPlayerStatus(player)
@@ -95,9 +92,7 @@ export function useTrackPlayer(): TrackPlayerHook {
     } catch (e) {
       console.error('[TrackPlayer] Playback error:', e)
       setLoading(false)
-      const errorMsg = `Playback error: ${
-        e instanceof Error ? e.message : 'Unknown error'
-      }`
+      const errorMsg = `Playback error: ${e instanceof Error ? e.message : 'Unknown error'}`
       setError(errorMsg)
     }
   }
@@ -112,18 +107,13 @@ export function useTrackPlayer(): TrackPlayerHook {
     } catch (e) {
       console.error('[TrackPlayer] Error setting track URL:', e)
       setLoading(false)
-      const errorMsg = `Failed to load track: ${
-        e instanceof Error ? e.message : 'Unknown error'
-      }`
+      const errorMsg = `Failed to load track: ${e instanceof Error ? e.message : 'Unknown error'}`
       setError(errorMsg)
     }
   }
 
   const playOrPause = () => {
-    console.log(
-      '[TrackPlayer] playOrPause called, selectedTrack:',
-      selectedTrack,
-    )
+    console.log('[TrackPlayer] playOrPause called, selectedTrack:', selectedTrack)
 
     if (!selectedTrack) {
       console.warn('[TrackPlayer] no track selected')
@@ -150,9 +140,7 @@ export function useTrackPlayer(): TrackPlayerHook {
     } catch (e) {
       console.error('[TrackPlayer] Pause error:', e)
       setLoading(false)
-      const errorMsg = `Pause error: ${
-        e instanceof Error ? e.message : 'Unknown error'
-      }`
+      const errorMsg = `Pause error: ${e instanceof Error ? e.message : 'Unknown error'}`
       setError(errorMsg)
     }
   }

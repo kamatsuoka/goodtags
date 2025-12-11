@@ -21,9 +21,7 @@ export const LabeledScreen = () => {
   const { paddingLeft, paddingRight } = useBodyInsets()
   const [fabOpen, setFabOpen] = useState(false)
   const selectedLabel = useAppSelector(state => state.favorites.selectedLabel)
-  const labeledSortOrder = useAppSelector(
-    state => state.favorites.labeledSortOrder,
-  )
+  const labeledSortOrder = useAppSelector(state => state.favorites.labeledSortOrder)
   const dispatch = useAppDispatch()
   const listRef = useRef<FlashListRef<number> | null>(null)
   const fabStyleSheet = useFabDownStyle()
@@ -39,8 +37,7 @@ export const LabeledScreen = () => {
   const order = labeledSortOrder
   const otherOrder = order === SortOrder.alpha ? SortOrder.id : SortOrder.alpha
 
-  const iconLabel =
-    order === SortOrder.id ? 'sort alphabetically' : 'sort by id'
+  const iconLabel = order === SortOrder.id ? 'sort alphabetically' : 'sort by id'
 
   const fabActions = [
     {
@@ -71,11 +68,7 @@ export const LabeledScreen = () => {
         setFabOpen={setFabOpen}
       />
       <View style={[CommonStyles.listContainer, listContainerPadding]}>
-        <TagList
-          listRef={listRef}
-          emptyMessage={emptyMessage}
-          tagListType={selectedLabel || ''}
-        />
+        <TagList listRef={listRef} emptyMessage={emptyMessage} tagListType={selectedLabel || ''} />
       </View>
       <FABDown
         open={fabOpen}

@@ -5,20 +5,14 @@ import { RootState } from '@app/store'
 import { ActionCreatorWithPayload, createSelector } from '@reduxjs/toolkit'
 import { ClassicActions, selectClassic } from './classicSlice'
 import { EasyActions, selectEasy } from './easySlice'
-import {
-  FavoritesActions,
-  selectFavorites,
-  selectLabelState,
-} from './favoritesSlice'
+import { FavoritesActions, selectFavorites, selectLabelState } from './favoritesSlice'
 import { HistoryActions, selectHistory } from './historySlice'
 import { NewActions, selectNew } from './newSlice'
 import { PopularActions, selectPopular } from './popularSlice'
 import { SearchActions, selectSearchResults } from './searchSlice'
 import { isLabelType, TagListEnum, TagListState, TagListType } from './tagLists'
 
-export function getTagListSelector(
-  tagListType: TagListType,
-): (state: RootState) => TagListState {
+export function getTagListSelector(tagListType: TagListType): (state: RootState) => TagListState {
   switch (tagListType) {
     case TagListEnum.Favorites:
       return selectFavorites
@@ -55,12 +49,8 @@ function getLabeledTagListSelector(label: string) {
 
 export const makeSelectTagState = () =>
   createSelector(
-    [
-      (state: RootState) => state,
-      (_: RootState, tagListType: TagListType) => tagListType,
-    ],
-    (state: RootState, tagListType: TagListType) =>
-      getTagListSelector(tagListType)(state),
+    [(state: RootState) => state, (_: RootState, tagListType: TagListType) => tagListType],
+    (state: RootState, tagListType: TagListType) => getTagListSelector(tagListType)(state),
   )
 
 export type SelectedTag = {

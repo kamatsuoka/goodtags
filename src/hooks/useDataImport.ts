@@ -36,16 +36,13 @@ export function useDataImport() {
 
       if (pickerResult?.uri) {
         try {
-          const importPayload = await dispatch(
-            receiveSharedFile(pickerResult.uri),
-          )
+          const importPayload = await dispatch(receiveSharedFile(pickerResult.uri))
           const importResult = importPayload.payload
           console.log(`importResult:`, importResult)
 
           if (importPayload.type.endsWith('/rejected')) {
             // Handle rejection
-            const errorMessage =
-              typeof importResult === 'string' ? importResult : 'import failed'
+            const errorMessage = typeof importResult === 'string' ? importResult : 'import failed'
             return { message: errorMessage, showSnackBar: true }
           } else if (typeof importResult === 'string') {
             return { message: importResult, showSnackBar: true }
