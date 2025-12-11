@@ -48,9 +48,9 @@ echo -e "${GREEN}========================================${NC}"
 if [ "$SKIP_BUMP" = false ]; then
   echo -e "\n${YELLOW}Step 1: Bumping build number...${NC}"
   if [ -n "$VERSION_BUMP" ]; then
-    node "$SCRIPT_DIR/bump-ios-build.js" "$VERSION_BUMP"
+    node "$SCRIPT_DIR/bump-ios-versions.js" "$VERSION_BUMP"
   else
-    node "$SCRIPT_DIR/bump-ios-build.js"
+    node "$SCRIPT_DIR/bump-ios-versions.js"
   fi
 else
   echo -e "\n${YELLOW}Step 1: Skipping build number bump${NC}"

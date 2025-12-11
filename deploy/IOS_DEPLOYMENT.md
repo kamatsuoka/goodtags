@@ -23,7 +23,7 @@ This will:
 ### 1. Bump Build Number Only
 
 ```bash
-yarn bump-ios-build
+yarn bump-ios-versions
 ```
 
 Increments `CURRENT_PROJECT_VERSION` (e.g., 104 → 105)
@@ -50,10 +50,10 @@ This updates both:
 
 ```bash
 # Deploy with version bump
-./scripts/deploy-ios.sh --bump patch
+./deploy/deploy-ios.sh --bump patch
 
 # Deploy without bumping build number
-./scripts/deploy-ios.sh --skip-bump
+./deploy/deploy-ios.sh --skip-bump
 ```
 
 ## Setup for Automatic Upload

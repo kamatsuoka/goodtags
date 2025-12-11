@@ -20,7 +20,7 @@ yarn deploy:android
 
 ## 📱 Platform-Specific Guides
 
-- **[iOS Deployment](./DEPLOYMENT.md)** - Detailed iOS App Store deployment instructions
+- **[iOS Deployment](./IOS_DEPLOYMENT.md)** - Detailed iOS App Store deployment instructions
 - **[Android Deployment](./ANDROID_DEPLOYMENT.md)** - Detailed Google Play deployment instructions
 
 ## 📋 Available Commands
@@ -32,8 +32,8 @@ yarn deploy:android
 | `yarn bump-ios-version patch` | Bump patch version (4.0.1 → 4.0.2) for BOTH platforms |
 | `yarn bump-ios-version minor` | Bump minor version (4.0.1 → 4.1.0) for BOTH platforms |
 | `yarn bump-ios-version major` | Bump major version (4.0.1 → 5.0.0) for BOTH platforms |
-| `yarn bump-ios-build` | Bump iOS build number only |
-| `yarn bump-android-build` | Bump Android version code only |
+| `yarn bump-ios-versions` | Bump iOS build number only |
+| `yarn bump-android-version` | Bump Android version code only |
 
 ### iOS Commands
 

@@ -52,9 +52,9 @@ echo -e "${GREEN}========================================${NC}"
 if [ "$SKIP_BUMP" = false ]; then
   echo -e "\n${YELLOW}Step 1: Bumping version code...${NC}"
   if [ -n "$VERSION_BUMP" ]; then
-    node "$SCRIPT_DIR/bump-android-build.js" "$VERSION_BUMP"
+    node "$SCRIPT_DIR/bump-android-version.js" "$VERSION_BUMP"
   else
-    node "$SCRIPT_DIR/bump-android-build.js"
+    node "$SCRIPT_DIR/bump-android-version.js"
   fi
 else
   echo -e "\n${YELLOW}Step 1: Skipping version code bump${NC}"

@@ -21,7 +21,7 @@ This will:
 ### 1. Bump Version Code Only
 
 ```bash
-yarn bump-android-build
+yarn bump-android-version
 ```
 
 Increments `versionCode` in `android/app/build.gradle` (e.g., 1 → 2)
@@ -48,13 +48,13 @@ This updates:
 
 ```bash
 # Deploy with version bump
-./scripts/deploy-android.sh --bump patch
+./deploy/deploy-android.sh --bump patch
 
 # Deploy without bumping version code
-./scripts/deploy-android.sh --skip-bump
+./deploy/deploy-android.sh --skip-bump
 
 # Build APK instead of AAB (for testing)
-./scripts/deploy-android.sh --apk
+./deploy/deploy-android.sh --apk
 ```
 
 ## 🔐 Setup: Release Signing (Required for Production)
