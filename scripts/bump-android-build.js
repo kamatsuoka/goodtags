@@ -39,22 +39,6 @@ if (versionBump) {
     'utf8',
   )
   console.log(`✓ Updated package.json version to ${newVersion}`)
-
-  // Also update iOS
-  const projectPbxprojPath = path.join(
-    rootDir,
-    'ios/goodtags.xcodeproj/project.pbxproj',
-  )
-  if (fs.existsSync(projectPbxprojPath)) {
-    let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8')
-    const marketingRegex = /MARKETING_VERSION = [^;]+;/g
-    projectContent = projectContent.replace(
-      marketingRegex,
-      `MARKETING_VERSION = ${newVersion};`,
-    )
-    fs.writeFileSync(projectPbxprojPath, projectContent, 'utf8')
-    console.log(`✓ Updated iOS MARKETING_VERSION to ${newVersion}`)
-  }
 }
 
 // Read current versionCode
