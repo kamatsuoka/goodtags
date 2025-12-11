@@ -7,15 +7,17 @@ module.exports = {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|redux-persist|react-redux|@reduxjs/toolkit|fast-xml-parser|html-entities|lodash|axios)',
+    [
+      'node_modules/(?!((jest-)?react-native|@react-native(-community)?)',
+      '|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*',
+      '|react-navigation|@react-navigation/.*',
+      '|@unimodules/.*|unimodules|sentry-expo',
+      '|redux-persist|react-redux|@reduxjs/toolkit',
+      '|fast-xml-parser|html-entities|lodash|axios)',
+    ].join(''),
   ],
-  setupFiles: [
-    '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js',
-  ],
-  setupFilesAfterEnv: [
-    '<rootDir>/src/setupTests.ts',
-    '@testing-library/jest-native/extend-expect',
-  ],
+  setupFiles: ['<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts', '@testing-library/jest-native/extend-expect'],
   testPathIgnorePatterns: ['<rootDir>/e2e', '/node_modules/'],
   moduleNameMapper: {
     '^@app/(.*)$': '<rootDir>/src/$1',

@@ -19,7 +19,7 @@ const LOCAL_SQL_PATH = path.join(OUT_DIR, TAGS_DB_NAME)
 async function downloadLatestSearchDb() {
   try {
     const manifestContents = await fetchRemoteManifest()
-    // TODO - Should we put the DB md5sum in the manifest and use that to validate the DB (for both checking
+    // TODO - Should we put DB md5sum in manifest and use that to validate DB (for both checking
     //  existing and downloading new)?
     if (shouldDownload(manifestContents)) {
       console.log('Downloading remote database...')
@@ -34,10 +34,7 @@ async function downloadLatestSearchDb() {
 async function assertResponseOk(response: Response): Promise<Response> {
   if (!response.ok) {
     throw new Error(
-      'Request failed. status: ' +
-        response.status +
-        ', body: ' +
-        (await response.text()),
+      'Request failed. status: ' + response.status + ', body: ' + (await response.text()),
     )
   }
 
@@ -45,49 +42,43 @@ async function assertResponseOk(response: Response): Promise<Response> {
 }
 
 /**
- * Downloads the current manifest and returns its contents
+ * Downloads current manifest and returns its contents
  */
 async function fetchRemoteManifest(): Promise<Uint8Array> {
-  const response = await fetch(
-    `${REMOTE_ASSET_BASE_URL}/${path.basename(MANIFEST_PATH)}`,
-    {
-      method: 'GET',
-    },
-  ).then(assertResponseOk)
+  const response = await fetch(`${REMOTE_ASSET_BASE_URL}/${path.basename(MANIFEST_PATH)}`, {
+    method: 'GET',
+  }).then(assertResponseOk)
 
   return new Uint8Array(await response.arrayBuffer())
 }
 
 /**
- * Checks whether we should download the full database and write out both the manifest and database to disk.
+ * Checks whether we should download full database and write out both manifest and database to disk.
  *
- * Specifically compares the downloaded manifest contents against what's on disk (if anything), and also looks
- * to see if the database file exists.
+ * Specifically compares downloaded manifest contents against what's on disk (if anything),
+ * and also looks to see if database file exists.
  */
 function shouldDownload(remoteManifestContents: Uint8Array): boolean {
   const existingManifestContents = fs.existsSync(MANIFEST_PATH)
     ? fs.readFileSync(MANIFEST_PATH)
     : Buffer.from([])
-  const manifestsDiffer = !existingManifestContents.equals(
-    remoteManifestContents,
-  )
+  const manifestsDiffer = !existingManifestContents.equals(remoteManifestContents)
   const dbMissing = !fs.existsSync(LOCAL_SQL_PATH)
   return manifestsDiffer || dbMissing
 }
 
 /**
- * Downloads the DB and writes both the manifest and DB to disk
+ * Downloads DB and writes both manifest and DB to disk
  */
 async function downloadDb(remoteManifestContents: Uint8Array) {
   fs.mkdirSync(OUT_DIR, { recursive: true })
 
-  const remoteManifest: DbManifest = JSON.parse(
-    new TextDecoder().decode(remoteManifestContents),
-  )
+  const remoteManifest: DbManifest = JSON.parse(new TextDecoder().decode(remoteManifestContents))
   const remoteSqlName = remoteManifest.db_name_by_version[VALID_SCHEMA_VERSION]
   if (remoteSqlName == null) {
     throw new Error(
-      `Unable to find remote SQL database with expected schema version of ${VALID_SCHEMA_VERSION}. Options:\n` +
+      `Unable to find remote SQL database with expected schema version` +
+        ` of ${VALID_SCHEMA_VERSION}. Options:\n` +
         JSON.stringify(remoteManifest.db_name_by_version),
     )
   }
@@ -115,7 +106,7 @@ async function downloadDb(remoteManifestContents: Uint8Array) {
     }
   }
 
-  // Only write out the manifest once we're done downloading the DB
+  // Only write out manifest once we're done downloading DB
   fs.writeFileSync(MANIFEST_PATH, remoteManifestContents)
 }
 

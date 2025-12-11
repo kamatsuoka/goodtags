@@ -95,6 +95,7 @@ bundle exec pod install # Install iOS native dependencies
 
 ## Comments & Commit Messages
 - prefer lowercase for comments and commit messages
+- avoid "the" and "a" unless necessary
 - be concise but descriptive
 
 ## Testing Requirements

@@ -1,5 +1,6 @@
 import parseXml from '../xmlparser'
 
+/* eslint-disable max-len */
 const text = `<?xml version="1.0" encoding="iso-8859-1" ?>
 <tags available="5451" count="3" stamp="2022-11-25 20:25:19">
    <tag index="1">
@@ -166,6 +167,7 @@ a star, the unreachable star</Lyrics>
       </videos>
    </tag>
 </tags>`
+/* eslint-enable max-len */
 
 describe('parseXml', () => {
   it('should parse xml', () => {

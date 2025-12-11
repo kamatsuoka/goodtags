@@ -74,9 +74,7 @@ function AppContent() {
             loading={null}
             persistor={persistor}
             onBeforeLift={() => {
-              console.log(
-                '[PersistGate] About to render app - rehydration should be complete',
-              )
+              console.log('[PersistGate] About to render app - rehydration should be complete')
             }}
           >
             <StatusBarController />

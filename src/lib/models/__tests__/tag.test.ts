@@ -9,8 +9,7 @@ const xmlTag: XmlTag = {
   AltTitle: 'In Your Eyes',
   WritKey: 'Minor:G',
   Parts: 4,
-  Lyrics:
-    'And I will wait to face the skies,\never roaming in your eyes.\nThere I go lost in your eyes.',
+  Lyrics: 'And I will wait to face the skies,\never roaming in your eyes.',
   Arranger: 'Soren Wohlers',
   Downloaded: 134646,
   SheetMusicAlt: 'https://www.barbershoptags.com/tags/Lost.jpg',
@@ -71,8 +70,7 @@ describe('tagFromApiXml', () => {
       aka: 'In Your Eyes',
       arranger: 'Soren Wohlers',
       key: 'Minor:G',
-      lyrics:
-        'And I will wait to face the skies,\never roaming in your eyes.\nThere I go lost in your eyes.',
+      lyrics: 'And I will wait to face the skies,\never roaming in your eyes.',
       parts: 4,
       posted: '2011-12-26',
       uri: 'https://www.barbershoptags.com/tags/Lost.jpg',

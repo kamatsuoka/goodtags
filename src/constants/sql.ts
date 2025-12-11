@@ -14,8 +14,9 @@ export const MANIFEST_NAME = 'manifest.json' // Must match `require`s below
 export const SRC_RELATIVE_APP_BUNDLE_DB_DIR = 'assets/generated_db' // Must match `require`s below
 
 /*
- * Putting these here because we need to pass a static string to `require` and I want this duplication between the
- * above variables and the below requires to be as close as possible. Unfortunately it means they're not constants.
+ * Putting these here because we need to pass a static string to `require`
+ * and I want this duplication between above variables and the below requires
+ * to be as close as possible. Unfortunately it means they're not constants.
  */
 export function getReactNativeAppSqlModule(): number {
   return require(`../assets/generated_db/tags_db.sqlite`) // Must match the variables above

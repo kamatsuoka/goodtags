@@ -10,9 +10,7 @@ jest.mock('redux-persist', () => {
   const real = jest.requireActual('redux-persist')
   return {
     ...real,
-    persistReducer: jest
-      .fn()
-      .mockImplementation((_config: any, reducers: any) => reducers),
+    persistReducer: jest.fn().mockImplementation((_config: any, reducers: any) => reducers),
     persistStore: jest.fn().mockReturnValue({
       purge: jest.fn(),
       flush: jest.fn(),

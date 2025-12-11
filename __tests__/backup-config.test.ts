@@ -34,9 +34,7 @@ describe('Backup Configuration', () => {
       )
       const manifest = readFileSync(manifestPath, 'utf8')
 
-      expect(manifest).toContain(
-        'android:fullBackupContent="@xml/backup_rules"',
-      )
+      expect(manifest).toContain('android:fullBackupContent="@xml/backup_rules"')
     })
 
     it('should reference data_extraction_rules.xml for Android 12+', () => {
@@ -51,9 +49,7 @@ describe('Backup Configuration', () => {
       )
       const manifest = readFileSync(manifestPath, 'utf8')
 
-      expect(manifest).toContain(
-        'android:dataExtractionRules="@xml/data_extraction_rules"',
-      )
+      expect(manifest).toContain('android:dataExtractionRules="@xml/data_extraction_rules"')
     })
 
     it('should include SharedPreferences in backup_rules.xml', () => {
@@ -103,9 +99,7 @@ describe('Backup Configuration', () => {
         expect(plist).toContain('<key>RCTAsyncStorageExcludeFromBackup</key>')
         // The next line after the key should be <false/>
         const lines = plist.split('\n')
-        const keyIndex = lines.findIndex(line =>
-          line.includes('RCTAsyncStorageExcludeFromBackup'),
-        )
+        const keyIndex = lines.findIndex(line => line.includes('RCTAsyncStorageExcludeFromBackup'))
         expect(lines[keyIndex + 1]).toContain('<false/>')
       }
       // If key doesn't exist, it defaults to false which is correct
