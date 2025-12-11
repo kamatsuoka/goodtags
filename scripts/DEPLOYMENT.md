@@ -23,7 +23,7 @@ This will:
 ### 1. Bump Build Number Only
 
 ```bash
-yarn bump-build
+yarn bump-ios-build
 ```
 
 Increments `CURRENT_PROJECT_VERSION` (e.g., 104 → 105)
@@ -32,13 +32,13 @@ Increments `CURRENT_PROJECT_VERSION` (e.g., 104 → 105)
 
 ```bash
 # Patch version (4.0.1 → 4.0.2)
-yarn bump-version patch
+yarn bump-ios-version patch
 
 # Minor version (4.0.1 → 4.1.0)
-yarn bump-version minor
+yarn bump-ios-version minor
 
 # Major version (4.0.1 → 5.0.0)
-yarn bump-version major
+yarn bump-ios-version major
 ```
 
 This updates both:
@@ -135,7 +135,7 @@ If the automated upload fails, the script will provide the IPA location for manu
 
 ```bash
 # 1. Bump to new version (e.g., 4.0.1 → 4.0.2)
-yarn bump-version patch
+yarn bump-ios-version patch
 
 # 2. Deploy (build number will be auto-incremented)
 yarn deploy:ios

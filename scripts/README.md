@@ -29,10 +29,10 @@ yarn deploy:android
 
 | Command | Description |
 |---------|-------------|
-| `yarn bump-version patch` | Bump patch version (4.0.1 → 4.0.2) for BOTH platforms |
-| `yarn bump-version minor` | Bump minor version (4.0.1 → 4.1.0) for BOTH platforms |
-| `yarn bump-version major` | Bump major version (4.0.1 → 5.0.0) for BOTH platforms |
-| `yarn bump-build` | Bump iOS build number only |
+| `yarn bump-ios-version patch` | Bump patch version (4.0.1 → 4.0.2) for BOTH platforms |
+| `yarn bump-ios-version minor` | Bump minor version (4.0.1 → 4.1.0) for BOTH platforms |
+| `yarn bump-ios-version major` | Bump major version (4.0.1 → 5.0.0) for BOTH platforms |
+| `yarn bump-ios-build` | Bump iOS build number only |
 | `yarn bump-android-build` | Bump Android version code only |
 
 ### iOS Commands
@@ -59,7 +59,7 @@ yarn deploy:android
 
 ```bash
 # 1. Bump version (updates package.json, iOS, and Android)
-yarn bump-version patch  # or minor/major
+yarn bump-ios-version patch  # or minor/major
 
 # 2. Deploy to iOS
 yarn deploy:ios
