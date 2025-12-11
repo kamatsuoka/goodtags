@@ -18,43 +18,15 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Parse arguments
-SKIP_BUMP=false
-VERSION_BUMP=""
-
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    --skip-bump)
-      SKIP_BUMP=true
-      shift
-      ;;
-    --bump)
-      VERSION_BUMP="$2"
-      shift 2
-      ;;
-    *)
-      echo -e "${RED}Unknown option: $1${NC}"
-      echo "Usage: $0 [--skip-bump] [--bump patch|minor|major]"
-      exit 1
-      ;;
-  esac
-done
+# No arguments needed - always bumps build number
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}iOS App Store Deployment${NC}"
 echo -e "${GREEN}========================================${NC}"
 
-# Step 1: Bump build number (and optionally version)
-if [ "$SKIP_BUMP" = false ]; then
-  echo -e "\n${YELLOW}Step 1: Bumping build number...${NC}"
-  if [ -n "$VERSION_BUMP" ]; then
-    node "$SCRIPT_DIR/bump-ios-versions.js" "$VERSION_BUMP"
-  else
-    node "$SCRIPT_DIR/bump-ios-versions.js"
-  fi
-else
-  echo -e "\n${YELLOW}Step 1: Skipping build number bump${NC}"
-fi
+# Step 1: Bump iOS project version (always)
+echo -e "\n${YELLOW}Step 1: Bumping iOS project version...${NC}"
+node "$SCRIPT_DIR/bump-ios-versions.js"
 
 # Step 2: Clean previous builds
 echo -e "\n${YELLOW}Step 2: Cleaning previous builds...${NC}"

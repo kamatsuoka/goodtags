@@ -29,55 +29,51 @@ yarn deploy:android
 
 | Command | Description |
 |---------|-------------|
-| `yarn bump-ios-version patch` | Bump patch version (4.0.1 → 4.0.2) for BOTH platforms |
-| `yarn bump-ios-version minor` | Bump minor version (4.0.1 → 4.1.0) for BOTH platforms |
-| `yarn bump-ios-version major` | Bump major version (4.0.1 → 5.0.0) for BOTH platforms |
-| `yarn bump-ios-versions` | Bump iOS build number only |
-| `yarn bump-android-version` | Bump Android version code only |
+| `yarn bump-package-version patch` | Bump patch version in package.json (4.0.1 → 4.0.2) |
+| `yarn bump-package-version minor` | Bump minor version in package.json (4.0.1 → 4.1.0) |
+| `yarn bump-package-version major` | Bump major version in package.json (4.0.1 → 5.0.0) |
+| `yarn bump-ios-version` | Sync version from package.json + bump iOS build number |
+| `yarn bump-android-version` | Bump Android version code |
 
 ### iOS Commands
 
 | Command | Description |
 |---------|-------------|
-| `yarn deploy:ios` | Full iOS deployment (bump + build + upload) |
-| `yarn deploy:ios --skip-bump` | Deploy without bumping build number |
-| `yarn deploy:ios --bump patch` | Deploy with version bump |
+| `yarn deploy:ios` | Full iOS deployment (auto-bumps build + uploads) |
 
 ### Android Commands
 
 | Command | Description |
 |---------|-------------|
-| `yarn deploy:android` | Full Android deployment (bump + build AAB) |
-| `yarn deploy:android --skip-bump` | Deploy without bumping version code |
-| `yarn deploy:android --bump patch` | Deploy with version bump |
-| `yarn deploy:android --apk` | Build APK instead of AAB (for testing) |
+| `yarn deploy:android` | Full Android deployment (auto-bumps versionCode + builds AAB) |
+| `./deploy/deploy-android.sh --apk` | Build APK instead of AAB (for testing) |
 | `yarn setup:android-signing` | Set up release signing (first-time setup) |
 
 ## 🔄 Typical Workflows
 
-### Release New Version to Both Platforms
-
-```bash
-# 1. Bump version (updates package.json, iOS, and Android)
-yarn bump-ios-version patch  # or minor/major
-
-# 2. Deploy to iOS
-yarn deploy:ios
-
-# 3. Deploy to Android
-yarn deploy:android
-```
-
-### Release Build Number Update Only
+### Regular Deployment (Most Common)
 
 **iOS:**
 ```bash
-yarn deploy:ios  # Auto-increments build number
+yarn deploy:ios  # Auto-bumps build number and uploads
 ```
 
 **Android:**
 ```bash
-yarn deploy:android  # Auto-increments version code
+yarn deploy:android  # Auto-bumps versionCode and builds AAB
+```
+
+### Release New Marketing Version
+
+```bash
+# 1. Bump marketing version in package.json
+yarn bump-package-version patch  # or minor/major
+
+# 2. Deploy to iOS (syncs version from package.json)
+yarn deploy:ios
+
+# 3. Deploy to Android
+yarn deploy:android
 ```
 
 ### Testing Locally

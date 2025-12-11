@@ -18,44 +18,48 @@ This will:
 
 ## Available Scripts
 
-### 1. Bump Version Code Only
+### 1. Deploy to Play Store (Recommended)
+
+```bash
+yarn deploy:android
+```
+
+This automatically:
+- Bumps `versionCode` in build.gradle
+- Builds the release AAB
+- Provides upload instructions
+
+### 2. Build APK for Testing
+
+```bash
+./deploy/deploy-android.sh --apk
+```
+
+Builds an APK instead of AAB, useful for local testing.
+
+### 3. Bump Package Version (Infrequent)
+
+```bash
+# Patch version (4.0.1 → 4.0.2)
+yarn bump-package-version patch
+
+# Minor version (4.0.1 → 4.1.0)
+yarn bump-package-version minor
+
+# Major version (4.0.1 → 5.0.0)
+yarn bump-package-version major
+```
+
+This only updates `package.json` version.
+
+### 4. Manually Bump Android Version (Rare)
 
 ```bash
 yarn bump-android-version
 ```
 
-Increments `versionCode` in `android/app/build.gradle` (e.g., 1 → 2)
-
-### 2. Bump Version and Version Code
-
-```bash
-# Patch version (4.0.1 → 4.0.2)
-yarn bump-android-version patch
-
-# Minor version (4.0.1 → 4.1.0)
-yarn bump-android-version minor
-
-# Major version (4.0.1 → 5.0.0)
-yarn bump-android-version major
-```
-
-This updates:
-- `package.json` version
-- `android/app/build.gradle` versionCode
-- `ios/goodtags.xcodeproj/project.pbxproj` MARKETING_VERSION (for consistency)
-
-### 3. Deploy with Custom Options
-
-```bash
-# Deploy with version bump
-./deploy/deploy-android.sh --bump patch
-
-# Deploy without bumping version code
-./deploy/deploy-android.sh --skip-bump
-
-# Build APK instead of AAB (for testing)
-./deploy/deploy-android.sh --apk
-```
+This bumps the versionCode.
+Normally you don't need this since `deploy:android` does it automatically.
 
 ## 🔐 Setup: Release Signing (Required for Production)
 
@@ -200,17 +204,20 @@ See: https://github.com/Triple-T/gradle-play-publisher
 
 ## 🚀 Workflow Examples
 
-### Regular Release
+### Regular Release (Most Common)
 
 ```bash
-# Bump patch version (4.0.1 → 4.0.2) and build
-yarn deploy:android --bump patch
+# Auto-increments versionCode and builds
+yarn deploy:android
 ```
 
-### Build Without Version Change
+### New Marketing Version Release
 
 ```bash
-# Just increment versionCode and build
+# 1. Bump package version (4.0.1 → 4.0.2)
+yarn bump-package-version patch
+
+# 2. Build and deploy
 yarn deploy:android
 ```
 
@@ -265,9 +272,11 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 
 ## 📝 What Gets Modified
 
-- `package.json` - version field (only if using `--bump`)
-- `android/app/build.gradle` - versionCode (always incremented)
-- `ios/goodtags.xcodeproj/project.pbxproj` - MARKETING_VERSION (only if using `--bump`, for consistency)
+When running `yarn deploy:android`:
+- `android/app/build.gradle` - versionCode (always auto-incremented)
+
+When running `yarn bump-package-version`:
+- `package.json` - version field (marketing version)
 
 ## 🎯 Tips
 

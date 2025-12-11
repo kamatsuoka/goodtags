@@ -20,41 +20,40 @@ This will:
 
 ## Available Scripts
 
-### 1. Bump Build Number Only
+### 1. Deploy to TestFlight (Recommended)
 
 ```bash
-yarn bump-ios-versions
+yarn deploy:ios
 ```
 
-Increments `CURRENT_PROJECT_VERSION` (e.g., 104 → 105)
+This automatically:
+- Bumps `CURRENT_PROJECT_VERSION` (iOS build number)
+- Syncs `MARKETING_VERSION` from package.json
+- Builds and uploads to TestFlight
 
-### 2. Bump Version and Build Number
+### 2. Bump Package Version (Infrequent)
 
 ```bash
 # Patch version (4.0.1 → 4.0.2)
-yarn bump-ios-version patch
+yarn bump-package-version patch
 
 # Minor version (4.0.1 → 4.1.0)
-yarn bump-ios-version minor
+yarn bump-package-version minor
 
 # Major version (4.0.1 → 5.0.0)
-yarn bump-ios-version major
+yarn bump-package-version major
 ```
 
-This updates both:
-- `package.json` version
-- `MARKETING_VERSION` in project.pbxproj
-- `CURRENT_PROJECT_VERSION` in project.pbxproj
+This only updates `package.json` version.
 
-### 3. Deploy with Custom Options
+### 3. Manually Bump iOS Version (Rare)
 
 ```bash
-# Deploy with version bump
-./deploy/deploy-ios.sh --bump patch
-
-# Deploy without bumping build number
-./deploy/deploy-ios.sh --skip-bump
+yarn bump-ios-version
 ```
+
+This syncs the marketing version from package.json to iOS and bumps the build number.
+Normally you don't need this since `deploy:ios` does it automatically.
 
 ## Setup for Automatic Upload
 
@@ -131,22 +130,26 @@ If the automated upload fails, the script will provide the IPA location for manu
 
 ## Workflow Example
 
-### Releasing a New Patch Version
+### Regular Build (Most Common)
 
 ```bash
-# 1. Bump to new version (e.g., 4.0.1 → 4.0.2)
-yarn bump-ios-version patch
-
-# 2. Deploy (build number will be auto-incremented)
+# Deploy with auto-incremented build number
 yarn deploy:ios
 ```
 
-### Releasing Without Version Change
+This is what you'll do most of the time - it bumps the iOS build number and uploads to TestFlight.
+
+### Releasing a New Marketing Version
 
 ```bash
-# Just deploy with incremented build number
+# 1. Bump marketing version in package.json (e.g., 4.0.1 → 4.0.2)
+yarn bump-package-version patch
+
+# 2. Deploy (build number bumped, version synced from package.json)
 yarn deploy:ios
 ```
+
+Do this when you want to change the public-facing version number.
 
 ## What Gets Modified
 

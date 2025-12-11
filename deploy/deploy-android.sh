@@ -18,27 +18,17 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Parse arguments
-SKIP_BUMP=false
-VERSION_BUMP=""
 BUILD_TYPE="bundle"  # bundle (AAB) or apk
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --skip-bump)
-      SKIP_BUMP=true
-      shift
-      ;;
-    --bump)
-      VERSION_BUMP="$2"
-      shift 2
-      ;;
     --apk)
       BUILD_TYPE="apk"
       shift
       ;;
     *)
       echo -e "${RED}Unknown option: $1${NC}"
-      echo "Usage: $0 [--skip-bump] [--bump patch|minor|major] [--apk]"
+      echo "Usage: $0 [--apk]"
       exit 1
       ;;
   esac
@@ -48,17 +38,9 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Android Play Store Deployment${NC}"
 echo -e "${GREEN}========================================${NC}"
 
-# Step 1: Bump version code (and optionally version)
-if [ "$SKIP_BUMP" = false ]; then
-  echo -e "\n${YELLOW}Step 1: Bumping version code...${NC}"
-  if [ -n "$VERSION_BUMP" ]; then
-    node "$SCRIPT_DIR/bump-android-version.js" "$VERSION_BUMP"
-  else
-    node "$SCRIPT_DIR/bump-android-version.js"
-  fi
-else
-  echo -e "\n${YELLOW}Step 1: Skipping version code bump${NC}"
-fi
+# Step 1: Bump version code (always)
+echo -e "\n${YELLOW}Step 1: Bumping version code...${NC}"
+node "$SCRIPT_DIR/bump-android-version.js"
 
 # Step 2: Clean previous builds
 echo -e "\n${YELLOW}Step 2: Cleaning previous builds...${NC}"
