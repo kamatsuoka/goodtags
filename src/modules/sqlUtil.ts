@@ -22,7 +22,7 @@ export interface InnerDb {
 type ReplaceDbCallback = () => Promise<InnerDb>
 
 /**
- * Point of this class is to give access to underlying database while also allowing
+ * This class gives access to underlying database while also allowing
  * it to be safely replaced on fly. In particular, just writing to file might cause
  * corrupted reads if a query is ongoing simultaneously (which could be possible because
  * both queries and writing are async and can therefore give up control), and just moving
