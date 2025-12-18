@@ -87,3 +87,4 @@ keystore.properties
 # screenshots
 /screenshots/
 /artifacts/
+ios.sim.release.*/
