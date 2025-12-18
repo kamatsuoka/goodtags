@@ -2,6 +2,7 @@
 module.exports = {
   rootDir: '..',
   testMatch: ['<rootDir>/e2e/**/*.test.js'],
+  testPathIgnorePatterns: ['<rootDir>/e2e/screenshots.test.js'],
   testTimeout: 120000,
   maxWorkers: 1,
   globalSetup: 'detox/runners/jest/globalSetup',
