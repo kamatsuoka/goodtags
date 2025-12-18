@@ -83,3 +83,7 @@ web-build/
 *.aab
 *.ab
 keystore.properties
+
+# screenshots
+/screenshots/
+/artifacts/

@@ -52,6 +52,7 @@ export default function WelcomeScreen(props: Props) {
           }}
           icon="arrow-right"
           iconColor={theme.colors.onPrimary}
+          size={34}
           testID="welcome_forward_button"
         />
       </View>

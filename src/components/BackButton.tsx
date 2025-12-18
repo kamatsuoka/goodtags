@@ -27,7 +27,7 @@ export default function BackButton({
       style={styles.button}
       mode="contained"
       onPress={() => (onBack ? onBack() : navigation.goBack())}
-      testID="logo_button"
+      testID="back_button"
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     />
   )

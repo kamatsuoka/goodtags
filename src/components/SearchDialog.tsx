@@ -115,6 +115,7 @@ export default function SearchDialog(props: Props) {
         }}
         spellCheck={false}
         style={staticStyles.searchBar}
+        testID="search_input"
       />
       <Pressable onPress={Keyboard.dismiss}>
         <View style={staticStyles.searchOptions}>

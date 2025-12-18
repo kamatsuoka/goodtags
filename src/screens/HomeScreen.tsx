@@ -107,7 +107,7 @@ export default function HomeScreen({ navigation }: HomeNavigatorScreenProps<'Hom
             style={listStyles.listItem}
             titleStyle={theme.fonts.bodyLarge}
             contentStyle={styles.listItemContent}
-            testID={testID}
+            testID={testID || title}
           />
         </Pressable>
       )

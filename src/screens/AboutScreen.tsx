@@ -25,12 +25,12 @@ export default function AboutScreen({ navigation }: Props) {
   return (
     <View style={styles.container} testID="about_screen">
       <AboutWithCredits />
-      <View style={styles.iconHolder}>
+      <View style={styles.iconHolder} testID="about_back_button">
         <IconButton
           onPress={navigation.goBack}
           icon="arrow-left"
           iconColor={theme.colors.onPrimary}
-          size={26}
+          size={34}
         />
       </View>
     </View>
