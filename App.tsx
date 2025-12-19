@@ -12,7 +12,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider as ReactReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
-LogBox.ignoreLogs(['shouldStartLoad']) // react-native-webview for raster (non-pdf) sheet music
+LogBox.ignoreLogs([/Reduced motion setting is enabled on this device/])
 
 // Configure audio mode once for the entire app
 setAudioModeAsync({ playsInSilentMode: true })

@@ -24,6 +24,7 @@ class MainApplication : Application(), ReactApplication {
         // add(MyReactNativePackage())
         add(StatusBarPackage())
       },
+    )
   }
 
   override fun onCreate() {
