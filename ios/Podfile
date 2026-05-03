@@ -45,5 +45,15 @@ target 'goodtags' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # fmt 11's consteval usage is broken on Apple Clang in Xcode 26+. Compile
+    # only the fmt pod with c++17 so FMT_USE_CONSTEVAL stays 0 via fmt's own
+    # FMT_CPLUSPLUS guard, without affecting any other target.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'fmt'
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+      end
+    end
   end
 end

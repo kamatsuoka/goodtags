@@ -1,5 +1,5 @@
 import UIKit
-import Expo
+internal import Expo
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
@@ -21,7 +21,6 @@ class AppDelegate: ExpoAppDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
-    bindReactNativeFactory(factory)
 
     window = UIWindow(frame: UIScreen.main.bounds)
 

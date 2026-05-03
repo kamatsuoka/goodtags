@@ -88,3 +88,6 @@ keystore.properties
 /screenshots/
 /artifacts/
 ios.sim.release.*/
+
+# claude
+.claude/
