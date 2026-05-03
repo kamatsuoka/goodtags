@@ -336,7 +336,7 @@ export const refreshFavorite = createAsyncThunk<Tag | undefined, number, ThunkAp
       const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
       const { tags } = convertedTags
       return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
-    } catch (e) {
+    } catch {
       return thunkAPI.rejectWithValue(`Unable to download tag with id ${id}`)
     }
   },
