@@ -4,6 +4,11 @@ import 'react-native-gesture-handler/jestSetup'
 // Extend expect (added also via jest.config but harmless)
 import '@testing-library/jest-native/extend-expect'
 
+// Render children immediately so PersistGate never triggers async state updates in tests.
+jest.mock('redux-persist/integration/react', () => ({
+  PersistGate: ({ children }: { children: any }) => children,
+}))
+
 // Mock redux-persist so `persistReducer` doesn't require native storage at module load.
 jest.mock('redux-persist', () => {
   const real = jest.requireActual('redux-persist')
@@ -22,6 +27,8 @@ jest.mock('redux-persist', () => {
 
 // Mock only the modules we directly rely on that are problematic in Node.
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'))
+
+jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'))
 
 // Expo module mocks (enough for tests using sqlUtil etc.)
 jest.mock('expo-asset', () => ({
