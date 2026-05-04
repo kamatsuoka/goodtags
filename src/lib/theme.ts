@@ -93,7 +93,7 @@ const customFontSizes = {
   labelSmall: { fontSize: 13 },
   bodyLarge: { fontSize: 18 },
   bodyMedium: { fontSize: 16 },
-  bodySmall: { fontSize: 14 },
+  bodySmall: { fontSize: 13 },
 }
 export const MainTheme = {
   ...CombinedTheme,

@@ -30,7 +30,7 @@ const TagListItem = React.memo((props: Props) => {
       <>
         <Text
           style={[
-            theme.fonts.labelSmall,
+            theme.fonts.bodySmall,
             {
               color: theme.colors.outline,
             },
@@ -76,7 +76,7 @@ const TagListItem = React.memo((props: Props) => {
             <Text
               numberOfLines={1}
               style={[
-                theme.fonts.labelSmall,
+                theme.fonts.bodySmall,
                 {
                   color: theme.colors.secondary,
                 },
@@ -91,7 +91,7 @@ const TagListItem = React.memo((props: Props) => {
           <View style={styles.metadataLeft}>
             <Text
               numberOfLines={1}
-              style={[theme.fonts.labelSmall, { color: theme.colors.secondary }]}
+              style={[theme.fonts.bodySmall, { color: theme.colors.secondary }]}
             >
               {arranger(tag)}
               &nbsp;
