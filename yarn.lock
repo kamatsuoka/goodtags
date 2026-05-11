@@ -2711,18 +2711,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/async-storage@npm:^1.12.1":
-  version: 1.12.1
-  resolution: "@react-native-community/async-storage@npm:1.12.1"
-  dependencies:
-    deep-assign: "npm:^3.0.0"
-  peerDependencies:
-    react: ^16.8
-    react-native: ">=0.59"
-  checksum: 10/a4549c930e47fc1cbdb5c45fe6ca4d8487ecd94ce17c76109ed710845ba42f21e78653ecea142dbedfd9e4687995237a9e1585d7400ed8fd5efe0d0c4f2a017e
-  languageName: node
-  linkType: hard
-
 "@react-native-community/cli-clean@npm:20.0.0":
   version: 20.0.0
   resolution: "@react-native-community/cli-clean@npm:20.0.0"
@@ -5353,15 +5341,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deep-assign@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "deep-assign@npm:3.0.0"
-  dependencies:
-    is-obj: "npm:^1.0.0"
-  checksum: 10/9041ccc72ae1980f014d4b745d6135d8f0e71d60ac433397550789c27e6b4d14bc0de2af69777e09f97e1d0da3007a8d78de36f7bf9df931c9968b68fc9546ab
-  languageName: node
-  linkType: hard
-
 "deep-is@npm:^0.1.3":
   version: 0.1.4
   resolution: "deep-is@npm:0.1.4"
@@ -7018,7 +6997,6 @@ __metadata:
     "@babel/runtime": "npm:^7.25.0"
     "@gorhom/bottom-sheet": "npm:^5.2.7"
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
-    "@react-native-community/async-storage": "npm:^1.12.1"
     "@react-native-community/cli": "npm:20.0.0"
     "@react-native-community/cli-platform-android": "npm:20.0.0"
     "@react-native-community/cli-platform-ios": "npm:20.0.0"
@@ -7664,13 +7642,6 @@ __metadata:
   version: 7.0.0
   resolution: "is-number@npm:7.0.0"
   checksum: 10/6a6c3383f68afa1e05b286af866017c78f1226d43ac8cb064e115ff9ed85eb33f5c4f7216c96a71e4dfea289ef52c5da3aef5bbfade8ffe47a0465d70c0c8e86
-  languageName: node
-  linkType: hard
-
-"is-obj@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "is-obj@npm:1.0.1"
-  checksum: 10/3ccf0efdea12951e0b9c784e2b00e77e87b2f8bd30b42a498548a8afcc11b3287342a2030c308e473e93a7a19c9ea7854c99a8832a476591c727df2a9c79796c
   languageName: node
   linkType: hard
 
