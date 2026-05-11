@@ -91,6 +91,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           icon="plus"
           onPress={() => navigation.navigate('CreateLabel', {})}
           style={styles.actionButton}
+          labelStyle={theme.fonts.bodyLarge}
         >
           new label
         </Button>
@@ -99,6 +100,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           icon="pencil-outline"
           onPress={() => navigation.navigate('LabelEditor')}
           style={styles.actionButton}
+          labelStyle={theme.fonts.bodyLarge}
           disabled={labels.length === 0}
         >
           edit labels

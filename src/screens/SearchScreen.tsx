@@ -135,7 +135,7 @@ const SearchScreen = () => {
             onPress={() => setSearchMenuVisible(true)}
             style={styles.compactSearchBar}
             labelStyle={[
-              theme.fonts.titleMedium,
+              theme.fonts.bodyLarge,
               styles.compactSearchLabel,
               { color: theme.colors.secondary },
             ]}
@@ -188,7 +188,7 @@ const SearchScreen = () => {
           }}
           style={styles.compactSearchBar}
           labelStyle={[
-            theme.fonts.titleMedium,
+            theme.fonts.bodyLarge,
             styles.compactSearchLabel,
             { color: theme.colors.secondary },
           ]}

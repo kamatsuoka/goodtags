@@ -46,6 +46,7 @@ const LabelSelector = (props: {
 }
 
 const TagLabels = () => {
+  const theme = useTheme()
   const tagListType = useAppSelector(state => state.visit.tagListType)
   const tag = useSelectedTag(tagListType)
   const labels = useAppSelector(state => state.favorites.labels)
@@ -82,6 +83,7 @@ const TagLabels = () => {
         mode="contained-tonal"
         onPress={() => navigation.navigate('CreateLabel', { tag })}
         style={styles.createButton}
+        labelStyle={theme.fonts.bodyLarge}
       >
         new label
       </Button>

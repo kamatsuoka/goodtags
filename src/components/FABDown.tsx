@@ -242,7 +242,7 @@ export const FABDown = ({
           {actions.map((it, i) => {
             const labelTextStyle = {
               color: it.labelTextColor ?? labelColor,
-              ...theme.fonts.titleMedium,
+              ...theme.fonts.bodyLarge,
             }
             const marginHorizontal = typeof it.size === 'undefined' || it.size === 'small' ? 24 : 16
             const accessLabel = it.label
@@ -281,7 +281,7 @@ export const FABDown = ({
                         ] as StyleProp<ViewStyle>
                       }
                     >
-                      <Text variant="titleMedium" style={[labelTextStyle, it.labelStyle]}>
+                      <Text variant="bodyLarge" style={[labelTextStyle, it.labelStyle]}>
                         {it.label}
                       </Text>
                     </Card>
