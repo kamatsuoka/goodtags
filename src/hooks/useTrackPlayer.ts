@@ -28,39 +28,35 @@ export function useTrackPlayer(): TrackPlayerHook {
   const [error, setError] = useState<string | null>(null)
   const [trackUrlState, setTrackUrlState] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [trackFinished, setTrackFinished] = useState(false)
 
   // show loading when we've manually initiated loading.
   // status.isBuffering is unreliable on iOS
   const isLoading = loading && !playing && !error
 
-  // clear loading when playing starts or error occurs
+  // clear loading and finished state when playing starts or error occurs
   useEffect(() => {
-    if (playing || error) {
+    if (playing) {
+      setLoading(false)
+      setTrackFinished(false)
+    } else if (error) {
       setLoading(false)
     }
   }, [playing, error])
-
-  // clear loading when track is loaded
-  useEffect(() => {
-    if (status.isLoaded && !status.isBuffering) {
-      setLoading(false)
-    }
-  }, [status.isLoaded, status.isBuffering])
 
   useEffect(() => {
     if (status.isLoaded || playing) {
       setError(null)
     }
-  }, [status.isLoaded, status.isBuffering, playing, selectedTrack?.url, status])
+  }, [status.isLoaded, playing])
 
-  // allow replaying track after it ends
+  // detect track end using didJustFinish (cross-platform) or NaN currentTime (iOS fallback)
   useEffect(() => {
-    // note: status.duration not provided by expo-audio, but currentTime becomes NaN when track ends
-    if (status.isLoaded && !status.playing && isNaN(status.currentTime)) {
-      console.log('[TrackPlayer] Track finished, seeking to start')
-      player.seekTo(0)
+    if (status.isLoaded && !status.playing && (status.didJustFinish || isNaN(status.currentTime))) {
+      console.log('[TrackPlayer] Track finished')
+      setTrackFinished(true)
     }
-  }, [status.isLoaded, status.playing, status.currentTime, player])
+  }, [status.isLoaded, status.playing, status.currentTime, status.didJustFinish])
 
   const trackPlayOrPause = () => {
     console.log('[TrackPlayer] trackPlayOrPause called, playing:', playing)
@@ -76,7 +72,13 @@ export function useTrackPlayer(): TrackPlayerHook {
         console.log('[TrackPlayer] Pausing playback')
         player.pause()
         setLoading(false)
-      } else if (!status.isLoaded || trackUrlState !== selectedTrack.url) {
+      } else if (
+        !status.isLoaded ||
+        trackUrlState !== selectedTrack.url ||
+        trackFinished ||
+        status.didJustFinish ||
+        isNaN(status.currentTime)
+      ) {
         console.log('[TrackPlayer] Loading track on play:', selectedTrack.url)
         setError(null)
         setLoading(true)
@@ -102,6 +104,7 @@ export function useTrackPlayer(): TrackPlayerHook {
     try {
       setError(null)
       setLoading(true)
+      setTrackUrlState(url)
       player.replace(url)
       player.play()
     } catch (e) {
