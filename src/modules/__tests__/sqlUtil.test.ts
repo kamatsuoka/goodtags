@@ -17,7 +17,7 @@ class TestSqliteDatabase implements InnerDb {
     return []
   }
 
-  closeAsync() {}
+  async closeAsync() {}
 }
 
 /** Wait a little bit for promises to reach a steady state */

@@ -17,7 +17,7 @@ import * as SQLite from 'expo-sqlite'
 export interface InnerDb {
   withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
-  closeAsync: () => void
+  closeAsync: () => Promise<void>
 }
 type ReplaceDbCallback = () => Promise<InnerDb>
 
@@ -94,7 +94,7 @@ export class DbWrapper {
       const replaceDbCallback = this.pendingReplaceDbCallback
       // This allows others to wait until replacement is done
       this.replaceDbInProgress = (async () => {
-        this.db.closeAsync()
+        await this.db.closeAsync()
         this.db = await replaceDbCallback()
         this.pendingReplaceDbCallback = null
         this.replaceDbInProgress = null
