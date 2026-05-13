@@ -1,10 +1,11 @@
+import { Text } from '@app/components/Text'
 import { useAppDispatch, useAppSelector } from '@app/hooks'
 import { TrackPart } from '@app/lib/models/Tag'
 import { setSelectedPart } from '@app/modules/tracksSlice'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Divider, Menu, Text, useTheme } from 'react-native-paper'
+import { Divider, Menu, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type TrackMenuProps = {

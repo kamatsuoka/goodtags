@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import CommonStyles from '@app/constants/CommonStyles'
 import { useAppDispatch, useAppSelector, useTagListState } from '@app/hooks'
 import Tag from '@app/lib/models/Tag'
@@ -10,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { RefObject, useCallback, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Text, useTheme } from 'react-native-paper'
+import { useTheme } from 'react-native-paper'
 import TagListItem from './TagListItem'
 
 export type TagListProps = {

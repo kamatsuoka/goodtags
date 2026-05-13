@@ -1,3 +1,4 @@
+import { MAX_FONT_SIZE_MULTIPLIER } from '@app/components/Text'
 import { useAppDispatch, useAppSelector, useHorizontalInset } from '@app/hooks'
 import { useSelectedTag } from '@app/hooks/useSelectedTag'
 import Tag from '@app/lib/models/Tag'
@@ -84,6 +85,7 @@ const TagLabels = () => {
         onPress={() => navigation.navigate('CreateLabel', { tag })}
         style={styles.createButton}
         labelStyle={theme.fonts.bodyLarge}
+        maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
       >
         new label
       </Button>

@@ -1,5 +1,6 @@
+import { Text } from '@app/components/Text'
 import { Linking, StyleSheet, TextStyle, View, ViewStyle } from 'react-native'
-import { Button, Text, useTheme } from 'react-native-paper'
+import { Button, useTheme } from 'react-native-paper'
 import AboutBase from './AboutBase'
 
 type LinkButtonParams = {

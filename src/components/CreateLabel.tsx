@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import { useAppDispatch, useAppSelector } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { RootStackParamList } from '@app/navigation/navigationParams'
@@ -5,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Text, TextInput, useTheme } from 'react-native-paper'
+import { TextInput, useTheme } from 'react-native-paper'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateLabel'>
 

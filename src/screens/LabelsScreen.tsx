@@ -1,3 +1,4 @@
+import { MAX_FONT_SIZE_MULTIPLIER } from '@app/components/Text'
 import homeIcon from '@app/components/homeIcon'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
@@ -70,6 +71,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
                       right={RightIcon}
                       style={listStyles.listItem}
                       titleStyle={theme.fonts.bodyLarge}
+                      titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                     />
                   </Pressable>
                   {index === labels.length - 1 ? null : <Divider />}
@@ -79,6 +81,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
               <List.Item
                 title="no labels yet"
                 titleStyle={styles.emptyText}
+                titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                 style={listStyles.listItem}
               />
             )}
@@ -92,8 +95,9 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           onPress={() => navigation.navigate('CreateLabel', {})}
           style={styles.actionButton}
           labelStyle={theme.fonts.bodyLarge}
+          maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
         >
-          new label
+          new
         </Button>
         <Button
           mode="outlined"
@@ -101,9 +105,10 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           onPress={() => navigation.navigate('LabelEditor')}
           style={styles.actionButton}
           labelStyle={theme.fonts.bodyLarge}
+          maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           disabled={labels.length === 0}
         >
-          edit labels
+          edit
         </Button>
       </View>
     </View>

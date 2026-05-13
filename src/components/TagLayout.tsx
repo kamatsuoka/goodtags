@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import CommonStyles, { SMALL_ICON_SIZE } from '@app/constants/CommonStyles'
 import {
   noteForKey,
@@ -23,7 +24,7 @@ import { useNavigation } from '@react-navigation/native'
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorValue, View } from 'react-native'
-import { ActivityIndicator, IconButton, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
+import { ActivityIndicator, IconButton, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'

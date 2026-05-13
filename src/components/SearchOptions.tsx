@@ -1,7 +1,8 @@
+import { Text } from '@app/components/Text'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { ComponentProps } from 'react'
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
-import { Divider, MD3TypescaleKey, Surface, Text, useTheme } from 'react-native-paper'
+import { Divider, MD3TypescaleKey, Surface, useTheme } from 'react-native-paper'
 
 type Props = {
   title: string
@@ -13,6 +14,7 @@ type Props = {
   children: React.ReactNode
   infoButton?: React.ReactNode
   titleStyle?: StyleProp<ViewStyle>
+  maxFontSizeMultiplier?: number
 }
 
 /**
@@ -28,6 +30,7 @@ const SearchOptions = ({
   children,
   infoButton,
   titleStyle,
+  maxFontSizeMultiplier,
 }: Props) => {
   const theme = useTheme()
 
@@ -37,7 +40,12 @@ const SearchOptions = ({
         <View style={rightStyle}>
           <Icon name={icon} size={iconSize || 24} color={iconColor || theme.colors.primary} />
         </View>
-        <Text style={styles.title} numberOfLines={1} variant={titleVariant}>
+        <Text
+          style={styles.title}
+          numberOfLines={1}
+          variant={titleVariant}
+          maxFontSizeMultiplier={maxFontSizeMultiplier}
+        >
           {title}
         </Text>
         {infoButton}
@@ -61,10 +69,11 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   title: {
+    flex: 1,
     paddingLeft: 8,
   },
   optionsContainer: {
-    minWidth: 120,
+    minWidth: 150,
     paddingTop: 10,
     paddingBottom: 5,
   },

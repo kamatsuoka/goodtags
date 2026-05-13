@@ -1,6 +1,7 @@
 import homeIcon from '@app/components/homeIcon'
 import Logo from '@app/components/Logo'
 import SharedHeader, { BackType } from '@app/components/SharedHeader'
+import { MAX_FONT_SIZE_MULTIPLIER } from '@app/components/Text'
 import { useAppDispatch, useAppSelector, useBodyInsets, useWindowShape } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
 import { receiveSharedFile } from '@app/modules/favoritesSlice'
@@ -14,7 +15,7 @@ import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const LOGO_SIZE = 26
+const LOGO_SIZE = 32
 const logoTitle = <Logo size={LOGO_SIZE} dark={false} />
 
 type HomeItemProps = {
@@ -106,6 +107,7 @@ export default function HomeScreen({ navigation }: HomeNavigatorScreenProps<'Hom
             right={RightIcon}
             style={listStyles.listItem}
             titleStyle={theme.fonts.bodyLarge}
+            titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
             contentStyle={styles.listItemContent}
             testID={testID || title}
           />

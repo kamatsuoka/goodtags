@@ -1,3 +1,4 @@
+import { MAX_FONT_SIZE_MULTIPLIER } from '@app/components/Text'
 import CommonStyles from '@app/constants/CommonStyles'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { TabBarBackground } from '@app/lib/theme'
@@ -62,6 +63,8 @@ export default function OptionsScreen() {
           left={renderSerifsCheckbox}
           title="serifs"
           titleStyle={styles.listItemTitle}
+          titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+          descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           description="use serif fonts"
           onPress={toggleSerifs}
         />
@@ -69,6 +72,8 @@ export default function OptionsScreen() {
           left={renderStatusBarCheckbox}
           title="show status bar"
           titleStyle={styles.listItemTitle}
+          titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+          descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           description="show the system status bar"
           onPress={toggleStatusBar}
         />
@@ -76,6 +81,8 @@ export default function OptionsScreen() {
           left={renderKeepAwakeCheckbox}
           title="keep screen awake"
           titleStyle={styles.listItemTitle}
+          titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+          descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           description="prevent screen from sleeping while viewing tags"
           descriptionNumberOfLines={2}
           onPress={toggleKeepAwake}

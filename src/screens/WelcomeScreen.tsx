@@ -1,4 +1,5 @@
 import AboutBase from '@app/components/AboutBase'
+import { Text } from '@app/components/Text'
 import { useAppDispatch } from '@app/hooks'
 import { getPopularTags } from '@app/modules/popularSlice'
 import { setLastVisited } from '@app/modules/visitSlice'
@@ -6,7 +7,7 @@ import { RootStackParamList } from '@app/navigation/navigationParams'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { IconButton, Text, useTheme } from 'react-native-paper'
+import { IconButton, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>

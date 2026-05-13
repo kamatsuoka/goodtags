@@ -1,5 +1,5 @@
+import { Text } from '@app/components/Text'
 import { StyleProp, StyleSheet, TextStyle } from 'react-native'
-import { Text } from 'react-native-paper'
 
 type TagIdProps = {
   id: number

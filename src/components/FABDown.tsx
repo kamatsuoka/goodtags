@@ -11,7 +11,8 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import { Card, FAB, Text } from 'react-native-paper'
+import { Text } from '@app/components/Text'
+import { Card, FAB } from 'react-native-paper'
 import { getFABGroupColors } from 'react-native-paper/lib/module/components/FAB/utils'
 import { IconSource } from 'react-native-paper/lib/module/components/Icon'
 import { MD3Theme } from 'react-native-paper/lib/typescript/types'

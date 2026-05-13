@@ -14,7 +14,7 @@ export const useListStyles = () => {
       marginVertical: 5,
     },
     listItem: {
-      height: 56,
+      minHeight: 56,
       flexDirection: 'row',
       paddingHorizontal: 10,
       paddingVertical: 4,

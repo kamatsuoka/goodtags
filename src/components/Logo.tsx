@@ -22,7 +22,7 @@ const Logo = (props: Props) => {
   })
   return (
     <View style={props.style}>
-      <Text key="logo.2" style={styles.logo}>
+      <Text key="logo.2" style={styles.logo} allowFontScaling={false}>
         goodtags
       </Text>
     </View>

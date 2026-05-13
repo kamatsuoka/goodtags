@@ -1,10 +1,11 @@
+import { Text } from '@app/components/Text'
 import { HEADER_BUTTON_SIZE } from '@app/constants/CommonStyles'
 import { useHeaderHeight } from '@app/hooks'
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import { FlashListRef } from '@shopify/flash-list'
 import React, { ComponentProps, useMemo } from 'react'
-import { Platform, Pressable, StyleSheet, View } from 'react-native'
-import { Text, useTheme } from 'react-native-paper'
+import { Pressable, StyleSheet, View } from 'react-native'
+import { useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from './BackButton'
 import homeIcon from './homeIcon'
@@ -51,7 +52,6 @@ export default function SharedHeader({
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
   const theme = useTheme()
-  const ios = Platform.OS === 'ios'
 
   const headerDynamicStyles = useMemo(
     () => ({
@@ -67,10 +67,9 @@ export default function SharedHeader({
 
   const centerDynamicStyles = useMemo(
     () => ({
-      marginBottom: ios ? 6 : 10,
       ...headerCenterStyle,
     }),
-    [ios, headerCenterStyle],
+    [headerCenterStyle],
   )
 
   const scrollToTop = () => {
@@ -146,7 +145,7 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center',
     height: HEADER_BUTTON_SIZE,
   },

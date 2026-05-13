@@ -1,4 +1,5 @@
 import homeIcon from '@app/components/homeIcon'
+import { MAX_FONT_SIZE_MULTIPLIER, Text } from '@app/components/Text'
 import {
   clearPdfCache,
   useAppSelector,
@@ -11,7 +12,7 @@ import { shareFavorites } from '@app/modules/favoritesSlice'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
-import { Divider, List, Portal, Snackbar, Text, useTheme } from 'react-native-paper'
+import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 /**
@@ -104,6 +105,7 @@ export default function DataScreen() {
                   right={RightIcon}
                   style={listStyles.listItem}
                   titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                 />
               </Pressable>
               <Divider />
@@ -123,6 +125,7 @@ export default function DataScreen() {
                   right={RightIcon}
                   style={listStyles.listItem}
                   titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                 />
               </Pressable>
             </View>
@@ -160,6 +163,7 @@ export default function DataScreen() {
                   right={RightIcon}
                   style={listStyles.listItem}
                   titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                   disabled={clearingCache}
                 />
               </Pressable>
@@ -183,6 +187,7 @@ export default function DataScreen() {
                   right={RightIcon}
                   style={listStyles.listItem}
                   titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                 />
               </Pressable>
             </View>

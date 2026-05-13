@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import Tag, { SearchResult } from '@app/lib/models/Tag'
 import { TagListType } from '@app/modules/tagLists'
 import { isFavoriteOrLabel } from '@app/modules/tagListUtil'
@@ -5,7 +6,7 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Pressable } from 'react-native-gesture-handler'
-import { Text, useTheme } from 'react-native-paper'
+import { useTheme } from 'react-native-paper'
 import TagId from './TagId'
 import { arranger } from './tagInfo'
 

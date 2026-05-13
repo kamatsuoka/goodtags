@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import { Collection, Parts } from '@app/constants/Search'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { SearchFilters, newSearch, selectSearchResults } from '@app/modules/searchSlice'
@@ -11,7 +12,6 @@ import {
   Portal,
   RadioButton,
   Searchbar,
-  Text,
   useTheme,
 } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -22,6 +22,8 @@ type Props = {
   filters: SearchFilters
   dismiss: () => void
 }
+
+const SEARCH_MAX_FONT = 1.3
 
 const staticStyles = StyleSheet.create({
   searchOptions: {
@@ -97,6 +99,7 @@ export default function SearchDialog(props: Props) {
         autoFocus={true}
         icon={existingSearchResults ? 'chevron-left' : () => null}
         inputStyle={staticStyles.searchInput}
+        maxFontSizeMultiplier={SEARCH_MAX_FONT}
         multiline={false}
         numberOfLines={1}
         onChangeText={setDraftQuery}
@@ -119,7 +122,11 @@ export default function SearchDialog(props: Props) {
       />
       <Pressable onPress={Keyboard.dismiss}>
         <View style={staticStyles.searchOptions}>
-          <SearchOptions title="collection" icon="playlist-music-outline">
+          <SearchOptions
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            title="collection"
+            icon="playlist-music-outline"
+          >
             <RadioButton.Group
               onValueChange={value =>
                 setDraftFilters({
@@ -135,6 +142,7 @@ export default function SearchDialog(props: Props) {
                     <RadioButton.Item
                       label={value.toLowerCase()}
                       labelStyle={staticStyles.optionText}
+                      labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
                       position="leading"
                       style={staticStyles.checkboxItem}
                       value={value}
@@ -144,39 +152,11 @@ export default function SearchDialog(props: Props) {
               })}
             </RadioButton.Group>
           </SearchOptions>
-          <SearchOptions title="media" icon="music-clef-treble">
-            <View style={staticStyles.optionsContainer}>
-              <Checkbox.Item
-                label="sheet music"
-                labelStyle={staticStyles.optionText}
-                style={staticStyles.checkboxItem}
-                position="leading"
-                status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  setDraftFilters({
-                    ...draftFilters,
-                    sheetMusic: !draftFilters.sheetMusic,
-                  })
-                }
-              />
-            </View>
-            <View style={staticStyles.optionsContainer}>
-              <Checkbox.Item
-                label="tracks"
-                labelStyle={staticStyles.optionText}
-                style={staticStyles.checkboxItem}
-                position="leading"
-                status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  setDraftFilters({
-                    ...draftFilters,
-                    learningTracks: !draftFilters.learningTracks,
-                  })
-                }
-              />
-            </View>
-          </SearchOptions>
-          <SearchOptions title="parts" icon="account-multiple-outline">
+          <SearchOptions
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            title="parts"
+            icon="account-multiple-outline"
+          >
             <RadioButton.Group
               onValueChange={value =>
                 setDraftFilters({
@@ -192,6 +172,7 @@ export default function SearchDialog(props: Props) {
                     <RadioButton.Item
                       label={value.toLowerCase()}
                       labelStyle={staticStyles.optionText}
+                      labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
                       position="leading"
                       style={staticStyles.checkboxItem}
                       value={value}
@@ -202,6 +183,45 @@ export default function SearchDialog(props: Props) {
             </RadioButton.Group>
           </SearchOptions>
           <SearchOptions
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            title="media"
+            icon="music-clef-treble"
+          >
+            <View style={staticStyles.optionsContainer}>
+              <Checkbox.Item
+                label="sheet music"
+                labelStyle={staticStyles.optionText}
+                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
+                style={staticStyles.checkboxItem}
+                position="leading"
+                status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
+                onPress={() =>
+                  setDraftFilters({
+                    ...draftFilters,
+                    sheetMusic: !draftFilters.sheetMusic,
+                  })
+                }
+              />
+            </View>
+            <View style={staticStyles.optionsContainer}>
+              <Checkbox.Item
+                label="tracks"
+                labelStyle={staticStyles.optionText}
+                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
+                style={staticStyles.checkboxItem}
+                position="leading"
+                status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
+                onPress={() =>
+                  setDraftFilters({
+                    ...draftFilters,
+                    learningTracks: !draftFilters.learningTracks,
+                  })
+                }
+              />
+            </View>
+          </SearchOptions>
+          <SearchOptions
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
             title="offline"
             icon="cog-outline"
             infoButton=<IconButton
@@ -218,6 +238,7 @@ export default function SearchDialog(props: Props) {
               <Checkbox.Item
                 label="enabled"
                 labelStyle={staticStyles.optionText}
+                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
                 style={staticStyles.checkboxItem}
                 position="leading"
                 status={draftFilters.offline ? 'checked' : 'unchecked'}

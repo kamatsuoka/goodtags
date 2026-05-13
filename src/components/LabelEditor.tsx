@@ -1,3 +1,4 @@
+import { Text } from '@app/components/Text'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { useMemo, useState } from 'react'
@@ -7,7 +8,7 @@ import {
   NestableScrollContainer,
   RenderItemParams,
 } from 'react-native-draggable-flatlist'
-import { IconButton, Text, TextInput, useTheme } from 'react-native-paper'
+import { IconButton, TextInput, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ITEM_HEIGHT = 60

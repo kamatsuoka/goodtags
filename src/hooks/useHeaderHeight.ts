@@ -9,6 +9,6 @@ export function useHeaderHeight() {
   const { landscape } = useWindowShape()
 
   const top = Math.max(landscape ? 0 : 30, useSafeAreaInsets().top)
-  const topFactor = 0.6
+  const topFactor = 0.7
   return HEADER_HEIGHT + Math.round(top * topFactor)
 }

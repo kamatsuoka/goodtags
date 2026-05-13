@@ -1,10 +1,11 @@
+import { Text } from '@app/components/Text'
 import { useWindowShape } from '@app/hooks/useWindowShape'
 import Tag from '@app/lib/models/Tag'
 import { TagListType } from '@app/modules/tagLists'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React, { useMemo } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
-import { Divider, Text, useTheme } from 'react-native-paper'
+import { Divider, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { arranger } from './tagInfo'
 

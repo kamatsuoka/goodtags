@@ -1,10 +1,11 @@
 import SharedHeader, { BackType } from '@app/components/SharedHeader'
+import { Text } from '@app/components/Text'
 import { useBodyInsets } from '@app/hooks'
 import { useNavigation } from '@react-navigation/native'
 import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
-import { Card, Chip, IconButton, Text, useTheme } from 'react-native-paper'
+import { Card, Chip, IconButton, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface LogEntry {

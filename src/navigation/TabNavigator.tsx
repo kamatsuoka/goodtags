@@ -106,7 +106,7 @@ export default function TabNavigator() {
 
 function tabIcon(name: string) {
   return (props: { focused: boolean; color: string; size: number }) => (
-    <Icon name={name as any} size={props.size} color={props.color} />
+    <Icon name={name as any} size={props.size * 1.3} color={props.color} />
   )
 }
 
