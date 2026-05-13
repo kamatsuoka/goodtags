@@ -160,9 +160,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    alignSelf: 'stretch',
   },
   metadataLeft: {
     flexGrow: 1,
+    flexShrink: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -181,7 +183,8 @@ const styles = StyleSheet.create({
   },
   id: {
     textAlign: 'left',
-    width: 69,
+    minWidth: 69,
+    flexShrink: 0,
   },
   title: {
     overflow: 'hidden',
