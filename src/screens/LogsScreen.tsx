@@ -30,12 +30,18 @@ const originalConsole = {
   debug: console.debug,
 }
 
+// ignore errors from debug bridge
+const FILTERED_MESSAGES = ['Exceeded max retries', 'Error happened from the WebSocket connection']
+
 // intercept console methods
 const interceptConsole = () => {
   const createInterceptor = (type: LogEntry['type']) => {
     return (...args: any[]) => {
       // call original method
       originalConsole[type](...args)
+
+      const message = args.map(arg => String(arg)).join(' ')
+      if (FILTERED_MESSAGES.some(f => message.includes(f))) return
 
       const entry: LogEntry = {
         id: `log-${logIdCounter++}`,
