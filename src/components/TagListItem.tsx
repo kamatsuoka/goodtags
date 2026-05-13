@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   listItem: {
     flex: 1,
     flexDirection: 'row',
-    paddingHorizontal: 0,
+    paddingRight: 8,
     paddingVertical: 2,
     alignItems: 'center',
     justifyContent: 'center',
