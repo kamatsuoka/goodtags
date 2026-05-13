@@ -4,18 +4,8 @@ import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { SearchFilters, newSearch, selectSearchResults } from '@app/modules/searchSlice'
 import { useMemo, useState } from 'react'
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  IconButton,
-  Portal,
-  RadioButton,
-  Searchbar,
-  useTheme,
-} from 'react-native-paper'
+import { Searchbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import SearchOptions from './SearchOptions'
 
 type Props = {
   query: string
@@ -23,44 +13,93 @@ type Props = {
   dismiss: () => void
 }
 
+type PickerOption = { value: string; label: string }
+
+type SegmentedPickerProps =
+  | { value: string; onValueChange: (v: string) => void; options: PickerOption[] }
+  | { values: string[]; onToggle: (v: string) => void; options: PickerOption[] }
+
+function SegmentedPicker(props: SegmentedPickerProps) {
+  const theme = useTheme()
+  const isMulti = 'values' in props
+  return (
+    <View style={[pickerStyles.container, { borderColor: theme.colors.outline }]}>
+      {props.options.map((option, i) => {
+        const selected = isMulti
+          ? props.values.includes(option.value)
+          : option.value === props.value
+        return (
+          <Pressable
+            key={option.value}
+            style={[
+              pickerStyles.button,
+              i !== 0 && [pickerStyles.divider, { borderLeftColor: theme.colors.outline }],
+              selected && { backgroundColor: theme.colors.secondaryContainer },
+            ]}
+            onPress={() =>
+              isMulti ? props.onToggle(option.value) : props.onValueChange(option.value)
+            }
+          >
+            <Text
+              style={[
+                pickerStyles.label,
+                {
+                  color: selected ? theme.colors.onSecondaryContainer : theme.colors.onSurface,
+                },
+              ]}
+              maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            >
+              {option.label}
+            </Text>
+          </Pressable>
+        )
+      })}
+    </View>
+  )
+}
+
+const pickerStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  button: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  label: {
+    fontSize: 15,
+  },
+  divider: {
+    borderLeftWidth: 1,
+  },
+})
+
 const SEARCH_MAX_FONT = 1.3
 
 const staticStyles = StyleSheet.create({
-  searchOptions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    paddingLeft: 20,
-  },
   searchInput: {
     borderWidth: 0,
     borderBottomWidth: 0,
     borderBottomColor: 'transparent',
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  optionText: {
-    marginLeft: 5,
-  },
   searchBar: {
     margin: 10,
   },
-  checkboxItem: {
-    paddingLeft: 0,
-    paddingRight: 5,
-    paddingVertical: 3,
+  filtersContainer: {
+    paddingHorizontal: 10,
   },
-  infoButton: {
-    paddingLeft: 10,
-    marginHorizontal: 5,
+  segmentedSection: {
+    marginBottom: 12,
+    paddingHorizontal: 10,
   },
-  offlineTitle: {
-    padding: 0,
-    paddingLeft: 10,
+  sectionLabel: {
+    paddingLeft: 4,
+    paddingBottom: 6,
   },
 })
 
@@ -73,13 +112,11 @@ export default function SearchDialog(props: Props) {
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
   const allTagIds = useAppSelector(state => selectSearchResults(state).allTagIds)
-  const [modeExplanationDialogVisible, setModeExplanationDialogVisible] = useState(false)
 
   const dynamicStyles = useMemo(
     () =>
       StyleSheet.create({
         container: {
-          // Paddings to handle safe area
           paddingTop: insets.top,
           paddingLeft,
           paddingRight,
@@ -121,158 +158,76 @@ export default function SearchDialog(props: Props) {
         testID="search_input"
       />
       <Pressable onPress={Keyboard.dismiss}>
-        <View style={staticStyles.searchOptions}>
-          <SearchOptions
-            maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            title="collection"
-            icon="playlist-music-outline"
-          >
-            <RadioButton.Group
-              onValueChange={value =>
-                setDraftFilters({
-                  ...draftFilters,
-                  collection: value as Collection,
-                })
-              }
+        <View style={staticStyles.filtersContainer}>
+          <View style={staticStyles.segmentedSection}>
+            <Text
+              variant="labelLarge"
+              style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
+              maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            >
+              collection
+            </Text>
+            <SegmentedPicker
               value={draftFilters.collection}
-            >
-              {Object.values(Collection).map(value => {
-                return (
-                  <View key={`collection_${value}`} style={staticStyles.optionsContainer}>
-                    <RadioButton.Item
-                      label={value.toLowerCase()}
-                      labelStyle={staticStyles.optionText}
-                      labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
-                      position="leading"
-                      style={staticStyles.checkboxItem}
-                      value={value}
-                    />
-                  </View>
-                )
-              })}
-            </RadioButton.Group>
-          </SearchOptions>
-          <SearchOptions
-            maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            title="parts"
-            icon="account-multiple-outline"
-          >
-            <RadioButton.Group
               onValueChange={value =>
-                setDraftFilters({
-                  ...draftFilters,
-                  parts: value as Parts,
-                })
+                setDraftFilters({ ...draftFilters, collection: value as Collection })
               }
-              value={draftFilters.parts || 'any'}
-            >
-              {Object.values(Parts).map(value => {
-                return (
-                  <View key={`parts_${value}`} style={staticStyles.optionsContainer}>
-                    <RadioButton.Item
-                      label={value.toLowerCase()}
-                      labelStyle={staticStyles.optionText}
-                      labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
-                      position="leading"
-                      style={staticStyles.checkboxItem}
-                      value={value}
-                    />
-                  </View>
-                )
-              })}
-            </RadioButton.Group>
-          </SearchOptions>
-          <SearchOptions
-            maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            title="media"
-            icon="music-clef-treble"
-          >
-            <View style={staticStyles.optionsContainer}>
-              <Checkbox.Item
-                label="sheet music"
-                labelStyle={staticStyles.optionText}
-                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
-                style={staticStyles.checkboxItem}
-                position="leading"
-                status={draftFilters.sheetMusic ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  setDraftFilters({
-                    ...draftFilters,
-                    sheetMusic: !draftFilters.sheetMusic,
-                  })
-                }
-              />
-            </View>
-            <View style={staticStyles.optionsContainer}>
-              <Checkbox.Item
-                label="tracks"
-                labelStyle={staticStyles.optionText}
-                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
-                style={staticStyles.checkboxItem}
-                position="leading"
-                status={draftFilters.learningTracks ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  setDraftFilters({
-                    ...draftFilters,
-                    learningTracks: !draftFilters.learningTracks,
-                  })
-                }
-              />
-            </View>
-          </SearchOptions>
-          <SearchOptions
-            maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            title="offline"
-            icon="cog-outline"
-            infoButton=<IconButton
-              style={staticStyles.infoButton}
-              icon="information-outline"
-              onPress={() => {
-                setModeExplanationDialogVisible(true)
-                Keyboard.dismiss()
-              }}
+              options={[
+                { value: Collection.ALL, label: 'all' },
+                { value: Collection.CLASSIC, label: 'classic' },
+                { value: Collection.EASY, label: 'easy' },
+              ]}
             />
-            titleStyle={staticStyles.offlineTitle}
-          >
-            <View style={staticStyles.optionsContainer}>
-              <Checkbox.Item
-                label="enabled"
-                labelStyle={staticStyles.optionText}
-                labelMaxFontSizeMultiplier={SEARCH_MAX_FONT}
-                style={staticStyles.checkboxItem}
-                position="leading"
-                status={draftFilters.offline ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  setDraftFilters({
-                    ...draftFilters,
-                    offline: !draftFilters.offline,
-                  })
-                }
-              />
-            </View>
-          </SearchOptions>
+          </View>
+          <View style={staticStyles.segmentedSection}>
+            <Text
+              variant="labelLarge"
+              style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
+              maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            >
+              parts
+            </Text>
+            <SegmentedPicker
+              value={draftFilters.parts || Parts.any}
+              onValueChange={value => setDraftFilters({ ...draftFilters, parts: value as Parts })}
+              options={[
+                { value: Parts.any, label: 'any' },
+                { value: Parts.four, label: '4' },
+                { value: Parts.five, label: '5' },
+                { value: Parts.six, label: '6' },
+              ]}
+            />
+          </View>
         </View>
       </Pressable>
-      <Portal>
-        <Dialog
-          visible={modeExplanationDialogVisible}
-          onDismiss={() => setModeExplanationDialogVisible(false)}
-          // It's otherwise a *very* round dialog
-          theme={{ ...theme, roundness: 3 }}
-        >
-          <Dialog.Title>Search mode</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The newer offline search is faster but may not show the same results, and results may
-              be slightly less up-to-date. Note this is just for searching; viewing a non-favorited
-              individual tag still requires internet.
-            </Text>
-            <Dialog.Actions>
-              <Button onPress={() => setModeExplanationDialogVisible(false)}>Ok</Button>
-            </Dialog.Actions>
-          </Dialog.Content>
-        </Dialog>
-      </Portal>
+      <View style={staticStyles.filtersContainer}>
+        <View style={staticStyles.segmentedSection}>
+          <Text
+            variant="labelLarge"
+            style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+          >
+            media
+          </Text>
+          <SegmentedPicker
+            values={[
+              ...(draftFilters.sheetMusic ? ['sheetMusic'] : []),
+              ...(draftFilters.learningTracks ? ['learningTracks'] : []),
+            ]}
+            onToggle={value => {
+              if (value === 'sheetMusic') {
+                setDraftFilters({ ...draftFilters, sheetMusic: !draftFilters.sheetMusic })
+              } else {
+                setDraftFilters({ ...draftFilters, learningTracks: !draftFilters.learningTracks })
+              }
+            }}
+            options={[
+              { value: 'sheetMusic', label: 'sheet music' },
+              { value: 'learningTracks', label: 'tracks' },
+            ]}
+          />
+        </View>
+      </View>
     </View>
   )
 }
