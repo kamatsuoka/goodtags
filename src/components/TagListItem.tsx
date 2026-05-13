@@ -104,7 +104,7 @@ const TagListItem = React.memo((props: Props) => {
               styles.id,
               theme.fonts.bodyLarge,
               {
-                color: theme.colors.primary,
+                color: theme.colors.secondary,
               },
             ]}
           />

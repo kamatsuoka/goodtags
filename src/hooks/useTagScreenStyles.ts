@@ -109,6 +109,12 @@ export const useTagScreenStyles = (buttonsDimmed: boolean, fabOpen: boolean) => 
       fontWeight: 'normal',
       marginRight: 7,
     },
+    idHash: {
+      color: theme.colors.onPrimary,
+      fontSize: iPad ? 16 : 14,
+      fontWeight: 'normal',
+      letterSpacing: 3,
+    },
     idHolder: {
       justifyContent: 'flex-start',
       backgroundColor: theme.colors.primary,

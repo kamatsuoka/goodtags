@@ -272,7 +272,10 @@ export const TagLayout = ({
 
   const title = (
     <View style={styles.idHolder}>
-      <Text style={styles.id}># {tag.id}</Text>
+      <Text style={styles.id}>
+        <Text style={styles.idHash}>#</Text>
+        {tag.id}
+      </Text>
     </View>
   )
 
