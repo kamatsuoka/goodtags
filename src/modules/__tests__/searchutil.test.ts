@@ -1,17 +1,10 @@
-import { Collection, Parts, SearchParams, SortOrder } from '@app/constants/Search'
+import { Collection, Parts, SortOrder } from '@app/constants/Search'
 import { SearchState } from '../searchSlice'
-import {
-  buildApiQueryParams,
-  buildSqlParts,
-  buildWhereClause,
-  getSearchParams,
-  isId,
-} from '../searchutil'
+import { buildSqlParts, buildWhereClause, getSearchParams, isId } from '../searchutil'
 import { LoadingState } from '../tagLists'
 
 // Mock dependencies
 jest.mock('@app/modules/sqlUtil')
-jest.mock('../getUrl')
 
 describe('searchutil', () => {
   describe('isId', () => {
@@ -39,7 +32,6 @@ describe('searchutil', () => {
         sheetMusic: false,
         learningTracks: false,
         parts: Parts.any,
-        offline: true,
       },
       error: undefined,
       selectedTag: undefined,
@@ -98,7 +90,6 @@ describe('searchutil', () => {
           sheetMusic: true,
           learningTracks: true,
           parts: Parts.four,
-          offline: true,
         },
       }
 
@@ -110,86 +101,6 @@ describe('searchutil', () => {
       expect(params.requireLearningTracks).toBe(true)
       expect(params.parts).toBe(4)
       expect(params.offset).toBe(10)
-    })
-  })
-
-  describe('buildApiQueryParams', () => {
-    it('builds basic query params', () => {
-      const searchParams: SearchParams = {
-        query: 'test',
-        offset: 0,
-        limit: 33,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.q).toBe('test')
-      expect(result.start).toBe(1) // API uses 1-based indexing
-      expect(result.n).toBe(33)
-    })
-
-    it('handles id search', () => {
-      const searchParams: SearchParams = {
-        id: 12345,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.id).toBe(12345)
-    })
-
-    it('converts collection filter', () => {
-      const searchParams: SearchParams = {
-        collection: Collection.CLASSIC,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.Collection).toBe('classic')
-    })
-
-    it('converts sort order', () => {
-      const searchParams: SearchParams = {
-        sortBy: SortOrder.downloads,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.Sortby).toBe('Downloaded')
-    })
-
-    it('handles sheet music and learning tracks filters', () => {
-      const searchParams: SearchParams = {
-        requireSheetMusic: true,
-        requireLearningTracks: true,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.SheetMusic).toBe('Yes')
-      expect(result.Learning).toBe('Yes')
-    })
-
-    it('omits false boolean filters', () => {
-      const searchParams: SearchParams = {
-        requireSheetMusic: false,
-        requireLearningTracks: false,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.SheetMusic).toBeUndefined()
-      expect(result.Learning).toBeUndefined()
-    })
-
-    it('handles parts filter', () => {
-      const searchParams: SearchParams = {
-        parts: 4,
-      }
-
-      const result = buildApiQueryParams(searchParams)
-
-      expect(result.Parts).toBe(4)
     })
   })
 

@@ -68,10 +68,11 @@ function TracksInfo(props: { tag: Tag }) {
     if (tag.quartetUrl?.startsWith('http')) {
       return (
         <View style={styles.infoItemRow}>
-          <Text style={styles.infoName} numberOfLines={1}>
+          <Text variant="bodyMedium" style={styles.infoName} numberOfLines={1}>
             tracks:{' '}
           </Text>
           <Text
+            variant="bodyMedium"
             style={styles.infoValue}
             numberOfLines={2}
             onPress={() => Linking.openURL(tag.quartetUrl!)}
@@ -91,10 +92,10 @@ const InfoItem = React.memo((props: { infoName: string; infoValue: string | numb
   const { infoName, infoValue } = props
   return (
     <View style={styles.infoItemRow}>
-      <Text style={styles.infoName} numberOfLines={1}>
+      <Text variant="bodyMedium" style={styles.infoName} numberOfLines={1}>
         {infoName}:{' '}
       </Text>
-      <Text style={styles.infoValue} numberOfLines={2}>
+      <Text variant="bodyMedium" style={styles.infoValue} numberOfLines={2}>
         {infoName === 'lyrics' ? truncateLyrics(`${infoValue}`) : infoValue}
       </Text>
     </View>
@@ -137,12 +138,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   infoName: {
-    minWidth: 70,
-    fontSize: 14,
+    minWidth: 120,
     flexShrink: 0,
   },
   infoValue: {
-    fontSize: 15,
     flexShrink: 1,
   },
   link: {

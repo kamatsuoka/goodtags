@@ -4464,12 +4464,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baseline-browser-mapping@npm:^2.10.29":
-  version: 2.10.29
-  resolution: "baseline-browser-mapping@npm:2.10.29"
+"baseline-browser-mapping@npm:^2.10.27":
+  version: 2.10.27
+  resolution: "baseline-browser-mapping@npm:2.10.27"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10/df8fd128168e473abf1ebe3b7d6a9d7fead3a4d76f9f6aa3dce4dd797e5b5a1ecd32b7eb0855c21f6acdb5c48eba9e176a4f93040e47790bb05fe3fccd4ad9d6
+  checksum: 10/4f28c994592d92ab70479f6fb802c219922a72876e20001a39ae0a0d2fef8c86197ebc830c32c23be3a7ee99e5eababf992c0883461ef5af56a075e8c66079ee
   languageName: node
   linkType: hard
 
@@ -7030,7 +7030,7 @@ __metadata:
     axios: "npm:^1.13.2"
     babel-plugin-module-resolver: "npm:^5.0.2"
     babel-preset-expo: "npm:~55.0.8"
-    baseline-browser-mapping: "npm:^2.10.29"
+    baseline-browser-mapping: "npm:^2.10.27"
     detox: "npm:^20.46.0"
     eslint: "npm:^8.19.0"
     eslint-config-prettier: "npm:^10.1.8"

@@ -81,7 +81,7 @@ const HistoryScreen = () => {
       <View style={styles.listContainer}>
         <TagList
           listRef={listRef}
-          emptyMessage="Tags you have viewed will show up here"
+          emptyMessage="tags you have viewed will show up here"
           tagListType={TagListEnum.History}
         />
       </View>

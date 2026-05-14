@@ -106,10 +106,10 @@ export const getClassicTags = createAsyncThunk<SearchResult[] | undefined, boole
     const state = thunkAPI.getState().classic
     if (refresh || state.allTagIds.length === 0) {
       try {
-        const fetchResult = await fetchAndConvertTags(
-          { ...ClassicSearchParams, sortBy: state.sortOrder },
-          false /* useApi */,
-        )
+        const fetchResult = await fetchAndConvertTags({
+          ...ClassicSearchParams,
+          sortBy: state.sortOrder,
+        })
         return fetchResult.tags
       } catch (error) {
         const payload = await handleError(error, `getClassicTags`)

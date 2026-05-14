@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { FlashList, FlashListRef } from '@shopify/flash-list'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
-import { Card, Chip, IconButton, useTheme } from 'react-native-paper'
+import { Card, IconButton, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface LogEntry {
@@ -168,15 +168,14 @@ export default function LogsScreen() {
   }
 
   const renderLogItem = ({ item }: { item: LogEntry }) => (
-    <Card style={[styles.logCard, { backgroundColor: theme.colors.surfaceVariant }]}>
+    <Card
+      style={[
+        styles.logCard,
+        { backgroundColor: theme.colors.surfaceVariant, borderLeftColor: getLogColor(item.type) },
+      ]}
+    >
       <Card.Content style={styles.logContent}>
         <View style={styles.logHeader}>
-          <Chip
-            style={[styles.typeChip, { backgroundColor: getLogColor(item.type) }]}
-            textStyle={[styles.typeChipText, { color: theme.colors.onPrimary }]}
-          >
-            {item.type.toUpperCase()}
-          </Chip>
           <Text style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}>
             {formatTime(item.timestamp)}
           </Text>
@@ -264,6 +263,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     elevation: 2,
     borderRadius: 0,
+    borderLeftWidth: 4,
   },
   logContent: {
     paddingVertical: 8,
@@ -274,14 +274,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 4,
-  },
-  typeChip: {
-    height: 24,
-  },
-  typeChipText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginVertical: 0,
   },
   timestamp: {
     fontSize: 12,

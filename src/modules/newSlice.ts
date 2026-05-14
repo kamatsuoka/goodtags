@@ -100,7 +100,7 @@ export const getNewTags = createAsyncThunk<SearchResult[] | undefined, boolean, 
     const state = thunkAPI.getState().new
     if (refresh || state.allTagIds.length === 0) {
       try {
-        const fetchResult = await fetchAndConvertTags(NewSearchParams, false /* useApi */)
+        const fetchResult = await fetchAndConvertTags(NewSearchParams)
         console.log(`getNewTags fetched ${fetchResult.tags.length} tags`)
         return fetchResult.tags
       } catch (error) {

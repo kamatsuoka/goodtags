@@ -14,7 +14,7 @@ export const refreshTag = createAsyncThunk<
   ThunkApiConfig
 >('tagList/refreshTag', async ({ id, tagListType }, thunkAPI) => {
   try {
-    const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
+    const convertedTags = await fetchAndConvertTags({ id })
     const { tags } = convertedTags
     const tag = tags?.[0]
 

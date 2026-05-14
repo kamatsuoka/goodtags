@@ -5,7 +5,7 @@ import { setSelectedPart } from '@app/modules/tracksSlice'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Divider, Menu, useTheme } from 'react-native-paper'
+import { Menu, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type TrackMenuProps = {
@@ -70,13 +70,9 @@ export default function TrackMenu(props: TrackMenuProps) {
   return (
     <BottomSheetView style={styles.outerContainer}>
       <View style={styles.container}>
-        <Text style={styles.title} variant="titleLarge">
-          Tracks
-        </Text>
-        <Divider bold style={styles.divider} />
         {Object.keys(tagTracks).map(part => (
           <Menu.Item
-            dense
+            // dense
             key={part}
             onPress={() => playPart(part)}
             title={itemTitle(part)}

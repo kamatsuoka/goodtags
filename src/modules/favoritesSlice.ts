@@ -333,7 +333,7 @@ export const refreshFavorite = createAsyncThunk<Tag | undefined, number, ThunkAp
   'favorites/refresh',
   async (id, thunkAPI) => {
     try {
-      const convertedTags = await fetchAndConvertTags({ id }, false /* useApi */)
+      const convertedTags = await fetchAndConvertTags({ id })
       const { tags } = convertedTags
       return tags?.[0] || thunkAPI.rejectWithValue(`Tag ${id} not found`)
     } catch {
@@ -564,8 +564,6 @@ export const receiveSharedFile = createAsyncThunk<ReceivedData, string, ThunkApi
         const favoriteIds = sharedData.favorites.map(f => f.id) || []
         const { tags: favorites } = await fetchAndConvertTags(
           { ids: favoriteIds },
-          false,
-          undefined,
           false, // Don't use transaction to avoid nesting issues
         )
         const receivedLabels = await Promise.all(
@@ -573,8 +571,6 @@ export const receiveSharedFile = createAsyncThunk<ReceivedData, string, ThunkApi
             const tagIds = sharedLabel.tags.map(t => t.id)
             const { tags } = await fetchAndConvertTags(
               { ids: tagIds },
-              false,
-              undefined,
               false, // Don't use transaction to avoid nesting issues
             )
             return { label: sharedLabel.label, tags }

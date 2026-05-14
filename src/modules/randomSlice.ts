@@ -67,10 +67,7 @@ export const getRandomTag = createAsyncThunk<SearchResult, void, ThunkApiConfig>
     try {
       const tagCount = await countTags()
       const randomOffset = Math.max(0, Math.floor(Math.random() * tagCount) - 50)
-      const fetchResult = await fetchAndConvertTags(
-        { ...RandomSearchParams, offset: randomOffset },
-        false /* useApi */,
-      )
+      const fetchResult = await fetchAndConvertTags({ ...RandomSearchParams, offset: randomOffset })
       return fetchResult.tags[0] // Will be undefined if array is empty
     } catch (error) {
       const payload = await handleError(error, 'getRandomTag')

@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   emptyMessage: {
     fontSize: 14,
     paddingTop: 55,
+    paddingHorizontal: 30,
     textAlign: 'center',
   },
   tagListHolder: {

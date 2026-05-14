@@ -1,8 +1,7 @@
 import { Collection, Parts, Search, SearchParams, SortOrder } from '@app/constants/Search'
-import { ConvertedTags, tagsFromApiResponse, tagsFromDbRows } from '@app/lib/models/Tag'
+import { ConvertedTags, tagsFromDbRows } from '@app/lib/models/Tag'
 import { getDbConnection } from '@app/modules/sqlUtil'
 import { toInteger } from 'lodash'
-import getUrl from './getUrl'
 import { SearchState } from './searchSlice'
 
 const idRegex = /^[0-9]+$/
@@ -47,51 +46,9 @@ export function getSearchParams(state: SearchState, start: number): SearchParams
 
 export async function fetchAndConvertTags(
   searchParams: SearchParams,
-  useApi: boolean,
-  baseUrl: string = Search.API_BASE,
   useTransaction: boolean = true,
 ): Promise<ConvertedTags> {
-  if (useApi) {
-    const queryParams = buildApiQueryParams(searchParams)
-    const responseText = await getUrl(baseUrl, { params: queryParams })
-    return tagsFromApiResponse(responseText)
-  } else {
-    return searchDb(searchParams, useTransaction)
-  }
-}
-
-export type ApiQueryParams = {
-  q?: string
-  start?: number
-  id?: number
-  n?: number
-  Collection?: string
-  Sortby?: string
-  SheetMusic?: string
-  Learning?: string
-  Parts?: number
-}
-
-/**
- * kinda like Kotlin's `.apply`/`.let`, useful for transforming maybe null values in arbitrary ways
- */
-function apply<T, R>(value: T | undefined, transformer: (value: T) => R): R | undefined {
-  return value === undefined ? undefined : transformer(value)
-}
-
-export function buildApiQueryParams(searchParams: SearchParams): ApiQueryParams {
-  return {
-    q: searchParams.query,
-    // API uses 1-based indexing
-    start: apply(searchParams.offset, offset => offset + 1),
-    id: searchParams.id,
-    n: searchParams.limit,
-    Collection: apply(searchParams.collection, collection => COLLECTION_PARAMS[collection]),
-    Sortby: apply(searchParams.sortBy, sortBy => SORTBY_PARAMS[sortBy]),
-    SheetMusic: searchParams.requireSheetMusic ? 'Yes' : undefined,
-    Learning: searchParams.requireLearningTracks ? 'Yes' : undefined,
-    Parts: searchParams.parts,
-  }
+  return searchDb(searchParams, useTransaction)
 }
 
 export type DbRow = { [column: string]: any }

@@ -21,7 +21,6 @@ export interface SearchFilters {
   sheetMusic: boolean
   collection: Collection
   parts: Parts
-  offline: boolean
 }
 
 interface Results {
@@ -59,7 +58,6 @@ export const InitialFilters: SearchFilters = {
   sheetMusic: true,
   collection: Collection.ALL,
   parts: Parts.any,
-  offline: true,
 }
 
 const initialResults: Results = {
@@ -147,9 +145,8 @@ function isSearchAction(actionType: string) {
 }
 
 async function fetchTags(state: SearchState, start: number): Promise<SearchPayload> {
-  const useApi = !state.filters.offline
   const searchParams = getSearchParams(state, start)
-  const fetchResult: ConvertedTags = await fetchAndConvertTags(searchParams, useApi)
+  const fetchResult: ConvertedTags = await fetchAndConvertTags(searchParams)
   const available = fetchResult.available
   const tags = fetchResult.tags
   const highestIndex = fetchResult.highestIndex

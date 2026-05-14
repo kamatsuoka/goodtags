@@ -3,12 +3,11 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods"],
   "compilerOptions": {
-    "baseUrl": ".",
     "types": ["jest", "node"],
     "paths": {
-      "@app/*": ["src/*"],
+      "@app/*": ["./src/*"],
       "react-native-paper/lib/module/*": [
-        "node_modules/react-native-paper/lib/typescript/*"
+        "./node_modules/react-native-paper/lib/typescript/*"
       ]
     }
   }

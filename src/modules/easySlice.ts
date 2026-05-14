@@ -106,10 +106,10 @@ export const getEasyTags = createAsyncThunk<SearchResult[] | undefined, boolean,
     const state = thunkAPI.getState().easy
     if (refresh || state.allTagIds.length === 0) {
       try {
-        const fetchResult = await fetchAndConvertTags(
-          { ...EasySearchParams, sortBy: state.sortOrder },
-          false /* useApi */,
-        )
+        const fetchResult = await fetchAndConvertTags({
+          ...EasySearchParams,
+          sortBy: state.sortOrder,
+        })
         return fetchResult.tags
       } catch (error) {
         const payload = await handleError(error, `getEasyTags`)

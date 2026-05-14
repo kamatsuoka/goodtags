@@ -38,7 +38,6 @@ export type AppState = ReturnType<typeof rootReducer>
 // is when the migrations haven't made it out to any users devices yet (e.g. before deployment)
 const MIGRATIONS = {
   0: (state: AppState) => {
-    state.search.filters.offline = true
     return state
   },
 }

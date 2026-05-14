@@ -141,7 +141,7 @@ export const getPopularTags = createAsyncThunk<SearchResult[] | undefined, boole
       outdatedSearchResults(state.tagsById, state.allTagIds)
     ) {
       try {
-        const fetchResult = await fetchAndConvertTags(PopularSearchParams, false /* useApi */)
+        const fetchResult = await fetchAndConvertTags(PopularSearchParams)
         return fetchResult.tags
       } catch (error) {
         const payload = await handleError(error, `getPopularTags`)
