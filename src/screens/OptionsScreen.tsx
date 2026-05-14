@@ -61,29 +61,29 @@ export default function OptionsScreen() {
       <View style={styles.container}>
         <List.Item
           left={renderSerifsCheckbox}
-          title="serifs"
+          title="use serif fonts"
           titleStyle={styles.listItemTitle}
+          descriptionStyle={styles.listItemDescription}
           titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-          description="use serif fonts"
           onPress={toggleSerifs}
         />
         <List.Item
           left={renderStatusBarCheckbox}
-          title="show status bar"
+          title="show system status bar"
           titleStyle={styles.listItemTitle}
+          descriptionStyle={styles.listItemDescription}
           titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-          description="show the system status bar"
           onPress={toggleStatusBar}
         />
         <List.Item
           left={renderKeepAwakeCheckbox}
           title="keep screen awake"
           titleStyle={styles.listItemTitle}
+          descriptionStyle={styles.listItemDescription}
           titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           descriptionMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-          description="prevent screen from sleeping while viewing tags"
           descriptionNumberOfLines={2}
           onPress={toggleKeepAwake}
         />
@@ -106,6 +106,10 @@ const styles = StyleSheet.create({
   },
   listItemTitle: {
     marginVertical: 5,
+    fontSize: 18,
+  },
+  listItemDescription: {
+    fontSize: 15,
   },
   infoIcon: {
     padding: 5,
