@@ -1,0 +1,29 @@
+appId: com.fogcitysingers.goodtags
+---
+- launchApp:
+    clearState: true
+
+# 01 - welcome screen
+- assertVisible:
+    id: welcome_forward_button
+- takeScreenshot: ${SCREENSHOT_DIR}/01-welcome-screen
+
+# 02 - home screen
+- tapOn:
+    id: welcome_forward_button
+- assertVisible:
+    id: home_container
+- takeScreenshot: ${SCREENSHOT_DIR}/02-home-screen
+
+# 03 - popular tags (pre-fetched on welcome screen, so list loads quickly)
+- waitForAnimationToEnd
+- tapOn:
+    id: "popular"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
+
+# 04 - search form
+- tapOn:
+    text: "search, tab, 2 of 4"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04-search-form

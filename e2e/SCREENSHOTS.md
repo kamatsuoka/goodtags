@@ -1,5 +1,58 @@
 # automated screenshot generation
 
+two tools are available: **Maestro** (recommended, iOS + Android) and **Detox** (iOS only, legacy).
+
+---
+
+## Maestro (recommended)
+
+### setup
+
+```bash
+brew install maestro
+```
+
+### usage
+
+```bash
+# ios default device (iPhone 17)
+yarn screenshots:ios
+
+# ios app store sizes
+yarn screenshots:ios:6.5inch   # iphone xs max
+yarn screenshots:ios:13inch    # ipad pro 13"
+
+# android (requires a running emulator or connected device)
+yarn screenshots:android
+
+# all sizes — ios 6.5", ios 13", android
+yarn screenshots:all
+```
+
+### how it works
+
+the flow is defined in [e2e/maestro/screenshots.yaml](maestro/screenshots.yaml). screenshots are saved to `screenshots/[platform]/[size]/[timestamp]/`.
+
+to add or change screenshots, edit that YAML file. available commands: `tapOn`, `assertVisible`, `waitForAnimationToEnd`, `takeScreenshot`. element IDs match `testID` props in the app.
+
+### android setup
+
+start an emulator first:
+```bash
+emulator -avd Pixel_9_API_35   # or whatever avd you have
+```
+then run `yarn screenshots:android`.
+
+### troubleshooting
+
+- **element not found**: run `maestro studio` for an interactive inspector
+- **wrong device**: check available simulators with `xcrun simctl list devices available`
+- **list not loaded**: add a `waitForAnimationToEnd` or `extendedWaitUntil` before the screenshot
+
+---
+
+## Detox (iOS only, legacy)
+
 generate ios app store screenshots automatically using detox e2e tests.
 
 ## setup
@@ -84,13 +137,5 @@ edit `.detoxrc.js` to change simulator/emulator settings or add new device confi
 - verify simulator/emulator is running
 
 **wrong device size:**
-- check simulator name in `.detoxrc.js`
-- ensure correct i is running
-
-**wrong device size:**
 - check device name matches available simulators: `xcrun simctl list devices`
 - update device configurations in [generate-screenshots.sh](../scripts/generate-screenshots.sh)
-
-## note on android
-
-android screenshots require additional detox integration that is not currently implemented. for play store submissions, you can use ios screenshots or capture manually.
