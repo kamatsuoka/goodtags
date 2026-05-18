@@ -22,8 +22,62 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
 
-# 04 - search form
+# 04 - classic tags (tap home tab to pop stack back to home, then navigate)
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "classic"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04-classic-tags
+
+# 05 - easy tags
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "easy"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/05-easy-tags
+
+# 06 - new tags
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "new"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/06-new-tags
+
+# 07 - labels
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "labels"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/07-labels
+
+# 08 - search form
+- tapOn:
+    text: "home, tab, 1 of 4"
 - tapOn:
     text: "search, tab, 2 of 4"
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04-search-form
+- takeScreenshot: ${SCREENSHOT_DIR}/08-search-form
+
+# 09 - search results
+- tapOn:
+    id: search_input
+- inputText: "barbershop"
+- pressKey: Enter
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/09-search-results
+
+# 10 - favorites
+- tapOn:
+    text: "faves, tab, 3 of 4"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/10-favorites
+
+# 11 - history
+- tapOn:
+    text: "history, tab, 4 of 4"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/11-history
