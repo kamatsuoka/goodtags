@@ -31,6 +31,25 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04-sheet-music
 
+# 04a - next tag in popular list (down arrow = index 5)
+- tapOn:
+    id: "icon-button"
+    index: 5
+- extendedWaitUntil:
+    visible:
+      text: "sheet music"
+    timeout: 15000
+- takeScreenshot: ${SCREENSHOT_DIR}/04a-sheet-music-next
+
+# back to original tag (up arrow = index 4, now enabled)
+- tapOn:
+    id: "icon-button"
+    index: 4
+- extendedWaitUntil:
+    visible:
+      text: "sheet music"
+    timeout: 15000
+
 # 04b - tap heart to add to favorites
 - tapOn:
     id: "icon-button"
@@ -146,7 +165,7 @@ appId: com.fogcitysingers.goodtags
 - extendedWaitUntil:
     visible:
       text: "sheet music"
-    timeout: 15000
+    timeout: 10000
 - takeScreenshot: ${SCREENSHOT_DIR}/07b-random-tag
 
 # 07c - shuffled random tag
