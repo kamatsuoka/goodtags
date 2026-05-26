@@ -10,6 +10,7 @@ import LogsScreen from '@app/screens/LogsScreen'
 import RandomScreen from '@app/screens/RandomScreen'
 import TagScreen from '@app/screens/TagScreen'
 import WelcomeScreen from '@app/screens/WelcomeScreen'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { NavigationContainer, Theme as NavigationTheme } from '@react-navigation/native'
 import {
   NativeStackNavigationOptions,
@@ -53,78 +54,80 @@ export default function RootStackNavigator() {
 
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer theme={theme as unknown as NavigationTheme}>
-        <Stack.Navigator
-          initialRouteName={lastVisited ? 'Tabs' : 'Welcome'}
-          screenOptions={screenOptions}
-        >
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="Tabs" component={TabNavigator} options={homeOrientation} />
-          <Stack.Screen name="Tag" component={TagScreen} options={tagOrientation} />
-          <Stack.Screen name="Favorites" component={FavoritesScreen} options={homeOrientation} />
-          <Stack.Screen name="Random" component={RandomScreen} options={tagOrientation} />
-          <Stack.Group
-            screenOptions={{
-              headerShown: true,
-              headerBackVisible: false,
-              headerStyle: {
-                backgroundColor: theme.colors.inversePrimary,
-              },
-              headerTitleStyle: {
-                fontFamily: theme.fonts.titleSmall.fontFamily,
-              },
-              contentStyle: noHorizontalPadding,
-              headerTitleAlign: 'center',
-            }}
+      <BottomSheetModalProvider>
+        <NavigationContainer theme={theme as unknown as NavigationTheme}>
+          <Stack.Navigator
+            initialRouteName={lastVisited ? 'Tabs' : 'Welcome'}
+            screenOptions={screenOptions}
           >
-            <Stack.Screen
-              name="About"
-              component={AboutScreen}
-              options={{
-                headerShown: false,
-                ...homeOrientation,
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Tabs" component={TabNavigator} options={homeOrientation} />
+            <Stack.Screen name="Tag" component={TagScreen} options={tagOrientation} />
+            <Stack.Screen name="Favorites" component={FavoritesScreen} options={homeOrientation} />
+            <Stack.Screen name="Random" component={RandomScreen} options={tagOrientation} />
+            <Stack.Group
+              screenOptions={{
+                headerShown: true,
+                headerBackVisible: false,
+                headerStyle: {
+                  backgroundColor: theme.colors.inversePrimary,
+                },
+                headerTitleStyle: {
+                  fontFamily: theme.fonts.titleSmall.fontFamily,
+                },
+                contentStyle: noHorizontalPadding,
+                headerTitleAlign: 'center',
               }}
-            />
-            <Stack.Screen
-              name="TagLabels"
-              component={TagLabels}
-              options={{
-                title: 'labels',
-                header: NavHeader,
-                ...tagOrientation,
-              }}
-            />
-            <Stack.Screen
-              name="TagVideos"
-              component={VideoView}
-              options={{
-                title: 'videos',
-                header: NavHeader,
-                ...tagOrientation,
-              }}
-            />
-            <Stack.Screen
-              name="CreateLabel"
-              component={CreateLabel}
-              options={{
-                title: 'new label',
-                headerBackTitle: 'cancel',
-                header: NavHeader,
-                orientation: 'all',
-              }}
-            />
-            <Stack.Screen
-              name="Logs"
-              component={LogsScreen}
-              options={{
-                title: 'logs',
-                header: NavHeader,
-                orientation: 'portrait',
-              }}
-            />
-          </Stack.Group>
-        </Stack.Navigator>
-      </NavigationContainer>
+            >
+              <Stack.Screen
+                name="About"
+                component={AboutScreen}
+                options={{
+                  headerShown: false,
+                  ...homeOrientation,
+                }}
+              />
+              <Stack.Screen
+                name="TagLabels"
+                component={TagLabels}
+                options={{
+                  title: 'labels',
+                  header: NavHeader,
+                  ...tagOrientation,
+                }}
+              />
+              <Stack.Screen
+                name="TagVideos"
+                component={VideoView}
+                options={{
+                  title: 'videos',
+                  header: NavHeader,
+                  ...tagOrientation,
+                }}
+              />
+              <Stack.Screen
+                name="CreateLabel"
+                component={CreateLabel}
+                options={{
+                  title: 'new label',
+                  headerBackTitle: 'cancel',
+                  header: NavHeader,
+                  orientation: 'all',
+                }}
+              />
+              <Stack.Screen
+                name="Logs"
+                component={LogsScreen}
+                options={{
+                  title: 'logs',
+                  header: NavHeader,
+                  orientation: 'portrait',
+                }}
+              />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </BottomSheetModalProvider>
     </PaperProvider>
   )
 }
