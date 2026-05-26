@@ -43,7 +43,7 @@ target 'goodtags' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :ccache_enabled => true
     )
 
     # fmt 11's consteval usage is broken on Apple Clang in Xcode 26+. Compile
