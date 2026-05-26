@@ -4,7 +4,7 @@
 #
 # ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
 # android device types: default (whatever emulator is booted)
-# flow: flow file under e2e/maestro/ (default: screenshots.yaml)
+# flow: flow file under e2e/maestro/ (default: screenshots.yaml); fragment files starting with _ are auto-wrapped with app launch
 
 set -e
 
@@ -17,6 +17,16 @@ SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}"
 
 echo "generating ${PLATFORM} screenshots (${DEVICE_TYPE})..."
 mkdir -p "${OUTPUT_DIR}" "${SCREENSHOT_DIR}"
+
+# if flow is a fragment (starts with _), wrap it with the standard app launch preamble;
+# wrapper is written into e2e/maestro/ so that relative runFlow paths resolve correctly
+FLOW_FILE="e2e/maestro/${FLOW}"
+if [[ "${FLOW}" == _* ]]; then
+  WRAPPER=$(mktemp e2e/maestro/tmp-XXXXXX.yaml)
+  trap 'rm -f "${WRAPPER}"' EXIT
+  printf 'appId: com.fogcitysingers.goodtags\n---\n- launchApp:\n    clearState: true\n- tapOn:\n    id: welcome_forward_button\n- assertVisible:\n    id: home_container\n- runFlow: %s\n' "${FLOW}" > "${WRAPPER}"
+  FLOW_FILE="${WRAPPER}"
+fi
 
 case "${PLATFORM}" in
   ios)
@@ -60,7 +70,7 @@ case "${PLATFORM}" in
     maestro --device "${DEVICE_ID}" test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
-      e2e/maestro/${FLOW}
+      "${FLOW_FILE}"
     ;;
 
   android)
@@ -68,7 +78,7 @@ case "${PLATFORM}" in
     maestro test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
-      e2e/maestro/${FLOW}
+      "${FLOW_FILE}"
     ;;
 
   *)

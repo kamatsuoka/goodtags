@@ -53,3 +53,8 @@ appId: com.fogcitysingers.goodtags
     text: "history, tab, 4 of 4"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/12-history
+
+# 13-13c - options screen (home tab → home tab)
+- tapOn:
+    text: "home, tab, 1 of 4"
+- runFlow: _options.yaml

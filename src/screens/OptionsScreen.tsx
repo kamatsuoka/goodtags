@@ -60,6 +60,7 @@ export default function OptionsScreen() {
     <ScrollView style={[CommonStyles.listContainer, listContainerPadding]}>
       <View style={styles.container}>
         <List.Item
+          testID="option_serifs"
           left={renderSerifsCheckbox}
           title="use serif fonts"
           titleStyle={styles.listItemTitle}
@@ -69,6 +70,7 @@ export default function OptionsScreen() {
           onPress={toggleSerifs}
         />
         <List.Item
+          testID="option_status_bar"
           left={renderStatusBarCheckbox}
           title="show system status bar"
           titleStyle={styles.listItemTitle}
@@ -78,6 +80,7 @@ export default function OptionsScreen() {
           onPress={toggleStatusBar}
         />
         <List.Item
+          testID="option_keep_awake"
           left={renderKeepAwakeCheckbox}
           title="keep screen awake"
           titleStyle={styles.listItemTitle}
