@@ -22,13 +22,13 @@ module.exports = {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/goodtags.app',
       build:
-        'xcodebuild -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
+        './scripts/xcodebuild.sh -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build ONLY_ACTIVE_ARCH=YES',
     },
     'ios.release': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/goodtags.app',
       build:
-        'xcodebuild -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
+        './scripts/xcodebuild.sh -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Release -sdk iphonesimulator -derivedDataPath ios/build ONLY_ACTIVE_ARCH=YES',
     },
   },
   devices: {

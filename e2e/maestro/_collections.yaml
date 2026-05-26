@@ -1,0 +1,29 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: collection list screenshots (classic, easy, new)
+# Entry: home screen (home tab)
+# Exit: home screen (home tab)
+
+# 05 - classic tags
+- tapOn:
+    id: "classic"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/05-classic-tags
+
+# 06 - easy tags
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "easy"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/06-easy-tags
+
+# 07 - new tags
+- tapOn:
+    text: "home, tab, 1 of 4"
+- tapOn:
+    id: "new"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/07-new-tags
+- tapOn:
+    text: "home, tab, 1 of 4"

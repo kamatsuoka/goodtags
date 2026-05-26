@@ -86,7 +86,7 @@ export default function SheetMusic(props: Props) {
       if (localPath) {
         return (
           <GestureDetector gesture={composed}>
-            <View style={pdfStyle}>
+            <View style={pdfStyle} testID="sheet_music_loaded">
               <PdfRendererView
                 source={localPath}
                 onError={() => console.log('PDF render error')}
@@ -105,6 +105,7 @@ export default function SheetMusic(props: Props) {
       return (
         <WebView
           key={uri}
+          testID="sheet_music_loaded"
           source={source}
           renderError={() => <Text>Unable to load image</Text>}
           onMessage={event => {

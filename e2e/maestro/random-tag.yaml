@@ -1,0 +1,9 @@
+appId: com.fogcitysingers.goodtags
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: welcome_forward_button
+- assertVisible:
+    id: home_container
+- runFlow: _random-tag.yaml

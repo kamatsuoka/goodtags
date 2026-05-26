@@ -1,14 +1,16 @@
 #!/bin/bash
 # generate app store screenshots using Maestro
-# usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type]
+# usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [flow]
 #
 # ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
 # android device types: default (whatever emulator is booted)
+# flow: flow file under e2e/maestro/ (default: screenshots.yaml)
 
 set -e
 
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
+FLOW=${3:-screenshots.yaml}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTPUT_DIR="screenshots/${PLATFORM}/${DEVICE_TYPE}/${TIMESTAMP}"
 SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}"
@@ -58,7 +60,7 @@ case "${PLATFORM}" in
     maestro --device "${DEVICE_ID}" test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
-      e2e/maestro/screenshots.yaml
+      e2e/maestro/${FLOW}
     ;;
 
   android)
@@ -66,7 +68,7 @@ case "${PLATFORM}" in
     maestro test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
-      e2e/maestro/screenshots.yaml
+      e2e/maestro/${FLOW}
     ;;
 
   *)

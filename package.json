@@ -23,7 +23,8 @@
     "screenshots:ios:6.5inch": "./scripts/maestro-screenshots.sh ios 6.5inch",
     "screenshots:ios:13inch": "./scripts/maestro-screenshots.sh ios 13inch",
     "screenshots:android": "./scripts/maestro-screenshots.sh android",
-    "screenshots:all": "./scripts/maestro-screenshots.sh ios 6.5inch && ./scripts/maestro-screenshots.sh ios 13inch && ./scripts/maestro-screenshots.sh android"
+    "screenshots:all": "./scripts/maestro-screenshots.sh ios 6.5inch && ./scripts/maestro-screenshots.sh ios 13inch && ./scripts/maestro-screenshots.sh android",
+    "screenshots:random-tag": "./scripts/maestro-screenshots.sh ios default random-tag.yaml"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.7",

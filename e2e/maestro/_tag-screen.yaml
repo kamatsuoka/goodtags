@@ -1,0 +1,119 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: tag screen interactions
+# Entry: popular tags list visible
+# Exit: home tab (home screen)
+
+# 04 - sheet music (tap first tag in popular list)
+- tapOn:
+    id: "title_.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- takeScreenshot: ${SCREENSHOT_DIR}/04-sheet-music
+
+# 04a - next tag
+- tapOn:
+    id: "icon-button"
+    index: 5
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- takeScreenshot: ${SCREENSHOT_DIR}/04a-sheet-music-next
+
+# back to original tag (up arrow = index 4, now enabled)
+- tapOn:
+    id: "icon-button"
+    index: 4
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+
+# 04b - tap heart to add to favorites
+- tapOn:
+    id: "icon-button"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04b-sheet-music-favorited
+
+# 04c - open FAB menu (hamburger is icon-button index 1)
+- tapOn:
+    id: "icon-button"
+    index: 1
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04c-tag-menu
+
+# 04d - tag info bottom sheet
+- tapOn:
+    text: "tag info"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04d-tag-info
+- tapOn:
+    point: "50%, 10%"
+- waitForAnimationToEnd
+
+# 04e - labels screen (TagLabels)
+- tapOn:
+    id: "icon-button"
+    index: 1
+- waitForAnimationToEnd
+- tapOn:
+    text: "labels"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04e-tag-labels
+
+# 04f/04g - create label "high"
+- tapOn:
+    text: "new label"
+- waitForAnimationToEnd
+- inputText: "high"
+- takeScreenshot: ${SCREENSHOT_DIR}/04f-create-label
+- pressKey: Enter
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04g-tag-labels-high
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
+
+# 04h - tracks bottom sheet
+- tapOn:
+    id: "icon-button"
+    index: 1
+- waitForAnimationToEnd
+- tapOn:
+    text: "tracks"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/04h-tracks
+- tapOn:
+    point: "50%, 10%"
+- waitForAnimationToEnd
+
+# 04i/04j - videos
+- tapOn:
+    id: "icon-button"
+    index: 1
+- waitForAnimationToEnd
+- tapOn:
+    text: "videos"
+- assertVisible:
+    text: "Play video"
+- takeScreenshot: ${SCREENSHOT_DIR}/04i-videos
+- swipe:
+    start: "75%, 55%"
+    end: "25%, 55%"
+- assertVisible:
+    text: "Play video"
+- takeScreenshot: ${SCREENSHOT_DIR}/04j-videos-next
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
+
+# back to popular list, then home tab (tapping active tab resets to root)
+- tapOn:
+    id: back_button
+- tapOn:
+    text: "home, tab, 1 of 4"

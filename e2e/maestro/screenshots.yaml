@@ -15,194 +15,34 @@ appId: com.fogcitysingers.goodtags
     id: home_container
 - takeScreenshot: ${SCREENSHOT_DIR}/02-home-screen
 
-# 03 - popular tags (pre-fetched on welcome screen, so list loads quickly)
+# 03 - popular tags list
 - waitForAnimationToEnd
 - tapOn:
     id: "popular"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
 
-# 04 - sheet music (tap first tag in popular list)
-- tapOn:
-    id: "title_.*"
-    index: 0
-- assertVisible:
-    text: "sheet music"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04-sheet-music
+# 04-04j - tag screen interactions (enters from popular list, exits on home tab)
+- runFlow: _tag-screen.yaml
 
-# 04a - next tag in popular list (down arrow = index 5)
-- tapOn:
-    id: "icon-button"
-    index: 5
-- extendedWaitUntil:
-    visible:
-      text: "sheet music"
-    timeout: 15000
-- takeScreenshot: ${SCREENSHOT_DIR}/04a-sheet-music-next
+# 05-07 - collections: classic, easy, new (home tab → home tab)
+- runFlow: _collections.yaml
 
-# back to original tag (up arrow = index 4, now enabled)
-- tapOn:
-    id: "icon-button"
-    index: 4
-- extendedWaitUntil:
-    visible:
-      text: "sheet music"
-    timeout: 15000
-
-# 04b - tap heart to add to favorites
-- tapOn:
-    id: "icon-button"
-    index: 0
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04b-sheet-music-favorited
-
-# 04c - open FAB menu (hamburger is icon-button index 1)
-- tapOn:
-    id: "icon-button"
-    index: 1
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04c-tag-menu
-
-# 04d - tag info bottom sheet
-- tapOn:
-    text: "tag info"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04d-tag-info
-- tapOn:
-    point: "50%, 10%"
-- waitForAnimationToEnd
-
-# 04e - labels screen (TagLabels)
-- tapOn:
-    id: "icon-button"
-    index: 1
-- waitForAnimationToEnd
-- tapOn:
-    text: "labels"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04e-tag-labels
-
-# 04f - create label "high"
-- tapOn:
-    text: "new label"
-- waitForAnimationToEnd
-- inputText: "high"
-- takeScreenshot: ${SCREENSHOT_DIR}/04f-create-label
-- pressKey: Enter
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04g-tag-labels-high
-- tapOn:
-    id: back_button
-- waitForAnimationToEnd
-
-# 04h - tracks bottom sheet
-- tapOn:
-    id: "icon-button"
-    index: 1
-- waitForAnimationToEnd
-- tapOn:
-    text: "tracks"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/04h-tracks
-- tapOn:
-    point: "50%, 10%"
-- waitForAnimationToEnd
-
-# 04i - videos
-- tapOn:
-    id: "icon-button"
-    index: 1
-- waitForAnimationToEnd
-- tapOn:
-    text: "videos"
-- assertVisible:
-    text: "Play video"
-- takeScreenshot: ${SCREENSHOT_DIR}/04i-videos
-- swipe:
-    start: "75%, 55%"
-    end: "25%, 55%"
-- assertVisible:
-    text: "Play video"
-- takeScreenshot: ${SCREENSHOT_DIR}/04j-videos-next
-- tapOn:
-    id: back_button
-- waitForAnimationToEnd
-
-# back to popular, then home
-- tapOn:
-    id: back_button
-- tapOn:
-    text: "home, tab, 1 of 4"
-
-# 05 - classic tags
-- tapOn:
-    id: "classic"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/05-classic-tags
-
-# 06 - easy tags
-- tapOn:
-    text: "home, tab, 1 of 4"
-- tapOn:
-    id: "easy"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/06-easy-tags
-
-# 07 - new tags
-- tapOn:
-    text: "home, tab, 1 of 4"
-- tapOn:
-    id: "new"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/07-new-tags
-
-# 07b - random tag
-- tapOn:
-    text: "home, tab, 1 of 4"
-- tapOn:
-    id: "random tag"
-- extendedWaitUntil:
-    visible:
-      text: "sheet music"
-    timeout: 10000
-- takeScreenshot: ${SCREENSHOT_DIR}/07b-random-tag
-
-# 07c - shuffled random tag
-- tapOn:
-    id: "icon-button"
-    index: 4
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/07c-random-tag-shuffled
-- tapOn:
-    id: back_button
-- waitForAnimationToEnd
+# 07b-07c - random tag (home tab → home tab)
+- runFlow: _random-tag.yaml
 
 # 08 - labels
-- tapOn:
-    text: "home, tab, 1 of 4"
 - tapOn:
     id: "labels"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/08-labels
-
-# 09 - search form
 - tapOn:
     text: "home, tab, 1 of 4"
-- tapOn:
-    text: "search, tab, 2 of 4"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/09-search-form
 
-# 10 - search results
-- tapOn:
-    id: search_input
-- inputText: "barbershop"
-- pressKey: Enter
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/10-search-results
+# 09-10 - search
+- runFlow: _search.yaml
 
-# 11 - favorites (has the tag we favorited in step 04b)
+# 11 - favorites (has the tag favorited in 04b)
 - tapOn:
     text: "faves, tab, 3 of 4"
 - waitForAnimationToEnd
