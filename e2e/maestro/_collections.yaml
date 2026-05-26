@@ -18,6 +18,25 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/06-easy-tags
 
+# 06a/06b - first easy tag, add to favorites
+- tapOn:
+    id: "title_.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/06a-easy-sheet-music
+- tapOn:
+    id: "icon-button"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/06b-easy-sheet-music-favorited
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
+
 # 07 - new tags
 - tapOn:
     text: "home, tab, 1 of 4"
