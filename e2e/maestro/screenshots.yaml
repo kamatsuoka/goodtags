@@ -37,24 +37,24 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/08-labels
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 
 # 09-10 - search
 - runFlow: _search.yaml
 
 # 11 - favorites (has the tag favorited in 04b)
 - tapOn:
-    text: "faves, tab, 3 of 4"
+    text: "tab_faves"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/11-favorites
 
 # 12 - history
 - tapOn:
-    text: "history, tab, 4 of 4"
+    text: "tab_history"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/12-history
 
 # 13-13c - options screen (home tab → home tab)
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 - runFlow: _options.yaml

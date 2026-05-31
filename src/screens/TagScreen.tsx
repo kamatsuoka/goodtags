@@ -95,11 +95,13 @@ const TagScreen = ({ navigation }: Props) => {
     () => [
       {
         icon: 'arrow-up',
+        testID: 'tag_prev',
         onPress: () => selectPrevTag(),
         disabled: () => !selectedTag || selectedTag.index <= 0,
       },
       {
         icon: 'arrow-down',
+        testID: 'tag_next',
         onPress: () => selectNextTag(),
         disabled: () => !selectedTag || selectedTag.index >= allTagIds.length - 1,
       },

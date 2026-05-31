@@ -48,6 +48,7 @@ const RandomScreen = () => {
     () => [
       {
         icon: 'shuffle',
+        testID: 'tag_shuffle',
         onPress: handleShuffle,
       },
     ],

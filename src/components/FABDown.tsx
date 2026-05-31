@@ -264,6 +264,7 @@ export const FABDown = ({
                   <View>
                     <Card
                       mode="contained"
+                      testID={it.testID}
                       onPress={e => {
                         it.onPress(e)
                         close()

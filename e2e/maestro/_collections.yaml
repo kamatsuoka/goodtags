@@ -12,7 +12,7 @@ appId: com.fogcitysingers.goodtags
 
 # 06 - easy tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 - tapOn:
     id: "easy"
 - waitForAnimationToEnd
@@ -29,8 +29,7 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/06a-easy-sheet-music
 - tapOn:
-    id: "icon-button"
-    index: 0
+    id: "tag_favorite"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/06b-easy-sheet-music-favorited
 - tapOn:
@@ -39,10 +38,10 @@ appId: com.fogcitysingers.goodtags
 
 # 07 - new tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 - tapOn:
     id: "new"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/07-new-tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"

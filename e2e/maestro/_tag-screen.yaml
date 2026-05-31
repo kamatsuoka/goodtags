@@ -12,22 +12,22 @@ appId: com.fogcitysingers.goodtags
     visible:
       id: sheet_music_loaded
     timeout: 30000
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04-sheet-music
 
 # 04a - next tag
 - tapOn:
-    id: "icon-button"
-    index: 5
+    id: "tag_next"
 - extendedWaitUntil:
     visible:
       id: sheet_music_loaded
     timeout: 30000
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04a-sheet-music-next
 
-# back to original tag (up arrow = index 4, now enabled)
+# back to original tag
 - tapOn:
-    id: "icon-button"
-    index: 4
+    id: "tag_prev"
 - extendedWaitUntil:
     visible:
       id: sheet_music_loaded
@@ -35,21 +35,19 @@ appId: com.fogcitysingers.goodtags
 
 # 04b - tap heart to add to favorites
 - tapOn:
-    id: "icon-button"
-    index: 0
+    id: "tag_favorite"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04b-sheet-music-favorited
 
-# 04c - open FAB menu (hamburger is icon-button index 1)
+# 04c - open FAB menu
 - tapOn:
-    id: "icon-button"
-    index: 1
+    id: "tag_menu"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04c-tag-menu
 
 # 04d - tag info bottom sheet
 - tapOn:
-    text: "tag info"
+    id: "fab_tag_info"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04d-tag-info
 - tapOn:
@@ -58,11 +56,10 @@ appId: com.fogcitysingers.goodtags
 
 # 04e - labels screen (TagLabels)
 - tapOn:
-    id: "icon-button"
-    index: 1
+    id: "tag_menu"
 - waitForAnimationToEnd
 - tapOn:
-    text: "labels"
+    id: "fab_labels"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04e-tag-labels
 
@@ -81,11 +78,10 @@ appId: com.fogcitysingers.goodtags
 
 # 04h - tracks bottom sheet
 - tapOn:
-    id: "icon-button"
-    index: 1
+    id: "tag_menu"
 - waitForAnimationToEnd
 - tapOn:
-    text: "tracks"
+    id: "fab_tracks"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04h-tracks
 - tapOn:
@@ -94,11 +90,10 @@ appId: com.fogcitysingers.goodtags
 
 # 04i/04j - videos
 - tapOn:
-    id: "icon-button"
-    index: 1
+    id: "tag_menu"
 - waitForAnimationToEnd
 - tapOn:
-    text: "videos"
+    id: "fab_videos"
 - assertVisible:
     text: "Play video"
 - takeScreenshot: ${SCREENSHOT_DIR}/04i-videos
@@ -116,4 +111,4 @@ appId: com.fogcitysingers.goodtags
 - tapOn:
     id: back_button
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"

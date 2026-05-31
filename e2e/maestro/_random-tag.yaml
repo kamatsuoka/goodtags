@@ -11,19 +11,20 @@ appId: com.fogcitysingers.goodtags
     visible:
       id: sheet_music_loaded
     timeout: 30000
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/07b-random-tag
 
 # 07c - shuffled random tag
 - tapOn:
-    id: "icon-button"
-    index: 4
+    id: "tag_shuffle"
 - extendedWaitUntil:
     visible:
       id: sheet_music_loaded
     timeout: 30000
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/07c-random-tag-shuffled
 - tapOn:
     id: back_button
 - waitForAnimationToEnd
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"

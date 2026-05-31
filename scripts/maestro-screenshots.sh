@@ -11,9 +11,10 @@ set -e
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
 FLOW=${3:-screenshots.yaml}
+BUILD_TYPE=${BUILD_TYPE:-release}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-OUTPUT_DIR="screenshots/${PLATFORM}/${DEVICE_TYPE}/${TIMESTAMP}"
-SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}"
+OUTPUT_DIR="screenshots/${PLATFORM}/${BUILD_TYPE}/${DEVICE_TYPE}/${TIMESTAMP}"
+SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}/${BUILD_TYPE}"
 
 echo "generating ${PLATFORM} screenshots (${DEVICE_TYPE})..."
 mkdir -p "${OUTPUT_DIR}" "${SCREENSHOT_DIR}"
@@ -22,9 +23,10 @@ mkdir -p "${OUTPUT_DIR}" "${SCREENSHOT_DIR}"
 # wrapper is written into e2e/maestro/ so that relative runFlow paths resolve correctly
 FLOW_FILE="e2e/maestro/${FLOW}"
 if [[ "${FLOW}" == _* ]]; then
-  WRAPPER=$(mktemp e2e/maestro/tmp-XXXXXX.yaml)
+  WRAPPER=$(mktemp /tmp/maestro-wrapper-XXXXXX.yaml)
   trap 'rm -f "${WRAPPER}"' EXIT
-  printf 'appId: com.fogcitysingers.goodtags\n---\n- launchApp:\n    clearState: true\n- tapOn:\n    id: welcome_forward_button\n- assertVisible:\n    id: home_container\n- runFlow: %s\n' "${FLOW}" > "${WRAPPER}"
+  FRAGMENT_PATH="$(pwd)/e2e/maestro/${FLOW}"
+  printf 'appId: com.fogcitysingers.goodtags\n---\n- launchApp:\n    clearState: true\n- tapOn:\n    id: welcome_forward_button\n- assertVisible:\n    id: home_container\n- runFlow: %s\n' "${FRAGMENT_PATH}" > "${WRAPPER}"
   FLOW_FILE="${WRAPPER}"
 fi
 
@@ -58,10 +60,13 @@ case "${PLATFORM}" in
     fi
 
     # install app on simulator (required for Maestro's clearState to work)
-    APP_PATH="ios/build/Build/Products/Release-iphonesimulator/goodtags.app"
+    case "${BUILD_TYPE}" in
+      debug)   APP_PATH="ios/build/Build/Products/Debug-iphonesimulator/goodtags.app" ;;
+      *)       APP_PATH="ios/build/Build/Products/Release-iphonesimulator/goodtags.app" ;;
+    esac
     if [ ! -d "${APP_PATH}" ]; then
       echo "error: app binary not found at ${APP_PATH}" >&2
-      echo "build first with: yarn e2e:build:ios" >&2
+      echo "build first with: yarn e2e:build:ios (release) or yarn e2e:build:ios:debug (debug)" >&2
       exit 1
     fi
     echo "installing app..."

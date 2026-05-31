@@ -89,6 +89,7 @@ const NavigationActionButton = React.memo(
     brightenThenFade,
     styles,
     theme,
+    testID,
   }: {
     icon: string | IconSource
     onPress: () => void
@@ -96,9 +97,11 @@ const NavigationActionButton = React.memo(
     brightenThenFade: () => void
     styles: any
     theme: any
+    testID?: string
   }) => {
     return (
       <IconButton
+        testID={testID}
         icon={icon}
         iconColor={theme.colors.primary}
         onPress={() => {
@@ -128,6 +131,7 @@ interface NavigationAction {
   icon: string | IconSource
   onPress: () => void
   disabled?: () => boolean
+  testID?: string
 }
 
 export const TagLayout = ({
@@ -215,11 +219,13 @@ export const TagLayout = ({
     {
       icon: 'file-document-outline',
       label: 'tag info',
+      testID: 'fab_tag_info',
       onPress: () => setInfoVisible(true),
     },
     {
       icon: 'tag-outline',
       label: 'labels',
+      testID: 'fab_labels',
       onPress: () => navigation.navigate('TagLabels'),
     },
   ]
@@ -228,6 +234,7 @@ export const TagLayout = ({
     fabActions.push({
       icon: 'headphones',
       label: 'tracks',
+      testID: 'fab_tracks',
       onPress: () => setTracksVisible(true),
     })
   }
@@ -236,6 +243,7 @@ export const TagLayout = ({
     fabActions.push({
       icon: 'video-box',
       label: 'videos',
+      testID: 'fab_videos',
       onPress: () => {
         pause()
         navigation.navigate('TagVideos', { tag })
@@ -284,6 +292,7 @@ export const TagLayout = ({
     (_props: any) => (
       <View style={styles.headerRight}>
         <IconButton
+          testID="tag_favorite"
           icon={favoritesById[tag.id] ? 'heart' : 'heart-outline'}
           onPress={() => onToggleFavorite(tag.id)}
           iconColor={theme.colors.primary}
@@ -292,6 +301,7 @@ export const TagLayout = ({
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 8 }}
         />
         <IconButton
+          testID="tag_menu"
           icon="menu"
           onPress={() => setFabOpen(!fabOpen)}
           iconColor={theme.colors.primary}
@@ -345,6 +355,7 @@ export const TagLayout = ({
             navigationActions.map((action, index) => (
               <NavigationActionButton
                 key={index}
+                testID={action.testID}
                 icon={action.icon}
                 onPress={() => {
                   pause()
