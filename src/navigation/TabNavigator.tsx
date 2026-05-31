@@ -73,7 +73,6 @@ export default function TabNavigator() {
           options={{
             title: 'home',
             tabBarIcon: HomeIcon,
-            tabBarAccessibilityLabel: 'tab_home',
           }}
         />
         <Tab.Screen
@@ -82,7 +81,6 @@ export default function TabNavigator() {
           options={{
             title: 'search',
             tabBarIcon: SearchIcon,
-            tabBarAccessibilityLabel: 'tab_search',
           }}
         />
         <Tab.Screen
@@ -91,7 +89,6 @@ export default function TabNavigator() {
           options={{
             title: 'faves',
             tabBarIcon: FavoritesIcon,
-            tabBarAccessibilityLabel: 'tab_faves',
           }}
         />
         <Tab.Screen
@@ -100,7 +97,6 @@ export default function TabNavigator() {
           options={{
             title: 'history',
             tabBarIcon: HistoryIcon,
-            tabBarAccessibilityLabel: 'tab_history',
           }}
         />
       </Tab.Navigator>

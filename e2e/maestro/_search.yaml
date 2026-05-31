@@ -6,7 +6,7 @@ appId: com.fogcitysingers.goodtags
 
 # 09 - search form
 - tapOn:
-    text: "tab_search"
+    text: "search, tab, 2 of 4"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/09-search-form
 
