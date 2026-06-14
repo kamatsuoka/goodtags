@@ -1,0 +1,64 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: labels screen screenshots
+# Entry: home screen (home tab)
+# Exit: home screen (home tab)
+
+# 08 - labels screen (has 'high' label from _tag-screen.yaml)
+- tapOn:
+    id: "labels"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/08-labels
+
+# 08a - create label 'low'
+- tapOn:
+    text: "new"
+- waitForAnimationToEnd
+- inputText: "low"
+- takeScreenshot: ${SCREENSHOT_DIR}/08a-create-label-low
+- pressKey: Enter
+- waitForAnimationToEnd
+
+# 08a - create label 'mid'
+- tapOn:
+    text: "new"
+- waitForAnimationToEnd
+- inputText: "mid"
+- takeScreenshot: ${SCREENSHOT_DIR}/08b-create-label-mid
+- pressKey: Enter
+- waitForAnimationToEnd
+
+# 08c/08d - label editor: rename 'low' to 'lower'
+- tapOn:
+    text: "edit"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/08c-label-editor
+- tapOn:
+    point: "6%, 22%"
+- waitForAnimationToEnd
+- inputText: "er"
+- takeScreenshot: ${SCREENSHOT_DIR}/08d-rename-label
+- pressKey: Enter
+- waitForAnimationToEnd
+
+# 08e/08f - drag 'mid' below 'low'
+- takeScreenshot: ${SCREENSHOT_DIR}/08e-label-editor-renamed
+- swipe:
+    start: "90%, 16%"
+    end: "90%, 28%"
+    duration: 2500
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/08f-label-reordered
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
+
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
+
+# Explicitly navigate home to ensure clean exit regardless of gesture/nav state
+- tapOn:
+    text: "home, tab, 1 of 4"
+- waitForAnimationToEnd

@@ -44,7 +44,7 @@ export default function CreateLabel({ route }: Props) {
           placeholder="label"
           maxLength={32}
           dense
-          style={[styles.textInput]}
+          style={[styles.textInput, theme.fonts.bodyLarge]}
         />
         {labelAlreadyExists(draft.trim()) ? (
           <Text style={[styles.warning, { color: theme.colors.error }]} variant="labelSmall">

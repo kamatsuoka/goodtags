@@ -13,6 +13,10 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Button, Divider, IconButton, List, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+function LabelsMenuButton({ color, onPress }: { color: string; onPress: () => void }) {
+  return <IconButton icon="menu" iconColor={color} size={22} onPress={onPress} />
+}
+
 /**
  * List of labels for navigating to labeled tags
  */
@@ -40,18 +44,15 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
     [],
   )
 
+  const openFab = useCallback(() => setFabOpen(true), [])
+  const headerRight = useCallback(
+    () => <LabelsMenuButton color={theme.colors.onPrimary} onPress={openFab} />,
+    [theme.colors.onPrimary, openFab],
+  )
+
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon="menu"
-          iconColor={theme.colors.onPrimary}
-          size={22}
-          onPress={() => setFabOpen(true)}
-        />
-      ),
-    })
-  }, [navigation, theme])
+    navigation.setOptions({ headerRight })
+  }, [navigation, headerRight])
 
   const fabActions = [
     {
@@ -149,6 +150,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           style={styles.actionButton}
           labelStyle={theme.fonts.bodyLarge}
           maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+          testID="labels_new"
         >
           new
         </Button>
@@ -160,6 +162,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           labelStyle={theme.fonts.bodyLarge}
           maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
           disabled={labels.length === 0}
+          testID="labels_edit"
         >
           edit
         </Button>

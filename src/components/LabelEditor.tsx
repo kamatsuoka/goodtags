@@ -3,11 +3,7 @@ import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { useMemo, useState } from 'react'
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native'
-import {
-  NestableDraggableFlatList,
-  NestableScrollContainer,
-  RenderItemParams,
-} from 'react-native-draggable-flatlist'
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist'
 import { IconButton, TextInput, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -80,6 +76,7 @@ export default function LabelEditor() {
         <IconButton
           icon={editingThisItem ? 'close' : 'pencil-outline'}
           animated
+          testID={`label_pencil_${item}`}
           onPress={() => (editingThisItem ? stopEditing() : startEditing(item))}
         />
         <View style={styles.itemAndRightIcon}>
@@ -113,7 +110,12 @@ export default function LabelEditor() {
               </Text>
               {labelToEdit ? null : (
                 <Pressable onPress={() => {}} onPressIn={drag}>
-                  <IconButton icon="drag-vertical" size={20} iconColor="black" />
+                  <IconButton
+                    icon="drag-vertical"
+                    size={20}
+                    iconColor="black"
+                    testID={`label_drag_${item}`}
+                  />
                 </Pressable>
               )}
             </>
@@ -125,17 +127,13 @@ export default function LabelEditor() {
 
   return (
     <View style={[styles.container, containerPadding]}>
-      <NestableScrollContainer keyboardShouldPersistTaps="handled">
-        <NestableDraggableFlatList
-          keyboardShouldPersistTaps="handled"
-          data={labels}
-          onDragEnd={({ data }) => {
-            return setLabels(data)
-          }}
-          keyExtractor={item => item}
-          renderItem={renderItem}
-        />
-      </NestableScrollContainer>
+      <DraggableFlatList
+        keyboardShouldPersistTaps="handled"
+        data={labels}
+        onDragEnd={({ data }) => setLabels(data)}
+        keyExtractor={item => item}
+        renderItem={renderItem}
+      />
     </View>
   )
 }
