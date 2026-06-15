@@ -12,7 +12,7 @@ appId: com.fogcitysingers.goodtags
 
 # 06 - easy tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 - tapOn:
     id: "easy"
 - waitForAnimationToEnd
@@ -38,10 +38,10 @@ appId: com.fogcitysingers.goodtags
 
 # 07 - new tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"
 - tapOn:
     id: "new"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/07-new-tags
 - tapOn:
-    text: "home, tab, 1 of 4"
+    text: "tab_home"

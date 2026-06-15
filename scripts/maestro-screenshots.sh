@@ -3,7 +3,7 @@
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [flow]
 #
 # ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
-# android device types: default (whatever emulator is booted)
+# android device types: default (Pixel 9), pixel7 (Pixel 7 API 33)
 # flow: flow file under e2e/maestro/ (default: screenshots.yaml); fragment files starting with _ are auto-wrapped with app launch
 
 set -e
@@ -79,7 +79,42 @@ case "${PLATFORM}" in
     ;;
 
   android)
-    # assumes an emulator or device is already running (adb devices)
+    case "${DEVICE_TYPE}" in
+      "pixel7") AVD_NAME="Pixel_7_API_33" ;;
+      *)        AVD_NAME="Pixel_9" ;;
+    esac
+
+    echo "avd: ${AVD_NAME}"
+
+    # boot emulator if no Android device/emulator is running
+    ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep -E "emulator|device" | awk '{print $1}' | head -1)
+    if [ -z "${ANDROID_DEVICE}" ]; then
+      echo "starting emulator ${AVD_NAME}..."
+      emulator -avd "${AVD_NAME}" -no-audio -no-boot-anim &
+      echo "waiting for emulator to boot..."
+      adb wait-for-device
+      until [ "$(adb shell getprop sys.boot_completed 2>/dev/null)" = "1" ]; do
+        sleep 2
+      done
+      echo "emulator ready"
+    else
+      echo "device: ${ANDROID_DEVICE}"
+    fi
+
+    # install APK (required for Maestro's clearState to work)
+    case "${BUILD_TYPE}" in
+      debug) APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk" ;;
+      *)     APK_PATH="android/app/build/outputs/apk/release/app-release.apk" ;;
+    esac
+    if [ ! -f "${APK_PATH}" ]; then
+      echo "error: APK not found at ${APK_PATH}" >&2
+      echo "build first with: cd android && ./gradlew assembleRelease" >&2
+      exit 1
+    fi
+    echo "installing APK..."
+    adb uninstall com.fogcitysingers.goodtags 2>/dev/null || true
+    adb install "${APK_PATH}"
+
     maestro test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
