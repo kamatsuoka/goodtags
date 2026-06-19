@@ -26,7 +26,17 @@ if [[ "${FLOW}" == _* ]]; then
   WRAPPER=$(mktemp /tmp/maestro-wrapper-XXXXXX.yaml)
   trap 'rm -f "${WRAPPER}"' EXIT
   FRAGMENT_PATH="$(pwd)/e2e/maestro/${FLOW}"
-  printf 'appId: com.fogcitysingers.goodtags\n---\n- launchApp:\n    clearState: true\n- tapOn:\n    id: welcome_forward_button\n- assertVisible:\n    id: home_container\n- runFlow: %s\n' "${FRAGMENT_PATH}" > "${WRAPPER}"
+  cat > "${WRAPPER}" <<YAML
+appId: com.fogcitysingers.goodtags
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: welcome_forward_button
+- assertVisible:
+    id: home_container
+- runFlow: ${FRAGMENT_PATH}
+YAML
   FLOW_FILE="${WRAPPER}"
 fi
 

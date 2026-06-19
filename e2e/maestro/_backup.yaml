@@ -1,0 +1,49 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: backup / restore
+# Entry: home screen (home tab)
+# Exit: home screen (home tab)
+
+# 14 - data screen (default state)
+- tapOn:
+    id: "data"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/14-data
+
+# 14a - backup button
+- tapOn:
+    id: "backup"
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/14a-data-backup
+
+# 14b - Android-specific saving flow
+- runFlow:
+    when:
+        platform: Android
+    commands:
+        # no "save to files" available in android, just dismiss 
+        - tapOn:
+            point: "10%, 10%"
+
+# 14b/c - iOS-specific saving flow
+- runFlow:
+    when:
+        platform: iOS
+    commands:
+      # maestro doesn't see "Save to Files" button, find it by location
+      - tapOn: 
+            point: "30%, 90%"
+      - waitForAnimationToEnd
+      - takeScreenshot: ${SCREENSHOT_DIR}/14b-ios-save-dialog
+      # maestro doesn't see "Save" button, find it by location
+      # for some reason this works with two nearby taps on iPhone 17
+      - tapOn: 
+            point: "83%, 9%"
+      - tapOn: 
+            point: "83%, 13%"
+      - waitForAnimationToEnd
+      - takeScreenshot: ${SCREENSHOT_DIR}/14c-ios-saved
+
+- tapOn:
+    id: back_button
+- waitForAnimationToEnd
