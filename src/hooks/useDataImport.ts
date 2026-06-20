@@ -5,6 +5,7 @@ import {
   pick as pickDocument,
   types,
 } from '@react-native-documents/picker'
+import { useRef } from 'react'
 import { useAppDispatch } from './useAppDispatch'
 
 interface ImportResult {
@@ -14,13 +15,11 @@ interface ImportResult {
 
 export function useDataImport() {
   const dispatch = useAppDispatch()
+  const isPicking = useRef(false)
 
-  /**
-   * Handle importing favorites and labels from a JSON file
-   *
-   * @returns ImportResult with message and whether to show snackbar
-   */
   const handleImport = async (): Promise<ImportResult> => {
+    if (isPicking.current) return { message: '', showSnackBar: false }
+    isPicking.current = true
     try {
       const pickerResults = await pickDocument({
         presentationStyle: 'fullScreen',
@@ -71,6 +70,8 @@ export function useDataImport() {
         console.error(JSON.stringify(e))
         return { message: `import error: ${e}`, showSnackBar: true }
       }
+    } finally {
+      isPicking.current = false
     }
   }
 

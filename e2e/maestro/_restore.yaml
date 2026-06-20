@@ -7,12 +7,15 @@ appId: com.fogcitysingers.goodtags
 # 17 - data screen
 - tapOn:
     id: "data"
-- takeScreenshot: ${SCREENSHOT_DIR}/17-data
+- takeScreenshot: ${SCREENSHOT_DIR}/17a-data
 
 # 17a - restore button
 - tapOn:
     id: "restore"
-- takeScreenshot: ${SCREENSHOT_DIR}/17a-data-restore
+    repeat: 2
+    delay: 1000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/17b-data-restore-clicked
 
 # 17b - Android-specific flow
 - runFlow:
@@ -28,19 +31,11 @@ appId: com.fogcitysingers.goodtags
     when:
         platform: iOS
     commands:
-      # maestro doesn't see "Save to Files" button, find it by location
       - tapOn: 
-            point: "30%, 90%"
+            point: "15%, 30%"
+            delay: 1000
       - waitForAnimationToEnd
-      - takeScreenshot: ${SCREENSHOT_DIR}/17b-ios-save-dialog
-      # maestro doesn't see "Save" button, find it by location
-      # for some reason this works with two nearby taps on iPhone 17
-      - tapOn: 
-            point: "83%, 9%"
-      - tapOn: 
-            point: "83%, 13%"
-      - waitForAnimationToEnd
-      - takeScreenshot: ${SCREENSHOT_DIR}/17c-ios-saved
+      - takeScreenshot: ${SCREENSHOT_DIR}/17c-data-restored
 
 - tapOn:
     id: back_button

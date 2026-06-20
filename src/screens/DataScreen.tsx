@@ -127,6 +127,7 @@ export default function DataScreen() {
                   style={listStyles.listItem}
                   titleStyle={theme.fonts.bodyLarge}
                   titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+                  testID="restore"
                 />
               </Pressable>
             </View>
