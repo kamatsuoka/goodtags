@@ -70,6 +70,7 @@ export const FavoritesScreen = () => {
       icon: 'broom',
       label: 'remove all favorites',
       onPress: async () => confirmRemoveAll(),
+      testID: 'remove-all',
     },
   ]
 
@@ -138,6 +139,7 @@ export const FavoritesScreen = () => {
               dispatch(FavoritesActions.resetFavorites())
             }}
             style={sheetStyles.action}
+            testID="remove-favorites-confirm"
           >
             <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
               remove all favorites

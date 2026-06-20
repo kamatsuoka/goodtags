@@ -215,6 +215,7 @@ export const FABDown = ({
   return (
     <View
       pointerEvents={open ? 'box-none' : 'none'}
+      importantForAccessibility={open ? 'auto' : 'no-hide-descendants'}
       style={[
         styles.container,
         {

@@ -14,7 +14,7 @@ import { Button, Divider, IconButton, List, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function LabelsMenuButton({ color, onPress }: { color: string; onPress: () => void }) {
-  return <IconButton icon="menu" iconColor={color} size={22} onPress={onPress} />
+  return <IconButton icon="menu" iconColor={color} size={22} onPress={onPress} testID="menu" />
 }
 
 /**
@@ -59,6 +59,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
       icon: 'broom',
       label: 'remove all labels',
       onPress: () => confirmSheetRef.current?.present(),
+      testID: 'remove-all',
     },
   ]
 
@@ -191,6 +192,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
               dispatch(FavoritesActions.clearLabels())
             }}
             style={styles.sheetAction}
+            testID="remove-labels-confirm"
           >
             <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
               remove all labels

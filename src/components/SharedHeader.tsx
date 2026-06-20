@@ -121,7 +121,7 @@ export default function SharedHeader({
 
   if (enableScrollToTop) {
     return (
-      <Pressable onPress={scrollToTop}>
+      <Pressable onPress={scrollToTop} accessible={false}>
         <View collapsable={false}>{content}</View>
       </Pressable>
     )

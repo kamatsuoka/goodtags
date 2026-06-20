@@ -24,7 +24,7 @@ mkdir -p "${OUTPUT_DIR}" "${SCREENSHOT_DIR}"
 FLOW_FILE="e2e/maestro/${FLOW}"
 if [[ "${FLOW}" == _* ]]; then
   WRAPPER=$(mktemp /tmp/maestro-wrapper-XXXXXX.yaml)
-  trap 'rm -f "${WRAPPER}"' EXIT
+#  trap 'rm -f "${WRAPPER}"' EXIT
   FRAGMENT_PATH="$(pwd)/e2e/maestro/${FLOW}"
   cat > "${WRAPPER}" <<YAML
 appId: com.fogcitysingers.goodtags
@@ -85,6 +85,7 @@ case "${PLATFORM}" in
     maestro --device "${DEVICE_ID}" test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
+      --env runId="${TIMESTAMP}" \
       "${FLOW_FILE}"
     ;;
 
@@ -128,6 +129,7 @@ case "${PLATFORM}" in
     maestro test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
+      --env runId="${TIMESTAMP}" \
       "${FLOW_FILE}"
     ;;
 

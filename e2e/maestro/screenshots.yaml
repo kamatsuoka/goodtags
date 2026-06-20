@@ -3,6 +3,8 @@ appId: com.fogcitysingers.goodtags
 - launchApp:
     clearState: true
 
+- evalScript: ${OUTPUT.runId = Date.now().toString()}
+
 # 01 - welcome screen
 - assertVisible:
     id: welcome_forward_button
@@ -19,7 +21,6 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - tapOn:
     id: "popular"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
 
 # 04-04j - tag screen interactions (enters from popular list, exits on home tab)
@@ -40,17 +41,14 @@ appId: com.fogcitysingers.goodtags
 # 11 - favorites (has the tag favorited in 04b)
 - tapOn:
     text: "tab_faves"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/11-favorites
 
 # 12 - history
 - tapOn:
     text: "tab_history"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/12-history
 - tapOn:
     text: "tab_home"
-- waitForAnimationToEnd
 
 # 13-13c - options screen (home tab → home tab)
 - runFlow: _options.yaml
@@ -58,3 +56,11 @@ appId: com.fogcitysingers.goodtags
 # 14 - backup
 - runFlow: _backup.yaml
 
+# 15 - remove favorites
+- runFlow: _remove-favorites.yaml
+
+# 16 - remove labels
+- runFlow: _remove-labels.yaml
+
+# 17 - restore
+- runFlow: _restore.yaml

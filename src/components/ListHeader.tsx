@@ -38,6 +38,7 @@ export default function ListHeader({
           style={styles.menuButton}
           onPress={() => setFabOpen(true)}
           iconColor={theme.colors.onPrimary}
+          testID="menu"
         />
       </View>
     ),

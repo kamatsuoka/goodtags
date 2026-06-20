@@ -1,13 +1,12 @@
 appId: com.fogcitysingers.goodtags
 ---
-# Fragment: backup / restore
+# Fragment: backup
 # Entry: home screen (home tab)
 # Exit: home screen (home tab)
 
 # 14 - data screen (default state)
 - tapOn:
     id: "data"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/14-data
 
 # 14a - backup button
@@ -15,6 +14,7 @@ appId: com.fogcitysingers.goodtags
     id: "backup"
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/14a-data-backup
+- waitForAnimationToEnd
 
 # 14b - Android-specific saving flow
 - runFlow:
@@ -30,19 +30,19 @@ appId: com.fogcitysingers.goodtags
     when:
         platform: iOS
     commands:
-      # maestro doesn't see "Save to Files" button, find it by location
-      - tapOn: 
+        # maestro doesn't see "Save to Files" button, find it by location
+        - tapOn:
             point: "30%, 90%"
-      - waitForAnimationToEnd
-      - takeScreenshot: ${SCREENSHOT_DIR}/14b-ios-save-dialog
-      # maestro doesn't see "Save" button, find it by location
-      # for some reason this works with two nearby taps on iPhone 17
-      - tapOn: 
-            point: "83%, 9%"
-      - tapOn: 
-            point: "83%, 13%"
-      - waitForAnimationToEnd
-      - takeScreenshot: ${SCREENSHOT_DIR}/14c-ios-saved
+        - waitForAnimationToEnd
+        - takeScreenshot: ${SCREENSHOT_DIR}/14b-ios-save-dialog
+        - tapOn:
+            point: "50%, 95%"
+        - waitForAnimationToEnd
+        - inputText: "faves-labels-maestro-${runId}.json"
+        - takeScreenshot: ${SCREENSHOT_DIR}/14c-enter-backup-filename
+        - pressKey: Enter
+        - waitForAnimationToEnd
+        - takeScreenshot: ${SCREENSHOT_DIR}/14d-ios-saved
 
 - tapOn:
     id: back_button
