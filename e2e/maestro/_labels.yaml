@@ -7,7 +7,6 @@ appId: com.fogcitysingers.goodtags
 # 08 - labels screen (has 'high' label from _tag-screen.yaml)
 - tapOn:
     id: "labels"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/08-labels
 
 # 08a - create label 'low'
