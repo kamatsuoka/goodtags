@@ -15,19 +15,13 @@ appId: com.fogcitysingers.goodtags
     id: home_container
 - takeScreenshot: ${SCREENSHOT_DIR}/02-home-screen
 
-# 03 - popular tags list
-- waitForAnimationToEnd
-- tapOn:
-    id: "popular"
-- takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
+# 03-04 - popular tags list and tag screen interactions
+- runFlow: _popular.yaml
 
-# 04-04j - tag screen interactions (enters from popular list, exits on home tab)
-- runFlow: _tag-screen.yaml
-
-# 05-07 - collections: classic, easy, new (home tab → home tab)
+# 05-07 - collections: classic, easy, new 
 - runFlow: _collections.yaml
 
-# 07b-07c - random tag (home tab → home tab)
+# 07b-07c - random tag 
 - runFlow: _random-tag.yaml
 
 # 08 - labels
@@ -48,7 +42,7 @@ appId: com.fogcitysingers.goodtags
 - tapOn:
     text: "tab_home"
 
-# 13-13c - options screen (home tab → home tab)
+# 13-13c - options screen 
 - runFlow: _options.yaml
 
 # 14 - backup

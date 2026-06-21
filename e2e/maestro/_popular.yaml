@@ -1,8 +1,12 @@
 appId: com.fogcitysingers.goodtags
 ---
-# Fragment: tag screen interactions
-# Entry: popular tags list visible
+# Fragment: popular tags and tag screen interactions
+# Entry: home tab (home screwen)
 # Exit: home tab (home screen)
+
+- tapOn:
+    id: "popular"
+- takeScreenshot: ${SCREENSHOT_DIR}/03-popular-tags
 
 # 04 - sheet music (tap first tag in popular list)
 - tapOn:
@@ -32,6 +36,7 @@ appId: com.fogcitysingers.goodtags
     visible:
       id: sheet_music_loaded
     timeout: 30000
+- waitForAnimationToEnd
 
 # 04b - tap heart to add to favorites
 - tapOn:

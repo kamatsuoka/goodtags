@@ -1,16 +1,21 @@
 #!/bin/bash
 # generate app store screenshots using Maestro
-# usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [flow]
+# usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [flow...]
 #
 # ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
 # android device types: default (Pixel 9), pixel7 (Pixel 7 API 33)
-# flow: flow file under e2e/maestro/ (default: screenshots.yaml); fragment files starting with _ are auto-wrapped with app launch
+# flow: one or more flow files under e2e/maestro/ (default: screenshots.yaml); all flows are combined into a single wrapper with app launch
 
 set -e
 
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
-FLOW=${3:-screenshots.yaml}
+shift 2
+if [ $# -eq 0 ]; then
+  FLOWS=(screenshots.yaml)
+else
+  FLOWS=("$@")
+fi
 BUILD_TYPE=${BUILD_TYPE:-release}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTPUT_DIR="screenshots/${PLATFORM}/${BUILD_TYPE}/${DEVICE_TYPE}/${TIMESTAMP}"
@@ -19,26 +24,21 @@ SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}/${BUILD_TYPE}"
 echo "generating ${PLATFORM} screenshots (${DEVICE_TYPE})..."
 mkdir -p "${OUTPUT_DIR}" "${SCREENSHOT_DIR}"
 
-# if flow is a fragment (starts with _), wrap it with the standard app launch preamble;
-# wrapper is written into e2e/maestro/ so that relative runFlow paths resolve correctly
-FLOW_FILE="e2e/maestro/${FLOW}"
-if [[ "${FLOW}" == _* ]]; then
-  WRAPPER=$(mktemp /tmp/maestro-wrapper-XXXXXX.yaml)
-#  trap 'rm -f "${WRAPPER}"' EXIT
-  FRAGMENT_PATH="$(pwd)/e2e/maestro/${FLOW}"
-  cat > "${WRAPPER}" <<YAML
-appId: com.fogcitysingers.goodtags
----
-- launchApp:
-    clearState: true
-- tapOn:
-    id: welcome_forward_button
-- assertVisible:
-    id: home_container
-- runFlow: ${FRAGMENT_PATH}
-YAML
-  FLOW_FILE="${WRAPPER}"
-fi
+# build a single wrapper that launches the app then runs all flows in sequence
+WRAPPER=$(mktemp /tmp/maestro-wrapper-XXXXXX.yaml)
+{
+  echo "appId: com.fogcitysingers.goodtags"
+  echo "---"
+  echo "- launchApp:"
+  echo "    clearState: true"
+  echo "- tapOn:"
+  echo "    id: welcome_forward_button"
+  echo "- assertVisible:"
+  echo "    id: home_container"
+  for FLOW in "${FLOWS[@]}"; do
+    echo "- runFlow: $(pwd)/e2e/maestro/${FLOW}"
+  done
+} > "${WRAPPER}"
 
 case "${PLATFORM}" in
   ios)
@@ -86,7 +86,7 @@ case "${PLATFORM}" in
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
       --env runId="${TIMESTAMP}" \
-      "${FLOW_FILE}"
+      "${WRAPPER}"
     ;;
 
   android)
@@ -130,7 +130,7 @@ case "${PLATFORM}" in
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
       --env runId="${TIMESTAMP}" \
-      "${FLOW_FILE}"
+      "${WRAPPER}"
     ;;
 
   *)
