@@ -83,6 +83,9 @@ const pickerStyles = StyleSheet.create({
 
 const SEARCH_MAX_FONT = 1.3
 
+const KEYBOARD_SHOW_EVENT = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow'
+const KEYBOARD_HIDE_EVENT = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide'
+
 const staticStyles = StyleSheet.create({
   searchInput: {
     borderWidth: 0,
@@ -138,19 +141,16 @@ export default function SearchDialog(props: Props) {
     [insets.top, insets.bottom, paddingLeft, paddingRight],
   )
 
-  const ios = Platform.OS === 'ios'
   const [keyboardVisible, setKeyboardVisible] = useState(true)
 
   useEffect(() => {
-    const showEvent = ios ? 'keyboardWillShow' : 'keyboardDidShow'
-    const hideEvent = ios ? 'keyboardWillHide' : 'keyboardDidHide'
-    const show = Keyboard.addListener(showEvent, () => setKeyboardVisible(true))
-    const hide = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false))
+    const show = Keyboard.addListener(KEYBOARD_SHOW_EVENT, () => setKeyboardVisible(true))
+    const hide = Keyboard.addListener(KEYBOARD_HIDE_EVENT, () => setKeyboardVisible(false))
     return () => {
       show.remove()
       hide.remove()
     }
-  }, [ios])
+  }, [])
 
   const handleSearch = () => {
     dismiss()
