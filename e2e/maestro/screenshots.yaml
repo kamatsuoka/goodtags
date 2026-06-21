@@ -19,16 +19,22 @@ appId: com.fogcitysingers.goodtags
 - runFlow:
     file: _labels.yaml
     env:
-        SEQ: 01
+        SEQ: 03
 
 # 03-04 - popular tags list and tag screen interactions
 - runFlow: _popular.yaml
 
 # 05 - classic tags
-- runFlow: _classic.yaml
+- runFlow:
+    file: _classic.yaml
+    env:
+        SEQ: 05
 
 # 06 - easy tags
-- runFlow: _easy.yaml
+- runFlow:
+    file: _easy.yaml
+    env:
+        SEQ: 06
 
 # 05-07 - collections: classic, easy, new 
 - runFlow: _collections.yaml

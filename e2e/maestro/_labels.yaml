@@ -7,39 +7,39 @@ appId: com.fogcitysingers.goodtags
 # labels screen
 - tapOn:
     id: "labels"
-- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-01-labels
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-01-main
 
 # create label 'first'
 - tapOn:
     text: "new"
 - inputText: "first"
-- takeScreenshot: ${SCREENSHOT_DIR}/08b-create-label-first
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-create-first
 - pressKey: Enter
 
 # create label 'low'
 - tapOn:
     text: "new"
 - inputText: "low"
-- takeScreenshot: ${SCREENSHOT_DIR}/08a-create-label-low
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-03-create-low
 - pressKey: Enter
 
-# 08c/08d - label editor: rename 'low' to 'lower'
+# label editor: rename 'low' to 'lower'
 - tapOn:
     text: "edit"
-- takeScreenshot: ${SCREENSHOT_DIR}/08c-label-editor
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-04-editor
 - tapOn:
     id: label_pencil_low
 - inputText: "er"
-- takeScreenshot: ${SCREENSHOT_DIR}/08d-rename-label
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-05-rename
 - pressKey: Enter
 
-# 08e/08f - drag 'mid' below 'first'
-- takeScreenshot: ${SCREENSHOT_DIR}/08e-label-editor-renamed
+# drag 'mid' below 'first'
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-06-editor-renamed
 - swipe:
     start: "90%, 16%"
     end: "90%, 22%"
     duration: 2500
-- takeScreenshot: ${SCREENSHOT_DIR}/08f-label-reordered
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-07-reordered
 - tapOn:
     id: back_button
 
