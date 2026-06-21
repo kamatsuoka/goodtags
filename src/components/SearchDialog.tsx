@@ -1,10 +1,10 @@
 import { Text } from '@app/components/Text'
 import { Collection, Parts } from '@app/constants/Search'
-import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
-import { SearchFilters, newSearch, selectSearchResults } from '@app/modules/searchSlice'
-import { useMemo, useState } from 'react'
-import { Keyboard, Pressable, StyleSheet, View } from 'react-native'
-import { Searchbar, useTheme } from 'react-native-paper'
+import { useAppDispatch, useBodyInsets } from '@app/hooks'
+import { SearchFilters, newSearch } from '@app/modules/searchSlice'
+import { useEffect, useMemo, useState } from 'react'
+import { Keyboard, Platform, Pressable, StyleSheet, View } from 'react-native'
+import { Button, Searchbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type Props = {
@@ -104,6 +104,16 @@ const staticStyles = StyleSheet.create({
     paddingLeft: 4,
     paddingBottom: 6,
   },
+  searchButtonSpacer: {
+    flex: 1,
+  },
+  searchButton: {
+    marginHorizontal: 20,
+    marginBottom: 16,
+  },
+  searchButtonLabel: {
+    fontWeight: 'normal',
+  },
 })
 
 export default function SearchDialog(props: Props) {
@@ -114,21 +124,38 @@ export default function SearchDialog(props: Props) {
   const [draftQuery, setDraftQuery] = useState(query)
   const insets = useSafeAreaInsets()
   const { paddingLeft, paddingRight } = useBodyInsets()
-  const allTagIds = useAppSelector(state => selectSearchResults(state).allTagIds)
-
   const dynamicStyles = useMemo(
     () =>
       StyleSheet.create({
         container: {
+          flex: 1,
           paddingTop: insets.top,
+          paddingBottom: insets.bottom,
           paddingLeft,
           paddingRight,
         },
       }),
-    [insets.top, paddingLeft, paddingRight],
+    [insets.top, insets.bottom, paddingLeft, paddingRight],
   )
 
-  const existingSearchResults = allTagIds.length > 0
+  const ios = Platform.OS === 'ios'
+  const [keyboardVisible, setKeyboardVisible] = useState(true)
+
+  useEffect(() => {
+    const showEvent = ios ? 'keyboardWillShow' : 'keyboardDidShow'
+    const hideEvent = ios ? 'keyboardWillHide' : 'keyboardDidHide'
+    const show = Keyboard.addListener(showEvent, () => setKeyboardVisible(true))
+    const hide = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false))
+    return () => {
+      show.remove()
+      hide.remove()
+    }
+  }, [ios])
+
+  const handleSearch = () => {
+    dismiss()
+    dispatch(newSearch({ query: draftQuery, filters: draftFilters }))
+  }
 
   return (
     <View style={dynamicStyles.container}>
@@ -137,25 +164,17 @@ export default function SearchDialog(props: Props) {
         autoComplete="off"
         autoCorrect={false}
         autoFocus={true}
-        icon={existingSearchResults ? 'chevron-left' : () => null}
+        icon="chevron-left"
         inputStyle={staticStyles.searchInput}
         maxFontSizeMultiplier={SEARCH_MAX_FONT}
         multiline={false}
         numberOfLines={1}
         onChangeText={setDraftQuery}
-        onIconPress={existingSearchResults ? dismiss : () => null}
+        onIconPress={dismiss}
         placeholder="search for tags"
         placeholderTextColor={theme.colors.secondary}
         value={draftQuery}
-        onSubmitEditing={async () => {
-          dismiss()
-          dispatch(
-            newSearch({
-              query: draftQuery,
-              filters: draftFilters,
-            }),
-          )
-        }}
+        onSubmitEditing={handleSearch}
         spellCheck={false}
         style={staticStyles.searchBar}
         testID="search_input"
@@ -228,6 +247,18 @@ export default function SearchDialog(props: Props) {
           />
         </View>
       </View>
+      <View style={staticStyles.searchButtonSpacer} />
+      {!keyboardVisible && (
+        <Button
+          icon="magnify"
+          mode="contained"
+          onPress={handleSearch}
+          style={staticStyles.searchButton}
+          labelStyle={staticStyles.searchButtonLabel}
+        >
+          search
+        </Button>
+      )}
     </View>
   )
 }

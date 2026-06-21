@@ -18,7 +18,7 @@ import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Modal, StyleSheet, View } from 'react-native'
 import { ActivityIndicator, Button, Chip, Snackbar, useTheme } from 'react-native-paper'
 
 /**
@@ -112,7 +112,11 @@ const SearchScreen = () => {
 
   const filterChip = (visible: boolean, icon: string, label: string) =>
     visible ? (
-      <Chip icon={icon} textStyle={{ color: theme.colors.primary }} style={styles.filterButton}>
+      <Chip
+        icon={icon}
+        textStyle={[{ color: theme.colors.primary }, styles.filterButtonText]}
+        style={styles.filterButton}
+      >
         {label.toLowerCase()}
       </Chip>
     ) : null
@@ -121,46 +125,49 @@ const SearchScreen = () => {
     setSearchMenuVisible(false)
   }
 
-  return searchMenuVisible ? (
-    <SearchDialog query={query} filters={filters} dismiss={dismissSearchDialog} />
-  ) : (
+  return (
     <View style={CommonStyles.container}>
+      <Modal visible={searchMenuVisible} animationType="none" statusBarTranslucent>
+        <SearchDialog query={query} filters={filters} dismiss={dismissSearchDialog} />
+      </Modal>
       <ListHeader listRef={listRef} title="" setFabOpen={setFabOpen} />
       {query ? (
-        <View style={styles.searchButtonHolder} pointerEvents="box-none">
-          <Button
-            icon="magnify"
-            mode="elevated"
-            contentStyle={styles.compactSearchContent}
-            onPress={() => setSearchMenuVisible(true)}
-            style={styles.compactSearchBar}
-            labelStyle={[
-              theme.fonts.bodyLarge,
-              styles.compactSearchLabel,
-              { color: theme.colors.secondary },
-            ]}
-          >
-            {query}
-          </Button>
-        </View>
+        <>
+          <View style={styles.searchButtonHolder} pointerEvents="box-none">
+            <Button
+              icon="magnify"
+              mode="elevated"
+              contentStyle={styles.compactSearchContent}
+              onPress={() => setSearchMenuVisible(true)}
+              style={styles.compactSearchBar}
+              labelStyle={[
+                theme.fonts.bodyLarge,
+                styles.compactSearchLabel,
+                { color: theme.colors.secondary },
+              ]}
+            >
+              {query}
+            </Button>
+          </View>
+          <View style={styles.filterHolder} pointerEvents="box-none">
+            {filterChip(
+              filters.collection !== Collection.ALL,
+              'playlist-check',
+              filters.collection.toString(),
+            )}
+            {filterChip(
+              filters.learningTracks !== InitialFilters.learningTracks,
+              'filter-check-outline',
+              'tracks',
+            )}
+            {filterChip(
+              filters.parts && filters.parts !== InitialFilters.parts,
+              'account-multiple-check-outline',
+              `${filters.parts} parts`,
+            )}
+          </View>
+        </>
       ) : null}
-      <View style={styles.filterHolder} pointerEvents="box-none">
-        {filterChip(
-          filters.collection !== Collection.ALL,
-          'playlist-check',
-          filters.collection.toString(),
-        )}
-        {filterChip(
-          filters.learningTracks !== InitialFilters.learningTracks,
-          'filter-check-outline',
-          'tracks',
-        )}
-        {filterChip(
-          filters.parts && filters.parts !== InitialFilters.parts,
-          'account-multiple-check-outline',
-          `${filters.parts} parts`,
-        )}
-      </View>
       <View style={[CommonStyles.listContainer, listHolderPadding]}>
         <TagList
           listRef={listRef}
@@ -234,6 +241,9 @@ const styles = StyleSheet.create({
     margin: 3,
     paddingTop: 0,
     backgroundColor: 'transparent',
+  },
+  filterButtonText: {
+    fontWeight: 'normal',
   },
   compactSearchBar: {
     padding: 0,
