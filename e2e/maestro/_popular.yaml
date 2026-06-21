@@ -62,13 +62,13 @@ appId: com.fogcitysingers.goodtags
     id: "fab_labels"
 - takeScreenshot: ${SCREENSHOT_DIR}/04e-tag-labels
 
-# 04f/04g - create label "high"
+# 04f/04g - create label "first"
 - tapOn:
     text: "new label"
-- inputText: "high"
+- inputText: "first"
 - takeScreenshot: ${SCREENSHOT_DIR}/04f-create-label
 - pressKey: Enter
-- takeScreenshot: ${SCREENSHOT_DIR}/04g-tag-labels-high
+- takeScreenshot: ${SCREENSHOT_DIR}/04g-tag-labels-first
 - tapOn:
     id: back_button
 

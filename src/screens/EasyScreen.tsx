@@ -49,6 +49,7 @@ const EasyScreen = () => {
         onPress: async () => {
           return dispatch(EasyActions.toggleSortOrder())
         },
+        testID: 'sort',
       },
       {
         icon: 'reload',
@@ -56,6 +57,7 @@ const EasyScreen = () => {
         onPress: async () => {
           return dispatch(getEasyTags(true))
         },
+        testID: 'reload',
       },
       {
         icon: 'broom',
@@ -63,6 +65,7 @@ const EasyScreen = () => {
         onPress: async () => {
           return dispatch(EasyActions.reset())
         },
+        testID: 'clear',
       },
     ],
     [otherOrder, dispatch],

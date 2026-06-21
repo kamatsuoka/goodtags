@@ -1,0 +1,37 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: easy tags
+# Entry: home screen (home tab)
+# Exit: home screen (home tab)
+
+# 06 - easy tags
+- tapOn:
+    id: "easy"
+- takeScreenshot: ${SCREENSHOT_DIR}/06a-easy-tags
+
+# sort 
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/06b-easy-menu
+- tapOn:
+    id: "sort"
+- takeScreenshot: ${SCREENSHOT_DIR}/06c-easy-sorted
+
+# clear
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/06d-easy-menu
+- tapOn:
+    id: "clear"
+- takeScreenshot: ${SCREENSHOT_DIR}/06e-easy-cleared
+
+# reload 
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/06f-easy-menu
+- tapOn:
+    id: "reload"
+- takeScreenshot: ${SCREENSHOT_DIR}/06g-easy-reloaded
+
+- tapOn:
+    text: "tab_home"

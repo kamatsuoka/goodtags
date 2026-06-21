@@ -3,29 +3,38 @@ appId: com.fogcitysingers.goodtags
 - launchApp:
     clearState: true
 
-# 01 - welcome screen
+# welcome screen
 - assertVisible:
     id: welcome_forward_button
 - takeScreenshot: ${SCREENSHOT_DIR}/01-welcome-screen
 
-# 02 - home screen
+# home screen
 - tapOn:
     id: welcome_forward_button
 - assertVisible:
     id: home_container
 - takeScreenshot: ${SCREENSHOT_DIR}/02-home-screen
 
+# labels
+- runFlow:
+    file: _labels.yaml
+    env:
+        SEQ: 01
+
 # 03-04 - popular tags list and tag screen interactions
 - runFlow: _popular.yaml
+
+# 05 - classic tags
+- runFlow: _classic.yaml
+
+# 06 - easy tags
+- runFlow: _easy.yaml
 
 # 05-07 - collections: classic, easy, new 
 - runFlow: _collections.yaml
 
 # 07b-07c - random tag 
 - runFlow: _random-tag.yaml
-
-# 08 - labels
-- runFlow: _labels.yaml
 
 # 09-10 - search
 - runFlow: _search.yaml

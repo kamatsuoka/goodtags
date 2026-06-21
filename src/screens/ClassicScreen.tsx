@@ -54,6 +54,7 @@ const ClassicScreen = () => {
         onPress: async () => {
           return dispatch(ClassicActions.toggleSortOrder())
         },
+        testID: 'sort',
       },
       {
         icon: 'reload',
@@ -61,6 +62,7 @@ const ClassicScreen = () => {
         onPress: async () => {
           return dispatch(getClassicTags(true))
         },
+        testID: 'reload',
       },
       {
         icon: 'broom',
@@ -68,6 +70,7 @@ const ClassicScreen = () => {
         onPress: async () => {
           return dispatch(ClassicActions.reset())
         },
+        testID: 'clear',
       },
     ],
     [otherOrder, dispatch],

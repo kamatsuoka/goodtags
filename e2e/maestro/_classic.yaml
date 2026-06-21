@@ -1,0 +1,59 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: classic tags
+# Entry: home screen (home tab)
+# Exit: home screen (home tab)
+
+# 05 - classic tags
+- tapOn:
+    id: "classic"
+- takeScreenshot: ${SCREENSHOT_DIR}/05a-classic-tags
+
+# first tag, add to favorites
+- tapOn:
+    id: "title_.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/05a-classic-sheet-music
+- tapOn:
+    id: tag_favorite
+- takeScreenshot: ${SCREENSHOT_DIR}/05b-classic-sheet-music-favorited
+
+# add label
+- tapOn:
+    id: tag_menu
+- takeScreenshot: ${SCREENSHOT_DIR}/05c-classic-menu
+- tapOn:
+    id: fab_labels
+
+
+# sort 
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/05b-classic-menu
+- tapOn:
+    id: "sort"
+- takeScreenshot: ${SCREENSHOT_DIR}/05c-classic-sorted
+
+# clear
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/05d-classic-menu
+- tapOn:
+    id: "clear"
+- takeScreenshot: ${SCREENSHOT_DIR}/05e-classic-cleared
+
+# reload 
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/05f-classic-menu
+- tapOn:
+    id: "reload"
+- takeScreenshot: ${SCREENSHOT_DIR}/05g-classic-reloaded
+
+- tapOn:
+    text: "tab_home"

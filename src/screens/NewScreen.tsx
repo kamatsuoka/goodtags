@@ -49,6 +49,7 @@ const NewScreen = () => {
         onPress: async () => {
           return dispatch(NewActions.toggleSortOrder())
         },
+        testID: 'sort',
       },
       {
         icon: 'reload',
@@ -56,6 +57,7 @@ const NewScreen = () => {
         onPress: async () => {
           return dispatch(getNewTags(true))
         },
+        testID: 'reload',
       },
       {
         icon: 'broom',
@@ -63,6 +65,7 @@ const NewScreen = () => {
         onPress: async () => {
           return dispatch(NewActions.reset())
         },
+        testID: 'clear',
       },
     ],
     [otherOrder, dispatch],
