@@ -36,9 +36,11 @@ function SegmentedPicker(props: SegmentedPickerProps) {
               i !== 0 && [pickerStyles.divider, { borderLeftColor: theme.colors.outline }],
               selected && { backgroundColor: theme.colors.secondaryContainer },
             ]}
-            onPress={() =>
+            onPress={() => {
+              Keyboard.dismiss()
               isMulti ? props.onToggle(option.value) : props.onValueChange(option.value)
-            }
+            }}
+            testID={option.value}
           >
             <Text
               style={[
@@ -158,50 +160,47 @@ export default function SearchDialog(props: Props) {
         style={staticStyles.searchBar}
         testID="search_input"
       />
-      <Pressable onPress={Keyboard.dismiss}>
-        <View style={staticStyles.filtersContainer}>
-          <View style={staticStyles.segmentedSection}>
-            <Text
-              variant="labelLarge"
-              style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
-              maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            >
-              collection
-            </Text>
-            <SegmentedPicker
-              value={draftFilters.collection}
-              onValueChange={value =>
-                setDraftFilters({ ...draftFilters, collection: value as Collection })
-              }
-              options={[
-                { value: Collection.ALL, label: 'all' },
-                { value: Collection.CLASSIC, label: 'classic' },
-                { value: Collection.EASY, label: 'easy' },
-              ]}
-            />
-          </View>
-          <View style={staticStyles.segmentedSection}>
-            <Text
-              variant="labelLarge"
-              style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
-              maxFontSizeMultiplier={SEARCH_MAX_FONT}
-            >
-              parts
-            </Text>
-            <SegmentedPicker
-              value={draftFilters.parts || Parts.any}
-              onValueChange={value => setDraftFilters({ ...draftFilters, parts: value as Parts })}
-              options={[
-                { value: Parts.any, label: 'any' },
-                { value: Parts.four, label: '4' },
-                { value: Parts.five, label: '5' },
-                { value: Parts.six, label: '6' },
-              ]}
-            />
-          </View>
-        </View>
-      </Pressable>
       <View style={staticStyles.filtersContainer}>
+        <View style={staticStyles.segmentedSection}>
+          <Text
+            variant="labelLarge"
+            style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+            testID="collection"
+          >
+            collection
+          </Text>
+          <SegmentedPicker
+            value={draftFilters.collection}
+            onValueChange={value =>
+              setDraftFilters({ ...draftFilters, collection: value as Collection })
+            }
+            options={[
+              { value: Collection.ALL, label: 'all' },
+              { value: Collection.CLASSIC, label: 'classic' },
+              { value: Collection.EASY, label: 'easy' },
+            ]}
+          />
+        </View>
+        <View style={staticStyles.segmentedSection}>
+          <Text
+            variant="labelLarge"
+            style={[staticStyles.sectionLabel, { color: theme.colors.primary }]}
+            maxFontSizeMultiplier={SEARCH_MAX_FONT}
+          >
+            parts
+          </Text>
+          <SegmentedPicker
+            value={draftFilters.parts || Parts.any}
+            onValueChange={value => setDraftFilters({ ...draftFilters, parts: value as Parts })}
+            options={[
+              { value: Parts.any, label: 'any' },
+              { value: Parts.four, label: '4' },
+              { value: Parts.five, label: '5' },
+              { value: Parts.six, label: '6' },
+            ]}
+          />
+        </View>
         <View style={staticStyles.segmentedSection}>
           <Text
             variant="labelLarge"

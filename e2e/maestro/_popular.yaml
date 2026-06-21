@@ -41,76 +41,64 @@ appId: com.fogcitysingers.goodtags
 # 04b - tap heart to add to favorites
 - tapOn:
     id: "tag_favorite"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04b-sheet-music-favorited
 
 # 04c - open FAB menu
 - tapOn:
     id: "tag_menu"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04c-tag-menu
 
 # 04d - tag info bottom sheet
 - tapOn:
     id: "fab_tag_info"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04d-tag-info
 - tapOn:
     point: "50%, 10%"
-- waitForAnimationToEnd
 
 # 04e - labels screen (TagLabels)
 - tapOn:
     id: "tag_menu"
-- waitForAnimationToEnd
 - tapOn:
     id: "fab_labels"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04e-tag-labels
 
 # 04f/04g - create label "high"
 - tapOn:
     text: "new label"
-- waitForAnimationToEnd
 - inputText: "high"
 - takeScreenshot: ${SCREENSHOT_DIR}/04f-create-label
 - pressKey: Enter
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04g-tag-labels-high
 - tapOn:
     id: back_button
-- waitForAnimationToEnd
 
 # 04h - tracks bottom sheet
 - tapOn:
     id: "tag_menu"
-- waitForAnimationToEnd
 - tapOn:
     id: "fab_tracks"
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/04h-tracks
 - tapOn:
     point: "50%, 10%"
-- waitForAnimationToEnd
 
 # 04i/04j - videos
 - tapOn:
     id: "tag_menu"
-- waitForAnimationToEnd
 - tapOn:
     id: "fab_videos"
+- waitForAnimationToEnd
 - assertVisible:
     text: "Play video"
 - takeScreenshot: ${SCREENSHOT_DIR}/04i-videos
 - swipe:
     start: "75%, 55%"
     end: "25%, 55%"
+- waitForAnimationToEnd
 - assertVisible:
     text: "Play video"
 - takeScreenshot: ${SCREENSHOT_DIR}/04j-videos-next
 - tapOn:
     id: back_button
-- waitForAnimationToEnd
 
 # back to popular list, then home tab (tapping active tab resets to root)
 - tapOn:

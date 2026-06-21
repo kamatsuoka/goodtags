@@ -25,6 +25,5 @@ appId: com.fogcitysingers.goodtags
 - takeScreenshot: ${SCREENSHOT_DIR}/07c-random-tag-shuffled
 - tapOn:
     id: back_button
-- waitForAnimationToEnd
 - tapOn:
     text: "tab_home"

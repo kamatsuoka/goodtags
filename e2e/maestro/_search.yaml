@@ -4,16 +4,36 @@ appId: com.fogcitysingers.goodtags
 # Entry: tab bar visible (any tab)
 # Exit: search tab
 
-# 09 - search form
+# search form
 - tapOn:
     text: "tab_search"
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/09-search-form
+- takeScreenshot: ${SCREENSHOT_DIR}/09a-search-form
 
-# 10 - search results
+# search results
 - tapOn:
     id: search_input
-- inputText: "barbershop"
+- inputText: "moonlight"
 - pressKey: Enter
-- waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/10-search-results
+- takeScreenshot: ${SCREENSHOT_DIR}/09b-search-results
+
+# revise search
+- tapOn:
+    text: moonlight
+- takeScreenshot: ${SCREENSHOT_DIR}/09c-revise-search-form
+- tapOn:
+    text: "4"
+- tapOn:
+    text: tracks
+- tapOn:
+    text: classic
+- takeScreenshot: ${SCREENSHOT_DIR}/09d-revised-search-options
+- tapOn:
+    id: search_input
+- pressKey: Enter
+- takeScreenshot: ${SCREENSHOT_DIR}/09e-revised-search-results
+
+# new search
+- tapOn:
+    text: new search    
+- takeScreenshot: ${SCREENSHOT_DIR}/09f-new-saerch
+    
