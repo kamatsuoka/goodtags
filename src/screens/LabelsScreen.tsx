@@ -189,7 +189,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
           <Pressable
             onPress={() => {
               confirmSheetRef.current?.dismiss()
-              dispatch(FavoritesActions.clearLabels())
+              dispatch(FavoritesActions.resetLabels())
             }}
             style={styles.sheetAction}
             testID="remove-labels-confirm"

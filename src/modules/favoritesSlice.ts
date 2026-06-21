@@ -131,8 +131,14 @@ const favoritesSlice = createSlice({
         state.tagsById[id] = buildFavorite(tag, oldFavorite.addedDate)
       }
     },
-    resetFavorites: state => {
-      Object.assign(state, InitialState)
+    // reset favorite tags (not labels, even though they are part of this slice -- see resetLabels)
+    resetFavoriteTags: state => {
+      state.tagsById = {}
+      state.allTagIds = []
+      state.error = undefined
+      state.loadingState = LoadingState.idle
+      state.selectedTag = undefined
+      state.sortOrder = SortOrder.alpha
     },
     setSelectedFavoriteTag: (state, action: PayloadAction<SelectedTag>) => {
       state.selectedTag = action.payload
@@ -237,7 +243,7 @@ const favoritesSlice = createSlice({
         delete state.selectedLabel
       }
     },
-    clearLabels: state => {
+    resetLabels: state => {
       Object.assign(state, LabelsInitialState)
     },
     selectLabel: (state, action: PayloadAction<string>) => {

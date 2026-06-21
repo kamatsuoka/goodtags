@@ -136,7 +136,7 @@ export const FavoritesScreen = () => {
           <Pressable
             onPress={() => {
               confirmSheetRef.current?.dismiss()
-              dispatch(FavoritesActions.resetFavorites())
+              dispatch(FavoritesActions.resetFavoriteTags())
             }}
             style={sheetStyles.action}
             testID="remove-favorites-confirm"

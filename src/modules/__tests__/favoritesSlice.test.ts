@@ -16,7 +16,7 @@ const {
   removeLabel,
   deleteLabel,
   selectLabel,
-  clearLabels,
+  resetLabels: clearLabels,
 } = FavoritesActions
 
 const fav12 = buildFavorite({
