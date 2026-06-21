@@ -10,7 +10,7 @@ set -e
 
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
-shift 2
+shift $(( $# < 2 ? $# : 2 ))
 if [ $# -eq 0 ]; then
   FLOWS=(screenshots.yaml)
 else

@@ -28,12 +28,19 @@ appId: com.fogcitysingers.goodtags
     text: classic
 - takeScreenshot: ${SCREENSHOT_DIR}/09d-revised-search-options
 - tapOn:
-    id: search_input
-- pressKey: Enter
+    id: search_button
 - takeScreenshot: ${SCREENSHOT_DIR}/09e-revised-search-results
 
 # new search
 - tapOn:
     text: new search    
-- takeScreenshot: ${SCREENSHOT_DIR}/09f-new-saerch
+- takeScreenshot: ${SCREENSHOT_DIR}/09f-new-search
+
+# exit search dialog
+- tapOn:
+    id: search_input-icon
     
+# back to home screen
+- tapOn:
+    text: tab_home
+        

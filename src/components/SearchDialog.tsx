@@ -255,6 +255,7 @@ export default function SearchDialog(props: Props) {
           onPress={handleSearch}
           style={staticStyles.searchButton}
           labelStyle={staticStyles.searchButtonLabel}
+          testID="search_button"
         >
           search
         </Button>
