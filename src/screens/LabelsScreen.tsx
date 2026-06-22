@@ -127,6 +127,7 @@ export default function LabelsScreen({ navigation }: HomeNavigatorScreenProps<'L
                       style={listStyles.listItem}
                       titleStyle={theme.fonts.bodyLarge}
                       titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+                      testID={label}
                     />
                   </Pressable>
                   {index === labels.length - 1 ? null : <Divider />}

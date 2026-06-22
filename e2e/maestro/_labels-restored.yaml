@@ -1,0 +1,20 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: labels screen after restore
+# Entry/Exit: home screen (home tab)
+
+# labels screen
+- tapOn:
+    id: "labels"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-restored-01-main
+
+# view tags labeled 'first'
+- tapOn:
+    id: "first"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-restored-02-first
+
+- tapOn:
+    id: back_button
+
+- tapOn:
+    id: back_button

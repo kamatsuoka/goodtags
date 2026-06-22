@@ -101,9 +101,10 @@ appId: com.fogcitysingers.goodtags
     text: "tab_home"
 
 # labels restored
-- tapOn:
-    id: "labels"
-- takeScreenshot: ${SCREENSHOT_DIR}/17-labels-restored
+- runFlow:
+    file: _labels-restored.yaml
+    env:
+        SEQ: 17
 
 # history
 - tapOn:

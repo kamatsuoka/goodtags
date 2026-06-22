@@ -54,6 +54,7 @@ const PopularScreen = () => {
         onPress: async () => {
           return dispatch(PopularActions.toggleSortOrder())
         },
+        testID: 'sort',
       },
       {
         icon: 'reload',
@@ -61,6 +62,7 @@ const PopularScreen = () => {
         onPress: async () => {
           return dispatch(getPopularTags(true))
         },
+        testID: 'reload',
       },
       {
         icon: 'broom',
@@ -68,6 +70,7 @@ const PopularScreen = () => {
         onPress: async () => {
           return dispatch(PopularActions.reset())
         },
+        testID: 'clear',
       },
     ],
     [otherOrder, dispatch],
