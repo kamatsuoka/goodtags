@@ -93,6 +93,11 @@ appId: com.fogcitysingers.goodtags
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-11-videos-next
 - tapOn:
     id: back_button
+    
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-12-landscape
+- setOrientation: PORTRAIT
 
 # back to popular list, then home tab
 - tapOn:
