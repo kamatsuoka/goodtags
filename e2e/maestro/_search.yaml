@@ -2,45 +2,44 @@ appId: com.fogcitysingers.goodtags
 ---
 # Fragment: search screenshots
 # Entry: tab bar visible (any tab)
-# Exit: search tab
+# Exit: home tab
 
 # search form
 - tapOn:
     text: "tab_search"
-- takeScreenshot: ${SCREENSHOT_DIR}/09a-search-form
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-01-form
 
 # search results
 - tapOn:
     id: search_input
 - inputText: "moonlight"
 - pressKey: Enter
-- takeScreenshot: ${SCREENSHOT_DIR}/09b-search-results
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-02-results
 
 # revise search
 - tapOn:
     text: moonlight
-- takeScreenshot: ${SCREENSHOT_DIR}/09c-revise-search-form
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-03-revise
 - tapOn:
     text: "4"
 - tapOn:
     text: tracks
 - tapOn:
     text: classic
-- takeScreenshot: ${SCREENSHOT_DIR}/09d-revised-search-options
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-04-options
 - tapOn:
     id: search_button
-- takeScreenshot: ${SCREENSHOT_DIR}/09e-revised-search-results
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-05-results-revised
 
 # new search
 - tapOn:
-    text: new search    
-- takeScreenshot: ${SCREENSHOT_DIR}/09f-new-search
+    text: new search
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-search-06-new
 
 # exit search dialog
 - tapOn:
     id: search_input-icon
-    
+
 # back to home screen
 - tapOn:
     text: tab_home
-        

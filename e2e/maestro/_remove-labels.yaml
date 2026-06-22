@@ -1,24 +1,23 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: remove labels
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
 - tapOn:
     id: "labels"
-- takeScreenshot: ${SCREENSHOT_DIR}/16a-labels
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-remove-labels-01-main
 
 - tapOn:
-    id: "menu"    
-- takeScreenshot: ${SCREENSHOT_DIR}/16b-labels-menu
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-remove-labels-02-menu
 
 - tapOn:
     id: "remove-all"
-- takeScreenshot: ${SCREENSHOT_DIR}/16c-confirm-remove-labels
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-remove-labels-03-confirm
 
 - tapOn:
     id: "remove-labels-confirm"
-- takeScreenshot: ${SCREENSHOT_DIR}/16d-labels-removed
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-remove-labels-04-removed
 
 - tapOn:
     text: "tab_home"

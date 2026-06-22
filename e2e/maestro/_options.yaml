@@ -1,38 +1,36 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: options screen screenshots
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
-# 13 - options screen (default state)
 - tapOn:
     id: "options"
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/13-options
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-options-01-main
 
-# 13a - serifs toggled off
+# serifs toggled off
 - tapOn:
     id: "option_serifs"
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/13a-options-serifs-off
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-options-02-serifs-off
 - tapOn:
     id: "option_serifs"
 - waitForAnimationToEnd
 
-# 13b - status bar toggled on
+# status bar toggled on
 - tapOn:
     id: "option_status_bar"
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/13b-options-status-bar-on
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-options-03-status-bar-on
 - tapOn:
     id: "option_status_bar"
 - waitForAnimationToEnd
 
-# 13c - keep awake toggled off
+# keep awake toggled off
 - tapOn:
     id: "option_keep_awake"
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/13c-options-keep-awake-off
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-options-04-keep-awake-off
 - tapOn:
     id: "option_keep_awake"
 - waitForAnimationToEnd

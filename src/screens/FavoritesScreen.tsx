@@ -65,6 +65,7 @@ export const FavoritesScreen = () => {
       onPress: async () => {
         dispatch(FavoritesActions.setSortOrder(order))
       },
+      testID: SORT_LABELS[order],
     })),
     {
       icon: 'broom',

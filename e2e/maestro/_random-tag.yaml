@@ -1,10 +1,8 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: random tag screenshots
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
-# 07b - random tag
 - tapOn:
     id: "random tag"
 - extendedWaitUntil:
@@ -12,9 +10,9 @@ appId: com.fogcitysingers.goodtags
       id: sheet_music_loaded
     timeout: 30000
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/07b-random-tag
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-random-tag-01-main
 
-# 07c - shuffled random tag
+# shuffled random tag
 - tapOn:
     id: "tag_shuffle"
 - extendedWaitUntil:
@@ -22,7 +20,7 @@ appId: com.fogcitysingers.goodtags
       id: sheet_music_loaded
     timeout: 30000
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/07c-random-tag-shuffled
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-random-tag-02-shuffled
 - tapOn:
     id: back_button
 - tapOn:

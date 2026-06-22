@@ -21,65 +21,94 @@ appId: com.fogcitysingers.goodtags
     env:
         SEQ: 03
 
-# 03-04 - popular tags list and tag screen interactions
-- runFlow: _popular.yaml
+# popular tags list
+- runFlow: 
+    file: _popular.yaml
+    env:
+        SEQ: 04
 
-# 05 - classic tags
+# classic tags
 - runFlow:
     file: _classic.yaml
     env:
         SEQ: 05
 
-# 06 - easy tags
+# easy tags
 - runFlow:
     file: _easy.yaml
     env:
         SEQ: 06
 
-# 05-07 - collections: classic, easy, new 
-- runFlow: _collections.yaml
+# new tags
+- runFlow:
+    file: _new.yaml
+    env:
+        SEQ: 07
 
-# 07b-07c - random tag 
-- runFlow: _random-tag.yaml
+# sheet music interactions
+- runFlow:
+    file: _sheet-music.yaml
+    env:
+        SEQ: 08
 
-# 09-10 - search
-- runFlow: _search.yaml
+# random tag
+- runFlow:
+    file: _random-tag.yaml
+    env:
+        SEQ: 09
 
-# 11 - favorites (has the tag favorited in 04b)
+# search
+- runFlow:
+    file: _search.yaml
+    env:
+        SEQ: 10
+
+# options
+- runFlow:
+    file: _options.yaml
+    env:
+        SEQ: 11
+
+# backup
+- runFlow:
+    file: _backup.yaml
+    env:
+        SEQ: 12
+
+# favorites
+- runFlow:
+    file: _favorites.yaml
+    env:
+        SEQ: 13
+
+# remove labels
+- runFlow:
+    file: _remove-labels.yaml
+    env:
+        SEQ: 14
+
+# restore
+- runFlow:
+    file: _restore.yaml
+    env:
+        SEQ: 15
+
+# favorites restored
 - tapOn:
     text: "tab_faves"
-- takeScreenshot: ${SCREENSHOT_DIR}/11-favorites
-
-# 12 - history
-- tapOn:
-    text: "tab_history"
-- takeScreenshot: ${SCREENSHOT_DIR}/12-history
+- takeScreenshot: ${SCREENSHOT_DIR}/16-favorites-restored
 - tapOn:
     text: "tab_home"
 
-# 13-13c - options screen 
-- runFlow: _options.yaml
-
-# 14 - backup
-- runFlow: _backup.yaml
-
-# 15 - remove favorites
-- runFlow: _remove-favorites.yaml
-
-# 16 - remove labels
-- runFlow: _remove-labels.yaml
-
-# 17 - restore
-- runFlow: _restore.yaml
-
-# 18 - favorites restored
-- tapOn:
-    text: "tab_faves"
-- takeScreenshot: ${SCREENSHOT_DIR}/18-favorites-restored
-- tapOn:
-    text: "tab_home"
-
-# 19 - labels restored 
+# labels restored
 - tapOn:
     id: "labels"
-- takeScreenshot: ${SCREENSHOT_DIR}/19-labels-restored
+- takeScreenshot: ${SCREENSHOT_DIR}/17-labels-restored
+
+# history
+- tapOn:
+    text: "tab_history"
+- takeScreenshot: ${SCREENSHOT_DIR}/18-history
+- tapOn:
+    text: "tab_home"
+

@@ -1,41 +1,38 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: restore
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
-# 17 - data screen
 - tapOn:
     id: "data"
-- takeScreenshot: ${SCREENSHOT_DIR}/17a-data
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-01-data
 
-# 17a - restore button
 - tapOn:
     id: "restore"
     repeat: 2
     delay: 1000
 - waitForAnimationToEnd
-- takeScreenshot: ${SCREENSHOT_DIR}/17b-data-restore-clicked
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-02-restore-clicked
 
-# 17b - Android-specific flow
+# Android-specific flow
 - runFlow:
     when:
         platform: Android
     commands:
-        # no local files available in android, just dismiss 
+        # no local files available in android, just dismiss
         - tapOn:
             point: "10%, 10%"
 
-# 17b/c - iOS-specific restore flow
+# iOS-specific restore flow
 - runFlow:
     when:
         platform: iOS
     commands:
-      - tapOn: 
+      - tapOn:
             point: "15%, 30%"
             delay: 1000
       - waitForAnimationToEnd
-      - takeScreenshot: ${SCREENSHOT_DIR}/17c-data-restored
+      - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-03-restored
 
 - tapOn:
     id: back_button

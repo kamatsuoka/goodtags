@@ -1,0 +1,35 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: remove favorites
+# Entry/Exit: home screen (home tab)
+
+- tapOn:
+    text: "tab_faves"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-01-main
+
+- tapOn:
+    id: "menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-02-menu
+- tapOn:
+    id: "sort by newest"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-03-sort-by-newest
+
+- tapOn:
+    id: "menu"
+- tapOn:
+    id: "sort by id"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-04-sort-by-id
+
+- tapOn:
+    id: "menu"
+- tapOn:
+    id: "remove-all"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-05-confirm
+
+- tapOn:
+    id: "remove-favorites-confirm"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-06-removed
+
+- tapOn:
+    text: "tab_home"
+- waitForAnimationToEnd

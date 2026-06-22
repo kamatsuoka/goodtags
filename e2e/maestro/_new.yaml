@@ -1,37 +1,17 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: new tags
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
-# 07 - new tags
 - tapOn:
     id: "new"
-- takeScreenshot: ${SCREENSHOT_DIR}/07a-new-tags
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-new-01-main
 
-# sort 
-- tapOn:
-    id: "menu"
-- takeScreenshot: ${SCREENSHOT_DIR}/07b-new-menu
-- tapOn:
-    id: "sort"
-- takeScreenshot: ${SCREENSHOT_DIR}/07c-new-sorted
-
-# clear
-- tapOn:
-    id: "menu"
-- takeScreenshot: ${SCREENSHOT_DIR}/07d-new-menu
-- tapOn:
-    id: "clear"
-- takeScreenshot: ${SCREENSHOT_DIR}/07e-new-cleared
-
-# reload 
-- tapOn:
-    id: "menu"
-- takeScreenshot: ${SCREENSHOT_DIR}/07f-new-menu
-- tapOn:
-    id: "reload"
-- takeScreenshot: ${SCREENSHOT_DIR}/07g-new-reloaded
+- runFlow:
+    file: _collection.yaml
+    env:
+        NAME: new
+        SEQ: ${SEQ}
 
 - tapOn:
     text: "tab_home"

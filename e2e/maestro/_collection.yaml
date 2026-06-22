@@ -1,0 +1,55 @@
+appId: com.fogcitysingers.goodtags
+---
+# Sub-fragment: collection tag interactions
+# Entry/Exit: collection list screen
+# Env: SEQ, NAME
+
+# first tag, add to favorites
+- tapOn:
+    id: "title_.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-02-sheet-music
+- tapOn:
+    id: tag_favorite
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-03-favorited
+
+# add label
+- tapOn:
+    id: tag_menu
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-04-menu
+- tapOn:
+    id: fab_labels
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-05-labels
+- tapOn:
+    text: first
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-06-label-added
+- tapOn:
+    id: back_button
+- tapOn:
+    id: back_button
+
+# sort
+- tapOn:
+    id: "menu"
+- tapOn:
+    id: "sort"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-07-sorted
+
+# clear
+- tapOn:
+    id: "menu"
+- tapOn:
+    id: "clear"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-08-cleared
+
+# reload
+- tapOn:
+    id: "menu"
+- tapOn:
+    id: "reload"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-${NAME}-09-reloaded

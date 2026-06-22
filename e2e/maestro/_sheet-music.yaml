@@ -1,0 +1,101 @@
+appId: com.fogcitysingers.goodtags
+---
+# Fragment: sheet music interactions
+# Entry/Exit: home tab
+
+- tapOn:
+    id: "popular"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-01-popular
+
+# sheet music (tap first tag in popular list)
+- tapOn:
+    id: "title_.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-02-main
+
+# next tag
+- tapOn:
+    id: "tag_next"
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-03-next
+
+# back to original tag
+- tapOn:
+    id: "tag_prev"
+- extendedWaitUntil:
+    visible:
+      id: sheet_music_loaded
+    timeout: 30000
+- waitForAnimationToEnd
+
+# open FAB menu
+- tapOn:
+    id: "tag_menu"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-04-menu
+
+# tag info bottom sheet
+- tapOn:
+    id: "fab_tag_info"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-05-tag-info
+- tapOn:
+    point: "50%, 10%"
+
+# labels screen (TagLabels)
+- tapOn:
+    id: "tag_menu"
+- tapOn:
+    id: "fab_labels"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-06-labels
+
+# create label "popular" from the sheet music screen
+- tapOn:
+    text: "new label"
+- inputText: "popular"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-07-create-label
+- pressKey: Enter
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-08-labels-popular
+- tapOn:
+    id: back_button
+
+# tracks bottom sheet
+- tapOn:
+    id: "tag_menu"
+- tapOn:
+    id: "fab_tracks"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-09-tracks
+- tapOn:
+    point: "50%, 10%"
+
+# videos
+- tapOn:
+    id: "tag_menu"
+- tapOn:
+    id: "fab_videos"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Play video"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-10-videos
+- swipe:
+    start: "75%, 55%"
+    end: "25%, 55%"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Play video"
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-11-videos-next
+- tapOn:
+    id: back_button
+
+# back to popular list, then home tab
+- tapOn:
+    id: back_button
+- tapOn:
+    text: "tab_home"

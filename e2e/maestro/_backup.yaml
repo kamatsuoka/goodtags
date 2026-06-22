@@ -1,30 +1,27 @@
 appId: com.fogcitysingers.goodtags
 ---
 # Fragment: backup
-# Entry: home screen (home tab)
-# Exit: home screen (home tab)
+# Entry/Exit: home screen (home tab)
 
-# 14 - data screen (default state)
 - tapOn:
     id: "data"
-- takeScreenshot: ${SCREENSHOT_DIR}/14a-data
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-01-data
 
-# 14a - backup button
 - tapOn:
     id: "backup"
     delay: 2000
-- takeScreenshot: ${SCREENSHOT_DIR}/14b-data-backup
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-02-backup-clicked
 
-# 14b - Android-specific saving flow
+# Android-specific saving flow
 - runFlow:
     when:
         platform: Android
     commands:
-        # no "save to files" available in android, just dismiss 
+        # no "save to files" available in android, just dismiss
         - tapOn:
             point: "10%, 10%"
 
-# 14 etc - iOS-specific saving flow
+# iOS-specific saving flow
 - runFlow:
     when:
         platform: iOS
@@ -34,19 +31,19 @@ appId: com.fogcitysingers.goodtags
             point: "30%, 90%"
             repeat: 2
             delay: 1000
-        - takeScreenshot: ${SCREENSHOT_DIR}/14c-data-file-selector
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-03-file-selector
         - tapOn:
             point: "50%, 95%"
             delay: 1000
         - eraseText: 50
         - inputText: "faves-labels-maestro-${runId}"
-        - takeScreenshot: ${SCREENSHOT_DIR}/14d-data-filename-entered
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-04-filename-entered
         - pressKey: Enter
         - waitForAnimationToEnd
-        - tapOn: 
+        - tapOn:
             point: "85%, 13%"
             delay: 1000
-        - takeScreenshot: ${SCREENSHOT_DIR}/14e-data-backed-up
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-05-backed-up
 
 - tapOn:
     id: back_button
