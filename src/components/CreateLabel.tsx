@@ -2,10 +2,11 @@ import { Text } from '@app/components/Text'
 import { useAppDispatch, useAppSelector } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
 import { RootStackParamList } from '@app/navigation/navigationParams'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { useCallback, useRef, useState } from 'react'
+
+import { TextInput as RNTextInput, StyleSheet, View } from 'react-native'
 import { TextInput, useTheme } from 'react-native-paper'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateLabel'>
@@ -17,6 +18,14 @@ export default function CreateLabel({ route }: Props) {
   const [draft, setDraft] = useState('')
   const dispatch = useAppDispatch()
   const theme = useTheme()
+  const inputRef = useRef<RNTextInput>(null)
+
+  useFocusEffect(
+    useCallback(() => {
+      const timer = setTimeout(() => inputRef.current?.focus(), 50)
+      return () => clearTimeout(timer)
+    }, []),
+  )
 
   const labelAlreadyExists = (label: string) => labels.includes(label)
 
@@ -37,7 +46,7 @@ export default function CreateLabel({ route }: Props) {
         <TextInput
           value={draft}
           mode="flat"
-          autoFocus
+          ref={inputRef}
           autoCapitalize="none"
           onChangeText={setDraft}
           onSubmitEditing={() => createLabel(draft.trim())}

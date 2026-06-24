@@ -101,6 +101,7 @@ export default function LabelEditor() {
                 icon="trash-can-outline"
                 disabled={item !== draftLabel}
                 onPress={() => confirmDelete(item)}
+                testID={`label_trash_${item}`}
               />
             </>
           ) : (

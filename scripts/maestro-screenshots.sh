@@ -133,6 +133,22 @@ case "${PLATFORM}" in
     adb uninstall com.fogcitysingers.goodtags 2>/dev/null || true
     adb install "${APK_PATH}"
 
+    # Maestro's auto-install of its driver APKs can silently fail on newer API levels.
+    # Pre-install them explicitly to ensure gRPC connectivity on tcp:7001.
+    if ! adb shell pm list packages 2>/dev/null | grep -q "dev.mobile.maestro.test"; then
+      echo "installing Maestro driver APKs..."
+      MAESTRO_CLIENT_JAR=$(find /opt/homebrew/Cellar/maestro -name "maestro-client.jar" 2>/dev/null | head -1)
+      if [ -z "${MAESTRO_CLIENT_JAR}" ]; then
+        echo "error: could not find maestro-client.jar; install Maestro via brew" >&2
+        exit 1
+      fi
+      MAESTRO_TMP=$(mktemp -d)
+      (cd "${MAESTRO_TMP}" && jar xf "${MAESTRO_CLIENT_JAR}" maestro-app.apk maestro-server.apk)
+      adb install -r "${MAESTRO_TMP}/maestro-app.apk"
+      adb install -r "${MAESTRO_TMP}/maestro-server.apk"
+      rm -rf "${MAESTRO_TMP}"
+    fi
+
     maestro test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \

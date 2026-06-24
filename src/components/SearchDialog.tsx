@@ -248,7 +248,7 @@ export default function SearchDialog(props: Props) {
         </View>
       </View>
       <View style={staticStyles.searchButtonSpacer} />
-      {!keyboardVisible && (
+      {(Platform.OS === 'android' || !keyboardVisible) && (
         <Button
           icon="magnify"
           mode="contained"
