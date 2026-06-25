@@ -3,8 +3,8 @@
   "version": "4.2.0",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "expo run:android --no-bundler",
+    "ios": "expo run:ios --no-bundler",
     "lint": "eslint . --format unix",
     "start": "react-native start",
     "test": "jest",
@@ -48,6 +48,7 @@
     "expo-audio": "~56.0.12",
     "expo-constants": "~56.0.18",
     "expo-file-system": "~56.0.8",
+    "expo-font": "~56.0.7",
     "expo-keep-awake": "~56.0.3",
     "expo-sqlite": "~56.0.5",
     "fast-xml-parser": "^5.3.2",

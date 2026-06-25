@@ -2,6 +2,33 @@
   "name": "goodtags",
   "displayName": "goodtags",
   "expo": {
-    "plugins": ["expo-audio", "expo-file-system", "expo-asset", "expo-sqlite"]
+    "plugins": [
+      "expo-audio",
+      "expo-file-system",
+      "expo-asset",
+      "expo-sqlite",
+      ["expo-font", {
+        "fonts": [
+          "./src/assets/fonts/Lato-Regular.ttf",
+          "./src/assets/fonts/Vollkorn-Black.ttf",
+          "./src/assets/fonts/Vollkorn-Regular.ttf"
+        ]
+      }]
+    ],
+    "android": {
+      "package": "com.fogcitysingers.goodtags",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier": "com.fogcitysingers.goodtags"
+    }
   }
 }
