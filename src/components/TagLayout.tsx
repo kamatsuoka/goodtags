@@ -307,12 +307,7 @@ export const TagLayout = ({
   return (
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
-        <View
-          style={[
-            styles.headerHolder,
-            { pointerEvents: infoVisible || tracksVisible ? 'none' : 'auto' },
-          ]}
-        >
+        <View style={[styles.headerHolder, (infoVisible || tracksVisible) && styles.pointerNone]}>
           <SharedHeader
             backType={BackType.Back}
             onBack={onBack}

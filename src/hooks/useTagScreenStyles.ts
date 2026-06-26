@@ -172,6 +172,10 @@ export const useTagScreenStyles = (buttonsDimmed: boolean, fabOpen: boolean) => 
           position: 'relative' as const,
           zIndex: 100,
         },
+
+    pointerNone: {
+      pointerEvents: 'none' as const,
+    },
   })
 
   return {
