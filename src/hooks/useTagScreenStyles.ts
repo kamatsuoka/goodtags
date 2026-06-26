@@ -146,10 +146,12 @@ export const useTagScreenStyles = (buttonsDimmed: boolean, fabOpen: boolean) => 
           right: Math.max(insets.right, ios ? 0 : MIN_HORIZONTAL_INSET),
           backgroundColor: 'transparent',
           opacity: fabOpen ? 0 : 1,
+          pointerEvents: 'box-none' as const,
         }
       : {
           ...baseStyles.actionBar,
           marginBottom: insets.bottom,
+          pointerEvents: 'box-none' as const,
         },
 
     modalCloseButton: ios
