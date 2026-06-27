@@ -14,6 +14,7 @@
     "deploy:ios": "./deploy/deploy-ios.sh",
     "deploy:android": "./deploy/deploy-android.sh",
     "setup:android-signing": "./deploy/setup-android-signing.sh",
+    "pods": "bundle install && bundle exec pod install --project-directory=ios",
     "build:ios": "./scripts/xcodebuild.sh -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Release -sdk iphonesimulator -derivedDataPath ios/build ONLY_ACTIVE_ARCH=YES",
     "build:ios:debug": "./scripts/xcodebuild.sh -workspace ios/goodtags.xcworkspace -scheme goodtags -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build ONLY_ACTIVE_ARCH=YES",
     "build:android": "cd android && ./gradlew assembleRelease",

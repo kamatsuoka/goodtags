@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		034ACB8DBF0647AF8B706A89 /* Vollkorn-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		70E985E1308A73E899AE40F9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4AF76375FBE56FE776826BAE /* PrivacyInfo.xcprivacy */; };
 		77C2D958D9B2B7CBBA0A322A /* libPods-goodtags.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EEF718E59185F831A68BA4C4 /* libPods-goodtags.a */; };
+		9293EF96BF6C48B5B0E65798 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EEB45ECEECB4E43B28F5478 /* Lato-Regular.ttf */; };
+		9E6261A044C94E4BA06E5E22 /* Vollkorn-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D86FD7D053045F2AF18C828 /* Vollkorn-Regular.ttf */; };
 		B2AB2C4D9448EB5754DC58DC /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F009462995E04D846275AA /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		034ACB8DBF0647AF8B706A89 /* Vollkorn-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */; };
-		9293EF96BF6C48B5B0E65798 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EEB45ECEECB4E43B28F5478 /* Lato-Regular.ttf */; };
-		9E6261A044C94E4BA06E5E22 /* Vollkorn-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D86FD7D053045F2AF18C828 /* Vollkorn-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,18 +24,18 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = goodtags/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = goodtags/Info.plist; sourceTree = "<group>"; };
 		244D9C7960B421AA25EF78D9 /* Pods-goodtags.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.release.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.release.xcconfig"; sourceTree = "<group>"; };
+		2D86FD7D053045F2AF18C828 /* Vollkorn-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Regular.ttf"; path = "../src/assets/fonts/Vollkorn-Regular.ttf"; sourceTree = "<group>"; };
 		35F009462995E04D846275AA /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-goodtags/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		3EEB45ECEECB4E43B28F5478 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		4AF76375FBE56FE776826BAE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = goodtags/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6D841A298120762AF52648B6 /* Pods-goodtags.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-goodtags.debug.xcconfig"; path = "Target Support Files/Pods-goodtags/Pods-goodtags.debug.xcconfig"; sourceTree = "<group>"; };
+		99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Black.ttf"; path = "../src/assets/fonts/Vollkorn-Black.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = goodtags/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EEF718E59185F831A68BA4C4 /* libPods-goodtags.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-goodtags.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = goodtags/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* goodtags-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "goodtags-Bridging-Header.h"; path = "goodtags/goodtags-Bridging-Header.h"; sourceTree = "<group>"; };
-		2D86FD7D053045F2AF18C828 /* Vollkorn-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Regular.ttf"; path = "../src/assets/fonts/Vollkorn-Regular.ttf"; sourceTree = "<group>"; };
-		3EEB45ECEECB4E43B28F5478 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
-		99542C99F74F49C3A7E6BEA8 /* Vollkorn-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Vollkorn-Black.ttf"; path = "../src/assets/fonts/Vollkorn-Black.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

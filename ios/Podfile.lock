@@ -1503,7 +1503,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-document-picker (11.0.0):
+  - react-native-document-picker (12.0.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2694,7 +2694,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: ab33a818d339f5a1da308893c11b487be66121a8
   React-mutationobservernativemodule: a42d1626651ccd7d0dc02a56e69d4ec77c248893
   react-native-blob-util: dffef224c11c57d3e1d44b1a16a2ecda5bfb1099
-  react-native-document-picker: c856c9e2bde554fef70bf429bd9e45440fe7dfcd
+  react-native-document-picker: 15cca2d1a6bfb6d0d3ff0283bd9b903e57cb028b
   react-native-safe-area-context: 6b4966397ada0f7dd481e4486a2ef936834861a1
   react-native-slider: 08ecfc4e9cc16cc388a56dd9caeca51b55cd9bb7
   react-native-webview: 2da09bdea1aeb6c46e27dd94632e21059cade6c1
@@ -2742,6 +2742,6 @@ SPEC CHECKSUMS:
   RNWorklets: 4931990f73bc8f347586918b2e13f11dfadf3b75
   Yoga: 77dfa8673de2874e1855002ae59c68b8be9b007b
 
-PODFILE CHECKSUM: a27a97119bb858c36cea38538ae3a105c7aa47b2
+PODFILE CHECKSUM: 932cd6b9b4f5530668e3f687417a3cf57f2abc4a
 
 COCOAPODS: 1.15.2
