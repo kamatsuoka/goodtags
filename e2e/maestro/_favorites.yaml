@@ -27,7 +27,7 @@ appId: com.fogcitysingers.goodtags
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-05-confirm
 
 - tapOn:
-    id: "remove-favorites-confirm"
+    id: "remove_favorites_confirm"
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-favorites-06-removed
 
 - tapOn:

@@ -1,10 +1,11 @@
 import { Text } from '@app/components/Text'
 import { useAppDispatch, useAppSelector, useBodyInsets } from '@app/hooks'
 import { FavoritesActions } from '@app/modules/favoritesSlice'
-import { useMemo, useState } from 'react'
-import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native'
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { Platform, Pressable, StyleSheet, View } from 'react-native'
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist'
-import { IconButton, TextInput, useTheme } from 'react-native-paper'
+import { Divider, IconButton, TextInput, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ITEM_HEIGHT = 60
@@ -18,6 +19,8 @@ export default function LabelEditor() {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const confirmSheetRef = useRef<BottomSheetModal>(null)
+  const [labelToDelete, setLabelToDelete] = useState('')
 
   const containerPadding = useMemo(
     () => ({
@@ -40,24 +43,23 @@ export default function LabelEditor() {
     dispatch(FavoritesActions.renameLabel({ oldLabel: label, newLabel }))
   }
 
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.3}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  )
+
   const confirmDelete = (label: string) => {
     stopEditing()
-    Alert.alert(
-      'delete label?',
-      '',
-      [
-        {
-          text: 'cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'delete',
-          style: 'destructive',
-          onPress: () => dispatch(FavoritesActions.deleteLabel(label)),
-        },
-      ],
-      { cancelable: true },
-    )
+    setLabelToDelete(label)
+    confirmSheetRef.current?.present()
   }
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<string>) => {
@@ -126,6 +128,17 @@ export default function LabelEditor() {
     )
   }
 
+  const sheetStyles = StyleSheet.create({
+    container: {
+      paddingHorizontal: Math.max(24, insets.left + 24, insets.right + 24),
+      paddingTop: 8,
+    },
+    action: {
+      alignItems: 'center',
+      paddingVertical: 18,
+    },
+  })
+
   return (
     <View style={[styles.container, containerPadding]}>
       <DraggableFlatList
@@ -135,6 +148,35 @@ export default function LabelEditor() {
         keyExtractor={item => item}
         renderItem={renderItem}
       />
+      <BottomSheetModal
+        ref={confirmSheetRef}
+        enableDynamicSizing
+        enablePanDownToClose
+        backgroundStyle={{ backgroundColor: theme.colors.surface }}
+        handleIndicatorStyle={{ backgroundColor: theme.colors.outline }}
+        backdropComponent={renderBackdrop}
+      >
+        <BottomSheetView
+          style={[sheetStyles.container, { paddingBottom: Math.max(24, insets.bottom) }]}
+        >
+          <Pressable
+            onPress={() => {
+              confirmSheetRef.current?.dismiss()
+              dispatch(FavoritesActions.deleteLabel(labelToDelete))
+            }}
+            style={sheetStyles.action}
+            testID="delete_label_confirm"
+          >
+            <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+              delete label
+            </Text>
+          </Pressable>
+          <Divider />
+          <Pressable onPress={() => confirmSheetRef.current?.dismiss()} style={sheetStyles.action}>
+            <Text variant="bodyLarge">cancel</Text>
+          </Pressable>
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   )
 }

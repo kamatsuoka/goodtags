@@ -26,7 +26,7 @@ appId: com.fogcitysingers.goodtags
     id: label_trash_DELETEME
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-delete-confirm
 - tapOn:
-    text: delete
+    id: delete_label_confirm
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-deleted-deleteme
 # exit edit mode
 - tapOn:

@@ -2,7 +2,7 @@
 # generate app store screenshots using Maestro
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
 #
-# ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
+# ios device types:  default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13")
 # android device types: default (Pixel 9), pixel7 (Pixel 7 API 33)
 # fragment: one or more fragment files under e2e/maestro/; 
 # all fragments are combined into a single wrapper with app launch
@@ -51,8 +51,8 @@ fi
 case "${PLATFORM}" in
   ios)
     case "${DEVICE_TYPE}" in
-      "13inch")  DEVICE_NAME="iPad Pro 13-inch (M5)" ;;
-      "6.5inch") DEVICE_NAME="iPhone Xs Max" ;;
+      "large")  DEVICE_NAME="iPad Pro 13-inch (M5)" ;;
+      "small") DEVICE_NAME="iPhone 13 mini" ;;
       *)         DEVICE_NAME="iPhone 17" ;;
     esac
 

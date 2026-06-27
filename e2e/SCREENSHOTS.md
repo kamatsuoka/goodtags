@@ -30,8 +30,8 @@ yarn build:android:debug # debug
 yarn screenshots:ios
 
 # ios app store sizes
-yarn screenshots:ios:6.5inch   # iphone xs max
-yarn screenshots:ios:13inch    # ipad pro 13"
+yarn screenshots:ios:small   # iphone 13 mini
+yarn screenshots:ios:large    # ipad pro 13"
 
 # android (requires a running emulator or connected device)
 yarn screenshots:android
