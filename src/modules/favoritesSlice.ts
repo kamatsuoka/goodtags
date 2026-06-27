@@ -2,8 +2,10 @@ import { SortOrder } from '@app/constants/Search'
 import { buildFavorite, FavoritesById } from '@app/lib/models/Favorite'
 import Tag, { IdsByString, StringsByNumber, TagsById } from '@app/lib/models/Tag'
 import { RootState } from '@app/store'
+import { errorCodes, isErrorWithCode, saveDocuments } from '@react-native-documents/picker'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
+import { Platform } from 'react-native'
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import Share from 'react-native-share'
 import { refreshTag } from './refreshTagThunk'
@@ -421,14 +423,28 @@ export const shareFavorites = async (favorites: FavoritesState): Promise<ShareRe
   try {
     const path: string = await writeFavoritesToFile(favorites)
     console.info(`wrote favorites to ${path}`)
-    const { success } = await Share.open({
-      url: `file://${path}`,
-      type: 'application/json',
-    })
-    // by default, failOnCancel is true and react-native-share
-    // throws an error if user cancels share dialog;
-    // log success result anyway
-    console.info(`share success: ${success}`)
+    if (Platform.OS === 'android') {
+      const filename = path.split('/').pop() ?? 'faves-labels.json'
+      const results = await saveDocuments({
+        sourceUris: [`file://${path}`],
+        mimeType: 'application/json',
+        fileName: filename,
+      })
+      const result = results[0]
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      console.info(`saved to ${result.uri}`)
+    } else {
+      const { success } = await Share.open({
+        url: `file://${path}`,
+        type: 'application/json',
+      })
+      // by default, failOnCancel is true and react-native-share
+      // throws an error if user cancels share dialog;
+      // log success result anyway
+      console.info(`share success: ${success}`)
+    }
     const favCount = favorites.allTagIds.length
     const labelCount = favorites.labels.length
     const message =
@@ -436,9 +452,12 @@ export const shareFavorites = async (favorites: FavoritesState): Promise<ShareRe
       ` and ${labelCount} label${labelCount !== 1 ? 's' : ''}`
     return { message, showSnackBar: true }
   } catch (e) {
+    if (isErrorWithCode(e) && e.code === errorCodes.OPERATION_CANCELED) {
+      return { message: '', showSnackBar: false }
+    }
     if (e && typeof e === 'object' && 'message' in e) {
       const errorMessage = (e as Error).message
-      // User canceled the share dialog
+      // User canceled the share dialog (iOS react-native-share)
       if (errorMessage.includes('User did not share')) {
         return { message: '', showSnackBar: false }
       }

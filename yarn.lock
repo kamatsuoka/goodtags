@@ -3207,13 +3207,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-documents/picker@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@react-native-documents/picker@npm:11.0.0"
+"@react-native-documents/picker@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@react-native-documents/picker@npm:12.0.1"
   peerDependencies:
     react: "*"
     react-native: ">=0.79.0"
-  checksum: 10/23e95064a42ee6c5879ace6494ae34f5389bf1d96d964cd4006499a2e487e0373f51dd80a6179eb98de01990f2d510556ab9906ddf9e55c63064d4d7dc5bd128
+  checksum: 10/5d915828a2baade9b476589738c2dc4ac192b4444006e198e15676e952991bdbf472163bb739592abf581fb7402a193c9cc49319fa986fb7fd6434aaae3a3a68
   languageName: node
   linkType: hard
 
@@ -7245,7 +7245,7 @@ __metadata:
     "@react-native-community/cli-platform-android": "npm:20.1.0"
     "@react-native-community/cli-platform-ios": "npm:20.1.0"
     "@react-native-community/slider": "npm:5.2.0"
-    "@react-native-documents/picker": "npm:^11.0.0"
+    "@react-native-documents/picker": "npm:^12.0.1"
     "@react-native/babel-preset": "npm:^0.85.3"
     "@react-native/eslint-config": "npm:^0.85.3"
     "@react-native/metro-config": "npm:^0.85.3"
