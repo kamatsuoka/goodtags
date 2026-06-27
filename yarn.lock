@@ -2491,9 +2491,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gorhom/bottom-sheet@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@gorhom/bottom-sheet@npm:5.2.7"
+"@gorhom/bottom-sheet@npm:5.2.14":
+  version: 5.2.14
+  resolution: "@gorhom/bottom-sheet@npm:5.2.14"
   dependencies:
     "@gorhom/portal": "npm:1.0.14"
     invariant: "npm:^2.2.4"
@@ -2509,7 +2509,7 @@ __metadata:
       optional: true
     "@types/react-native":
       optional: true
-  checksum: 10/370787f062149f0f8ce645f0d942ebd62ac0e75ad31746db8da9d1b6e19940ef811987b6cb9ef52cc1f920929db915ea9f5d5017ebfcd8211a59cf932c36ea95
+  checksum: 10/6d2008a7b47fcc26bd15d6fa6aa827a2df64a3b07754ddfc861a1a70f52762268f09f386e1d469d256ba0ed04602f9af99195fa01b799306750012fc4774e3bd
   languageName: node
   linkType: hard
 
@@ -7239,7 +7239,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.25.3"
     "@babel/runtime": "npm:^7.25.0"
     "@expo/vector-icons": "npm:^15.1.1"
-    "@gorhom/bottom-sheet": "npm:^5.2.7"
+    "@gorhom/bottom-sheet": "npm:5.2.14"
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
     "@react-native-community/cli": "npm:20.1.0"
     "@react-native-community/cli-platform-android": "npm:20.1.0"

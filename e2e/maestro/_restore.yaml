@@ -14,19 +14,7 @@ appId: com.fogcitysingers.goodtags
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-02-restore-clicked
 
-# Android-specific flow
 - runFlow:
-    when:
-        platform: Android
-    commands:
-        # no local files available in android, just dismiss
-        - tapOn:
-            point: "10%, 10%"
-
-# iOS-specific restore flow
-- runFlow:
-    when:
-        platform: iOS
     commands:
       - tapOn:
             point: "15%, 30%"
