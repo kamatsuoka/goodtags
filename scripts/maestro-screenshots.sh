@@ -31,6 +31,7 @@ else
     echo "---"
     echo "- launchApp:"
     echo "    clearState: true"
+    echo "- waitForAnimationToEnd"
     echo "- tapOn:"
     echo "    id: welcome_forward_button"
     echo "- assertVisible:"
