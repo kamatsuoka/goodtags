@@ -43,16 +43,19 @@ echo -e "\n${YELLOW}Step 1: Bumping version code...${NC}"
 node "$SCRIPT_DIR/bump-android-version.js"
 
 # Step 2: Clean previous builds
+# (RN 0.85 New Architecture: `gradlew clean` triggers CMake regeneration before
+# codegen dirs exist, causing a build failure. Delete build dirs directly instead.)
 echo -e "\n${YELLOW}Step 2: Cleaning previous builds...${NC}"
-cd "$ANDROID_DIR"
-./gradlew clean
+rm -rf "$ANDROID_DIR/app/build" "$ANDROID_DIR/build" "$ANDROID_DIR/app/.cxx"
+echo -e "${GREEN}✓ Build directories cleaned${NC}"
 
 # Step 3: Build the release bundle/APK
+cd "$ANDROID_DIR"
 if [ "$BUILD_TYPE" = "bundle" ]; then
   echo -e "\n${YELLOW}Step 3: Building release AAB (Android App Bundle)...${NC}"
   echo -e "${YELLOW}This may take a few minutes...${NC}"
   ./gradlew bundleRelease
-  
+
   OUTPUT_FILE="$BUILD_DIR/app-release.aab"
   OUTPUT_NAME="AAB"
 else
