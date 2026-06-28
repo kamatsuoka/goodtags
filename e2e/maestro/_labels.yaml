@@ -6,30 +6,54 @@ appId: com.fogcitysingers.goodtags
 
 # labels screen
 - tapOn:
-    id: "labels"
+    id: labels
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-01-main
+
+# create label 'DELETEME'
+- tapOn:
+    id: labels_new
+- inputText: DELETEME
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-create-deleteme
+- pressKey: Enter
+
+# delete label 'DELETEME'
+- tapOn:
+    id: labels_edit
+- tapOn:
+    id: label_pencil_DELETEME
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-editing-deleteme
+- tapOn:
+    id: label_trash_DELETEME
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-delete-confirm
+- tapOn:
+    id: delete_label_confirm
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-deleted-deleteme
+# exit edit mode
+- tapOn:
+    id: back_button
 
 # create label 'first'
 - tapOn:
-    text: "new"
-- inputText: "first"
+    id: labels_new
+- waitForAnimationToEnd
+- inputText: first
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-02-create-first
 - pressKey: Enter
 
 # create label 'low'
 - tapOn:
-    text: "new"
-- inputText: "low"
+    id: labels_new
+- inputText: low
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-03-create-low
 - pressKey: Enter
 
 # label editor: rename 'low' to 'lower'
 - tapOn:
-    text: "edit"
+    id: labels_edit
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-04-editor
 - tapOn:
     id: label_pencil_low
-- inputText: "er"
+- inputText: er
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-05-rename
 - pressKey: Enter
 
@@ -40,11 +64,12 @@ appId: com.fogcitysingers.goodtags
     end: "90%, 22%"
     duration: 2500
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-labels-07-reordered
+# exit edit mode
 - tapOn:
     id: back_button
 
+# back to home screen
 - tapOn:
     id: back_button
-
 - tapOn:
-    text: "tab_home"
+    text: tab_home

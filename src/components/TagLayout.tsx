@@ -186,22 +186,6 @@ export const TagLayout = ({
     }
   }, [keepAwakeEnabled])
 
-  useEffect(() => {
-    if (infoVisible) {
-      bottomSheetModalRef.current?.present()
-    } else {
-      bottomSheetModalRef.current?.dismiss()
-    }
-  }, [infoVisible])
-
-  useEffect(() => {
-    if (tracksVisible) {
-      tracksSheetRef.current?.present()
-    } else {
-      tracksSheetRef.current?.dismiss()
-    }
-  }, [tracksVisible])
-
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -214,42 +198,6 @@ export const TagLayout = ({
     ),
     [],
   )
-
-  const fabActions = [
-    {
-      icon: 'file-document-outline',
-      label: 'tag info',
-      testID: 'fab_tag_info',
-      onPress: () => setInfoVisible(true),
-    },
-    {
-      icon: 'tag-outline',
-      label: 'labels',
-      testID: 'fab_labels',
-      onPress: () => navigation.navigate('TagLabels'),
-    },
-  ]
-
-  if (hasTracks) {
-    fabActions.push({
-      icon: 'headphones',
-      label: 'tracks',
-      testID: 'fab_tracks',
-      onPress: () => setTracksVisible(true),
-    })
-  }
-
-  if (hasVideos) {
-    fabActions.push({
-      icon: 'video-box',
-      label: 'videos',
-      testID: 'fab_videos',
-      onPress: () => {
-        pause()
-        navigation.navigate('TagVideos', { tag })
-      },
-    })
-  }
 
   const noteIcon = useCallback(
     (props: { size: number; color: ColorValue }) => <NoteButton note={keyNote} {...props} />,
@@ -288,6 +236,48 @@ export const TagLayout = ({
     </View>
   )
 
+  const fabActions = [
+    {
+      icon: 'file-document-outline',
+      label: 'tag info',
+      testID: 'fab_tag_info',
+      onPress: () => {
+        setInfoVisible(true)
+        bottomSheetModalRef.current?.present()
+      },
+    },
+    {
+      icon: 'tag-outline',
+      label: 'labels',
+      testID: 'fab_labels',
+      onPress: () => navigation.navigate('TagLabels'),
+    },
+  ]
+
+  if (hasTracks) {
+    fabActions.push({
+      icon: 'headphones',
+      label: 'tracks',
+      testID: 'fab_tracks',
+      onPress: () => {
+        setTracksVisible(true)
+        tracksSheetRef.current?.present()
+      },
+    })
+  }
+
+  if (hasVideos) {
+    fabActions.push({
+      icon: 'video-box',
+      label: 'videos',
+      testID: 'fab_videos',
+      onPress: () => {
+        pause()
+        navigation.navigate('TagVideos', { tag })
+      },
+    })
+  }
+
   const headerRight = useCallback(
     (_props: any) => (
       <View style={styles.headerRight}>
@@ -317,10 +307,7 @@ export const TagLayout = ({
   return (
     <BottomSheetModalProvider>
       <View style={CommonStyles.container}>
-        <View
-          style={styles.headerHolder}
-          pointerEvents={infoVisible || tracksVisible ? 'none' : 'auto'}
-        >
+        <View style={[styles.headerHolder, (infoVisible || tracksVisible) && styles.pointerNone]}>
           <SharedHeader
             backType={BackType.Back}
             onBack={onBack}
@@ -332,7 +319,7 @@ export const TagLayout = ({
           />
         </View>
         {memoizedSheetMusic}
-        <View style={styles.bottomActionBar} pointerEvents="box-none">
+        <View style={styles.bottomActionBar}>
           <IconButton
             icon={noteIcon}
             onPressIn={handleNotePressIn}

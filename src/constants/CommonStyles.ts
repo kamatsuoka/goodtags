@@ -37,7 +37,7 @@ const CommonStyles = StyleSheet.create({
     left: 25,
   },
   spinnerHolder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
   },
   redBox: {

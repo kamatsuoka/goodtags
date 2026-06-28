@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     paddingTop: 35,
   },
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'flex-start',
   },
   fab: {
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   containerStyle: {
     borderRadius: 5,

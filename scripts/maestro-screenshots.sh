@@ -2,7 +2,7 @@
 # generate app store screenshots using Maestro
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
 #
-# ios device types:  default (iPhone 17), 6.5inch (iPhone Xs Max), 13inch (iPad Pro 13")
+# ios device types:  default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13")
 # android device types: default (Pixel 9), pixel7 (Pixel 7 API 33)
 # fragment: one or more fragment files under e2e/maestro/; 
 # all fragments are combined into a single wrapper with app launch
@@ -31,6 +31,7 @@ else
     echo "---"
     echo "- launchApp:"
     echo "    clearState: true"
+    echo "- waitForAnimationToEnd"
     echo "- tapOn:"
     echo "    id: welcome_forward_button"
     echo "- assertVisible:"
@@ -50,8 +51,8 @@ fi
 case "${PLATFORM}" in
   ios)
     case "${DEVICE_TYPE}" in
-      "13inch")  DEVICE_NAME="iPad Pro 13-inch (M5)" ;;
-      "6.5inch") DEVICE_NAME="iPhone Xs Max" ;;
+      "large")  DEVICE_NAME="iPad Pro 13-inch (M5)" ;;
+      "small") DEVICE_NAME="iPhone 13 mini" ;;
       *)         DEVICE_NAME="iPhone 17" ;;
     esac
 
@@ -83,11 +84,14 @@ case "${PLATFORM}" in
     esac
     if [ ! -d "${APP_PATH}" ]; then
       echo "error: app binary not found at ${APP_PATH}" >&2
-      echo "build first with: yarn e2e:build:ios (release) or yarn e2e:build:ios:debug (debug)" >&2
+      echo "build first with: yarn build:ios (release) or yarn build:ios:debug (debug)" >&2
       exit 1
     fi
     echo "installing app..."
     xcrun simctl install "${DEVICE_ID}" "${APP_PATH}"
+
+    # pre-grant all permissions so iOS doesn't show system dialogs on first launch
+    xcrun simctl privacy "${DEVICE_ID}" grant all com.fogcitysingers.goodtags
 
     maestro --device "${DEVICE_ID}" test \
       --output "${OUTPUT_DIR}" \
@@ -126,12 +130,28 @@ case "${PLATFORM}" in
     esac
     if [ ! -f "${APK_PATH}" ]; then
       echo "error: APK not found at ${APK_PATH}" >&2
-      echo "build first with: cd android && ./gradlew assembleRelease" >&2
+      echo "build first with: yarn build:android (release) or yarn build:android:debug (debug)" >&2
       exit 1
     fi
     echo "installing APK..."
     adb uninstall com.fogcitysingers.goodtags 2>/dev/null || true
     adb install "${APK_PATH}"
+
+    # Maestro's auto-install of its driver APKs can silently fail on newer API levels.
+    # Pre-install them explicitly to ensure gRPC connectivity on tcp:7001.
+    if ! adb shell pm list packages 2>/dev/null | grep -q "dev.mobile.maestro.test"; then
+      echo "installing Maestro driver APKs..."
+      MAESTRO_CLIENT_JAR=$(find /opt/homebrew/Cellar/maestro -name "maestro-client.jar" 2>/dev/null | head -1)
+      if [ -z "${MAESTRO_CLIENT_JAR}" ]; then
+        echo "error: could not find maestro-client.jar; install Maestro via brew" >&2
+        exit 1
+      fi
+      MAESTRO_TMP=$(mktemp -d)
+      (cd "${MAESTRO_TMP}" && jar xf "${MAESTRO_CLIENT_JAR}" maestro-app.apk maestro-server.apk)
+      adb install -r "${MAESTRO_TMP}/maestro-app.apk"
+      adb install -r "${MAESTRO_TMP}/maestro-server.apk"
+      rm -rf "${MAESTRO_TMP}"
+    fi
 
     maestro test \
       --output "${OUTPUT_DIR}" \

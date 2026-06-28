@@ -17,9 +17,18 @@ appId: com.fogcitysingers.goodtags
     when:
         platform: Android
     commands:
-        # no "save to files" available in android, just dismiss
+        # saveDocuments() opens a system "Save As" dialog (ACTION_CREATE_DOCUMENT);
         - tapOn:
-            point: "10%, 10%"
+            point: "50%, 95%"
+            repeat: 2
+            delay: 1000
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-03-file-selector
+        - eraseText: 50
+        - inputText: "faves-labels-maestro-${runId}"
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-04-filename-entered
+        - pressKey: Enter
+        - waitForAnimationToEnd
+        - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-05-backed-up
 
 # iOS-specific saving flow
 - runFlow:

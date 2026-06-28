@@ -140,7 +140,7 @@ export const FavoritesScreen = () => {
               dispatch(FavoritesActions.resetFavoriteTags())
             }}
             style={sheetStyles.action}
-            testID="remove-favorites-confirm"
+            testID="remove_favorites_confirm"
           >
             <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
               remove all favorites

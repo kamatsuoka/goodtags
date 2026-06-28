@@ -2,6 +2,7 @@ appId: com.fogcitysingers.goodtags
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 
 # welcome screen
 - assertVisible:
