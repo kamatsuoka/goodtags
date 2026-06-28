@@ -31,7 +31,7 @@ export const SORT_ICONS = {
 
 export const SORT_LABELS = {
   [SortOrder.alpha]: 'sort alphabetically',
-  [SortOrder.downloads]: 'sort by most downloaded',
+  [SortOrder.downloads]: 'sort by downloads',
   [SortOrder.newest]: 'sort by newest',
   [SortOrder.id]: 'sort by id',
 }

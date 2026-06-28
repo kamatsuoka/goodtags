@@ -26,18 +26,29 @@ yarn build:android:debug # debug
 ## usage
 
 ```bash
+To run screenshots on the release version:
+
 # ios default device (iPhone 17)
 yarn screenshots:ios
 
 # ios app store sizes
-yarn screenshots:ios:small   # iphone 13 mini
-yarn screenshots:ios:large    # ipad pro 13"
+yarn screenshots:ios small   # iphone 13 mini
+yarn screenshots:ios large    # ipad pro 13" — not currently working
 
-# android (requires a running emulator or connected device)
+# android default device (Pixel 0)
 yarn screenshots:android
 
-# all sizes — ios 6.5", ios 13", android
+# other android devices
+yarn screenshots:android pixel7
+
+# all sizes — iPhone 17, iPhone 13 mini, Pixel 9
 yarn screenshots:all
+
+To run screenshots on the debug version, which is quicker when adding new screenshots (and working out tap targets),
+append `:debug` after the platform, e.g.:
+
+yarn screenshots:ios:debug
+yarn screenshots:android:debug pixel7
 ```
 
 ## how it works
@@ -50,9 +61,15 @@ to add or change screenshots, edit that YAML file. available commands: `tapOn`, 
 
 start an emulator first:
 ```bash
-emulator -avd Pixel_9_API_35   # or whatever avd you have
+emulator -avd Pixel_9   # or whatever avd you have
 ```
 then run `yarn screenshots:android`.
+
+You can list available emulators with `emulator -list-avds`.
+
+(Note: you can also just run any of the `yarn screenshots:*` scripts and that will 
+launch the requested emulator, but due to timing issues it may to start the app.
+In that case, you can just run the script again.)
 
 ## troubleshooting
 

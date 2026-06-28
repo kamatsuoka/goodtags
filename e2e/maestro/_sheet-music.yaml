@@ -81,19 +81,24 @@ appId: com.fogcitysingers.goodtags
 - tapOn:
     id: "fab_videos"
 - waitForAnimationToEnd
-- assertVisible:
-    text: "Play video"
+- extendedWaitUntil:
+    visible:
+        text: "Play video"
+    timeout: 10000    
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-10-videos
 - swipe:
     start: "75%, 55%"
     end: "25%, 55%"
 - waitForAnimationToEnd
-- assertVisible:
-    text: "Play video"
+- extendedWaitUntil:
+    visible:
+        text: "Play video"
+    timeout: 10000    
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-11-videos-next
 - tapOn:
-    id: back_button
-    
+    id: back_button    
 - setOrientation: LANDSCAPE_LEFT
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-12-landscape

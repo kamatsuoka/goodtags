@@ -280,6 +280,24 @@ async function backgroundCheckForRemoteUpdates(
   const tmpSqlFile = new File(tmpSqlPath)
   tmpSqlFile.write(new Uint8Array(responseBuffer))
 
+  // Validate the downloaded file is a usable SQLite DB before swapping it in.
+  // A bad download (HTML error page, truncated response) would otherwise replace
+  // the current DB with an empty SQLite file that has no tables.
+  const tmpDb = await SQLite.openDatabaseAsync(tmpSqlPath)
+  try {
+    const rows = await tmpDb.getAllAsync<{ count: number }>(`SELECT COUNT(*) as count FROM tags`)
+    if (!rows[0]?.count && rows[0]?.count !== 0) {
+      throw new Error('tags table missing or unreadable in downloaded DB')
+    }
+    console.debug(`Remote DB validated: ${rows[0].count} tags`)
+  } catch (e) {
+    await tmpDb.closeAsync()
+    new File(tmpSqlPath).delete()
+    console.error('Downloaded remote DB failed validation, discarding:', e)
+    return
+  }
+  await tmpDb.closeAsync()
+
   const tmpManifestFile = new File(tmpManifestPath)
   tmpManifestFile.write(JSON.stringify(remoteManifestContents))
 

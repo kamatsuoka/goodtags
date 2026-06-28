@@ -3,7 +3,7 @@
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
 #
 # ios device types:  default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13")
-# android device types: default (Pixel 9), pixel7 (Pixel 7 API 33)
+# android device types: small (Pixel 7 API 33), default (Pixel 9), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36)
 # fragment: one or more fragment files under e2e/maestro/; 
 # all fragments are combined into a single wrapper with app launch
 
@@ -102,25 +102,38 @@ case "${PLATFORM}" in
 
   android)
     case "${DEVICE_TYPE}" in
-      "pixel7") AVD_NAME="Pixel_7_API_33" ;;
-      *)        AVD_NAME="Pixel_9" ;;
+      "small")   AVD_NAME="Pixel_7_API_33" ;;
+      "large")   AVD_NAME="Pixel_9_Pro_XL_API_36" ;;
+      "xlarge")  AVD_NAME="Pixel_Tablet_API_36" ;;
+      *)         AVD_NAME="Pixel_9" ;;
     esac
 
     echo "avd: ${AVD_NAME}"
 
-    # boot emulator if no Android device/emulator is running
-    ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep -E "emulator|device" | awk '{print $1}' | head -1)
-    if [ -z "${ANDROID_DEVICE}" ]; then
-      echo "starting emulator ${AVD_NAME}..."
+    # boot the correct emulator if needed
+    ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | head -1)
+    if [ -n "${ANDROID_DEVICE}" ]; then
+      RUNNING_AVD=$(adb -s "${ANDROID_DEVICE}" emu avd name 2>/dev/null | head -1 | tr -d '\r')
+    fi
+
+    if [ -z "${ANDROID_DEVICE}" ] || [ "${RUNNING_AVD}" != "${AVD_NAME}" ]; then
+      if [ -n "${ANDROID_DEVICE}" ]; then
+        echo "running emulator is '${RUNNING_AVD}', need '${AVD_NAME}' — starting correct emulator..."
+      else
+        echo "starting emulator ${AVD_NAME}..."
+      fi
       emulator -avd "${AVD_NAME}" -no-audio -no-boot-anim &
       echo "waiting for emulator to boot..."
-      adb wait-for-device
-      until [ "$(adb shell getprop sys.boot_completed 2>/dev/null)" = "1" ]; do
+      # wait for the new emulator specifically
+      sleep 3
+      ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | tail -1)
+      adb -s "${ANDROID_DEVICE}" wait-for-device
+      until [ "$(adb -s "${ANDROID_DEVICE}" shell getprop sys.boot_completed 2>/dev/null)" = "1" ]; do
         sleep 2
       done
       echo "emulator ready"
     else
-      echo "device: ${ANDROID_DEVICE}"
+      echo "using running emulator: ${ANDROID_DEVICE} (${RUNNING_AVD})"
     fi
 
     # install APK (required for Maestro's clearState to work)
@@ -134,12 +147,12 @@ case "${PLATFORM}" in
       exit 1
     fi
     echo "installing APK..."
-    adb uninstall com.fogcitysingers.goodtags 2>/dev/null || true
-    adb install "${APK_PATH}"
+    adb -s "${ANDROID_DEVICE}" uninstall com.fogcitysingers.goodtags 2>/dev/null || true
+    adb -s "${ANDROID_DEVICE}" install "${APK_PATH}"
 
     # Maestro's auto-install of its driver APKs can silently fail on newer API levels.
     # Pre-install them explicitly to ensure gRPC connectivity on tcp:7001.
-    if ! adb shell pm list packages 2>/dev/null | grep -q "dev.mobile.maestro.test"; then
+    if ! adb -s "${ANDROID_DEVICE}" shell pm list packages 2>/dev/null | grep -q "dev.mobile.maestro.test"; then
       echo "installing Maestro driver APKs..."
       MAESTRO_CLIENT_JAR=$(find /opt/homebrew/Cellar/maestro -name "maestro-client.jar" 2>/dev/null | head -1)
       if [ -z "${MAESTRO_CLIENT_JAR}" ]; then
@@ -148,12 +161,12 @@ case "${PLATFORM}" in
       fi
       MAESTRO_TMP=$(mktemp -d)
       (cd "${MAESTRO_TMP}" && jar xf "${MAESTRO_CLIENT_JAR}" maestro-app.apk maestro-server.apk)
-      adb install -r "${MAESTRO_TMP}/maestro-app.apk"
-      adb install -r "${MAESTRO_TMP}/maestro-server.apk"
+      adb -s "${ANDROID_DEVICE}" install -r "${MAESTRO_TMP}/maestro-app.apk"
+      adb -s "${ANDROID_DEVICE}" install -r "${MAESTRO_TMP}/maestro-server.apk"
       rm -rf "${MAESTRO_TMP}"
     fi
 
-    maestro test \
+    maestro --device "${ANDROID_DEVICE}" test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
       --env runId="${TIMESTAMP}" \
