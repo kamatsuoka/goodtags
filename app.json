@@ -7,13 +7,16 @@
       "expo-file-system",
       "expo-asset",
       "expo-sqlite",
-      ["expo-font", {
-        "fonts": [
-          "./src/assets/fonts/Lato-Regular.ttf",
-          "./src/assets/fonts/Vollkorn-Black.ttf",
-          "./src/assets/fonts/Vollkorn-Regular.ttf"
-        ]
-      }]
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./src/assets/fonts/Lato-Regular.ttf",
+            "./src/assets/fonts/Vollkorn-Black.ttf",
+            "./src/assets/fonts/Vollkorn-Regular.ttf"
+          ]
+        }
+      ]
     ],
     "android": {
       "package": "com.fogcitysingers.goodtags",
@@ -28,7 +31,9 @@
       ]
     },
     "ios": {
-      "bundleIdentifier": "com.fogcitysingers.goodtags"
+      "bundleIdentifier": "com.fogcitysingers.goodtags",
+      "buildNumber": "114",
+      "appleTeamId": "PXJ9SVB29P"
     }
   }
 }

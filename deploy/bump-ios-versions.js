@@ -12,6 +12,7 @@ const path = require('path')
 const rootDir = path.join(__dirname, '..')
 const projectPbxprojPath = path.join(rootDir, 'ios/goodtags.xcodeproj/project.pbxproj')
 const packageJsonPath = path.join(rootDir, 'package.json')
+const appJsonPath = path.join(rootDir, 'app.json')
 
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
 const packageVersion = packageJson.version
@@ -40,9 +41,16 @@ projectContent = projectContent.replace(
   `CURRENT_PROJECT_VERSION = ${newProjectVersion};`,
 )
 
-// write back
+// write back to project.pbxproj
 fs.writeFileSync(projectPbxprojPath, projectContent, 'utf8')
+
+// write back to app.json so expo prebuild picks up the correct build number
+const appJson = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'))
+appJson.expo.ios = appJson.expo.ios || {}
+appJson.expo.ios.buildNumber = String(newProjectVersion)
+fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2) + '\n', 'utf8')
 
 console.log(`✓ Updated CURRENT_PROJECT_VERSION to ${newProjectVersion}`)
 console.log(`✓ Updated MARKETING_VERSION to ${packageVersion} ...`)
+console.log(`✓ Updated app.json ios.buildNumber to ${newProjectVersion}`)
 console.log('✓ ios versions bumped successfully')
