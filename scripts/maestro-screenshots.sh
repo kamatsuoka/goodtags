@@ -90,6 +90,9 @@ case "${PLATFORM}" in
     echo "installing app..."
     xcrun simctl install "${DEVICE_ID}" "${APP_PATH}"
 
+    # pre-grant all permissions so iOS doesn't show system dialogs on first launch
+    xcrun simctl privacy "${DEVICE_ID}" grant all com.fogcitysingers.goodtags
+
     maestro --device "${DEVICE_ID}" test \
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \

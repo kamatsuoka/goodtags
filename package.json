@@ -25,7 +25,7 @@
     "screenshots:ios:large": "./scripts/maestro-screenshots.sh ios large",
     "screenshots:android": "./scripts/maestro-screenshots.sh android",
     "screenshots:android:debug": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh android",
-    "screenshots:all": "./scripts/maestro-screenshots.sh ios small && ./scripts/maestro-screenshots.sh ios large && ./scripts/maestro-screenshots.sh android",
+    "screenshots:all": "./scripts/maestro-screenshots.sh ios && ./scripts/maestro-screenshots.sh ios small && ./scripts/maestro-screenshots.sh android",
     "screenshots:random-tag": "./scripts/maestro-screenshots.sh ios default random-tag.yaml"
   },
   "dependencies": {
