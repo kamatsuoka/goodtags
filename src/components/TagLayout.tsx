@@ -23,8 +23,8 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ColorValue, View } from 'react-native'
-import { ActivityIndicator, IconButton, Portal, Snackbar, useTheme } from 'react-native-paper'
+import { ActivityIndicator, ColorValue, View } from 'react-native'
+import { IconButton, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { FABDown } from './FABDown'
 import NoteButton from './NoteButton'
@@ -54,28 +54,25 @@ const PlayPauseAction = React.memo(
     styles: any
     theme: any
   }) => {
-    const icon = isPlaying ? 'pause' : 'play'
+    const spinnerIcon = useCallback(
+      () => <ActivityIndicator size="large" color={TrackLoadingSpinner} />,
+      [],
+    )
+    const icon = isLoading ? spinnerIcon : isPlaying ? 'pause' : 'play'
     return (
-      <View>
-        <IconButton
-          icon={icon}
-          iconColor={theme.colors.primary}
-          onPress={() => {
-            console.log('[TagLayout] PlayPause pressed:', icon)
-            onPress()
-            // Defer state update to avoid re-render during touch event
-            setTimeout(() => brightenThenFade(), 0)
-          }}
-          disabled={disabled}
-          size={BIG_BUTTON_SIZE}
-          style={styles.dimmableIconHolder}
-        />
-        {isLoading && (
-          <View style={styles.spinnerOverlay} pointerEvents="none">
-            <ActivityIndicator size={BIG_BUTTON_SIZE + 16} color={TrackLoadingSpinner} />
-          </View>
-        )}
-      </View>
+      <IconButton
+        icon={icon}
+        iconColor={theme.colors.primary}
+        onPress={() => {
+          console.log('[TagLayout] PlayPause pressed:', icon)
+          onPress()
+          // Defer state update to avoid re-render during touch event
+          setTimeout(() => brightenThenFade(), 0)
+        }}
+        disabled={disabled || isLoading}
+        size={BIG_BUTTON_SIZE}
+        style={styles.dimmableIconHolder}
+      />
     )
   },
 )
