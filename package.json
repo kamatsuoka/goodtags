@@ -29,7 +29,7 @@
     "screenshots:android:large:debug": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh android large",
     "screenshots:android:xlarge": "./scripts/maestro-screenshots.sh android xlarge",
     "screenshots:android:xlarge:debug": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh android xlarge",
-    "screenshots:all": "./scripts/maestro-screenshots.sh ios && ./scripts/maestro-screenshots.sh ios small && ./scripts/maestro-screenshots.sh ios large && ./scripts/maestro-screenshots.sh android && ./scripts/maestro-screenshots.sh android large && ./scripts/maestro-screenshots.sh android xlarge",
+    "screenshots:all": "./scripts/maestro-screenshots.sh ios && ./scripts/maestro-screenshots.sh ios small && ./scripts/maestro-screenshots.sh android && ./scripts/maestro-screenshots.sh android large && ./scripts/maestro-screenshots.sh android xlarge",
     "screenshots:random-tag": "./scripts/maestro-screenshots.sh ios default random-tag.yaml"
   },
   "dependencies": {

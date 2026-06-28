@@ -15,8 +15,8 @@ import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View } from 'react-native'
-import { ActivityIndicator, Snackbar, useTheme } from 'react-native-paper'
+import { ActivityIndicator, View } from 'react-native'
+import { Snackbar, useTheme } from 'react-native-paper'
 
 /**
  * Popular tags

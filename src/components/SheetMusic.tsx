@@ -1,9 +1,9 @@
 import { useHeaderHeight, usePdfCache } from '@app/hooks'
 
 import { Text } from '@app/components/Text'
-import { Platform, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import PdfRendererView from 'react-native-pdf-renderer'
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'

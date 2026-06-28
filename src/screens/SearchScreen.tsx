@@ -18,8 +18,8 @@ import { LoadingState, SORT_ICONS, SORT_LABELS, TagListEnum } from '@app/modules
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashListRef } from '@shopify/flash-list'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Modal, StyleSheet, View } from 'react-native'
-import { ActivityIndicator, Button, Chip, Snackbar, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native'
+import { Button, Chip, Snackbar, useTheme } from 'react-native-paper'
 
 /**
  * List of search results.
