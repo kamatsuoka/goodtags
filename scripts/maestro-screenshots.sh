@@ -2,9 +2,9 @@
 # generate app store screenshots using Maestro
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
 #
-# ios device types:  default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13")
-# android device types: small (Pixel 7 API 33), default (Pixel 9), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36)
-# fragment: one or more fragment files under e2e/maestro/; 
+# ios device types:   default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13") (note: iPad not working as of June 2026)
+# android device types: default (Pixel 9), small (Pixel 7 API 33), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36), physical (connected USB device)
+# fragment: one or more fragment files under e2e/maestro/;
 # all fragments are combined into a single wrapper with app launch
 
 set -e
@@ -102,38 +102,53 @@ case "${PLATFORM}" in
 
   android)
     case "${DEVICE_TYPE}" in
-      "small")   AVD_NAME="Pixel_7_API_33" ;;
-      "large")   AVD_NAME="Pixel_9_Pro_XL_API_36" ;;
-      "xlarge")  AVD_NAME="Pixel_Tablet_API_36" ;;
-      *)         AVD_NAME="Pixel_9" ;;
+      "small")    AVD_NAME="Pixel_7_API_33" ;;
+      "large")    AVD_NAME="Pixel_9_Pro_XL_API_36" ;;
+      "xlarge")   AVD_NAME="Pixel_Tablet_API_36" ;;
+      "physical") AVD_NAME="" ;;
+      *)          AVD_NAME="Pixel_9" ;;
     esac
 
-    echo "avd: ${AVD_NAME}"
-
-    # boot the correct emulator if needed
-    ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | head -1)
-    if [ -n "${ANDROID_DEVICE}" ]; then
-      RUNNING_AVD=$(adb -s "${ANDROID_DEVICE}" emu avd name 2>/dev/null | head -1 | tr -d '\r')
-    fi
-
-    if [ -z "${ANDROID_DEVICE}" ] || [ "${RUNNING_AVD}" != "${AVD_NAME}" ]; then
-      if [ -n "${ANDROID_DEVICE}" ]; then
-        echo "running emulator is '${RUNNING_AVD}', need '${AVD_NAME}' — starting correct emulator..."
-      else
-        echo "starting emulator ${AVD_NAME}..."
+    if [ "${DEVICE_TYPE}" = "physical" ]; then
+      # use the connected physical device (non-emulator), ignoring any running emulators
+      ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep -v "emulator" | grep "device$" | awk '{print $1}' | head -1)
+      if [ -z "${ANDROID_DEVICE}" ]; then
+        echo "error: no physical Android device found. connect a device with USB debugging enabled." >&2
+        exit 1
       fi
-      emulator -avd "${AVD_NAME}" -no-audio -no-boot-anim &
-      echo "waiting for emulator to boot..."
-      # wait for the new emulator specifically
-      sleep 3
-      ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | tail -1)
-      adb -s "${ANDROID_DEVICE}" wait-for-device
-      until [ "$(adb -s "${ANDROID_DEVICE}" shell getprop sys.boot_completed 2>/dev/null)" = "1" ]; do
-        sleep 2
-      done
-      echo "emulator ready"
+      echo "using physical device: ${ANDROID_DEVICE}"
+      if [ "${BUILD_TYPE}" = "debug" ]; then
+        echo "setting up adb reverse for Metro bundler..."
+        adb -s "${ANDROID_DEVICE}" reverse tcp:8081 tcp:8081
+      fi
     else
-      echo "using running emulator: ${ANDROID_DEVICE} (${RUNNING_AVD})"
+      echo "avd: ${AVD_NAME}"
+
+      # boot the correct emulator if needed
+      ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | head -1)
+      if [ -n "${ANDROID_DEVICE}" ]; then
+        RUNNING_AVD=$(adb -s "${ANDROID_DEVICE}" emu avd name 2>/dev/null | head -1 | tr -d '\r')
+      fi
+
+      if [ -z "${ANDROID_DEVICE}" ] || [ "${RUNNING_AVD}" != "${AVD_NAME}" ]; then
+        if [ -n "${ANDROID_DEVICE}" ]; then
+          echo "running emulator is '${RUNNING_AVD}', need '${AVD_NAME}' — starting correct emulator..."
+        else
+          echo "starting emulator ${AVD_NAME}..."
+        fi
+        emulator -avd "${AVD_NAME}" -no-audio -no-boot-anim &
+        echo "waiting for emulator to boot..."
+        # wait for the new emulator specifically
+        sleep 3
+        ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep "emulator" | awk '{print $1}' | tail -1)
+        adb -s "${ANDROID_DEVICE}" wait-for-device
+        until [ "$(adb -s "${ANDROID_DEVICE}" shell getprop sys.boot_completed 2>/dev/null)" = "1" ]; do
+          sleep 2
+        done
+        echo "emulator ready"
+      else
+        echo "using running emulator: ${ANDROID_DEVICE} (${RUNNING_AVD})"
+      fi
     fi
 
     # install APK (required for Maestro's clearState to work)
