@@ -3,7 +3,7 @@
 # usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
 #
 # ios device types:   default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13") (note: iPad not working as of June 2026)
-# android device types: default (Pixel 9), small (Pixel 7 API 33), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36), physical (connected USB device)
+# android device types: default (Pixel 9), small (Pixel 7 API 33), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36), device (connected USB device)
 # fragment: one or more fragment files under e2e/maestro/;
 # all fragments are combined into a single wrapper with app launch
 
@@ -105,18 +105,18 @@ case "${PLATFORM}" in
       "small")    AVD_NAME="Pixel_7_API_33" ;;
       "large")    AVD_NAME="Pixel_9_Pro_XL_API_36" ;;
       "xlarge")   AVD_NAME="Pixel_Tablet_API_36" ;;
-      "physical") AVD_NAME="" ;;
+      "device") AVD_NAME="" ;;
       *)          AVD_NAME="Pixel_9" ;;
     esac
 
-    if [ "${DEVICE_TYPE}" = "physical" ]; then
-      # use the connected physical device (non-emulator), ignoring any running emulators
+    if [ "${DEVICE_TYPE}" = "device" ]; then
+      # use the connected device device (non-emulator), ignoring any running emulators
       ANDROID_DEVICE=$(adb devices | grep -v "^List" | grep -v "emulator" | grep "device$" | awk '{print $1}' | head -1)
       if [ -z "${ANDROID_DEVICE}" ]; then
-        echo "error: no physical Android device found. connect a device with USB debugging enabled." >&2
+        echo "error: no device Android device found. connect a device with USB debugging enabled." >&2
         exit 1
       fi
-      echo "using physical device: ${ANDROID_DEVICE}"
+      echo "using device device: ${ANDROID_DEVICE}"
       if [ "${BUILD_TYPE}" = "debug" ]; then
         echo "setting up adb reverse for Metro bundler..."
         adb -s "${ANDROID_DEVICE}" reverse tcp:8081 tcp:8081
