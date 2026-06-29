@@ -17,7 +17,7 @@ appId: com.fogcitysingers.goodtags
 - runFlow:
     commands:
       - tapOn:
-            point: "8%, 33%"
+            point: "8%, 30%"
             delay: 1000
       - waitForAnimationToEnd
       - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-03-restored
