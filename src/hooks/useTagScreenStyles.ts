@@ -166,6 +166,18 @@ export const useTagScreenStyles = (buttonsDimmed: boolean, fabOpen: boolean) => 
       backgroundColor: theme.colors.inverseOnSurface,
       opacity: buttonsDimmed ? BUTTON_DIM_OPACITY : 1.0,
     },
+    noteIndicator: {
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+    },
+    noteIndicatorInner: {
+      opacity: 0.25,
+    },
     headerHolder: landscape
       ? baseStyles.headerHolder
       : {

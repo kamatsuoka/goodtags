@@ -60,6 +60,15 @@ target 'goodtags' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+    # Raise any pod deployment target below 12.0 to satisfy Xcode's minimum
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        min = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+        if min && min.to_f < 12.0
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+        end
+      end
+    end
     # fmt 11's consteval usage is broken on Apple Clang in Xcode 26+
     installer.pods_project.targets.each do |target|
       next unless target.name == 'fmt'

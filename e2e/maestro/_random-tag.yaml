@@ -4,7 +4,7 @@ appId: com.fogcitysingers.goodtags
 # Entry/Exit: home screen (home tab)
 
 - tapOn:
-    id: "random tag"
+    id: "random"
 - extendedWaitUntil:
     visible:
       id: sheet_music_loaded

@@ -6202,6 +6202,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-haptics@npm:^56.0.3":
+  version: 56.0.3
+  resolution: "expo-haptics@npm:56.0.3"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/2521399323c4a8c2e114d8dade94d83815c9bd992686a8dea860cb02470dfb474bb9f0e0cf6a40af881189b20a49bd8b35f4b49c1edff478bb2dafdbe8620c06
+  languageName: node
+  linkType: hard
+
 "expo-keep-awake@npm:~56.0.3":
   version: 56.0.3
   resolution: "expo-keep-awake@npm:56.0.3"
@@ -6896,6 +6905,7 @@ __metadata:
     expo-constants: "npm:~56.0.18"
     expo-file-system: "npm:~56.0.8"
     expo-font: "npm:~56.0.7"
+    expo-haptics: "npm:^56.0.3"
     expo-keep-awake: "npm:~56.0.3"
     expo-sqlite: "npm:~56.0.5"
     fast-xml-parser: "npm:^5.3.2"

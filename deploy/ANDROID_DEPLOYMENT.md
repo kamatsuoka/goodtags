@@ -55,7 +55,7 @@ This only updates `package.json` version.
 ### 4. Manually Bump Android Version (Rare)
 
 ```bash
-yarn bump-android-version
+yarn android:bump
 ```
 
 This bumps the versionCode.

@@ -174,7 +174,7 @@ export default function HomeScreen({ navigation }: HomeNavigatorScreenProps<'Hom
           </View>
           <View style={styles.column}>
             <View style={listStyles.listHolder}>
-              <HomeItem title="random tag" leftIcon={RandomIcon} dest="Random" />
+              <HomeItem title="random" leftIcon={RandomIcon} dest="Random" />
             </View>
           </View>
           <View style={styles.column}>

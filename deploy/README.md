@@ -32,8 +32,8 @@ yarn deploy:android
 | `yarn bump-package-version patch` | Bump patch version in package.json (4.0.1 → 4.0.2) |
 | `yarn bump-package-version minor` | Bump minor version in package.json (4.0.1 → 4.1.0) |
 | `yarn bump-package-version major` | Bump major version in package.json (4.0.1 → 5.0.0) |
-| `yarn bump-ios-version` | Sync version from package.json + bump iOS build number |
-| `yarn bump-android-version` | Bump Android version code |
+| `yarn ios:bump` | Sync version from package.json + bump iOS build number |
+| `yarn android:bump` | Bump Android version code |
 
 ### iOS Commands
 

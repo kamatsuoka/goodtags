@@ -21,9 +21,10 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
+import * as Haptics from 'expo-haptics'
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, ColorValue, View } from 'react-native'
+import { ActivityIndicator, Animated, ColorValue, View } from 'react-native'
 import { IconButton, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 import { FABDown } from './FABDown'
@@ -208,17 +209,28 @@ export const TagLayout = ({
     [brightenThenFade, tag.uri, landscape],
   )
 
+  const noteIndicatorOpacity = useRef(new Animated.Value(0)).current
+
   const handleNotePressIn = useCallback(() => {
     noteOnPressIn()
-    // Defer state update to avoid re-render during touch event
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    Animated.timing(noteIndicatorOpacity, {
+      toValue: 1,
+      duration: 80,
+      useNativeDriver: true,
+    }).start()
     setTimeout(() => brightenButtons(), 0)
-  }, [noteOnPressIn, brightenButtons])
+  }, [noteOnPressIn, brightenButtons, noteIndicatorOpacity])
 
   const handleNotePressOut = useCallback(() => {
     noteOnPressOut()
-    // Defer state update to avoid re-render during touch event
+    Animated.timing(noteIndicatorOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start()
     setTimeout(() => brightenThenFade(), 0)
-  }, [noteOnPressOut, brightenThenFade])
+  }, [noteOnPressOut, brightenThenFade, noteIndicatorOpacity])
 
   const handlePlayOrPause = useCallback(() => {
     playOrPause()
@@ -316,6 +328,14 @@ export const TagLayout = ({
           />
         </View>
         {memoizedSheetMusic}
+        <Animated.View
+          pointerEvents="none"
+          style={[styles.noteIndicator, { opacity: noteIndicatorOpacity }]}
+        >
+          <View style={styles.noteIndicatorInner}>
+            <NoteButton note={keyNote} size={200} color={theme.colors.primary} />
+          </View>
+        </Animated.View>
         <View style={styles.bottomActionBar}>
           <IconButton
             icon={noteIcon}

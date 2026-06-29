@@ -1,7 +1,6 @@
 {
-  "name": "goodtags",
-  "displayName": "goodtags",
   "expo": {
+    "name": "goodtags",
     "plugins": [
       "expo-audio",
       "expo-file-system",

@@ -12,4 +12,4 @@
 # allowing llbuild to correctly skip unchanged script phases.
 export PATH
 PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '^/private/tmp/xfs-' | paste -sd':')"
-exec xcodebuild "$@"
+exec xcodebuild -workspace ios/goodtags.xcworkspace -scheme goodtags -derivedDataPath ios/build "$@"

@@ -84,7 +84,7 @@ case "${PLATFORM}" in
     esac
     if [ ! -d "${APP_PATH}" ]; then
       echo "error: app binary not found at ${APP_PATH}" >&2
-      echo "build first with: yarn build:ios (release) or yarn build:ios:debug (debug)" >&2
+      echo "build first with: yarn ios (debug) or yarn:ios:release" >&2
       exit 1
     fi
     echo "installing app..."
@@ -158,7 +158,7 @@ case "${PLATFORM}" in
     esac
     if [ ! -f "${APK_PATH}" ]; then
       echo "error: APK not found at ${APK_PATH}" >&2
-      echo "build first with: yarn build:android (release) or yarn build:android:debug (debug)" >&2
+      echo "build first with: yarn android (debug) or yarn android:release" >&2
       exit 1
     fi
     echo "installing APK..."

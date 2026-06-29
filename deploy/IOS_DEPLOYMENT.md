@@ -49,7 +49,7 @@ This only updates `package.json` version.
 ### 3. Manually Bump iOS Version (Rare)
 
 ```bash
-yarn bump-ios-version
+yarn ios:bump
 ```
 
 This syncs the marketing version from package.json to iOS and bumps the build number.
