@@ -15,13 +15,13 @@
     "android:release": "./scripts/android-install.sh release",
     "ios:screenshots": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh ios",
     "ios:screenshots:release": "./scripts/maestro-screenshots.sh ios",
-    "android:screenshots": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh android",
-    "android:screenshots:release": "./scripts/maestro-screenshots.sh android",
     "screenshots": "./scripts/maestro-screenshots.sh ios && ./scripts/maestro-screenshots.sh ios small && ./scripts/maestro-screenshots.sh android && ./scripts/maestro-screenshots.sh android large && ./scripts/maestro-screenshots.sh android xlarge",
     "ios:bump": "node deploy/bump-ios-versions.js",
+    "ios:deploy": "./deploy/deploy-ios.sh",
+    "android:screenshots": "BUILD_TYPE=debug ./scripts/maestro-screenshots.sh android",
+    "android:screenshots:release": "./scripts/maestro-screenshots.sh android",
     "android:bump": "node deploy/android:bump.js",
-    "deploy:ios": "./deploy/deploy-ios.sh",
-    "deploy:android": "./deploy/deploy-android.sh"
+    "android:deploy": "./deploy/deploy-android.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
