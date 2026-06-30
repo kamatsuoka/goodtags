@@ -270,9 +270,12 @@ async function generatedAtFromPath(manifestPath: string): Promise<number> {
 }
 
 /**
- * Checks db on server and downloads it if newer, replacing backing db in wrapper
+ * Checks db on server and downloads it if newer, replacing backing db in wrapper.
+ *
+ * Exported for unit testing (see sqlUtil.test.ts); normally only called by
+ * initializeDbConnection.
  */
-async function backgroundCheckForRemoteUpdates(
+export async function backgroundCheckForRemoteUpdates(
   dbWrapper: DbWrapper,
   currentSqlPath: string,
   currentManifestPath: string,
@@ -304,13 +307,15 @@ async function backgroundCheckForRemoteUpdates(
   // Go ahead and download/write out both
   // To avoid race conditions, first write out to temp files,
   // then move into place, as when copying from app files.
-  // It's important to set Accept-Encoding header since that should result in
-  // over-the-wire transfer sizes being reduced by ~4x
+  // NOTE: Do NOT set Accept-Encoding manually. iOS/Android only transparently
+  // decompress gzip responses when the platform added the Accept-Encoding header
+  // itself. Setting it here disables that decompression, so we'd write the raw
+  // gzipped bytes to disk and SQLite would fail with "no such table". The platform
+  // negotiates gzip on its own, so we still get the ~4x over-the-wire savings.
   console.debug('Downloading remote DB')
   const responseBuffer = await getUrl<ArrayBuffer>(remoteSqlUrl, {
     // "stream" isn't a valid type in React Native so we need to save it all to an in-memory buffer
     responseType: 'arraybuffer',
-    headers: { 'Accept-Encoding': 'gzip' },
   })
   const tmpSqlFile = new File(tmpSqlPath)
   tmpSqlFile.write(new Uint8Array(responseBuffer))
@@ -318,11 +323,20 @@ async function backgroundCheckForRemoteUpdates(
   // Validate the downloaded file is a usable SQLite DB before swapping it in.
   // A bad download (HTML error page, truncated response) would otherwise replace
   // the current DB with an empty SQLite file that has no tables.
-  const tmpDb = await SQLite.openDatabaseAsync(tmpSqlPath)
+  //
+  // NOTE: openDatabaseAsync treats its argument as a name relative to
+  // defaultDatabaseDirectory (it just strips a leading slash and prepends the dir),
+  // so passing the full tmpSqlPath URI resolves to a bogus path and silently opens a
+  // brand-new empty DB -> "no such table: tags". The tmp file lives in that same
+  // directory, so open it by basename, exactly as we do for TAGS_DB_NAME elsewhere.
+  const tmpDbName = `${TAGS_DB_NAME}.tmp`
+  const tmpDb = await SQLite.openDatabaseAsync(tmpDbName)
   try {
     const rows = await tmpDb.getAllAsync<{ count: number }>(`SELECT COUNT(*) as count FROM tags`)
-    if (!rows[0]?.count && rows[0]?.count !== 0) {
-      throw new Error('tags table missing or unreadable in downloaded DB')
+    // Reject a missing, unreadable, or empty tags table: a structurally valid but
+    // zero-row DB would otherwise replace the working DB with a useless one.
+    if (!rows[0]?.count) {
+      throw new Error('tags table missing, unreadable, or empty in downloaded DB')
     }
     console.debug(`Remote DB validated: ${rows[0].count} tags`)
   } catch (e) {

@@ -1,5 +1,13 @@
-import { DbWrapper, InnerDb } from '@app/modules/sqlUtil'
+import { TAGS_DB_NAME } from '@app/constants/sql'
+import getUrl from '@app/modules/getUrl'
+import { backgroundCheckForRemoteUpdates, DbWrapper, InnerDb } from '@app/modules/sqlUtil'
 import { setImmediate } from '@testing-library/react-native/build/helpers/timers'
+import * as SQLite from 'expo-sqlite'
+
+jest.mock('@app/modules/getUrl')
+
+const mockGetUrl = getUrl as jest.MockedFunction<typeof getUrl>
+const mockOpenDatabaseAsync = SQLite.openDatabaseAsync as jest.Mock
 
 class TestSqliteDatabase implements InnerDb {
   numTxns: number
@@ -129,6 +137,80 @@ describe('DbWrapper class', () => {
       expect(replacedB).toBe(false)
     })
 
+    it('should still run a queued replacement after a transaction throws', async () => {
+      // Regression: runTransactionAsync must restore txnCount even when the
+      // callback throws. Otherwise txnCount stays stuck > 0 and the downloaded
+      // remote DB never gets swapped in.
+      const db1 = new TestSqliteDatabase()
+      const db2 = new TestSqliteDatabase()
+      const wrapper = new DbWrapper(db1)
+
+      await expect(
+        wrapper.runTransactionAsync(async () => {
+          throw new Error('query failed (e.g. no such table: tags)')
+        }),
+      ).rejects.toThrow('query failed')
+
+      await wrapper.queueDbReplacement(async () => db2)
+      await settle()
+
+      await wrapper.runTransactionAsync(async () => {})
+      // If txnCount were stuck, the replacement wouldn't have happened and this
+      // would have gone to db1 instead.
+      expect(db2.numTxns).toBe(1)
+    })
+
+    it('should not close the DB while a getAllAsync is in flight', async () => {
+      // Regression for the exsqlite3_finalize SIGABRT crash: getAllAsync must be
+      // counted in txnCount so a replacement can't closeAsync() the DB out from
+      // under an active query.
+      const { promise, resolve } = promiseWithResolvers<void>()
+      let queryInFlight = false
+      let closedWhileQuerying = false
+      const db1: InnerDb = {
+        withTransactionAsync: async cb => cb(),
+        getAllAsync: async () => {
+          queryInFlight = true
+          await promise
+          queryInFlight = false
+          return []
+        },
+        closeAsync: async () => {
+          if (queryInFlight) closedWhileQuerying = true
+        },
+      }
+      const db2 = new TestSqliteDatabase()
+      const wrapper = new DbWrapper(db1)
+
+      const query = wrapper.getAllAsync('SELECT 1')
+      await settle() // let the query start and register in txnCount
+
+      await wrapper.queueDbReplacement(async () => db2)
+      await settle()
+      // Replacement must wait: db1 must not be closed while the query runs.
+      expect(closedWhileQuerying).toBe(false)
+
+      resolve()
+      await query
+      await settle()
+      expect(closedWhileQuerying).toBe(false)
+    })
+
+    it('should not be permanently locked if a replacement callback throws', async () => {
+      // Regression: replaceDbInProgress must be cleared even when the replacement
+      // callback throws, otherwise every later query awaits a rejected promise.
+      const db1 = new TestSqliteDatabase()
+      const wrapper = new DbWrapper(db1)
+
+      await wrapper.queueDbReplacement(async () => {
+        throw new Error('replacement failed (e.g. file move error)')
+      })
+      await settle()
+
+      // Wrapper should still be usable rather than re-throwing forever.
+      await expect(wrapper.runTransactionAsync(async () => {})).resolves.toBeUndefined()
+    })
+
     it('should queue second replacement if first has already started', async () => {
       const db = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db)
@@ -247,5 +329,140 @@ describe('DbWrapper class', () => {
       expect(checkSqliteHeader(fromBase64Buffer)).toBe(true)
       expect(checkSqliteHeader(directBinary)).toBe(true)
     })
+  })
+})
+
+describe('backgroundCheckForRemoteUpdates', () => {
+  const sqlDir = '/data/SQLite/'
+  const currentSqlPath = `${sqlDir}${TAGS_DB_NAME}`
+  const currentManifestPath = `${sqlDir}manifest.json`
+  const tmpSqlPath = `${currentSqlPath}.tmp`
+  const tmpManifestPath = `${currentManifestPath}.tmp`
+
+  beforeEach(() => {
+    mockGetUrl.mockReset()
+    mockOpenDatabaseAsync.mockReset()
+
+    // Remote manifest is newer than local (local mock File.text() returns '{}',
+    // so currentGeneratedAt is undefined and any remote value counts as newer),
+    // and advertises a DB for the current schema version.
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      // The SQL download
+      return new ArrayBuffer(100) as any
+    })
+
+    // Validation query reports a healthy table so the replacement is queued.
+    mockOpenDatabaseAsync.mockResolvedValue({
+      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
+      getAllAsync: async () => [{ count: 6975 }],
+      closeAsync: async () => {},
+    })
+  })
+
+  it('opens the downloaded tmp DB by basename, never by full path', async () => {
+    // Regression: expo-sqlite's openDatabaseAsync treats its argument as a name
+    // relative to defaultDatabaseDirectory, so passing the full tmpSqlPath URI
+    // silently opens a brand-new empty DB -> "no such table: tags". Every DB open
+    // in this module must use a bare basename.
+    const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+    await backgroundCheckForRemoteUpdates(
+      wrapper,
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    )
+    await settle()
+
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    // The tmp DB is validated by basename...
+    expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
+    // ...and no open ever receives a path with a directory separator.
+    for (const arg of openArgs) {
+      expect(arg).not.toContain('/')
+    }
+  })
+
+  it('does not set an Accept-Encoding header on the DB download', async () => {
+    // Regression: manually setting Accept-Encoding: gzip disables the platform's
+    // transparent gzip decompression, so we'd write compressed bytes to disk.
+    const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+    await backgroundCheckForRemoteUpdates(
+      wrapper,
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    )
+    await settle()
+
+    const sqlDownloadCall = mockGetUrl.mock.calls.find(call => String(call[0]).endsWith('.otf'))
+    expect(sqlDownloadCall).toBeDefined()
+    const config = sqlDownloadCall![1]
+    expect(config?.responseType).toBe('arraybuffer')
+    expect(config?.headers).toBeUndefined()
+  })
+
+  it('discards a downloaded DB whose tags table is missing or unreadable', async () => {
+    // The validation that protected us during the gzip incident: a download that
+    // isn't a usable tags DB must be thrown away rather than swapped in.
+    mockOpenDatabaseAsync.mockResolvedValue({
+      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
+      getAllAsync: async () => {
+        throw new Error('no such table: tags')
+      },
+      closeAsync: async () => {},
+    })
+    const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+    await backgroundCheckForRemoteUpdates(
+      wrapper,
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    )
+    await settle()
+
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    // The tmp DB was opened for validation...
+    expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
+    // ...but validation failed, so no replacement was queued (TAGS_DB_NAME, the
+    // basename used by the swap, is never opened).
+    expect(openArgs).not.toContain(TAGS_DB_NAME)
+  })
+
+  it('discards a downloaded DB whose tags table is empty (count 0)', async () => {
+    // A structurally valid but zero-row DB must not replace the working DB. This is
+    // belt-and-suspenders with the server-side floor in
+    // scripts/fetch_search_database.py (MIN_EXPECTED_TAGS / MIN_FRACTION_OF_PREVIOUS).
+    mockOpenDatabaseAsync.mockResolvedValue({
+      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
+      getAllAsync: async () => [{ count: 0 }],
+      closeAsync: async () => {},
+    })
+    const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+    await backgroundCheckForRemoteUpdates(
+      wrapper,
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    )
+    await settle()
+
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    // Validated the tmp DB, found it empty, and queued no replacement.
+    expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
+    expect(openArgs).not.toContain(TAGS_DB_NAME)
   })
 })
