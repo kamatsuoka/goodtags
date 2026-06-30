@@ -6,7 +6,7 @@ Automated deployment scripts for both iOS (App Store) and Android (Google Play).
 
 ### iOS Deployment
 ```bash
-yarn deploy:ios
+yarn ios:deploy
 ```
 
 ### Android Deployment
@@ -15,7 +15,7 @@ yarn deploy:ios
 yarn android:signing
 
 # Then deploy
-yarn deploy:android
+yarn android:deploy
 ```
 
 ## 📱 Platform-Specific Guides
@@ -39,13 +39,13 @@ yarn deploy:android
 
 | Command | Description |
 |---------|-------------|
-| `yarn deploy:ios` | Full iOS deployment (auto-bumps build + uploads) |
+| `yarn ios:deploy` | Full iOS deployment (auto-bumps build + uploads) |
 
 ### Android Commands
 
 | Command | Description |
 |---------|-------------|
-| `yarn deploy:android` | Full Android deployment (auto-bumps versionCode + builds AAB) |
+| `yarn android:deploy` | Full Android deployment (auto-bumps versionCode + builds AAB) |
 | `./deploy/deploy-android.sh --apk` | Build APK instead of AAB (for testing) |
 | `yarn android:signing` | Set up release signing (first-time setup) |
 
@@ -55,12 +55,12 @@ yarn deploy:android
 
 **iOS:**
 ```bash
-yarn deploy:ios  # Auto-bumps build number and uploads
+yarn ios:deploy  # Auto-bumps build number and uploads
 ```
 
 **Android:**
 ```bash
-yarn deploy:android  # Auto-bumps versionCode and builds AAB
+yarn android:deploy  # Auto-bumps versionCode and builds AAB
 ```
 
 ### Release New Marketing Version
@@ -70,10 +70,10 @@ yarn deploy:android  # Auto-bumps versionCode and builds AAB
 yarn package:bump patch  # or minor/major
 
 # 2. Deploy to iOS (syncs version from package.json)
-yarn deploy:ios
+yarn ios:deploy
 
 # 3. Deploy to Android
-yarn deploy:android
+yarn android:deploy
 ```
 
 ### Testing Locally
@@ -87,7 +87,7 @@ yarn ios
 **Android:**
 ```bash
 # Build APK and install on device
-yarn deploy:android --apk
+yarn android:deploy --apk
 adb install -r android/app/build/outputs/apk/release/app-release.apk
 ```
 
@@ -136,13 +136,13 @@ The app uses consistent versioning across platforms:
 ## 🛠️ Manual Steps After Automated Build
 
 ### iOS
-After `yarn deploy:ios` completes:
+After `yarn ios:deploy` completes:
 - If automatic upload fails, use Xcode Organizer or Transporter app
 - Submit for review in App Store Connect
 - Configure release details and screenshots
 
 ### Android
-After `yarn deploy:android` completes:
+After `yarn android:deploy` completes:
 1. Go to [Google Play Console](https://play.google.com/console)
 2. Select your app
 3. Choose a testing track or production

@@ -7,7 +7,7 @@ This directory contains scripts to automate the Android app deployment process f
 ### One-Command Deployment
 
 ```bash
-yarn deploy:android
+yarn android:deploy
 ```
 
 This will:
@@ -21,7 +21,7 @@ This will:
 ### 1. Deploy to Play Store (Recommended)
 
 ```bash
-yarn deploy:android
+yarn android:deploy
 ```
 
 This automatically:
@@ -59,7 +59,7 @@ yarn android:bump
 ```
 
 This bumps the versionCode.
-Normally you don't need this since `deploy:android` does it automatically.
+Normally you don't need this since `android:deploy` does it automatically.
 
 ## 🔐 Setup: Release Signing (Required for Production)
 
@@ -160,7 +160,7 @@ android/app/*.keystore
 
 ## 📤 Uploading to Google Play
 
-After running `yarn deploy:android`, you'll have an AAB file at:
+After running `yarn android:deploy`, you'll have an AAB file at:
 ```
 android/app/build/outputs/bundle/release/app-release.aab
 ```
@@ -208,7 +208,7 @@ See: https://github.com/Triple-T/gradle-play-publisher
 
 ```bash
 # Auto-increments versionCode and builds
-yarn deploy:android
+yarn android:deploy
 ```
 
 ### New Marketing Version Release
@@ -218,14 +218,14 @@ yarn deploy:android
 yarn package:bump patch
 
 # 2. Build and deploy
-yarn deploy:android
+yarn android:deploy
 ```
 
 ### Testing Local Build
 
 ```bash
 # Build APK for testing
-yarn deploy:android --apk
+yarn android:deploy --apk
 
 # Install on connected device
 adb install -r android/app/build/outputs/apk/release/app-release.apk
@@ -272,7 +272,7 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 
 ## 📝 What Gets Modified
 
-When running `yarn deploy:android`:
+When running `yarn android:deploy`:
 - `android/app/build.gradle` - versionCode (always auto-incremented)
 
 When running `yarn package:bump`:

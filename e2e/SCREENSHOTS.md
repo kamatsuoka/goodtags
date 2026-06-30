@@ -14,13 +14,13 @@ build the app for the simulator before running screenshots:
 # install/update pods (when dependencies change)
 yarn pods
 
-# build release binary for simulator
-yarn build:ios           # release
-yarn build:ios:debug     # debug
+# build and install binary on simulator
+yarn ios           # debug
+yarn ios:release   # release
 
 # android
-yarn build:android       # release
-yarn build:android:debug # debug
+yarn android          # debug
+yarn android:release  # release
 ```
 
 ## usage
@@ -29,26 +29,32 @@ yarn build:android:debug # debug
 To run screenshots on the release version:
 
 # ios default device (iPhone 17)
-yarn screenshots:ios
+yarn ios:screenshots
 
 # ios app store sizes
-yarn screenshots:ios small   # iphone 13 mini
-yarn screenshots:ios large    # ipad pro 13" — not currently working
+yarn ios:screenshots small   # iphone 13 mini
+yarn ios:screenshots large   # ipad pro 13" — not currently working
 
-# android default device (Pixel 0)
-yarn screenshots:android
+# android default device (Pixel 9)
+yarn android:screenshots
 
 # other android devices
-yarn screenshots:android pixel7
+yarn android:screenshots small
 
 # all sizes — iPhone 17, iPhone 13 mini, Pixel 9
-yarn screenshots:all
+yarn screenshots
 
-To run screenshots on the debug version, which is quicker when adding new screenshots (and working out tap targets),
-append `:debug` after the platform, e.g.:
+# release version
+To run screenshots on the release version,
+append `:release` after the platform, e.g.:
 
-yarn screenshots:ios:debug
-yarn screenshots:android:debug pixel7
+yarn ios:screenshots:release
+yarn android:screenshots:release pixel7
+
+# physical device (android only)
+To run screenshots on a physical android device connected by usb:
+
+yarn android:screenshots[:release] device  
 ```
 
 ## how it works
@@ -63,7 +69,7 @@ start an emulator first:
 ```bash
 emulator -avd Pixel_9   # or whatever avd you have
 ```
-then run `yarn screenshots:android`.
+then run `yarn android:screenshots`.
 
 You can list available emulators with `emulator -list-avds`.
 

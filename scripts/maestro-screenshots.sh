@@ -84,7 +84,7 @@ case "${PLATFORM}" in
     esac
     if [ ! -d "${APP_PATH}" ]; then
       echo "error: app binary not found at ${APP_PATH}" >&2
-      echo "build first with: yarn ios (debug) or yarn:ios:release" >&2
+      echo "build first with: yarn ios (debug) or yarn ios:release" >&2
       exit 1
     fi
     echo "installing app..."

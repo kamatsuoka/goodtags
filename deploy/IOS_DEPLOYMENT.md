@@ -7,7 +7,7 @@ This directory contains scripts to automate the iOS app deployment process.
 ### One-Command Deployment
 
 ```bash
-yarn deploy:ios
+yarn ios:deploy
 ```
 
 This will:
@@ -23,7 +23,7 @@ This will:
 ### 1. Deploy to TestFlight (Recommended)
 
 ```bash
-yarn deploy:ios
+yarn ios:deploy
 ```
 
 This automatically:
@@ -53,7 +53,7 @@ yarn ios:bump
 ```
 
 This syncs the marketing version from package.json to iOS and bumps the build number.
-Normally you don't need this since `deploy:ios` does it automatically.
+Normally you don't need this since `ios:deploy` does it automatically.
 
 ## Setup for Automatic Upload
 
@@ -134,7 +134,7 @@ If the automated upload fails, the script will provide the IPA location for manu
 
 ```bash
 # Deploy with auto-incremented build number
-yarn deploy:ios
+yarn ios:deploy
 ```
 
 This is what you'll do most of the time - it bumps the iOS build number and uploads to TestFlight.
@@ -146,7 +146,7 @@ This is what you'll do most of the time - it bumps the iOS build number and uplo
 yarn package:bump patch
 
 # 2. Deploy (build number bumped, version synced from package.json)
-yarn deploy:ios
+yarn ios:deploy
 ```
 
 Do this when you want to change the public-facing version number.
