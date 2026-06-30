@@ -29,6 +29,18 @@ LATEST_SCHEMA_VERSION = 1
 # Use this if we need to generate more than one DB schema simultaneously
 # PREVIOUS_SCHEMA_VERSION = 0
 
+# Sanity floor on how many tags a healthy build should contain. A build with fewer
+# than this almost certainly means the upstream API returned a partial or empty
+# result (it can still return HTTP 200 while doing so), so we abort rather than
+# deploy a degraded DB over the good one clients already have. The app's own
+# validation can't catch this: a structurally valid but under-populated DB passes
+# its checks and would silently replace the existing data.
+MIN_EXPECTED_TAGS = 5000
+# If a previous DB is present to compare against, require the new tag count to be at
+# least this fraction of it. Guards against partial outages that clear the absolute
+# floor but still represent a big regression.
+MIN_FRACTION_OF_PREVIOUS = 0.9
+
 
 type Tag = MutableMapping[str, Any]
 
@@ -88,6 +100,52 @@ def parse_batches_to_tags(
     batches: Sequence[Tag]
 ) -> Sequence[Tag]:
     return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
+
+
+def read_previous_tag_count(out_dir: Path) -> int | None:
+    """Read the tag count from the previously deployed DB, if one is present.
+
+    Must be called *before* `prepare_out_dir`, which clears out old files. Returns
+    None if there's no previous DB (e.g. first run) or it can't be read, in which
+    case only the absolute floor applies.
+    """
+    prev_path = out_dir / SQL_NAME_TEMPLATE.format(LATEST_SCHEMA_VERSION)
+    if not prev_path.exists():
+        return None
+    db = sqlite3.connect(prev_path)
+    try:
+        (count,) = db.execute("SELECT COUNT(*) FROM tags").fetchone()
+        return count
+    except sqlite3.Error as e:
+        print(f"Could not read previous tag count, ignoring: {e}")
+        return None
+    finally:
+        db.close()
+
+
+def validate_tag_count(num_tags: int, previous_count: int | None) -> None:
+    """Abort the build if the freshly fetched tag set looks degraded.
+
+    Raises SystemExit (which fails the workflow) so we never deploy a sparse DB
+    and bump the manifest timestamp, which would push it out to every client.
+    """
+    if num_tags < MIN_EXPECTED_TAGS:
+        raise SystemExit(
+            f"Aborting deploy: fetched only {num_tags} tags, below the absolute "
+            f"minimum of {MIN_EXPECTED_TAGS}. The upstream API likely returned a "
+            "partial result; not deploying over the existing DB."
+        )
+    if previous_count is not None and num_tags < previous_count * MIN_FRACTION_OF_PREVIOUS:
+        raise SystemExit(
+            f"Aborting deploy: fetched {num_tags} tags, less than "
+            f"{MIN_FRACTION_OF_PREVIOUS:.0%} of the previously deployed "
+            f"{previous_count}. The upstream API likely returned a partial result; "
+            "not deploying over the existing DB."
+        )
+    print(
+        f"Tag count validation passed: {num_tags} tags"
+        + (f" (previous: {previous_count})" if previous_count is not None else "")
+    )
 
 
 def prepare_out_dir(out_dir: Path) -> None:
@@ -364,9 +422,12 @@ def main() -> None:
     the remote. In particular this was done because the `checkout` step for the `out/` dir in the workflow sets up auth,
     so we're relying on the `.git` directory it creates to be able to push our changes.
     """
+    # Read the previous count before prepare_out_dir clears the old DB out.
+    previous_count = read_previous_tag_count(OUT_DIR)
     prepare_out_dir(OUT_DIR)
     batches = fetch_xml_batches()
     tags = [normalize(t) for t in parse_batches_to_tags(batches)]
+    validate_tag_count(len(tags), previous_count)
     current_sql_name = generate_sql_db(tags, OUT_DIR)
     generate_manifest(OUT_DIR, {LATEST_SCHEMA_VERSION: current_sql_name})
     deploy_to_gh_pages(OUT_DIR)

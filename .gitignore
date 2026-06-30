@@ -92,3 +92,7 @@ ios.sim.release.*/
 
 # claude
 .claude/
+
+# Python
+__pycache__/
+*.pyc
