@@ -57,9 +57,12 @@ export class DbWrapper {
       await this.replaceDbInProgress
     }
     this.txnCount += 1
-    await this.db.withTransactionAsync(asyncCallback)
-    this.txnCount -= 1
-    this.maybeDoDbReplacement()
+    try {
+      await this.db.withTransactionAsync(asyncCallback)
+    } finally {
+      this.txnCount -= 1
+      this.maybeDoDbReplacement()
+    }
   }
 
   async getAllAsync<T = any>(source: string, ...params: any[]): Promise<T[]> {
