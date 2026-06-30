@@ -253,6 +253,7 @@ export const FABDown = ({
             return (
               <Pressable
                 key={i}
+                testID={it.testID}
                 style={[styles.item, { paddingHorizontal }]}
                 pointerEvents={open ? 'auto' : 'none'}
                 onPress={e => {
@@ -296,7 +297,6 @@ export const FABDown = ({
                         it.style,
                       ] as StyleProp<ViewStyle>
                     }
-                    testID={it.testID}
                     visible={open}
                   />
                 </View>
