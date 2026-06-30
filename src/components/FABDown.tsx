@@ -2,6 +2,7 @@ import * as React from 'react'
 import {
   Animated,
   GestureResponderEvent,
+  Pressable,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -12,7 +13,7 @@ import {
 } from 'react-native'
 
 import { Text } from '@app/components/Text'
-import { Card, FAB } from 'react-native-paper'
+import { FAB } from 'react-native-paper'
 import { getFABGroupColors } from 'react-native-paper/lib/module/components/FAB/utils'
 import { IconSource } from 'react-native-paper/lib/module/components/Icon'
 import { MD3Theme } from 'react-native-paper/lib/typescript/types'
@@ -246,75 +247,60 @@ export const FABDown = ({
               color: it.labelTextColor ?? labelColor,
               ...theme.fonts.bodyLarge,
             }
-            const marginHorizontal = typeof it.size === 'undefined' || it.size === 'small' ? 24 : 16
-            const accessLabel = it.label
-            const actionSize = typeof it.size !== 'undefined' ? it.size : 'small'
+            const isSmall = it.size == null || it.size === 'small'
+            const paddingHorizontal = isSmall ? 24 : 16
 
             return (
-              <View
+              <Pressable
                 key={i}
-                style={[
-                  styles.item,
-                  {
-                    marginHorizontal,
-                  },
-                ]}
-                pointerEvents={open ? 'box-none' : 'none'}
+                style={[styles.item, { paddingHorizontal }]}
+                pointerEvents={open ? 'auto' : 'none'}
+                onPress={e => {
+                  it.onPress(e)
+                  close()
+                }}
+                accessibilityLabel={it.label}
+                accessibilityRole="button"
               >
                 {it.label && (
-                  <View>
-                    <Card
-                      mode="contained"
-                      testID={it.testID}
-                      onPress={e => {
-                        it.onPress(e)
-                        close()
-                      }}
-                      accessibilityLabel={accessLabel}
-                      accessibilityRole="button"
-                      style={
-                        [
-                          styles.containerStyle,
-                          {
-                            transform: [{ translateY: labelTranslations[i] }],
-                            opacity: opacities[i],
-                          },
-                          styles.v3ContainerStyle,
-                          it.containerStyle,
-                        ] as StyleProp<ViewStyle>
-                      }
-                    >
-                      <Text variant="bodyLarge" style={[labelTextStyle, it.labelStyle]}>
-                        {it.label}
-                      </Text>
-                    </Card>
-                  </View>
+                  <Animated.View
+                    style={
+                      [
+                        styles.containerStyle,
+                        {
+                          transform: [{ translateY: labelTranslations[i] }],
+                          opacity: opacities[i],
+                        },
+                        it.containerStyle,
+                      ] as StyleProp<ViewStyle>
+                    }
+                  >
+                    <Text variant="bodyLarge" style={[labelTextStyle, it.labelStyle]}>
+                      {it.label}
+                    </Text>
+                  </Animated.View>
                 )}
-                <FAB
-                  size={actionSize}
-                  icon={it.icon}
-                  color={it.color}
-                  style={
-                    [
-                      {
-                        transform: [{ scale: scales[i] }],
-                        opacity: opacities[i],
-                        backgroundColor: stackedFABBackgroundColor,
-                      },
-                      { transform: [{ translateY: translations[i] }] },
-                      it.style,
-                    ] as StyleProp<ViewStyle>
-                  }
-                  onPress={e => {
-                    it.onPress(e)
-                    close()
-                  }}
-                  accessibilityLabel={it.label}
-                  accessibilityRole="button"
-                  testID={it.testID}
-                  visible={open}
-                />
-              </View>
+                <View pointerEvents="none">
+                  <FAB
+                    size={isSmall ? 'small' : 'medium'}
+                    icon={it.icon}
+                    color={it.color}
+                    style={
+                      [
+                        {
+                          transform: [{ scale: scales[i] }],
+                          opacity: opacities[i],
+                          backgroundColor: stackedFABBackgroundColor,
+                        },
+                        { transform: [{ translateY: translations[i] }] },
+                        it.style,
+                      ] as StyleProp<ViewStyle>
+                    }
+                    testID={it.testID}
+                    visible={open}
+                  />
+                </View>
+              </Pressable>
             )
           })}
         </ScrollView>
@@ -348,16 +334,14 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     marginVertical: 8,
     marginHorizontal: 16,
-    elevation: 2,
+    elevation: 0,
+    backgroundColor: 'transparent',
   },
   item: {
-    marginBottom: 16,
+    paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  v3ContainerStyle: {
-    backgroundColor: 'transparent',
-    elevation: 0,
+    alignSelf: 'stretch',
   },
 })
