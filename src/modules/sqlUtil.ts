@@ -69,7 +69,13 @@ export class DbWrapper {
     while (this.replaceDbInProgress != null) {
       await this.replaceDbInProgress
     }
-    return await this.db.getAllAsync<T>(source, ...params)
+    this.txnCount += 1
+    try {
+      return await this.db.getAllAsync<T>(source, ...params)
+    } finally {
+      this.txnCount -= 1
+      this.maybeDoDbReplacement()
+    }
   }
 
   async queueDbReplacement(replaceDbCallback: ReplaceDbCallback) {
@@ -97,10 +103,19 @@ export class DbWrapper {
       const replaceDbCallback = this.pendingReplaceDbCallback
       // This allows others to wait until replacement is done
       this.replaceDbInProgress = (async () => {
-        await this.db.closeAsync()
-        this.db = await replaceDbCallback()
-        this.pendingReplaceDbCallback = null
-        this.replaceDbInProgress = null
+        try {
+          await this.db.closeAsync()
+          this.db = await replaceDbCallback()
+          this.pendingReplaceDbCallback = null
+        } catch (e) {
+          // Clear callback so we don't retry a broken replacement indefinitely.
+          // this.db may now be closed with no valid replacement; subsequent queries
+          // will fail, but the wrapper itself won't be permanently locked.
+          this.pendingReplaceDbCallback = null
+          console.error('DB replacement failed:', e)
+        } finally {
+          this.replaceDbInProgress = null
+        }
       })()
     }
   }
