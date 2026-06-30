@@ -12,7 +12,7 @@ yarn deploy:ios
 ### Android Deployment
 ```bash
 # First time only: Set up release signing
-yarn setup:android-signing
+yarn android:signing
 
 # Then deploy
 yarn deploy:android
@@ -29,9 +29,9 @@ yarn deploy:android
 
 | Command | Description |
 |---------|-------------|
-| `yarn bump-package-version patch` | Bump patch version in package.json (4.0.1 → 4.0.2) |
-| `yarn bump-package-version minor` | Bump minor version in package.json (4.0.1 → 4.1.0) |
-| `yarn bump-package-version major` | Bump major version in package.json (4.0.1 → 5.0.0) |
+| `yarn package:bump patch` | Bump patch version in package.json (4.0.1 → 4.0.2) |
+| `yarn package:bump minor` | Bump minor version in package.json (4.0.1 → 4.1.0) |
+| `yarn package:bump major` | Bump major version in package.json (4.0.1 → 5.0.0) |
 | `yarn ios:bump` | Sync version from package.json + bump iOS build number |
 | `yarn android:bump` | Bump Android version code |
 
@@ -47,7 +47,7 @@ yarn deploy:android
 |---------|-------------|
 | `yarn deploy:android` | Full Android deployment (auto-bumps versionCode + builds AAB) |
 | `./deploy/deploy-android.sh --apk` | Build APK instead of AAB (for testing) |
-| `yarn setup:android-signing` | Set up release signing (first-time setup) |
+| `yarn android:signing` | Set up release signing (first-time setup) |
 
 ## 🔄 Typical Workflows
 
@@ -67,7 +67,7 @@ yarn deploy:android  # Auto-bumps versionCode and builds AAB
 
 ```bash
 # 1. Bump marketing version in package.json
-yarn bump-package-version patch  # or minor/major
+yarn package:bump patch  # or minor/major
 
 # 2. Deploy to iOS (syncs version from package.json)
 yarn deploy:ios
@@ -120,7 +120,7 @@ The app uses consistent versioning across platforms:
 
 1. **Generate Release Keystore:**
    ```bash
-   yarn setup:android-signing
+   yarn android:signing
    ```
    This will:
    - Generate a release keystore

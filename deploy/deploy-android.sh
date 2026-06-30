@@ -40,7 +40,7 @@ echo -e "${GREEN}========================================${NC}"
 
 # Step 1: Bump version code (always)
 echo -e "\n${YELLOW}Step 1: Bumping version code...${NC}"
-node "$SCRIPT_DIR/android:bump.js"
+node "$SCRIPT_DIR/bump-android-version.js"
 
 # Step 2: Clean previous builds
 # (RN 0.85 New Architecture: `gradlew clean` triggers CMake regeneration before

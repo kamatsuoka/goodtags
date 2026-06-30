@@ -35,13 +35,13 @@ This automatically:
 
 ```bash
 # Patch version (4.0.1 → 4.0.2)
-yarn bump-package-version patch
+yarn package:bump patch
 
 # Minor version (4.0.1 → 4.1.0)
-yarn bump-package-version minor
+yarn package:bump minor
 
 # Major version (4.0.1 → 5.0.0)
-yarn bump-package-version major
+yarn package:bump major
 ```
 
 This only updates `package.json` version.
@@ -143,7 +143,7 @@ This is what you'll do most of the time - it bumps the iOS build number and uplo
 
 ```bash
 # 1. Bump marketing version in package.json (e.g., 4.0.1 → 4.0.2)
-yarn bump-package-version patch
+yarn package:bump patch
 
 # 2. Deploy (build number bumped, version synced from package.json)
 yarn deploy:ios

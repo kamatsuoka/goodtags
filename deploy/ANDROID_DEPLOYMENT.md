@@ -41,13 +41,13 @@ Builds an APK instead of AAB, useful for local testing.
 
 ```bash
 # Patch version (4.0.1 → 4.0.2)
-yarn bump-package-version patch
+yarn package:bump patch
 
 # Minor version (4.0.1 → 4.1.0)
-yarn bump-package-version minor
+yarn package:bump minor
 
 # Major version (4.0.1 → 5.0.0)
-yarn bump-package-version major
+yarn package:bump major
 ```
 
 This only updates `package.json` version.
@@ -215,7 +215,7 @@ yarn deploy:android
 
 ```bash
 # 1. Bump package version (4.0.1 → 4.0.2)
-yarn bump-package-version patch
+yarn package:bump patch
 
 # 2. Build and deploy
 yarn deploy:android
@@ -275,7 +275,7 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 When running `yarn deploy:android`:
 - `android/app/build.gradle` - versionCode (always auto-incremented)
 
-When running `yarn bump-package-version`:
+When running `yarn package:bump`:
 - `package.json` - version field (marketing version)
 
 ## 🎯 Tips

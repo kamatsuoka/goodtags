@@ -14,6 +14,16 @@ find_emulator_by_avd() {
   done
 }
 
+start_and_wait_for_avd() {
+  local avd="$1"
+  echo "Starting $avd..."
+  "${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -avd "$avd" &
+  echo "Waiting for boot..."
+  until SERIAL=$(find_emulator_by_avd "$avd") && [ -n "$SERIAL" ]; do sleep 2; done
+  adb -s "$SERIAL" wait-for-device
+  until adb -s "$SERIAL" shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do sleep 2; done
+}
+
 if [ "$DEST" = "device" ]; then
   SERIAL=$(adb devices | grep -v "List of devices" | grep -v "^emulator" | grep "device$" | awk '{print $1}' | head -1)
   if [ -z "$SERIAL" ]; then
@@ -23,18 +33,17 @@ if [ "$DEST" = "device" ]; then
 elif [ -n "$DEST" ]; then
   SERIAL=$(find_emulator_by_avd "$DEST")
   if [ -z "$SERIAL" ]; then
-    echo "Starting $DEST..."
-    "${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -avd "$DEST" &
-    echo "Waiting for boot..."
-    until SERIAL=$(find_emulator_by_avd "$DEST") && [ -n "$SERIAL" ]; do sleep 2; done
-    adb -s "$SERIAL" wait-for-device
-    until adb -s "$SERIAL" shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do sleep 2; done
+    start_and_wait_for_avd "$DEST"
   fi
 else
   SERIAL=$(adb devices | grep "^emulator" | grep "device$" | awk '{print $1}' | head -1)
   if [ -z "$SERIAL" ]; then
-    echo "No emulator running"
-    exit 1
+    DEFAULT_AVD=$("${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -list-avds | head -1)
+    if [ -z "$DEFAULT_AVD" ]; then
+      echo "No emulator running and no AVDs found"
+      exit 1
+    fi
+    start_and_wait_for_avd "$DEFAULT_AVD"
   fi
 fi
 

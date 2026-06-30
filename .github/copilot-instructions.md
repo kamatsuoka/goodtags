@@ -35,10 +35,10 @@ goodtags is a React Native app (v0.81) for browsing and playing barbershop quart
 - **Audio setup**: `expo-audio` configured for silent mode playback in `App.tsx`
 
 #### Build & Deploy
-- **Version bumping**: Use `yarn bump-package-version [patch|minor|major]` to bump package.json version (infrequent)
+- **Version bumping**: Use `yarn package:bump [patch|minor|major]` to bump package.json version (infrequent)
 - **iOS**: `yarn deploy:ios` auto-bumps iOS build number, syncs version from package.json, builds archive, uploads to TestFlight
 - **Android**: `yarn deploy:android` auto-bumps versionCode, builds AAB for Play Store
-- **Signing**: Android requires keystore setup via `yarn setup:android-signing` (one-time)
+- **Signing**: Android requires keystore setup via `yarn android:signing` (one-time)
 
 ## Code Conventions
 

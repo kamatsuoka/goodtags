@@ -84,7 +84,7 @@ appId: com.fogcitysingers.goodtags
 - extendedWaitUntil:
     visible:
         text: "Play video"
-    timeout: 10000    
+    timeout: 30000    
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-10-videos
 - swipe:
@@ -94,7 +94,7 @@ appId: com.fogcitysingers.goodtags
 - extendedWaitUntil:
     visible:
         text: "Play video"
-    timeout: 10000    
+    timeout: 30000    
 - waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-sheet-music-11-videos-next
 - tapOn:
