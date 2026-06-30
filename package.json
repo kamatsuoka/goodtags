@@ -6,6 +6,7 @@
     "lint": "eslint . --format unix",
     "start": "react-native start",
     "test": "jest",
+    "db:refresh": "./scripts/refresh-bundled-db.sh",
     "pods": "bundle install && bundle exec pod install --project-directory=ios",
     "ios": "./scripts/ios-install.sh Debug",
     "ios:release": "./scripts/ios-install.sh Release",

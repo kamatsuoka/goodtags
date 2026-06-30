@@ -210,7 +210,10 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     tmpSqlFile.move(new File(currentSqlPath))
     tmpManifestFile.move(new File(currentManifestPath))
   } else {
-    console.debug('Not copying DB from app storage: current DB is up to date and valid')
+    console.debug(
+      'Not seeding DB from app bundle: on-device DB is at least as new as the ' +
+        'bundled copy and has tags. (Will still check the remote server next.)',
+    )
   }
 
   // Note we intentionally are just using basename and not full path.

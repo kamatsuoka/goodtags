@@ -8,6 +8,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 IOS_DIR="$PROJECT_DIR/ios"
 SCHEME="goodtags"
+
+# Always refresh the bundled offline DB with the latest validated copy before
+# building a release. The refresh validates before overwriting, so a failure (e.g.
+# network/CDN issue) leaves the committed bundle intact -- we warn and continue
+# rather than block, since the app also updates the DB at runtime.
+"$SCRIPT_DIR/../scripts/refresh-bundled-db.sh" ||
+  echo "Warning: could not refresh bundled DB; building with the committed copy."
 WORKSPACE="$IOS_DIR/goodtags.xcworkspace"
 ARCHIVE_PATH="$IOS_DIR/build/goodtags.xcarchive"
 EXPORT_PATH="$IOS_DIR/build/ipa"
