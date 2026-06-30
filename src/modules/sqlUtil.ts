@@ -155,7 +155,10 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   }
 
   // Initialize DB from local storage if needed
-  if (await shouldCopyFromApp(currentSqlPath, currentManifestPath, appManifestObject)) {
+  const needsCopy =
+    (await shouldCopyFromApp(currentSqlPath, currentManifestPath, appManifestObject)) ||
+    !(await currentDbHasTags())
+  if (needsCopy) {
     console.debug('Copying DB from app storage')
     // To avoid getting into a bad state if app dies mid-copy,
     // write to temp files and then move files into place.
@@ -189,7 +192,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     tmpSqlFile.move(new File(currentSqlPath))
     tmpManifestFile.move(new File(currentManifestPath))
   } else {
-    console.debug('Not copying DB from app storage, current DB already new enough')
+    console.debug('Not copying DB from app storage: current DB is up to date and valid')
   }
 
   // Note we intentionally are just using basename and not full path.
@@ -208,6 +211,20 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   ).then(/* Ignore, let run in background */)
 
   return dbWrapper
+}
+
+async function currentDbHasTags(): Promise<boolean> {
+  try {
+    const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME)
+    try {
+      await db.getAllAsync('SELECT COUNT(*) FROM tags LIMIT 1')
+      return true
+    } finally {
+      await db.closeAsync()
+    }
+  } catch {
+    return false
+  }
 }
 
 /** Whether we should copy SQL and manifest from app's built-in assets */
