@@ -55,5 +55,8 @@ appId: com.fogcitysingers.goodtags
         - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-05-backed-up
 
 - tapOn:
+    id: close_button
+    
+- tapOn:
     id: back_button
 - waitForAnimationToEnd

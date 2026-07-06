@@ -23,5 +23,8 @@ appId: com.fogcitysingers.goodtags
       - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-restore-03-restored
 
 - tapOn:
+    id: close_button
+
+- tapOn:
     id: back_button
 - waitForAnimationToEnd

@@ -30,18 +30,25 @@ appId: com.fogcitysingers.goodtags
 
 # classic tags
 - runFlow:
+    when: 
+      true: ${typeof QUICK_COLLECTIONS == 'undefined' || QUICK_COLLECTIONS == 0}
     file: _classic.yaml
     env:
         SEQ: 05
+        
 
 # easy tags
 - runFlow:
+    when: 
+      true: ${typeof QUICK_COLLECTIONS == 'undefined' || QUICK_COLLECTIONS == 0}
     file: _easy.yaml
     env:
         SEQ: 06
 
 # new tags
 - runFlow:
+    when: 
+      true: ${typeof QUICK_COLLECTIONS == 'undefined' || QUICK_COLLECTIONS == 0}
     file: _new.yaml
     env:
         SEQ: 07

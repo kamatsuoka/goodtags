@@ -6,8 +6,10 @@
  * - syncs the marketing version (MARKETING_VERSION) from package.json
  */
 
+const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const { newVersionCode, rootDir } = require('./bump-android-version')
 
 const rootDir = path.join(__dirname, '..')
 const projectPbxprojPath = path.join(rootDir, 'ios/goodtags.xcodeproj/project.pbxproj')
@@ -54,3 +56,7 @@ console.log(`✓ Updated CURRENT_PROJECT_VERSION to ${newProjectVersion}`)
 console.log(`✓ Updated MARKETING_VERSION to ${packageVersion} ...`)
 console.log(`✓ Updated app.json ios.buildNumber to ${newProjectVersion}`)
 console.log('✓ ios versions bumped successfully')
+
+const tagName = `ios-${newProjectVersion}`
+console.log(`Adding git tag ${tagName}`)
+execSync(`git tag ${tagName}`, { cwd: rootDir, stdio: 'inherit' })

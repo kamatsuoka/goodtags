@@ -6,8 +6,10 @@
 
 const fs = require('fs')
 const path = require('path')
+const { execSync } = require('child_process')
 
 const rootDir = path.join(__dirname, '..')
+exports.rootDir = rootDir
 const buildGradlePath = path.join(rootDir, 'android/app/build.gradle')
 
 // Read current versionCode
@@ -22,6 +24,7 @@ if (!versionMatch) {
 
 const oldVersionCode = parseInt(versionMatch[1], 10)
 const newVersionCode = oldVersionCode + 1
+exports.newVersionCode = newVersionCode
 
 console.log(`Bumping Android versionCode from ${oldVersionCode} to ${newVersionCode}...`)
 
@@ -32,3 +35,7 @@ buildGradle = buildGradle.replace(versionCodeRegex, `versionCode ${newVersionCod
 fs.writeFileSync(buildGradlePath, buildGradle, 'utf8')
 
 console.log(`✓ Updated versionCode to ${newVersionCode}`)
+
+const tagName = `android-${newVersionCode}`
+console.log(`Adding git tag ${tagName}`)
+execSync(`git tag ${tagName}`, { cwd: rootDir, stdio: 'inherit' })

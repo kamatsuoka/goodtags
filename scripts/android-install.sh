@@ -50,12 +50,18 @@ fi
 if [ "$VARIANT" = "release" ]; then
   GRADLE_TASK="assembleRelease"
   APK="android/app/build/outputs/apk/release/app-release.apk"
+  GRADLE_ARGS=()
 else
   GRADLE_TASK="assembleDebug"
   APK="android/app/build/outputs/apk/debug/app-debug.apk"
+  # Debug builds are only ever installed on the emulator/device under test, so
+  # restrict native libs to its architecture instead of bundling all of them
+  # (a universal debug APK is ~220MB and can exhaust emulator storage on install).
+  # Override with e.g. DEBUG_ARCH=x86_64 for an Intel/x86 emulator.
+  GRADLE_ARGS=("-PreactNativeArchitectures=${DEBUG_ARCH:-arm64-v8a}")
 fi
 
-(cd android && ./gradlew "$GRADLE_TASK")
+(cd android && ./gradlew "$GRADLE_TASK" "${GRADLE_ARGS[@]}")
 
 adb -s "$SERIAL" uninstall com.fogcitysingers.goodtags || true
 adb -s "$SERIAL" install -r "$APK"

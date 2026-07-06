@@ -202,6 +202,7 @@ export default function DataScreen() {
           onDismiss={() => setSnackBarVisible(false)}
           action={{
             label: 'close',
+            testID: 'close_button',
           }}
         >
           {snackBarMessage}

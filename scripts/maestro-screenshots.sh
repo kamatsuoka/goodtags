@@ -9,6 +9,15 @@
 
 set -e
 
+QUICK_COLLECTIONS=0
+if [[ $1 == "--quick" ]]; then
+  shift
+  if [[ $1 == "collections" ]]; then
+    QUICK_COLLECTIONS=1
+    shift   
+  fi
+fi
+  
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
 shift $(( $# < 2 ? $# : 2 ))
@@ -97,6 +106,7 @@ case "${PLATFORM}" in
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
       --env runId="${TIMESTAMP}" \
+      --env QUICK_COLLECTIONS=$QUICK_COLLECTIONS \
       "${FLOW_FILE}"
     ;;
 
@@ -185,6 +195,7 @@ case "${PLATFORM}" in
       --output "${OUTPUT_DIR}" \
       --env SCREENSHOT_DIR="${SCREENSHOT_DIR}" \
       --env runId="${TIMESTAMP}" \
+      --env QUICK_COLLECTIONS=$QUICK_COLLECTIONS \
       "${FLOW_FILE}"
     ;;
 
