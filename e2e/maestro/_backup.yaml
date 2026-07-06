@@ -59,4 +59,6 @@ appId: com.fogcitysingers.goodtags
     
 - tapOn:
     id: back_button
+- tapOn:
+    text: tab_home
 - waitForAnimationToEnd
