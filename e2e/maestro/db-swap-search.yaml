@@ -1,0 +1,20 @@
+appId: com.fogcitysingers.goodtags
+---
+# DB-swap integration test, phase 2: runs AFTER the runner has seen
+# "Done updating DB from remote" in logcat, i.e. the DbWrapper is now backed
+# by the freshly swapped-in database handle. A search here goes through that
+# new handle -- the exact path that failed in the field with
+# "no such table: tags" when a stale cached connection was returned.
+# Entry: popular list screen (end state of db-swap-launch.yaml)
+
+- tapOn:
+    text: "tab_search"
+- tapOn:
+    id: search_input
+- inputText: "love"
+- pressKey: Enter
+# Results visible => the post-swap query succeeded
+- extendedWaitUntil:
+    visible:
+      id: "title_.*"
+    timeout: 15000

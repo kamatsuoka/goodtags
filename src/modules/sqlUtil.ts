@@ -13,6 +13,18 @@ import { Directory, File, Paths } from 'expo-file-system'
 import { copyAsync } from 'expo-file-system/legacy'
 import * as SQLite from 'expo-sqlite'
 
+// expo-sqlite keeps a process-global, refcounted connection cache keyed by database
+// NAME (see the Android SQLiteModule NativeDatabase constructor). With the default
+// `useNewConnection: false`, openDatabaseAsync hands back a cached connection for a
+// given name instead of reopening the file. That's wrong for us: this module deletes
+// and moves the DB file on disk (seeding from the bundle, swapping in a remote
+// download) and then reopens the same name. A cached/aliased connection can then point
+// at the pre-move file -- or a handle opened while the file was momentarily absent --
+// producing "no such table: tags" against what is actually a valid DB on disk. Opening
+// with a fresh connection every time forces a real sqlite3_open of the current file and
+// a real close, so every handle reflects exactly what's on disk right now.
+const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = { useNewConnection: true }
+
 // These are parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
 export interface InnerDb {
   withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
@@ -217,7 +229,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   }
 
   // Note we intentionally are just using basename and not full path.
-  const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME)
+  const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
   const dbWrapper = new DbWrapper(db)
 
   // We've updated based on local data, but should also check server for updates
@@ -236,7 +248,7 @@ async function initializeDbConnection(): Promise<DbWrapper> {
 
 async function currentDbHasTags(): Promise<boolean> {
   try {
-    const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME)
+    const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
     try {
       await db.getAllAsync('SELECT COUNT(*) FROM tags LIMIT 1')
       return true
@@ -333,7 +345,7 @@ export async function backgroundCheckForRemoteUpdates(
   // brand-new empty DB -> "no such table: tags". The tmp file lives in that same
   // directory, so open it by basename, exactly as we do for TAGS_DB_NAME elsewhere.
   const tmpDbName = `${TAGS_DB_NAME}.tmp`
-  const tmpDb = await SQLite.openDatabaseAsync(tmpDbName)
+  const tmpDb = await SQLite.openDatabaseAsync(tmpDbName, DB_OPEN_OPTIONS)
   try {
     const rows = await tmpDb.getAllAsync<{ count: number }>(`SELECT COUNT(*) as count FROM tags`)
     // Reject a missing, unreadable, or empty tags table: a structurally valid but
@@ -371,7 +383,7 @@ export async function backgroundCheckForRemoteUpdates(
       const tmpManifest = new File(tmpManifestPath)
       tmpManifest.move(new File(currentManifestPath))
       console.debug('Done updating DB from remote')
-      return await SQLite.openDatabaseAsync(TAGS_DB_NAME)
+      return await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
     })
     .then(/* ignore promise */)
 }

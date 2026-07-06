@@ -1,0 +1,29 @@
+appId: com.fogcitysingers.goodtags
+---
+# DB-swap integration test, phase 1: (re)launch the app after the on-device
+# manifest has been backdated, so the remote DB looks newer and a live swap
+# kicks off in the background. Exercise a query (popular list) while that's
+# in flight. Runner: scripts/integration-test-db-swap.sh
+
+- launchApp
+- waitForAnimationToEnd
+# The runner seeds via a headless launch after a data clear, so the welcome
+# screen is always still pending here. Debug builds load JS from Metro, which
+# can take a while on first load -- wait generously for the button.
+- extendedWaitUntil:
+    visible:
+      id: welcome_forward_button
+    timeout: 45000
+- tapOn:
+    id: welcome_forward_button
+- assertVisible:
+    id: home_container
+
+# Query the DB via the popular list (may run pre- or post-swap depending on
+# download timing; either way it must succeed)
+- tapOn:
+    id: "popular"
+- extendedWaitUntil:
+    visible:
+      id: "title_.*"
+    timeout: 20000

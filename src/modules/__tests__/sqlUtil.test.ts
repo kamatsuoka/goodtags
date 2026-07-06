@@ -390,6 +390,31 @@ describe('backgroundCheckForRemoteUpdates', () => {
     }
   })
 
+  it(
+    'opens every DB with a fresh connection (useNewConnection)' + ' to bypass the shared cache',
+    async () => {
+      // Regression: expo-sqlite's connection cache is keyed by database name and hands
+      // back a cached connection for a name even after we've deleted/moved the file on
+      // disk, yielding "no such table: tags" against a valid DB. Every open in this
+      // module must force a fresh connection so it reflects the current on-disk file.
+      const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+      await backgroundCheckForRemoteUpdates(
+        wrapper,
+        currentSqlPath,
+        currentManifestPath,
+        tmpSqlPath,
+        tmpManifestPath,
+      )
+      await settle()
+
+      expect(mockOpenDatabaseAsync.mock.calls.length).toBeGreaterThan(0)
+      for (const call of mockOpenDatabaseAsync.mock.calls) {
+        expect(call[1]?.useNewConnection).toBe(true)
+      }
+    },
+  )
+
   it('does not set an Accept-Encoding header on the DB download', async () => {
     // Regression: manually setting Accept-Encoding: gzip disables the platform's
     // transparent gzip decompression, so we'd write compressed bytes to disk.
