@@ -1,6 +1,6 @@
 #!/bin/bash
 # generate app store screenshots using Maestro
-# usage: ./scripts/maestro-screenshots.sh [ios|android] [device-type] [fragment...]
+# usage: ./scripts/maestro-screenshots.sh [--quick collections] [--build-type debug|release] [ios|android] [device-type] [fragment...]
 #
 # ios device types:   default (iPhone 17), small (iPhone 13 mini), large (iPad Pro 13") (note: iPad not working as of June 2026)
 # android device types: default (Pixel 9), small (Pixel 7 API 33), large (Pixel 9 Pro XL API 36), xlarge (Pixel Tablet API 36), device (connected USB device)
@@ -10,18 +10,37 @@
 set -e
 
 QUICK_COLLECTIONS=0
-if [[ $1 == "--quick" ]]; then
-  shift
-  if [[ $1 == "collections" ]]; then
-    QUICK_COLLECTIONS=1
-    shift   
-  fi
-fi
-  
+BUILD_TYPE=debug
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --quick)
+      shift
+      if [[ $1 == "collections" ]]; then
+        QUICK_COLLECTIONS=1
+        shift
+      fi
+      ;;
+    --build-type)
+      BUILD_TYPE=$2
+      shift 2
+      ;;
+    --*)
+      echo "error: unknown flag '$1'" >&2
+      exit 1
+      ;;
+    *)
+      POSITIONAL+=("$1")
+      shift
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}"
+
 PLATFORM=${1:-ios}
 DEVICE_TYPE=${2:-default}
 shift $(( $# < 2 ? $# : 2 ))
-BUILD_TYPE=${BUILD_TYPE:-release}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTPUT_DIR="screenshots/${PLATFORM}/${BUILD_TYPE}/${DEVICE_TYPE}/${TIMESTAMP}"
 SCREENSHOT_DIR="screenshots/maestro/${PLATFORM}/${BUILD_TYPE}"
