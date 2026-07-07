@@ -4,12 +4,10 @@
  * Bumps the Android versionCode in app/build.gradle
  */
 
+const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { execSync } = require('child_process')
-
 const rootDir = path.join(__dirname, '..')
-exports.rootDir = rootDir
 const buildGradlePath = path.join(rootDir, 'android/app/build.gradle')
 
 // Read current versionCode
@@ -37,5 +35,10 @@ fs.writeFileSync(buildGradlePath, buildGradle, 'utf8')
 console.log(`✓ Updated versionCode to ${newVersionCode}`)
 
 const tagName = `android-${newVersionCode}`
-console.log(`Adding git tag ${tagName}`)
+console.log(`Committing build.gradle and adding git tag ${tagName}`)
+execSync(`git add ${buildGradlePath}`, { cwd: rootDir, stdio: 'inherit' })
+execSync(`git commit -m "Bump android versionCode to ${newVersionCode}"`, {
+  cwd: rootDir,
+  stdio: 'inherit',
+})
 execSync(`git tag ${tagName}`, { cwd: rootDir, stdio: 'inherit' })

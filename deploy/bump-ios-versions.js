@@ -9,9 +9,8 @@
 const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { newVersionCode, rootDir } = require('./bump-android-version')
-
 const rootDir = path.join(__dirname, '..')
+
 const projectPbxprojPath = path.join(rootDir, 'ios/goodtags.xcodeproj/project.pbxproj')
 const packageJsonPath = path.join(rootDir, 'package.json')
 const appJsonPath = path.join(rootDir, 'app.json')
@@ -58,5 +57,10 @@ console.log(`✓ Updated app.json ios.buildNumber to ${newProjectVersion}`)
 console.log('✓ ios versions bumped successfully')
 
 const tagName = `ios-${newProjectVersion}`
-console.log(`Adding git tag ${tagName}`)
+console.log(`Committing ios version bump and adding git tag ${tagName}`)
+execSync(`git add ${projectPbxprojPath} ${appJsonPath}`, { cwd: rootDir, stdio: 'inherit' })
+execSync(`git commit -m "Bump ios version to ${newProjectVersion}"`, {
+  cwd: rootDir,
+  stdio: 'inherit',
+})
 execSync(`git tag ${tagName}`, { cwd: rootDir, stdio: 'inherit' })
