@@ -23,7 +23,19 @@ import * as SQLite from 'expo-sqlite'
 // producing "no such table: tags" against what is actually a valid DB on disk. Opening
 // with a fresh connection every time forces a real sqlite3_open of the current file and
 // a real close, so every handle reflects exactly what's on disk right now.
-const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = { useNewConnection: true }
+//
+// `finalizeUnusedStatementsBeforeClosing: false` works around a double-finalize bug in
+// expo-sqlite's own close-time statement cleanup: our search queries use FTS5
+// (tags_fts), and FTS5 already finalizes its internal statements when the connection
+// closes. expo-sqlite's "finalize anything left open" pass on close doesn't know that
+// and finalizes the same (already-freed) statement again, corrupting the heap and
+// crashing with SIGABRT inside exsqlite3_finalize (see
+// https://github.com/expo/expo/issues/38168). Disabling that pass avoids the double
+// free; any statements we actually leak get cleaned up by sqlite3_close itself.
+const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
+  useNewConnection: true,
+  finalizeUnusedStatementsBeforeClosing: false,
+}
 
 // These are parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
 export interface InnerDb {
