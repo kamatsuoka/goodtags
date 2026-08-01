@@ -127,16 +127,32 @@ export class DbWrapper {
       const replaceDbCallback = this.pendingReplaceDbCallback
       // This allows others to wait until replacement is done
       this.replaceDbInProgress = (async () => {
+        const oldDb = this.db
         try {
-          await this.db.closeAsync()
+          // Open the replacement connection BEFORE closing the current one. If the
+          // callback throws (failed file move, openDatabaseAsync error, etc.), we
+          // leave this.db pointing at oldDb -- which is still open -- so queries keep
+          // working. Closing first and then failing would strand the wrapper on a
+          // closed connection, making every search fail with "no such table: tags"
+          // for the rest of the session until the app is restarted. Only reached when
+          // txnCount === 0, so no query is in flight on oldDb during the swap; with
+          // useNewConnection the new connection is independent of oldDb.
           this.db = await replaceDbCallback()
           this.pendingReplaceDbCallback = null
         } catch (e) {
           // Clear callback so we don't retry a broken replacement indefinitely.
-          // this.db may now be closed with no valid replacement; subsequent queries
-          // will fail, but the wrapper itself won't be permanently locked.
+          // this.db is untouched (still the previous working connection).
           this.pendingReplaceDbCallback = null
-          console.error('DB replacement failed:', e)
+          console.error('DB replacement failed; keeping previous DB connection:', e)
+          this.replaceDbInProgress = null
+          return
+        }
+        // Swap succeeded; close the old connection. A failure here is harmless
+        // (we're already serving from the new connection), so just log it.
+        try {
+          await oldDb.closeAsync()
+        } catch (e) {
+          console.error('Failed to close previous DB connection after replacement:', e)
         } finally {
           this.replaceDbInProgress = null
         }

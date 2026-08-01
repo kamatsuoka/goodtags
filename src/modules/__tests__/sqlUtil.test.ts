@@ -213,6 +213,63 @@ describe('DbWrapper class', () => {
       await expect(wrapper.runTransactionAsync(async () => {})).resolves.toBeUndefined()
     })
 
+    it('keeps the previous open connection when a replacement callback throws', async () => {
+      // Regression for the sticky "no such table: tags" reported on 4.2.3 (iOS):
+      // retrying the search failed but restarting fixed it. A failed background swap
+      // must NOT close the working connection out from under the wrapper -- otherwise
+      // every later query in the session hits a closed/empty DB until app restart.
+      let db1Closed = false
+      let db1Queries = 0
+      const db1: InnerDb = {
+        withTransactionAsync: async cb => cb(),
+        getAllAsync: async () => {
+          db1Queries += 1
+          return []
+        },
+        closeAsync: async () => {
+          db1Closed = true
+        },
+      }
+      const wrapper = new DbWrapper(db1)
+
+      await wrapper.queueDbReplacement(async () => {
+        throw new Error('replacement failed (e.g. file move error)')
+      })
+      await settle()
+
+      // The old connection must remain open...
+      expect(db1Closed).toBe(false)
+      // ...and still serve queries (rather than throwing "no such table").
+      await expect(wrapper.getAllAsync('SELECT 1')).resolves.toEqual([])
+      expect(db1Queries).toBe(1)
+    })
+
+    it('closes the old connection only after a successful replacement', async () => {
+      // The old connection must be closed to avoid leaks, but only once the new one
+      // is in place -- never before, so a failure can't strand the wrapper.
+      let db1Closed = false
+      const db1: InnerDb = {
+        withTransactionAsync: async cb => cb(),
+        getAllAsync: async () => [],
+        closeAsync: async () => {
+          db1Closed = true
+        },
+      }
+      const db2 = new TestSqliteDatabase()
+      const wrapper = new DbWrapper(db1)
+
+      await wrapper.queueDbReplacement(async () => {
+        // The old connection must still be open while we build the new one.
+        expect(db1Closed).toBe(false)
+        return db2
+      })
+      await settle()
+
+      expect(db1Closed).toBe(true)
+      await wrapper.runTransactionAsync(async () => {})
+      expect(db2.numTxns).toBe(1)
+    })
+
     it('should queue second replacement if first has already started', async () => {
       const db = new TestSqliteDatabase()
       const wrapper = new DbWrapper(db)
