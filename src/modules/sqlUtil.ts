@@ -150,7 +150,10 @@ export class DbWrapper {
  * which can be done before we actually need access to db object itself.
  */
 export function warmupDb() {
-  getDbConnection().then(/* Ignore, let run in background */)
+  // Fire-and-forget: real callers await getDbConnection() and will see any error
+  // (it's cached on the singleton promise). This catch only keeps the warmup path
+  // from surfacing as an unhandled promise rejection.
+  getDbConnection().catch(e => console.error('warmupDb failed:', e))
 }
 
 // Singleton with our db.
@@ -251,13 +254,15 @@ async function initializeDbConnection(): Promise<DbWrapper> {
   // We've updated based on local data, but should also check server for updates
   // Kick this off once per app open, first time we load DB
   // (which should be roughly when app is opened)
+  // Runs in the background; getUrl rejects on network failure/non-200, so this must
+  // catch or the rejection becomes an unhandled promise rejection.
   backgroundCheckForRemoteUpdates(
     dbWrapper,
     currentSqlPath,
     currentManifestPath,
     tmpSqlPath,
     tmpManifestPath,
-  ).then(/* Ignore, let run in background */)
+  ).catch(e => console.error('Background remote DB update check failed:', e))
 
   return dbWrapper
 }
@@ -404,5 +409,7 @@ export async function backgroundCheckForRemoteUpdates(
       console.debug('Done updating DB from remote')
       return await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
     })
-    .then(/* ignore promise */)
+    // Errors inside the replacement callback are caught and logged by DbWrapper
+    // itself; this catch covers the queueing promise so it can't reject unhandled.
+    .catch(e => console.error('Queuing remote DB replacement failed:', e))
 }

@@ -478,6 +478,33 @@ describe('backgroundCheckForRemoteUpdates', () => {
     }
   })
 
+  it('rejects (rather than swallowing) when the download fails', async () => {
+    // The caller in initializeDbConnection attaches a .catch() to log background
+    // failures. That only works if this function actually propagates the rejection
+    // instead of swallowing it; a silent swallow here would hide network errors and
+    // make the .catch() dead code. getUrl rejects on network failure/non-200.
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      throw new Error('network down')
+    })
+    const wrapper = new DbWrapper(new TestSqliteDatabase())
+
+    await expect(
+      backgroundCheckForRemoteUpdates(
+        wrapper,
+        currentSqlPath,
+        currentManifestPath,
+        tmpSqlPath,
+        tmpManifestPath,
+      ),
+    ).rejects.toThrow('network down')
+  })
+
   it('does not set an Accept-Encoding header on the DB download', async () => {
     // Regression: manually setting Accept-Encoding: gzip disables the platform's
     // transparent gzip decompression, so we'd write compressed bytes to disk.
