@@ -16,8 +16,14 @@ SCHEME="goodtags"
 "$SCRIPT_DIR/../scripts/refresh-bundled-db.sh" ||
   echo "Warning: could not refresh bundled DB; building with the committed copy."
 WORKSPACE="$IOS_DIR/goodtags.xcworkspace"
-ARCHIVE_PATH="$IOS_DIR/build/goodtags.xcarchive"
 EXPORT_PATH="$IOS_DIR/build/ipa"
+
+# Archive into the Xcode Organizer's date-based folder structure so builds show
+# up in Xcode → Window → Organizer → Archives.
+ORGANIZER_FOLDER="$HOME/Library/Developer/Xcode/Archives/$(date +%Y-%m-%d)"
+# Match Xcode's own naming (e.g. "goodtags 8-1-26, 3.04 PM.xcarchive")
+ARCHIVE_NAME="${SCHEME} $(date +%-m-%-d-%y), $(date +%-I.%M\ %p).xcarchive"
+ARCHIVE_PATH="$ORGANIZER_FOLDER/$ARCHIVE_NAME"
 
 # Colors for output
 RED='\033[0;31m'
@@ -37,7 +43,8 @@ node "$SCRIPT_DIR/bump-ios-versions.js"
 
 # Step 2: Clean previous builds
 echo -e "\n${YELLOW}Step 2: Cleaning previous builds...${NC}"
-rm -rf "$ARCHIVE_PATH"
+# Note: no archive to clean -- each run writes a new timestamped archive into
+# the Organizer folder, and old archives are kept there on purpose.
 rm -rf "$EXPORT_PATH"
 xcodebuild clean \
   -workspace "$WORKSPACE" \
@@ -51,6 +58,7 @@ pod install
 
 # Step 4: Archive the app
 echo -e "\n${YELLOW}Step 4: Archiving the app (this may take a while)...${NC}"
+mkdir -p "$ORGANIZER_FOLDER"
 xcodebuild archive \
   -workspace "$WORKSPACE" \
   -scheme "$SCHEME" \
