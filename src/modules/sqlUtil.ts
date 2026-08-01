@@ -231,8 +231,12 @@ async function initializeDbConnection(): Promise<DbWrapper> {
     }
 
     const tmpSqlFile = new File(tmpSqlPath)
-    tmpSqlFile.move(new File(currentSqlPath))
-    tmpManifestFile.move(new File(currentManifestPath))
+    // File.move() is async; without awaiting it, the subsequent openDatabaseAsync
+    // below can race the in-flight move and open the (not-yet-moved-into) path
+    // before the file lands, silently creating a fresh empty DB -> "no such
+    // table: tags". Must await so the move is guaranteed complete before we open.
+    await tmpSqlFile.move(new File(currentSqlPath))
+    await tmpManifestFile.move(new File(currentManifestPath))
   } else {
     console.debug(
       'Not seeding DB from app bundle: on-device DB is at least as new as the ' +
@@ -391,9 +395,12 @@ export async function backgroundCheckForRemoteUpdates(
       }
 
       const tmpSql = new File(tmpSqlPath)
-      tmpSql.move(new File(currentSqlPath))
+      // File.move() is async; must await before opening the swapped-in file below,
+      // otherwise the open can race the in-flight move (see comment in
+      // initializeDbConnection) and land on a fresh empty DB -> "no such table: tags".
+      await tmpSql.move(new File(currentSqlPath))
       const tmpManifest = new File(tmpManifestPath)
-      tmpManifest.move(new File(currentManifestPath))
+      await tmpManifest.move(new File(currentManifestPath))
       console.debug('Done updating DB from remote')
       return await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
     })

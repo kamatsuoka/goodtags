@@ -2,12 +2,14 @@ import { TAGS_DB_NAME } from '@app/constants/sql'
 import getUrl from '@app/modules/getUrl'
 import { backgroundCheckForRemoteUpdates, DbWrapper, InnerDb } from '@app/modules/sqlUtil'
 import { setImmediate } from '@testing-library/react-native/build/helpers/timers'
+import { File } from 'expo-file-system'
 import * as SQLite from 'expo-sqlite'
 
 jest.mock('@app/modules/getUrl')
 
 const mockGetUrl = getUrl as jest.MockedFunction<typeof getUrl>
 const mockOpenDatabaseAsync = SQLite.openDatabaseAsync as jest.Mock
+const mockFile = File as unknown as jest.Mock
 
 class TestSqliteDatabase implements InnerDb {
   numTxns: number
@@ -414,6 +416,67 @@ describe('backgroundCheckForRemoteUpdates', () => {
       }
     },
   )
+
+  it('awaits File.move before opening the swapped-in DB', async () => {
+    // Regression: File.move() is async (returns Promise<void>). The swap code must
+    // await it before opening the moved-into path, otherwise the open can race the
+    // in-flight move and land on a not-yet-written file, which SQLite silently
+    // opens as a brand-new empty DB -> "no such table: tags".
+    const events: string[] = []
+    let resolveMove: () => void = () => {}
+    const moveGate = new Promise<void>(resolve => {
+      resolveMove = resolve
+    })
+    const defaultFileImpl = mockFile.getMockImplementation()
+
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => '{}'),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {
+        if (uri === tmpSqlPath) {
+          events.push('move-start')
+          await moveGate
+          events.push('move-end')
+        }
+      }),
+    }))
+    mockOpenDatabaseAsync.mockImplementation(async (name: string) => {
+      if (name === TAGS_DB_NAME) {
+        events.push('open')
+      }
+      return {
+        withTransactionAsync: async (cb: () => Promise<void>) => cb(),
+        getAllAsync: async () => [{ count: 6975 }],
+        closeAsync: async () => {},
+      }
+    })
+
+    try {
+      const wrapper = new DbWrapper(new TestSqliteDatabase())
+      await backgroundCheckForRemoteUpdates(
+        wrapper,
+        currentSqlPath,
+        currentManifestPath,
+        tmpSqlPath,
+        tmpManifestPath,
+      )
+      await settle()
+
+      // The move is still in flight; the swapped-in DB must not be opened yet.
+      expect(events).toEqual(['move-start'])
+
+      resolveMove()
+      await settle()
+
+      expect(events).toEqual(['move-start', 'move-end', 'open'])
+    } finally {
+      mockFile.mockImplementation(defaultFileImpl)
+    }
+  })
 
   it('does not set an Accept-Encoding header on the DB download', async () => {
     // Regression: manually setting Accept-Encoding: gzip disables the platform's

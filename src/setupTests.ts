@@ -48,7 +48,7 @@ jest.mock('expo-file-system', () => {
     text: jest.fn(async () => '{}'),
     write: jest.fn(),
     copy: jest.fn(),
-    move: jest.fn(),
+    move: jest.fn(async () => {}),
     delete: jest.fn(),
   }))
   mockFileConstructor.downloadFileAsync = jest.fn(async (_url, destination) => ({
