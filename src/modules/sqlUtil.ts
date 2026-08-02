@@ -25,13 +25,14 @@ import * as SQLite from 'expo-sqlite'
 // a real close, so every handle reflects exactly what's on disk right now.
 //
 // `finalizeUnusedStatementsBeforeClosing: false` works around a double-finalize bug in
-// expo-sqlite's own close-time statement cleanup: our search queries use FTS5
-// (tags_fts), and FTS5 already finalizes its internal statements when the connection
-// closes. expo-sqlite's "finalize anything left open" pass on close doesn't know that
-// and finalizes the same (already-freed) statement again, corrupting the heap and
-// crashing with SIGABRT inside exsqlite3_finalize (see
-// https://github.com/expo/expo/issues/38168). Disabling that pass avoids the double
-// free; any statements we actually leak get cleaned up by sqlite3_close itself.
+// expo-sqlite's own close-time statement cleanup: our search uses an FTS virtual table
+// (`tags_fts`, currently fts4), and FTS finalizes its own internal statements when the
+// connection closes. expo-sqlite's "finalize anything left open" pass on close doesn't
+// know that and finalizes the same (already-freed) statement again, corrupting the heap
+// and crashing with SIGABRT inside exsqlite3_finalize (see
+// https://github.com/expo/expo/issues/38168 -- reported against fts5, but the mechanism
+// is the same for the fts4 table we use). Disabling that pass avoids the double free;
+// any statements we actually leak get cleaned up by sqlite3_close itself.
 const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
   useNewConnection: true,
   finalizeUnusedStatementsBeforeClosing: false,
@@ -40,12 +41,14 @@ const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
 // The parts of SQLiteDatabase we use. It's an interface so tests can supply a stub
 // and so callers don't couple to expo-sqlite directly.
 //
-// The connection is opened once per app launch and never swapped mid-session: the
-// search DB is read-only content, and a newer remote copy is adopted on the *next*
-// launch (see backgroundCheckForRemoteUpdates), not hot-swapped into a running app.
-// That makes the connection an immutable, shared handle -- no refcounting, locking,
-// or replace-in-place machinery needed. Reads run directly against it with no wrapping
-// transaction (see searchDb); SQLite manages its own concurrency for the reads we issue.
+// One shared connection, opened lazily and reused by every caller. Automatic remote
+// updates are adopted on the *next* launch (see backgroundCheckForRemoteUpdates), not
+// hot-swapped into a running app. The connection can still be replaced *wholesale* in
+// two cases -- a manual force refresh (refreshDbNow) and re-init after a failed open
+// (getDbConnection) -- but it is never mutated in place or closed mid-query, so there is
+// no refcounting or locking. The search DB is read-only content, so reads run directly
+// against it with no wrapping transaction (see searchDb); SQLite manages its own
+// concurrency for the reads we issue.
 export interface InnerDb {
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
 }
@@ -55,9 +58,10 @@ export interface InnerDb {
  * which can be done before we actually need access to db object itself.
  */
 export function warmupDb() {
-  // Fire-and-forget: real callers await getDbConnection() and will see any error
-  // (it's cached on the singleton promise). This catch only keeps the warmup path
-  // from surfacing as an unhandled promise rejection.
+  // Fire-and-forget: this catch only keeps the warmup path from surfacing as an
+  // unhandled promise rejection. Real callers await getDbConnection() themselves and
+  // see any error; a failed init clears the singleton (see getDbConnection) so the next
+  // call retries rather than being stuck on a cached failure.
   getDbConnection().catch(e => console.error('warmupDb failed:', e))
 }
 
@@ -67,7 +71,9 @@ let dbConnectionPromise: Promise<InnerDb> | null = null
 
 /**
  * Resolves to the shared DB connection, initializing it on first call and reusing it
- * thereafter. Memoized on a module singleton so every caller shares one connection.
+ * thereafter. Memoized on a module singleton so every caller shares one connection. A
+ * failed initialization clears the singleton so the next call retries, rather than
+ * caching the failure and requiring an app restart to recover.
  */
 export async function getDbConnection(): Promise<InnerDb> {
   const attempt: Promise<InnerDb> = (dbConnectionPromise ??= initializeDbConnection().catch(e => {
@@ -300,12 +306,14 @@ async function currentGeneratedAtOrZero(manifestPath: string): Promise<number> {
 
 /**
  * Checks the server for a newer DB and, if found and valid, writes it into place on
- * disk. This does NOT touch the live connection: the updated file is adopted the next
- * time the app launches and initializeDbConnection opens it. The seed logic there
- * won't clobber it, because the manifest we write is newer than the bundled one.
+ * disk. It never touches the live connection itself -- it only stages files. The
+ * automatic (background) caller leaves the staged file to be adopted on the next launch,
+ * when initializeDbConnection opens it; the manual refreshDbNow caller adopts it
+ * immediately by reopening. The seed logic won't clobber a staged update, because the
+ * manifest we write is newer than the bundled one.
  *
- * Exported for unit testing (see sqlUtil.test.ts); normally only called by
- * initializeDbConnection.
+ * Exported for unit testing (see sqlUtil.test.ts); otherwise reached via
+ * checkForRemoteUpdate (from initializeDbConnection and refreshDbNow).
  */
 export async function backgroundCheckForRemoteUpdates(
   currentSqlPath: string,

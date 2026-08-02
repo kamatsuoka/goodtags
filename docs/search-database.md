@@ -72,11 +72,17 @@ mid-copy can't brick the DB.
 
 ## Connection model
 
-**One immutable connection per session.** `getDbConnection()` memoizes a single
-connection on a module-level singleton; every caller shares it. It is opened once and,
-under normal operation, never swapped while the app runs. Reads run **directly** against
-it — there is no wrapping transaction (the DB is read-only and the connection is fixed
-for the session, so sequential reads already see a consistent snapshot).
+**One shared connection.** `getDbConnection()` memoizes a single connection on a
+module-level singleton; every caller shares it. Reads run **directly** against it — there
+is no wrapping transaction (the DB is read-only, so sequential reads already see a
+consistent snapshot).
+
+Under normal operation the connection isn't swapped while the app runs. It can be
+**replaced wholesale** in two cases — but never mutated in place or closed mid-query:
+
+- a **manual force refresh** (`refreshDbNow`) reopens onto a freshly downloaded DB;
+- a **failed initialization** clears the singleton so the next `getDbConnection()` retries
+  from scratch (recovering a broken first-launch seed without needing an app restart).
 
 > This is deliberately simpler than earlier versions, which hot-swapped the connection
 > mid-session behind a hand-rolled reader/writer lock. That machinery was the source of
@@ -173,7 +179,6 @@ upgrade. This is a scoping note, not a plan of record.
 is already portable — `SELECT rowid FROM tags_fts WHERE tags_fts MATCH ?` with a `term*`
 prefix works identically on fts4 and fts5 and uses no fts4-only functions — and the
 `finalizeUnusedStatementsBeforeClosing: false` close-crash workaround is already in place.
-(The generator's *"versions we use don't support fts5 yet"* comment is stale.)
 
 What upgrading would involve, roughly in order:
 
