@@ -61,19 +61,22 @@ export function warmupDb() {
   getDbConnection().catch(e => console.error('warmupDb failed:', e))
 }
 
-// Singleton with our db.
-// Is an array because assigning to a global wasn't updating value on subsequent usages.
-const dbConnectionPromise: [Promise<InnerDb> | null] = [null]
+// Singleton with our db. Module-private, so a plain reassignable binding is enough --
+// every read and write below goes through this module.
+let dbConnectionPromise: Promise<InnerDb> | null = null
 
 /**
  * Resolves to the shared DB connection, initializing it on first call and reusing it
  * thereafter. Memoized on a module singleton so every caller shares one connection.
  */
 export async function getDbConnection(): Promise<InnerDb> {
-  // The `??=` assignment is synchronous -- nothing is awaited before the singleton is
-  // set -- so two callers that arrive together share one initializeDbConnection() call
-  // instead of each kicking off their own.
-  return await (dbConnectionPromise[0] ??= initializeDbConnection())
+  const attempt: Promise<InnerDb> = (dbConnectionPromise ??= initializeDbConnection().catch(e => {
+    // Only clear if nothing replaced it meanwhile (e.g. refreshDbNow installing a
+    // new connection while this attempt was in flight).
+    if (dbConnectionPromise === attempt) dbConnectionPromise = null
+    throw e
+  }))
+  return await attempt
 }
 
 const SQLITE_DIR = 'SQLite'
@@ -150,14 +153,14 @@ export async function refreshDbNow(force: boolean = false): Promise<DbUpdateResu
     return DbUpdateResult.Unavailable
   }
   if (result === DbUpdateResult.Updated) {
-    dbConnectionPromise[0] = openConnection()
+    dbConnectionPromise = openConnection()
   }
   return result
 }
 
 // Test-only: reset module singletons between cases.
 export function __resetDbStateForTest() {
-  dbConnectionPromise[0] = null
+  dbConnectionPromise = null
   updateChain = Promise.resolve()
 }
 
@@ -277,6 +280,25 @@ async function generatedAtFromPath(manifestPath: string): Promise<number> {
 }
 
 /**
+ * The local manifest's generated_at, or 0 if it is missing or unreadable.
+ *
+ * A first-launch seed that died partway through leaves exactly that state -- no
+ * manifest, or a truncated one -- and it is also the state in which the user most
+ * needs the update check to work. Reading it strictly would throw before we ever
+ * reach the network, so the refresh reported Unavailable and the UI blamed the
+ * server. Treating "no readable manifest" as older than anything lets the check
+ * proceed and download, which is the actual recovery.
+ */
+async function currentGeneratedAtOrZero(manifestPath: string): Promise<number> {
+  try {
+    return await generatedAtFromPath(manifestPath)
+  } catch (e) {
+    console.debug('No readable local manifest; treating as absent:', e)
+    return 0
+  }
+}
+
+/**
  * Checks the server for a newer DB and, if found and valid, writes it into place on
  * disk. This does NOT touch the live connection: the updated file is adopted the next
  * time the app launches and initializeDbConnection opens it. The seed logic there
@@ -294,8 +316,9 @@ export async function backgroundCheckForRemoteUpdates(
 ): Promise<DbUpdateResult> {
   const remoteManifestUrl = `${REMOTE_ASSET_BASE_URL}/${MANIFEST_NAME}`
 
-  // Assume we have a current manifest by this point
-  const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
+  // Tolerant read: a missing/corrupt local manifest must not abort the check, since
+  // that is precisely the state a refresh is meant to recover from.
+  const currentGeneratedAt = await currentGeneratedAtOrZero(currentManifestPath)
   // Get generated at for remote manifest
   const remoteManifestContents = await getUrl<DbManifest>(remoteManifestUrl)
   const remoteGeneratedAt = remoteManifestContents.generated_at_epoch_seconds

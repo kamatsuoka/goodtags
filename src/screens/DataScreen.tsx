@@ -254,7 +254,10 @@ const REFRESH_DB_MESSAGES: Record<DbUpdateResult, string> = {
   [DbUpdateResult.Updated]: 'search database refreshed',
   // Only reached if the server has no DB for this app's schema version.
   [DbUpdateResult.UpToDate]: 'search database already up to date',
-  [DbUpdateResult.Unavailable]: "couldn't reach the update server",
+  // Covers both remaining causes: the download failed, or what came back wasn't a
+  // usable DB. Deliberately not phrased as a network error -- a corrupt download
+  // reaches the server just fine.
+  [DbUpdateResult.Unavailable]: "couldn't download a usable search database",
 }
 
 const RightIcon = homeIcon('chevron-right')
