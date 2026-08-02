@@ -144,7 +144,7 @@ async function searchDb(
   }
 
   if (useTransaction) {
-    await db.runTransactionAsync(executeQueries)
+    await db.withTransactionAsync(executeQueries)
   } else {
     await executeQueries()
   }

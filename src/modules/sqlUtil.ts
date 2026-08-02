@@ -37,128 +37,18 @@ const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
   finalizeUnusedStatementsBeforeClosing: false,
 }
 
-// These are parts of SQLiteDatabase we use; it's an interface so we can swap out objects in testing
+// The parts of SQLiteDatabase we use. It's an interface so tests can supply a stub
+// and so callers don't couple to expo-sqlite directly.
+//
+// The connection is opened once per app launch and never swapped mid-session: the
+// search DB is read-only content, and a newer remote copy is adopted on the *next*
+// launch (see backgroundCheckForRemoteUpdates), not hot-swapped into a running app.
+// That makes the connection an immutable, shared handle -- no refcounting, locking,
+// or replace-in-place machinery needed. SQLite manages its own concurrency for the
+// reads we issue against it.
 export interface InnerDb {
   withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
-  closeAsync: () => Promise<void>
-}
-type ReplaceDbCallback = () => Promise<InnerDb>
-
-/**
- * This class gives access to underlying database while also allowing
- * it to be safely replaced on fly. In particular, just writing to file might cause
- * corrupted reads if a query is ongoing simultaneously (which could be possible because
- * both queries and writing are async and can therefore give up control), and just moving
- * a new file atomically into place likely wouldn't get used because underlying DB handle
- * would be pointing at old file descriptor.
- *
- * This class exposes a single entry point of `runTransactionAsync` and keeps track of
- * how many active calls there are to that method. When a request comes in to replace
- * underlying database, it waits for all transactions to end then runs replacement
- * callback (which presumably changes things on disk). While replacement callback is
- * running, new calls to `runTransactionAsync` will wait until replacement is finished,
- * at which point pending and subsequent transactions will use new DB.
- *
- * It is expected that instances of this class act a singleton points of access for
- * a given DB path.
- */
-export class DbWrapper {
-  private db: InnerDb
-  private txnCount: number
-  private pendingReplaceDbCallback: ReplaceDbCallback | null
-  private replaceDbInProgress: Promise<void> | null
-
-  constructor(db: InnerDb) {
-    this.db = db
-    this.txnCount = 0
-    this.pendingReplaceDbCallback = null
-    this.replaceDbInProgress = null
-  }
-
-  async runTransactionAsync(asyncCallback: () => Promise<void>): Promise<void> {
-    while (this.replaceDbInProgress != null) {
-      await this.replaceDbInProgress
-    }
-    this.txnCount += 1
-    try {
-      await this.db.withTransactionAsync(asyncCallback)
-    } finally {
-      this.txnCount -= 1
-      this.maybeDoDbReplacement()
-    }
-  }
-
-  async getAllAsync<T = any>(source: string, ...params: any[]): Promise<T[]> {
-    while (this.replaceDbInProgress != null) {
-      await this.replaceDbInProgress
-    }
-    this.txnCount += 1
-    try {
-      return await this.db.getAllAsync<T>(source, ...params)
-    } finally {
-      this.txnCount -= 1
-      this.maybeDoDbReplacement()
-    }
-  }
-
-  async queueDbReplacement(replaceDbCallback: ReplaceDbCallback) {
-    // Note: If this method is called multiple times while a replacement is in progress,
-    // first call will make progress first, which means it'll likely "win" by setting callback,
-    // but if it's also able to immediately start replacement, subsequent calls may
-    // remain in while loop and effectively be "queued".
-    // Having multiple replacements simultaneously seems very unlikely to happen at all
-    // so it's not worth turning the `pendingReplaceDbCallback` into an actual queue.
-    while (this.replaceDbInProgress != null) {
-      await this.replaceDbInProgress
-    }
-    if (this.pendingReplaceDbCallback == null) {
-      this.pendingReplaceDbCallback = replaceDbCallback
-      this.maybeDoDbReplacement()
-    }
-  }
-
-  private maybeDoDbReplacement() {
-    if (
-      this.txnCount === 0 &&
-      this.pendingReplaceDbCallback != null &&
-      this.replaceDbInProgress == null
-    ) {
-      const replaceDbCallback = this.pendingReplaceDbCallback
-      // This allows others to wait until replacement is done
-      this.replaceDbInProgress = (async () => {
-        const oldDb = this.db
-        try {
-          // Open the replacement connection BEFORE closing the current one. If the
-          // callback throws (failed file move, openDatabaseAsync error, etc.), we
-          // leave this.db pointing at oldDb -- which is still open -- so queries keep
-          // working. Closing first and then failing would strand the wrapper on a
-          // closed connection, making every search fail with "no such table: tags"
-          // for the rest of the session until the app is restarted. Only reached when
-          // txnCount === 0, so no query is in flight on oldDb during the swap; with
-          // useNewConnection the new connection is independent of oldDb.
-          this.db = await replaceDbCallback()
-          this.pendingReplaceDbCallback = null
-        } catch (e) {
-          // Clear callback so we don't retry a broken replacement indefinitely.
-          // this.db is untouched (still the previous working connection).
-          this.pendingReplaceDbCallback = null
-          console.error('DB replacement failed; keeping previous DB connection:', e)
-          this.replaceDbInProgress = null
-          return
-        }
-        // Swap succeeded; close the old connection. A failure here is harmless
-        // (we're already serving from the new connection), so just log it.
-        try {
-          await oldDb.closeAsync()
-        } catch (e) {
-          console.error('Failed to close previous DB connection after replacement:', e)
-        } finally {
-          this.replaceDbInProgress = null
-        }
-      })()
-    }
-  }
 }
 
 /**
@@ -174,18 +64,18 @@ export function warmupDb() {
 
 // Singleton with our db.
 // Is an array because assigning to a global wasn't updating value on subsequent usages.
-const dbConnectionPromise: [Promise<DbWrapper> | null] = [null]
+const dbConnectionPromise: [Promise<InnerDb> | null] = [null]
 
 /**
  * On first call will kick off initializing SQL db and resolve to db once done. Subsequent calls
  * will wait for that init (if it's in progress) or immediately resolve to db (if it's done).
  */
-export async function getDbConnection(): Promise<DbWrapper> {
+export async function getDbConnection(): Promise<InnerDb> {
   const [existing] = dbConnectionPromise
   if (existing == null) {
-    // Initializ database. We *must* immediately set dbConnectionPromise
+    // Initialize database. We *must* immediately set dbConnectionPromise
     // (before, eg, awaiting anything) to avoid race conditions.
-    console.debug('Initializing new DB wrapper')
+    console.debug('Initializing DB connection')
     const nonNullPromise = initializeDbConnection()
     dbConnectionPromise[0] = nonNullPromise
     return await nonNullPromise
@@ -197,10 +87,10 @@ export async function getDbConnection(): Promise<DbWrapper> {
 const SQLITE_DIR = 'SQLite'
 
 /**
- * Create db wrapper. Copies from app storage if needed before creating wrapper
- * and kicks off a check of remote DB after creating and returning wrapper.
+ * Opens the DB connection. Copies from app storage if needed before opening, and
+ * kicks off a background check for a newer remote DB (adopted on the next launch).
  */
-async function initializeDbConnection(): Promise<DbWrapper> {
+async function initializeDbConnection(): Promise<InnerDb> {
   // "SQLite" directory is required and assumed by SQLite.openDatabase
   const sqlDir = `${Paths.document.uri}${SQLITE_DIR}/`
   const currentSqlPath = sqlDir + TAGS_DB_NAME
@@ -265,22 +155,20 @@ async function initializeDbConnection(): Promise<DbWrapper> {
 
   // Note we intentionally are just using basename and not full path.
   const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
-  const dbWrapper = new DbWrapper(db)
 
-  // We've updated based on local data, but should also check server for updates
-  // Kick this off once per app open, first time we load DB
-  // (which should be roughly when app is opened)
+  // We've seeded from local data; also check the server for a newer DB. This writes
+  // any newer copy to disk for the *next* launch to pick up -- it does not touch the
+  // connection we just opened. Kicked off once per app open.
   // Runs in the background; getUrl rejects on network failure/non-200, so this must
   // catch or the rejection becomes an unhandled promise rejection.
   backgroundCheckForRemoteUpdates(
-    dbWrapper,
     currentSqlPath,
     currentManifestPath,
     tmpSqlPath,
     tmpManifestPath,
   ).catch(e => console.error('Background remote DB update check failed:', e))
 
-  return dbWrapper
+  return db
 }
 
 async function currentDbHasTags(): Promise<boolean> {
@@ -322,13 +210,15 @@ async function generatedAtFromPath(manifestPath: string): Promise<number> {
 }
 
 /**
- * Checks db on server and downloads it if newer, replacing backing db in wrapper.
+ * Checks the server for a newer DB and, if found and valid, writes it into place on
+ * disk. This does NOT touch the live connection: the updated file is adopted the next
+ * time the app launches and initializeDbConnection opens it. The seed logic there
+ * won't clobber it, because the manifest we write is newer than the bundled one.
  *
  * Exported for unit testing (see sqlUtil.test.ts); normally only called by
  * initializeDbConnection.
  */
 export async function backgroundCheckForRemoteUpdates(
-  dbWrapper: DbWrapper,
   currentSqlPath: string,
   currentManifestPath: string,
   tmpSqlPath: string,
@@ -402,30 +292,23 @@ export async function backgroundCheckForRemoteUpdates(
   const tmpManifestFile = new File(tmpManifestPath)
   tmpManifestFile.write(JSON.stringify(remoteManifestContents))
 
-  // Actually queue up replacement
-  dbWrapper
-    .queueDbReplacement(async () => {
-      // Delete existing files before moving (move doesn't overwrite)
-      const currentSql = new File(currentSqlPath)
-      if (currentSql.exists) {
-        currentSql.delete()
-      }
-      const currentManifest = new File(currentManifestPath)
-      if (currentManifest.exists) {
-        currentManifest.delete()
-      }
+  // Move the validated download into place for the next launch to open. The current
+  // session's connection is still open on currentSqlPath; deleting and replacing that
+  // file underneath it is safe because the open connection keeps reading its original
+  // file via its existing descriptor (POSIX unlink-while-open), while the new bytes
+  // take the path for the next openDatabaseAsync. We deliberately do NOT reopen here.
+  //
+  // Delete existing files before moving (move doesn't overwrite).
+  const currentSql = new File(currentSqlPath)
+  if (currentSql.exists) {
+    currentSql.delete()
+  }
+  const currentManifest = new File(currentManifestPath)
+  if (currentManifest.exists) {
+    currentManifest.delete()
+  }
 
-      const tmpSql = new File(tmpSqlPath)
-      // File.move() is async; must await before opening the swapped-in file below,
-      // otherwise the open can race the in-flight move (see comment in
-      // initializeDbConnection) and land on a fresh empty DB -> "no such table: tags".
-      await tmpSql.move(new File(currentSqlPath))
-      const tmpManifest = new File(tmpManifestPath)
-      await tmpManifest.move(new File(currentManifestPath))
-      console.debug('Done updating DB from remote')
-      return await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
-    })
-    // Errors inside the replacement callback are caught and logged by DbWrapper
-    // itself; this catch covers the queueing promise so it can't reject unhandled.
-    .catch(e => console.error('Queuing remote DB replacement failed:', e))
+  await tmpSqlFile.move(new File(currentSqlPath))
+  await tmpManifestFile.move(new File(currentManifestPath))
+  console.debug('Remote DB staged; will be adopted on next launch')
 }
