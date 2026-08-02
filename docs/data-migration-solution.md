@@ -1,5 +1,10 @@
 # Data migration for goodtags
 
+> Scope: this doc is about **user data** (favorites and labels, stored in
+> AsyncStorage) — backing it up and transferring it between devices. The offline
+> **tag-search database** is separate regenerable content; see
+> [search-database.md](search-database.md).
+
 ## Problem Summary
 
 User data in the goodtags app was not being migrated when users got new phones because:
