@@ -66,21 +66,14 @@ export function warmupDb() {
 const dbConnectionPromise: [Promise<InnerDb> | null] = [null]
 
 /**
- * On first call will kick off initializing SQL db and resolve to db once done. Subsequent calls
- * will wait for that init (if it's in progress) or immediately resolve to db (if it's done).
+ * Resolves to the shared DB connection, initializing it on first call and reusing it
+ * thereafter. Memoized on a module singleton so every caller shares one connection.
  */
 export async function getDbConnection(): Promise<InnerDb> {
-  const [existing] = dbConnectionPromise
-  if (existing == null) {
-    // Initialize database. We *must* immediately set dbConnectionPromise
-    // (before, eg, awaiting anything) to avoid race conditions.
-    console.debug('Initializing DB connection')
-    const nonNullPromise = initializeDbConnection()
-    dbConnectionPromise[0] = nonNullPromise
-    return await nonNullPromise
-  } else {
-    return await existing
-  }
+  // The `??=` assignment is synchronous -- nothing is awaited before the singleton is
+  // set -- so two callers that arrive together share one initializeDbConnection() call
+  // instead of each kicking off their own.
+  return await (dbConnectionPromise[0] ??= initializeDbConnection())
 }
 
 const SQLITE_DIR = 'SQLite'
@@ -112,36 +105,46 @@ export enum DbUpdateResult {
   Unavailable = 'unavailable', // couldn't fetch or validate a usable update
 }
 
-// Guards the download/stage so startup and a manual refresh -- or a double-tap --
-// never run two downloads into the same tmp file at once.
-let updateInFlight: Promise<DbUpdateResult> | null = null
+// Serializes update checks so the startup check and a manual refresh (or a second tap)
+// never run two downloads into the same tmp file at once. Each run waits for the
+// previous to settle, then proceeds -- regardless of whether it resolved or rejected.
+let updateChain: Promise<unknown> = Promise.resolve()
 
-function checkForRemoteUpdate(): Promise<DbUpdateResult> {
-  if (updateInFlight == null) {
-    const { currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
-    updateInFlight = backgroundCheckForRemoteUpdates(
-      currentSqlPath,
-      currentManifestPath,
-      tmpSqlPath,
-      tmpManifestPath,
-    ).finally(() => {
-      updateInFlight = null
-    })
-  }
-  return updateInFlight
+function checkForRemoteUpdate(force: boolean): Promise<DbUpdateResult> {
+  const run = updateChain.then(
+    () => runUpdateCheck(force),
+    () => runUpdateCheck(force),
+  )
+  // Swallow rejections for the chain only; the caller still sees `run` reject.
+  updateChain = run.catch(() => {})
+  return run
+}
+
+function runUpdateCheck(force: boolean): Promise<DbUpdateResult> {
+  const { currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
+  return backgroundCheckForRemoteUpdates(
+    currentSqlPath,
+    currentManifestPath,
+    tmpSqlPath,
+    tmpManifestPath,
+    force,
+  )
 }
 
 /**
  * Check for a newer DB and adopt it into the running app now (for a manual "refresh"
- * button). On success the live connection is replaced without closing the old one: an
- * in-flight query finishes against it and the next query uses the new file, so we never
- * close a connection mid-query (the FTS finalize SIGABRT). Deduped via
- * checkForRemoteUpdate so it can't race the startup check or a second tap.
+ * button). With `force`, re-download and re-adopt even when the on-disk DB already
+ * looks current -- the way to recover from a stale or corrupted local DB.
+ *
+ * On success the live connection is replaced without closing the old one: an in-flight
+ * query finishes against it and the next query uses the new file, so we never close a
+ * connection mid-query (the FTS finalize SIGABRT). Serialized via checkForRemoteUpdate
+ * so it can't race the startup check or a second tap.
  */
-export async function refreshDbNow(): Promise<DbUpdateResult> {
+export async function refreshDbNow(force: boolean = false): Promise<DbUpdateResult> {
   let result: DbUpdateResult
   try {
-    result = await checkForRemoteUpdate()
+    result = await checkForRemoteUpdate(force)
   } catch (e) {
     console.error('Manual DB refresh failed:', e)
     return DbUpdateResult.Unavailable
@@ -155,7 +158,7 @@ export async function refreshDbNow(): Promise<DbUpdateResult> {
 // Test-only: reset module singletons between cases.
 export function __resetDbStateForTest() {
   dbConnectionPromise[0] = null
-  updateInFlight = null
+  updateChain = Promise.resolve()
 }
 
 /**
@@ -228,7 +231,9 @@ async function initializeDbConnection(): Promise<InnerDb> {
   // so a manual refresh can't race it.
   // Runs in the background; getUrl rejects on network failure/non-200, so this must
   // catch or the rejection becomes an unhandled promise rejection.
-  checkForRemoteUpdate().catch(e => console.error('Background remote DB update check failed:', e))
+  checkForRemoteUpdate(false).catch(e =>
+    console.error('Background remote DB update check failed:', e),
+  )
 
   return db
 }
@@ -285,6 +290,7 @@ export async function backgroundCheckForRemoteUpdates(
   currentManifestPath: string,
   tmpSqlPath: string,
   tmpManifestPath: string,
+  force: boolean = false,
 ): Promise<DbUpdateResult> {
   const remoteManifestUrl = `${REMOTE_ASSET_BASE_URL}/${MANIFEST_NAME}`
 
@@ -294,8 +300,9 @@ export async function backgroundCheckForRemoteUpdates(
   const remoteManifestContents = await getUrl<DbManifest>(remoteManifestUrl)
   const remoteGeneratedAt = remoteManifestContents.generated_at_epoch_seconds
 
-  if (remoteGeneratedAt <= currentGeneratedAt) {
-    // It's not newer, bail
+  if (!force && remoteGeneratedAt <= currentGeneratedAt) {
+    // It's not newer, bail. A forced refresh skips this so it can re-download and
+    // re-adopt the current remote DB -- the way to recover a stale/corrupted local DB.
     console.debug('Remote DB not newer, done checking for updates')
     return DbUpdateResult.UpToDate
   }

@@ -145,7 +145,9 @@ export default function DataScreen() {
                 onPress={async () => {
                   setRefreshingDb(true)
                   try {
-                    const result = await refreshDbNow()
+                    // Force: always re-download and re-adopt, so this also recovers a
+                    // stale or corrupted local DB (not just "update if newer").
+                    const result = await refreshDbNow(true)
                     setSnackBarMessage(REFRESH_DB_MESSAGES[result])
                   } finally {
                     setRefreshingDb(false)
@@ -248,7 +250,9 @@ export default function DataScreen() {
 }
 
 const REFRESH_DB_MESSAGES: Record<DbUpdateResult, string> = {
-  [DbUpdateResult.Updated]: 'search database updated',
+  // Forced refresh re-downloads even when current, so Updated is the normal outcome.
+  [DbUpdateResult.Updated]: 'search database refreshed',
+  // Only reached if the server has no DB for this app's schema version.
   [DbUpdateResult.UpToDate]: 'search database already up to date',
   [DbUpdateResult.Unavailable]: "couldn't reach the update server",
 }

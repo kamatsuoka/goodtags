@@ -214,6 +214,36 @@ describe('backgroundCheckForRemoteUpdates', () => {
     )
   })
 
+  it('force: downloads and stages even when the remote is not newer', async () => {
+    // Same not-newer setup as above, but forced -- so it must download and stage the
+    // remote DB anyway (the recovery path).
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async () => {
+        movedFrom.push(uri)
+      }),
+    }))
+
+    const result = await backgroundCheckForRemoteUpdates(
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+      true, // force
+    )
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
+  })
+
   it('never hot-swaps the live connection (opens no DB other than the tmp validation)', async () => {
     // The whole point of the "adopt on next launch" design: this background path
     // must not reopen TAGS_DB_NAME into the running app. It opens only the tmp DB to
@@ -444,19 +474,55 @@ describe('refreshDbNow', () => {
     await expect(refreshDbNow()).resolves.toBe(DbUpdateResult.Unavailable)
   })
 
-  it('dedupes concurrent refreshes into a single download', async () => {
-    mockNewerRemote()
+  it('force: re-downloads and reopens even when the local DB looks current', async () => {
+    // On-disk manifest is NEWER than the remote, so a normal refresh would say
+    // "up to date". Force must still download and re-adopt -- this is the recovery
+    // path for a stale/corrupted local DB.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+    mockNewerRemote() // remote generated_at 2000 < local 9999
 
-    const [a, b] = await Promise.all([refreshDbNow(), refreshDbNow()])
+    const result = await refreshDbNow(true)
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // It actually downloaded the DB (not just the manifest) and reopened the connection.
+    const dbFetches = mockGetUrl.mock.calls.filter(c => String(c[0]).endsWith('.otf'))
+    expect(dbFetches).toHaveLength(1)
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).toContain(TAGS_DB_NAME)
+  })
+
+  it('serializes concurrent refreshes so their downloads never overlap', async () => {
+    // The startup check and a manual refresh (or a double-tap) must not run two
+    // downloads into the same tmp file at once.
+    let active = 0
+    let maxActive = 0
+    mockGetUrl.mockImplementation(async (url: string) => {
+      active += 1
+      maxActive = Math.max(maxActive, active)
+      await new Promise(setImmediate) // hold the "request" open across a tick
+      active -= 1
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      return new ArrayBuffer(100) as any
+    })
+
+    const [a, b] = await Promise.all([refreshDbNow(true), refreshDbNow(true)])
 
     expect(a).toBe(DbUpdateResult.Updated)
     expect(b).toBe(DbUpdateResult.Updated)
-    // Only one manifest fetch and one DB download despite two concurrent calls.
-    const manifestFetches = mockGetUrl.mock.calls.filter(c =>
-      String(c[0]).endsWith('manifest.json'),
-    )
-    const dbFetches = mockGetUrl.mock.calls.filter(c => String(c[0]).endsWith('.otf'))
-    expect(manifestFetches).toHaveLength(1)
-    expect(dbFetches).toHaveLength(1)
+    // Never more than one update operation touching the network at a time.
+    expect(maxActive).toBe(1)
   })
 })
