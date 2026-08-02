@@ -587,17 +587,11 @@ export const receiveSharedFile = createAsyncThunk<ReceivedData, string, ThunkApi
         if (sharedData.favorites === undefined && sharedData.labels === undefined)
           throw new Error('no favorites or labels found')
         const favoriteIds = sharedData.favorites.map(f => f.id) || []
-        const { tags: favorites } = await fetchAndConvertTags(
-          { ids: favoriteIds },
-          false, // Don't use transaction to avoid nesting issues
-        )
+        const { tags: favorites } = await fetchAndConvertTags({ ids: favoriteIds })
         const receivedLabels = await Promise.all(
           sharedData.labels.map(async sharedLabel => {
             const tagIds = sharedLabel.tags.map(t => t.id)
-            const { tags } = await fetchAndConvertTags(
-              { ids: tagIds },
-              false, // Don't use transaction to avoid nesting issues
-            )
+            const { tags } = await fetchAndConvertTags({ ids: tagIds })
             return { label: sharedLabel.label, tags }
           }),
         )

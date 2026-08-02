@@ -44,10 +44,9 @@ const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
 // search DB is read-only content, and a newer remote copy is adopted on the *next*
 // launch (see backgroundCheckForRemoteUpdates), not hot-swapped into a running app.
 // That makes the connection an immutable, shared handle -- no refcounting, locking,
-// or replace-in-place machinery needed. SQLite manages its own concurrency for the
-// reads we issue against it.
+// or replace-in-place machinery needed. Reads run directly against it with no wrapping
+// transaction (see searchDb); SQLite manages its own concurrency for the reads we issue.
 export interface InnerDb {
-  withTransactionAsync: (asyncCallback: () => Promise<void>) => Promise<void>
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
 }
 

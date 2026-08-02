@@ -84,9 +84,6 @@ jest.mock('expo-file-system/legacy', () => ({
 
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(async () => ({
-    withTransactionAsync: async (cb: () => Promise<void>) => {
-      await cb()
-    },
     getAllAsync: async () => [],
     closeAsync: () => {},
   })),

@@ -44,11 +44,8 @@ export function getSearchParams(state: SearchState, start: number): SearchParams
   }
 }
 
-export async function fetchAndConvertTags(
-  searchParams: SearchParams,
-  useTransaction: boolean = true,
-): Promise<ConvertedTags> {
-  return searchDb(searchParams, useTransaction)
+export async function fetchAndConvertTags(searchParams: SearchParams): Promise<ConvertedTags> {
+  return searchDb(searchParams)
 }
 
 export type DbRow = { [column: string]: any }
@@ -78,75 +75,59 @@ export async function countTags(): Promise<number> {
   return countRaw[0].count
 }
 
-async function searchDb(
-  searchParams: SearchParams,
-  useTransaction: boolean = true,
-): Promise<ConvertedTags> {
+async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =
     buildSqlParts(searchParams)
   const db = await getDbConnection()
   debugDbPerfLogging('Got db', overallStart)
 
-  // expo-sqlite's withTransactionAsync returns void, so can't return values from callback
-  // declare variables here and mutate within transaction
-  let tagRows: DbRow[] = []
-  let trackRows: DbRow[] = []
-  let videoRows: DbRow[] = []
-  let totalCount = 0
+  // No wrapping transaction: the search DB is read-only and the connection is
+  // immutable for the session, so these sequential reads already see a consistent
+  // snapshot -- nothing can write between them.
+  const start = debugDbPerfCurrentTime()
+  const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
+  console.debug(tagSql, whereVariables, suffixVariables)
+  const tagRows = await db.getAllAsync<DbRow>(tagSql, ...whereVariables, ...suffixVariables)
+  const tagTime = debugDbPerfCurrentTime()
 
-  const executeQueries = async () => {
-    const start = debugDbPerfCurrentTime()
-    debugDbPerfLogging('Txn start', overallStart)
-    const tagSql = `SELECT * FROM tags${whereClause}${suffixClauses}`
-    console.debug(tagSql, whereVariables, suffixVariables)
-    tagRows = await db.getAllAsync<DbRow>(tagSql, ...whereVariables, ...suffixVariables)
-    const tagTime = debugDbPerfCurrentTime()
+  const subSelect = `(SELECT id FROM tags${whereClause}${suffixClauses})`
+  const trackRows = await db.getAllAsync<DbRow>(
+    `SELECT * FROM tracks WHERE tracks.tag_id IN ${subSelect}`,
+    ...whereVariables,
+    ...suffixVariables,
+  )
+  const trackTime = debugDbPerfCurrentTime()
 
-    const subSelect = `(SELECT id FROM tags${whereClause}${suffixClauses})`
-    trackRows = await db.getAllAsync<DbRow>(
-      `SELECT * FROM tracks WHERE tracks.tag_id IN ${subSelect}`,
-      ...whereVariables,
-      ...suffixVariables,
+  const videoRows = await db.getAllAsync<DbRow>(
+    `SELECT * FROM videos WHERE videos.tag_id IN ${subSelect}`,
+    ...whereVariables,
+    ...suffixVariables,
+  )
+  const videoTime = debugDbPerfCurrentTime()
+
+  const totalCountRaw = await db.getAllAsync<{ count: number }>(
+    `SELECT COUNT(*) AS count FROM tags${whereClause}`,
+    ...whereVariables,
+  )
+  const countTime = debugDbPerfCurrentTime()
+  if (DEBUG_DB_PERF) {
+    console.debug(
+      `Per-execution times:\n` +
+        `tags=${tagTime - start}\n` +
+        `tracks=${trackTime - tagTime}\n` +
+        `videos=${videoTime - trackTime}\n` +
+        `count=${countTime - videoTime}\n` +
+        `total=${countTime - start}`,
     )
-    const trackTime = debugDbPerfCurrentTime()
-
-    videoRows = await db.getAllAsync<DbRow>(
-      `SELECT * FROM videos WHERE videos.tag_id IN ${subSelect}`,
-      ...whereVariables,
-      ...suffixVariables,
-    )
-    const videoTime = debugDbPerfCurrentTime()
-
-    const totalCountRaw = await db.getAllAsync<{ count: number }>(
-      `SELECT COUNT(*) AS count FROM tags${whereClause}`,
-      ...whereVariables,
-    )
-    const countTime = debugDbPerfCurrentTime()
-    if (DEBUG_DB_PERF) {
-      console.debug(
-        `Per-execution times:\n` +
-          `tags=${tagTime - start}\n` +
-          `tracks=${trackTime - tagTime}\n` +
-          `videos=${videoTime - trackTime}\n` +
-          `count=${countTime - videoTime}\n` +
-          `total=${countTime - start}`,
-      )
-    }
-    totalCount = totalCountRaw[0].count
-
-    if (tagRows.length > 1 && totalCount > 1) {
-      const msg =
-        `got ${tagRows.length}/${totalCount} tags` +
-        (searchParams.offset ? ` (offset ${searchParams.offset})` : '')
-      console.debug(msg)
-    }
   }
+  const totalCount = totalCountRaw[0].count
 
-  if (useTransaction) {
-    await db.withTransactionAsync(executeQueries)
-  } else {
-    await executeQueries()
+  if (tagRows.length > 1 && totalCount > 1) {
+    const msg =
+      `got ${tagRows.length}/${totalCount} tags` +
+      (searchParams.offset ? ` (offset ${searchParams.offset})` : '')
+    console.debug(msg)
   }
 
   debugDbPerfLogging('Db done, parsing rows', overallStart)

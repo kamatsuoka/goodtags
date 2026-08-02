@@ -161,7 +161,6 @@ describe('backgroundCheckForRemoteUpdates', () => {
 
     // Validation query reports a healthy table so the download is staged.
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => [{ count: 6975 }],
       closeAsync: async () => {},
     })
@@ -297,7 +296,6 @@ describe('backgroundCheckForRemoteUpdates', () => {
     // The validation that protected us during the gzip incident: a download that
     // isn't a usable tags DB must be thrown away rather than staged.
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => {
         throw new Error('no such table: tags')
       },
@@ -318,7 +316,6 @@ describe('backgroundCheckForRemoteUpdates', () => {
     // belt-and-suspenders with the server-side floor in
     // scripts/fetch_search_database.py (MIN_EXPECTED_TAGS / MIN_FRACTION_OF_PREVIOUS).
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => [{ count: 0 }],
       closeAsync: async () => {},
     })
