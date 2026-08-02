@@ -76,10 +76,6 @@ jest.mock('expo-file-system', () => {
 // (which references EventEmitter) during Jest runs.
 jest.mock('expo-file-system/legacy', () => ({
   copyAsync: jest.fn(async ({ _, to }: any) => ({ uri: to, exists: true })),
-  EncodingType: {
-    UTF8: 'utf8',
-    BASE64: 'base64',
-  },
 }))
 
 jest.mock('expo-sqlite', () => ({

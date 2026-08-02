@@ -21,93 +21,6 @@ async function settle() {
   await new Promise(setImmediate)
 }
 
-describe('file writing operations', () => {
-  // mock binary sqlite database data (minimal valid sqlite header)
-  const createMockSqliteData = (): ArrayBuffer => {
-    // sqlite file format starts with "SQLite format 3\0"
-    const header = 'SQLite format 3\0'
-    const buffer = new ArrayBuffer(100)
-    const view = new Uint8Array(buffer)
-    for (let i = 0; i < header.length; i++) {
-      view[i] = header.charCodeAt(i)
-    }
-    return buffer
-  }
-
-  it('should write ArrayBuffer directly to file without base64 encoding', async () => {
-    const mockData = createMockSqliteData()
-    const mockFileWrite = jest.fn()
-
-    // simulate writing binary data directly
-    mockFileWrite.mockImplementation((data: ArrayBuffer | string) => {
-      // verify we're receiving an ArrayBuffer, not a base64 string
-      expect(data).toBeInstanceOf(ArrayBuffer)
-      const view = new Uint8Array(data as ArrayBuffer)
-      // verify it starts with sqlite magic header
-      expect(String.fromCharCode(...Array.from(view.slice(0, 16)))).toContain('SQLite format 3')
-    })
-
-    // mock file writing function
-    const writeBinaryFile = async (path: string, data: ArrayBuffer) => {
-      const file = { write: mockFileWrite }
-      file.write(data)
-    }
-
-    await writeBinaryFile('test.db', mockData)
-
-    expect(mockFileWrite).toHaveBeenCalledTimes(1)
-  })
-
-  it('should produce identical binary output for base64 vs direct write', () => {
-    const mockData = createMockSqliteData()
-
-    // current approach: base64 encode then write with Base64 encoding flag
-    const base64String = Buffer.from(mockData).toString('base64')
-    const decodedFromBase64 = Buffer.from(base64String, 'base64')
-
-    // proposed approach: write ArrayBuffer directly
-    const directWrite = new Uint8Array(mockData)
-
-    // verify both produce identical binary data
-    expect(decodedFromBase64.length).toBe(directWrite.length)
-    expect(Buffer.from(decodedFromBase64)).toEqual(Buffer.from(directWrite))
-  })
-
-  it('should verify base64 encoding adds ~33% overhead', () => {
-    const mockData = createMockSqliteData()
-
-    const originalSize = mockData.byteLength
-    const base64String = Buffer.from(mockData).toString('base64')
-    const base64Size = base64String.length
-
-    // base64 encoding should increase size by approximately 33%
-    const overhead = (base64Size - originalSize) / originalSize
-    expect(overhead).toBeGreaterThan(0.3)
-    expect(overhead).toBeLessThan(0.4)
-  })
-
-  it('should validate sqlite can read binary data written both ways', () => {
-    const mockData = createMockSqliteData()
-
-    // method 1: base64 round-trip
-    const base64String = Buffer.from(mockData).toString('base64')
-    const fromBase64Buffer = Buffer.from(base64String, 'base64')
-
-    // method 2: direct binary
-    const directBinary = mockData
-
-    // both should have valid sqlite header
-    const checkSqliteHeader = (buffer: ArrayBuffer | Buffer) => {
-      const view = buffer instanceof Buffer ? buffer : new Uint8Array(buffer)
-      const header = String.fromCharCode(...Array.from(view.slice(0, 16)))
-      return header.startsWith('SQLite format 3')
-    }
-
-    expect(checkSqliteHeader(fromBase64Buffer)).toBe(true)
-    expect(checkSqliteHeader(directBinary)).toBe(true)
-  })
-})
-
 describe('backgroundCheckForRemoteUpdates', () => {
   const sqlDir = '/data/SQLite/'
   const currentSqlPath = `${sqlDir}${TAGS_DB_NAME}`
@@ -184,6 +97,30 @@ describe('backgroundCheckForRemoteUpdates', () => {
     expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
     // ...after the current files are deleted first (move does not overwrite).
     expect(deleted).toEqual([currentSqlPath, currentManifestPath])
+  })
+
+  it('writes the downloaded DB as raw bytes, not a base64 string', async () => {
+    // Regression: the DB used to be base64-encoded before being written. Writing the
+    // ArrayBuffer's bytes straight through avoids the ~33% encode overhead and an
+    // encoding-flag mismatch that would leave base64 text on disk instead of a DB.
+    const sqlWrites: unknown[] = []
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => '{}'),
+      write: jest.fn((data: unknown) => {
+        if (uri === tmpSqlPath) sqlWrites.push(data)
+      }),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+
+    await runCheck()
+    await settle()
+
+    expect(sqlWrites).toHaveLength(1)
+    expect(sqlWrites[0]).toBeInstanceOf(Uint8Array)
   })
 
   it('reports up-to-date and stages nothing when the remote is not newer', async () => {
