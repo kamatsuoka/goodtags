@@ -7,6 +7,18 @@ appId: com.fogcitysingers.goodtags
     id: "data"
 - takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-01-data
 
+# force-refresh the search database; wait for the result snackbar, then dismiss it
+- tapOn:
+    id: "refresh_db"
+- extendedWaitUntil:
+    visible:
+      id: close_button
+    timeout: 30000
+- takeScreenshot: ${SCREENSHOT_DIR}/${SEQ}-backup-01b-db-refreshed
+- tapOn:
+    id: close_button
+- waitForAnimationToEnd
+
 - tapOn:
     id: "backup"
     delay: 2000
