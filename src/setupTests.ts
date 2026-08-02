@@ -179,7 +179,10 @@ console.error = (...args: any[]) => {
     msgStr.includes('Error checking backup reminder') ||
     msgStr.includes('this.props.persistor.subscribe is not a function') ||
     msgStr.includes('SafeAreaProviderCompat') ||
-    msgStr.includes("Cannot read properties of undefined (reading 'Consumer')")
+    msgStr.includes("Cannot read properties of undefined (reading 'Consumer')") ||
+    // Expected, deliberately-triggered failures in the DB update-flow tests.
+    msgStr.includes('Downloaded remote DB failed validation') ||
+    msgStr.includes('Manual DB refresh failed')
   ) {
     return
   }
@@ -188,8 +191,15 @@ console.error = (...args: any[]) => {
 
 console.log = (...args: any[]) => {
   const msg = args[0]
-  if (typeof msg === 'string' && msg.includes('persistConfig.version=')) {
+  if (
+    typeof msg === 'string' &&
+    (msg.includes('persistConfig.version=') || msg.includes('Adding favorite tag'))
+  ) {
     return
   }
   originalLog(...args)
 }
+
+// Debug-level logs are pure noise in test output (e.g. the DB update-flow progress
+// logs and per-query search logging). Silence them; no test asserts on console.debug.
+console.debug = () => {}
