@@ -78,7 +78,7 @@ export default function DataScreen() {
       width: landscape ? undefined : '100%',
       paddingHorizontal: landscape ? 5 : 0,
       marginHorizontal: landscape ? 10 : 0,
-      marginVertical: 20,
+      marginVertical: 10,
     },
   })
 
@@ -137,6 +137,39 @@ export default function DataScreen() {
 
           <View style={styles.column}>
             <Text variant="titleLarge" style={styles.title}>
+              search database
+            </Text>
+            <View style={listStyles.listHolder}>
+              <Pressable
+                style={pressableStyle}
+                onPress={async () => {
+                  setRefreshingDb(true)
+                  try {
+                    const result = await refreshDbNow()
+                    setSnackBarMessage(REFRESH_DB_MESSAGES[result])
+                  } finally {
+                    setRefreshingDb(false)
+                    setSnackBarVisible(true)
+                  }
+                }}
+                disabled={refreshingDb}
+              >
+                <List.Item
+                  title="refresh"
+                  left={RefreshIcon}
+                  right={RightIcon}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+                  disabled={refreshingDb}
+                  testID="refresh_db"
+                />
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.column}>
+            <Text variant="titleLarge" style={styles.title}>
               pdf cache
             </Text>
             <View style={listStyles.listHolder}>
@@ -169,39 +202,6 @@ export default function DataScreen() {
                   titleStyle={theme.fonts.bodyLarge}
                   titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
                   disabled={clearingCache}
-                />
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.column}>
-            <Text variant="titleLarge" style={styles.title}>
-              search database
-            </Text>
-            <View style={listStyles.listHolder}>
-              <Pressable
-                style={pressableStyle}
-                onPress={async () => {
-                  setRefreshingDb(true)
-                  try {
-                    const result = await refreshDbNow()
-                    setSnackBarMessage(REFRESH_DB_MESSAGES[result])
-                  } finally {
-                    setRefreshingDb(false)
-                    setSnackBarVisible(true)
-                  }
-                }}
-                disabled={refreshingDb}
-              >
-                <List.Item
-                  title="refresh"
-                  left={RefreshIcon}
-                  right={RightIcon}
-                  style={listStyles.listItem}
-                  titleStyle={theme.fonts.bodyLarge}
-                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-                  disabled={refreshingDb}
-                  testID="refresh_db"
                 />
               </Pressable>
             </View>
