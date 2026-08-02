@@ -1,6 +1,11 @@
 import { TAGS_DB_NAME } from '@app/constants/sql'
 import getUrl from '@app/modules/getUrl'
-import { backgroundCheckForRemoteUpdates } from '@app/modules/sqlUtil'
+import {
+  __resetDbStateForTest,
+  backgroundCheckForRemoteUpdates,
+  DbUpdateResult,
+  refreshDbNow,
+} from '@app/modules/sqlUtil'
 import { setImmediate } from '@testing-library/react-native/build/helpers/timers'
 import { File } from 'expo-file-system'
 import * as SQLite from 'expo-sqlite'
@@ -171,13 +176,42 @@ describe('backgroundCheckForRemoteUpdates', () => {
   })
 
   it('stages the validated download into place for the next launch', async () => {
-    await runCheck()
+    const result = await runCheck()
     await settle()
 
+    expect(result).toBe(DbUpdateResult.Updated)
     // The validated tmp files are moved onto the current paths...
     expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
     // ...after the current files are deleted first (move does not overwrite).
     expect(deleted).toEqual([currentSqlPath, currentManifestPath])
+  })
+
+  it('reports up-to-date and stages nothing when the remote is not newer', async () => {
+    // Local manifest reads back a generated_at at/above the remote's, so there's
+    // nothing to download.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async () => {
+        movedFrom.push(uri)
+      }),
+    }))
+
+    const result = await runCheck()
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.UpToDate)
+    expect(movedFrom).toEqual([])
+    // No download attempted at all -- only the manifest was fetched.
+    expect(mockGetUrl.mock.calls.every(call => String(call[0]).endsWith('manifest.json'))).toBe(
+      true,
+    )
   })
 
   it('never hot-swaps the live connection (opens no DB other than the tmp validation)', async () => {
@@ -302,9 +336,10 @@ describe('backgroundCheckForRemoteUpdates', () => {
       closeAsync: async () => {},
     })
 
-    await runCheck()
+    const result = await runCheck()
     await settle()
 
+    expect(result).toBe(DbUpdateResult.Unavailable)
     // Validation failed, so nothing is staged: the bad tmp download is deleted and no
     // file is moved onto the current paths.
     expect(movedFrom).toEqual([])
@@ -320,10 +355,108 @@ describe('backgroundCheckForRemoteUpdates', () => {
       closeAsync: async () => {},
     })
 
-    await runCheck()
+    const result = await runCheck()
     await settle()
 
+    expect(result).toBe(DbUpdateResult.Unavailable)
     expect(movedFrom).toEqual([])
     expect(deleted).toContain(tmpSqlPath)
+  })
+})
+
+describe('refreshDbNow', () => {
+  let defaultFileImpl: any
+
+  beforeEach(() => {
+    mockGetUrl.mockReset()
+    mockOpenDatabaseAsync.mockReset()
+    __resetDbStateForTest()
+    defaultFileImpl = mockFile.getMockImplementation()
+
+    // Healthy validation stub for any opened DB.
+    mockOpenDatabaseAsync.mockResolvedValue({
+      getAllAsync: async () => [{ count: 6975 }],
+      closeAsync: async () => {},
+    })
+  })
+
+  afterEach(() => {
+    mockFile.mockImplementation(defaultFileImpl)
+    __resetDbStateForTest()
+  })
+
+  // Newer remote available -> validated download gets staged.
+  const mockNewerRemote = () => {
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      return new ArrayBuffer(100) as any
+    })
+  }
+
+  it('returns Updated and reopens the connection when a newer DB is staged', async () => {
+    mockNewerRemote()
+
+    const result = await refreshDbNow()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // Adoption = a fresh open of the live DB name (in addition to the tmp validation open).
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).toContain(TAGS_DB_NAME)
+  })
+
+  it('returns UpToDate and does NOT reopen when the remote is not newer', async () => {
+    // Local manifest is at/above the remote generated_at.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+    mockNewerRemote()
+
+    const result = await refreshDbNow()
+
+    expect(result).toBe(DbUpdateResult.UpToDate)
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).not.toContain(TAGS_DB_NAME)
+  })
+
+  it('returns Unavailable (not a rejection) when the download fails', async () => {
+    // Manual refresh must surface a friendly result, not throw, on network failure.
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      throw new Error('network down')
+    })
+
+    await expect(refreshDbNow()).resolves.toBe(DbUpdateResult.Unavailable)
+  })
+
+  it('dedupes concurrent refreshes into a single download', async () => {
+    mockNewerRemote()
+
+    const [a, b] = await Promise.all([refreshDbNow(), refreshDbNow()])
+
+    expect(a).toBe(DbUpdateResult.Updated)
+    expect(b).toBe(DbUpdateResult.Updated)
+    // Only one manifest fetch and one DB download despite two concurrent calls.
+    const manifestFetches = mockGetUrl.mock.calls.filter(c =>
+      String(c[0]).endsWith('manifest.json'),
+    )
+    const dbFetches = mockGetUrl.mock.calls.filter(c => String(c[0]).endsWith('.otf'))
+    expect(manifestFetches).toHaveLength(1)
+    expect(dbFetches).toHaveLength(1)
   })
 })

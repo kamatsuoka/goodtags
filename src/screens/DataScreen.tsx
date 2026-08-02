@@ -9,6 +9,7 @@ import {
 } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
 import { shareFavorites } from '@app/modules/favoritesSlice'
+import { DbUpdateResult, refreshDbNow } from '@app/modules/sqlUtil'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
@@ -28,6 +29,7 @@ export default function DataScreen() {
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const [clearingCache, setClearingCache] = useState(false)
+  const [refreshingDb, setRefreshingDb] = useState(false)
   const { landscape } = useWindowShape()
   const { listStyles, pressableStyle } = useListStyles()
 
@@ -174,6 +176,39 @@ export default function DataScreen() {
 
           <View style={styles.column}>
             <Text variant="titleLarge" style={styles.title}>
+              search database
+            </Text>
+            <View style={listStyles.listHolder}>
+              <Pressable
+                style={pressableStyle}
+                onPress={async () => {
+                  setRefreshingDb(true)
+                  try {
+                    const result = await refreshDbNow()
+                    setSnackBarMessage(REFRESH_DB_MESSAGES[result])
+                  } finally {
+                    setRefreshingDb(false)
+                    setSnackBarVisible(true)
+                  }
+                }}
+                disabled={refreshingDb}
+              >
+                <List.Item
+                  title="refresh"
+                  left={RefreshIcon}
+                  right={RightIcon}
+                  style={listStyles.listItem}
+                  titleStyle={theme.fonts.bodyLarge}
+                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+                  disabled={refreshingDb}
+                  testID="refresh_db"
+                />
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.column}>
+            <Text variant="titleLarge" style={styles.title}>
               logs
             </Text>
             <View style={listStyles.listHolder}>
@@ -212,8 +247,15 @@ export default function DataScreen() {
   )
 }
 
+const REFRESH_DB_MESSAGES: Record<DbUpdateResult, string> = {
+  [DbUpdateResult.Updated]: 'search database updated',
+  [DbUpdateResult.UpToDate]: 'search database already up to date',
+  [DbUpdateResult.Unavailable]: "couldn't reach the update server",
+}
+
 const RightIcon = homeIcon('chevron-right')
 const ExportIcon = homeIcon('database-export')
 const ImportIcon = homeIcon('database-import')
 const ClearIcon = homeIcon('broom')
+const RefreshIcon = homeIcon('database-refresh')
 const LogsIcon = homeIcon('file-document-multiple-outline')

@@ -85,17 +85,85 @@ export async function getDbConnection(): Promise<InnerDb> {
 
 const SQLITE_DIR = 'SQLite'
 
+function dbPaths() {
+  // "SQLite" directory is required and assumed by SQLite.openDatabase
+  const sqlDir = `${Paths.document.uri}${SQLITE_DIR}/`
+  const currentSqlPath = sqlDir + TAGS_DB_NAME
+  const currentManifestPath = sqlDir + MANIFEST_NAME
+  return {
+    sqlDir,
+    currentSqlPath,
+    currentManifestPath,
+    tmpSqlPath: `${currentSqlPath}.tmp`,
+    tmpManifestPath: `${currentManifestPath}.tmp`,
+  }
+}
+
+/** Open a fresh connection to the current on-disk DB (see DB_OPEN_OPTIONS). */
+async function openConnection(): Promise<InnerDb> {
+  // Basename only: openDatabaseAsync resolves it under defaultDatabaseDirectory.
+  return SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
+}
+
+/** Outcome of a remote-update check, for user-facing feedback. */
+export enum DbUpdateResult {
+  Updated = 'updated', // a newer DB was downloaded, validated, and staged on disk
+  UpToDate = 'up-to-date', // remote is not newer than what we already have
+  Unavailable = 'unavailable', // couldn't fetch or validate a usable update
+}
+
+// Guards the download/stage so startup and a manual refresh -- or a double-tap --
+// never run two downloads into the same tmp file at once.
+let updateInFlight: Promise<DbUpdateResult> | null = null
+
+function checkForRemoteUpdate(): Promise<DbUpdateResult> {
+  if (updateInFlight == null) {
+    const { currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
+    updateInFlight = backgroundCheckForRemoteUpdates(
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    ).finally(() => {
+      updateInFlight = null
+    })
+  }
+  return updateInFlight
+}
+
+/**
+ * Check for a newer DB and adopt it into the running app now (for a manual "refresh"
+ * button). On success the live connection is replaced without closing the old one: an
+ * in-flight query finishes against it and the next query uses the new file, so we never
+ * close a connection mid-query (the FTS finalize SIGABRT). Deduped via
+ * checkForRemoteUpdate so it can't race the startup check or a second tap.
+ */
+export async function refreshDbNow(): Promise<DbUpdateResult> {
+  let result: DbUpdateResult
+  try {
+    result = await checkForRemoteUpdate()
+  } catch (e) {
+    console.error('Manual DB refresh failed:', e)
+    return DbUpdateResult.Unavailable
+  }
+  if (result === DbUpdateResult.Updated) {
+    dbConnectionPromise[0] = openConnection()
+  }
+  return result
+}
+
+// Test-only: reset module singletons between cases.
+export function __resetDbStateForTest() {
+  dbConnectionPromise[0] = null
+  updateInFlight = null
+}
+
 /**
  * Opens the DB connection. Copies from app storage if needed before opening, and
  * kicks off a background check for a newer remote DB (adopted on the next launch).
  */
 async function initializeDbConnection(): Promise<InnerDb> {
-  // "SQLite" directory is required and assumed by SQLite.openDatabase
-  const sqlDir = `${Paths.document.uri}${SQLITE_DIR}/`
-  const currentSqlPath = sqlDir + TAGS_DB_NAME
-  const currentManifestPath = sqlDir + MANIFEST_NAME
-  const tmpSqlPath = `${currentSqlPath}.tmp`
-  const tmpManifestPath = `${currentManifestPath}.tmp`
+  const { sqlDir, currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
   const appSqlUri = Asset.fromModule(getReactNativeAppSqlModule()).uri
   const appManifestObject = getReactNativeAppManifestModule()
 
@@ -152,20 +220,15 @@ async function initializeDbConnection(): Promise<InnerDb> {
     )
   }
 
-  // Note we intentionally are just using basename and not full path.
-  const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
+  const db = await openConnection()
 
   // We've seeded from local data; also check the server for a newer DB. This writes
   // any newer copy to disk for the *next* launch to pick up -- it does not touch the
-  // connection we just opened. Kicked off once per app open.
+  // connection we just opened. Kicked off once per app open, through the shared guard
+  // so a manual refresh can't race it.
   // Runs in the background; getUrl rejects on network failure/non-200, so this must
   // catch or the rejection becomes an unhandled promise rejection.
-  backgroundCheckForRemoteUpdates(
-    currentSqlPath,
-    currentManifestPath,
-    tmpSqlPath,
-    tmpManifestPath,
-  ).catch(e => console.error('Background remote DB update check failed:', e))
+  checkForRemoteUpdate().catch(e => console.error('Background remote DB update check failed:', e))
 
   return db
 }
@@ -222,7 +285,7 @@ export async function backgroundCheckForRemoteUpdates(
   currentManifestPath: string,
   tmpSqlPath: string,
   tmpManifestPath: string,
-) {
+): Promise<DbUpdateResult> {
   const remoteManifestUrl = `${REMOTE_ASSET_BASE_URL}/${MANIFEST_NAME}`
 
   // Assume we have a current manifest by this point
@@ -234,13 +297,15 @@ export async function backgroundCheckForRemoteUpdates(
   if (remoteGeneratedAt <= currentGeneratedAt) {
     // It's not newer, bail
     console.debug('Remote DB not newer, done checking for updates')
-    return
+    return DbUpdateResult.UpToDate
   }
 
   const remoteSqlName = remoteManifestContents.db_name_by_version[VALID_SCHEMA_VERSION]
   if (remoteSqlName == null) {
+    // Remote is newer but has nothing for our schema version, so there's no usable
+    // update for this app build -- from the user's view they're as current as they can be.
     console.debug(`Unable to find remote DB with valid schema version of ${VALID_SCHEMA_VERSION}`)
-    return
+    return DbUpdateResult.UpToDate
   }
 
   const remoteSqlUrl = `${REMOTE_ASSET_BASE_URL}/${remoteSqlName}`
@@ -284,7 +349,7 @@ export async function backgroundCheckForRemoteUpdates(
     await tmpDb.closeAsync()
     new File(tmpSqlPath).delete()
     console.error('Downloaded remote DB failed validation, discarding:', e)
-    return
+    return DbUpdateResult.Unavailable
   }
   await tmpDb.closeAsync()
 
@@ -310,4 +375,5 @@ export async function backgroundCheckForRemoteUpdates(
   await tmpSqlFile.move(new File(currentSqlPath))
   await tmpManifestFile.move(new File(currentManifestPath))
   console.debug('Remote DB staged; will be adopted on next launch')
+  return DbUpdateResult.Updated
 }
