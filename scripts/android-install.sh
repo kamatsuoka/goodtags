@@ -1,8 +1,14 @@
 #!/bin/bash
 set -e
 
+# The AVD used when no target is given. Pinning it keeps the target from
+# depending on which emulator happens to be running, or on the alphabetical
+# order of `emulator -list-avds`.
+DEFAULT_AVD="Pixel_9"
+
 VARIANT="${1:-debug}"
-DEST="${2:-}"
+# Emulator AVD to build for, or "device" for a connected phone.
+DEST="${2:-${ANDROID_AVD:-$DEFAULT_AVD}}"
 
 find_emulator_by_avd() {
   adb devices | grep "^emulator" | grep "device$" | awk '{print $1}' | while read -r s; do
@@ -30,20 +36,16 @@ if [ "$DEST" = "device" ]; then
     echo "No physical device connected"
     exit 1
   fi
-elif [ -n "$DEST" ]; then
+else
   SERIAL=$(find_emulator_by_avd "$DEST")
   if [ -z "$SERIAL" ]; then
-    start_and_wait_for_avd "$DEST"
-  fi
-else
-  SERIAL=$(adb devices | grep "^emulator" | grep "device$" | awk '{print $1}' | head -1)
-  if [ -z "$SERIAL" ]; then
-    DEFAULT_AVD=$("${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -list-avds | head -1)
-    if [ -z "$DEFAULT_AVD" ]; then
-      echo "No emulator running and no AVDs found"
+    if ! "${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -list-avds | grep -qx "$DEST"; then
+      echo "No AVD named '$DEST'. Available AVDs:"
+      "${ANDROID_HOME:-$HOME/Library/Android/sdk}/emulator/emulator" -list-avds
+      echo "Pass one as the second argument or set ANDROID_AVD."
       exit 1
     fi
-    start_and_wait_for_avd "$DEFAULT_AVD"
+    start_and_wait_for_avd "$DEST"
   fi
 fi
 

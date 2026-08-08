@@ -28,6 +28,12 @@ For Macs with Apple silicon, I recommend `brew install` instead of `sudo gem ins
 
 - `yarn android`
 
+This targets the default AVD (see `DEFAULT_AVD` in `scripts/android-install.sh`),
+starting it if it isn't already running. To use a different one, set `ANDROID_AVD`
+(e.g. `ANDROID_AVD=Pixel_Tablet_API_36 yarn android`) or pass it directly:
+`./scripts/android-install.sh debug Pixel_Tablet_API_36`. Use `device` instead of
+an AVD name to install on a connected phone.
+
 ## build and launch goodtags in an ios simulator
 
 - `bundle install`
