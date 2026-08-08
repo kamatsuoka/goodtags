@@ -39,6 +39,18 @@ async function settle() {
   await new Promise(setImmediate)
 }
 
+// Several cases here deliberately trigger failures the module reports with
+// console.error (a failed download, a DB that fails validation). Silence them for this
+// file only -- putting these messages on the global allowlist in setupTests would blind
+// every other suite to them for good.
+let consoleErrorSpy: jest.SpyInstance
+beforeAll(() => {
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+})
+afterAll(() => {
+  consoleErrorSpy.mockRestore()
+})
+
 describe('backgroundCheckForRemoteUpdates', () => {
   const sqlDir = '/data/SQLite/'
   const currentSqlPath = `${sqlDir}${TAGS_DB_NAME}`
@@ -48,6 +60,7 @@ describe('backgroundCheckForRemoteUpdates', () => {
 
   // Recorded by the File mock so tests can assert what happened on disk.
   let movedFrom: string[]
+  let moves: { from: string; to?: string; overwrite?: boolean }[]
   let deleted: string[]
   let defaultFileImpl: any
 
@@ -63,10 +76,12 @@ describe('backgroundCheckForRemoteUpdates', () => {
     mockGetUrl.mockReset()
     mockOpenDatabaseAsync.mockReset()
     movedFrom = []
+    moves = []
     deleted = []
     defaultFileImpl = mockFile.getMockImplementation()
 
-    // Recording File mock: every File records its own move()/delete() by source uri.
+    // Recording File mock: every File records its own move()/delete() by source uri,
+    // and moves also record their destination and options.
     mockFile.mockImplementation((uri: string) => ({
       exists: true,
       uri,
@@ -76,8 +91,9 @@ describe('backgroundCheckForRemoteUpdates', () => {
       delete: jest.fn(() => {
         deleted.push(uri)
       }),
-      move: jest.fn(async () => {
+      move: jest.fn(async (destination?: any, options?: any) => {
         movedFrom.push(uri)
+        moves.push({ from: uri, to: destination?.uri, overwrite: options?.overwrite })
       }),
     }))
 
@@ -111,10 +127,15 @@ describe('backgroundCheckForRemoteUpdates', () => {
     await settle()
 
     expect(result).toBe(DbUpdateResult.Updated)
-    // The validated tmp files are moved onto the current paths...
-    expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
-    // ...after the current files are deleted first (move does not overwrite).
-    expect(deleted).toEqual([currentSqlPath, currentManifestPath])
+    // The validated tmp files are moved onto the current paths, each with
+    // overwrite: true. File.move() defaults to overwrite: false and rejects with
+    // DestinationAlreadyExists when the destination is present -- which it is on every
+    // staging after the very first launch, so dropping the option would break staging
+    // for every existing install while still passing on a fresh one.
+    expect(moves).toEqual([
+      { from: tmpSqlPath, to: currentSqlPath, overwrite: true },
+      { from: tmpManifestPath, to: currentManifestPath, overwrite: true },
+    ])
   })
 
   it('writes the downloaded DB as raw bytes, not a base64 string', async () => {

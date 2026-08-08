@@ -179,10 +179,7 @@ console.error = (...args: any[]) => {
     msgStr.includes('Error checking backup reminder') ||
     msgStr.includes('this.props.persistor.subscribe is not a function') ||
     msgStr.includes('SafeAreaProviderCompat') ||
-    msgStr.includes("Cannot read properties of undefined (reading 'Consumer')") ||
-    // Expected, deliberately-triggered failures in the DB update-flow tests.
-    msgStr.includes('Downloaded remote DB failed validation') ||
-    msgStr.includes('Manual DB refresh failed')
+    msgStr.includes("Cannot read properties of undefined (reading 'Consumer')")
   ) {
     return
   }

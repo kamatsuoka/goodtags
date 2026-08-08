@@ -40,15 +40,6 @@ const DB_OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {
 
 // The parts of SQLiteDatabase we use. It's an interface so tests can supply a stub
 // and so callers don't couple to expo-sqlite directly.
-//
-// One shared connection, opened lazily and reused by every caller. Automatic remote
-// updates are adopted on the *next* launch (see backgroundCheckForRemoteUpdates), not
-// hot-swapped into a running app. The connection can still be replaced *wholesale* in
-// two cases -- a manual force refresh (refreshDbNow) and re-init after a failed open
-// (getDbConnection) -- but it is never mutated in place or closed mid-query, so there is
-// no refcounting or locking. The search DB is read-only content, so reads run directly
-// against it with no wrapping transaction (see searchDb); SQLite manages its own
-// concurrency for the reads we issue.
 export interface InnerDb {
   getAllAsync: <T = any>(source: string, ...params: any[]) => Promise<T[]>
 }
@@ -65,24 +56,44 @@ export function warmupDb() {
   getDbConnection().catch(e => console.error('warmupDb failed:', e))
 }
 
-// Singleton with our db. Module-private, so a plain reassignable binding is enough --
-// every read and write below goes through this module.
+// One shared connection, opened lazily and reused by every caller. Automatic remote
+// updates are adopted on the *next* launch (see backgroundCheckForRemoteUpdates), not
+// hot-swapped into a running app. The connection can still be replaced *wholesale* in
+// two cases -- a manual force refresh (refreshDbNow) and re-init after a failed open
+// (getDbConnection) -- but it is never mutated in place or closed mid-query, so there is
+// no refcounting or locking. The search DB is read-only content, so reads run directly
+// against it with no wrapping transaction (see fetchAndConvertTags); SQLite manages its own
+// concurrency for the reads we issue.
+//
+// Module-private, so a plain reassignable binding is enough -- every read and write
+// goes through installConnection/getDbConnection below.
 let dbConnectionPromise: Promise<InnerDb> | null = null
 
 /**
- * Resolves to the shared DB connection, initializing it on first call and reusing it
- * thereafter. Memoized on a module singleton so every caller shares one connection. A
- * failed initialization clears the singleton so the next call retries, rather than
- * caching the failure and requiring an app restart to recover.
+ * Installs `open()`'s connection as the shared one and returns it.
+ *
+ * Clear-on-failure is a property of the slot, not of any one writer: a promise that
+ * rejects must not stay memoized, or every later caller replays the same failure and
+ * only an app restart recovers. Both writers (first init and refreshDbNow) go through
+ * here so neither can forget it.
  */
-export async function getDbConnection(): Promise<InnerDb> {
-  const attempt: Promise<InnerDb> = (dbConnectionPromise ??= initializeDbConnection().catch(e => {
+function installConnection(open: () => Promise<InnerDb>): Promise<InnerDb> {
+  const attempt: Promise<InnerDb> = open().catch(e => {
     // Only clear if nothing replaced it meanwhile (e.g. refreshDbNow installing a
     // new connection while this attempt was in flight).
     if (dbConnectionPromise === attempt) dbConnectionPromise = null
     throw e
-  }))
-  return await attempt
+  })
+  dbConnectionPromise = attempt
+  return attempt
+}
+
+/**
+ * Resolves to the shared DB connection, initializing it on first call and reusing it
+ * thereafter, so every caller shares one connection.
+ */
+export async function getDbConnection(): Promise<InnerDb> {
+  return await (dbConnectionPromise ?? installConnection(initializeDbConnection))
 }
 
 const SQLITE_DIR = 'SQLite'
@@ -101,10 +112,17 @@ function dbPaths() {
   }
 }
 
-/** Open a fresh connection to the current on-disk DB (see DB_OPEN_OPTIONS). */
-async function openConnection(): Promise<InnerDb> {
-  // Basename only: openDatabaseAsync resolves it under defaultDatabaseDirectory.
-  return SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
+/**
+ * Open a fresh connection to a DB in the SQLite directory (see DB_OPEN_OPTIONS).
+ *
+ * Always by basename: openDatabaseAsync treats its argument as a name relative to
+ * defaultDatabaseDirectory (it just strips a leading slash and prepends the dir), so
+ * passing a full path URI resolves to a bogus path and silently opens a brand-new empty
+ * DB -> "no such table: tags". Every open in this module goes through here so none of
+ * them can drop DB_OPEN_OPTIONS or reintroduce the full-path mistake.
+ */
+async function openConnection(name: string = TAGS_DB_NAME): Promise<SQLite.SQLiteDatabase> {
+  return SQLite.openDatabaseAsync(name, DB_OPEN_OPTIONS)
 }
 
 /** Outcome of a remote-update check, for user-facing feedback. */
@@ -116,28 +134,37 @@ export enum DbUpdateResult {
 
 // Serializes update checks so the startup check and a manual refresh (or a second tap)
 // never run two downloads into the same tmp file at once. Each run waits for the
-// previous to settle, then proceeds -- regardless of whether it resolved or rejected.
+// previous to finish, then proceeds. The chain never rejects (see below), so a failed
+// check can't break it for everyone after.
 let updateChain: Promise<unknown> = Promise.resolve()
 
+/**
+ * Runs a remote-update check, serialized against every other one, and decides what a
+ * failure means -- so this never rejects.
+ *
+ * Both callers want the same answer from a failure ("no usable update"): the startup
+ * check has nowhere to report it, and the manual refresh shows the same snackbar
+ * whether the download 404'd or came back corrupt. Owning that here keeps them from
+ * each re-catching and re-logging the same event in their own words.
+ */
 function checkForRemoteUpdate(force: boolean): Promise<DbUpdateResult> {
-  const run = updateChain.then(
-    () => runUpdateCheck(force),
-    () => runUpdateCheck(force),
-  )
-  // Swallow rejections for the chain only; the caller still sees `run` reject.
-  updateChain = run.catch(() => {})
+  const run = updateChain
+    .then(() => {
+      const { currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
+      return backgroundCheckForRemoteUpdates(
+        currentSqlPath,
+        currentManifestPath,
+        tmpSqlPath,
+        tmpManifestPath,
+        force,
+      )
+    })
+    .catch(e => {
+      console.error('Remote DB update check failed:', e)
+      return DbUpdateResult.Unavailable
+    })
+  updateChain = run
   return run
-}
-
-function runUpdateCheck(force: boolean): Promise<DbUpdateResult> {
-  const { currentSqlPath, currentManifestPath, tmpSqlPath, tmpManifestPath } = dbPaths()
-  return backgroundCheckForRemoteUpdates(
-    currentSqlPath,
-    currentManifestPath,
-    tmpSqlPath,
-    tmpManifestPath,
-    force,
-  )
 }
 
 /**
@@ -151,15 +178,9 @@ function runUpdateCheck(force: boolean): Promise<DbUpdateResult> {
  * so it can't race the startup check or a second tap.
  */
 export async function refreshDbNow(force: boolean = false): Promise<DbUpdateResult> {
-  let result: DbUpdateResult
-  try {
-    result = await checkForRemoteUpdate(force)
-  } catch (e) {
-    console.error('Manual DB refresh failed:', e)
-    return DbUpdateResult.Unavailable
-  }
+  const result = await checkForRemoteUpdate(force)
   if (result === DbUpdateResult.Updated) {
-    dbConnectionPromise = openConnection()
+    installConnection(openConnection)
   }
   return result
 }
@@ -205,26 +226,8 @@ async function initializeDbConnection(): Promise<InnerDb> {
       await copyAsync({ from: appSqlUri, to: tmpSqlPath })
     }
 
-    const tmpManifestFile = new File(tmpManifestPath)
-    tmpManifestFile.write(JSON.stringify(appManifestObject))
-
-    // Delete existing files before moving (move doesn't overwrite)
-    const currentSqlFile = new File(currentSqlPath)
-    if (currentSqlFile.exists) {
-      currentSqlFile.delete()
-    }
-    const currentManifestFile = new File(currentManifestPath)
-    if (currentManifestFile.exists) {
-      currentManifestFile.delete()
-    }
-
-    const tmpSqlFile = new File(tmpSqlPath)
-    // File.move() is async; without awaiting it, the subsequent openDatabaseAsync
-    // below can race the in-flight move and open the (not-yet-moved-into) path
-    // before the file lands, silently creating a fresh empty DB -> "no such
-    // table: tags". Must await so the move is guaranteed complete before we open.
-    await tmpSqlFile.move(new File(currentSqlPath))
-    await tmpManifestFile.move(new File(currentManifestPath))
+    new File(tmpManifestPath).write(JSON.stringify(appManifestObject))
+    await moveIntoPlace(tmpSqlPath, tmpManifestPath, currentSqlPath, currentManifestPath)
   } else {
     console.debug(
       'Not seeding DB from app bundle: on-device DB is at least as new as the ' +
@@ -237,19 +240,41 @@ async function initializeDbConnection(): Promise<InnerDb> {
   // We've seeded from local data; also check the server for a newer DB. This writes
   // any newer copy to disk for the *next* launch to pick up -- it does not touch the
   // connection we just opened. Kicked off once per app open, through the shared guard
-  // so a manual refresh can't race it.
-  // Runs in the background; getUrl rejects on network failure/non-200, so this must
-  // catch or the rejection becomes an unhandled promise rejection.
-  checkForRemoteUpdate(false).catch(e =>
-    console.error('Background remote DB update check failed:', e),
-  )
+  // so a manual refresh can't race it. Deliberately not awaited; checkForRemoteUpdate
+  // never rejects, so there's no unhandled rejection to guard against here.
+  checkForRemoteUpdate(false)
 
   return db
 }
 
+/**
+ * Moves a staged DB + manifest pair onto the live paths.
+ *
+ * Shared by the two writers (seeding from the bundle, staging a remote download) so the
+ * two rules here are stated and enforced once:
+ *  - `overwrite: true`, because File.move() defaults to overwrite: false and rejects
+ *    with DestinationAlreadyExists when the destination is there -- which it is on every
+ *    move after the first launch. The option makes the native side delete the
+ *    destination for us; it is not atomic-replace, so a crash mid-call can still leave
+ *    the DB moved and the manifest not. Consequences are mild (the mismatch just
+ *    triggers a re-seed on the next launch) rather than a bricked app.
+ *  - `await` every move. File.move() is async, and an un-awaited one lets a subsequent
+ *    openDatabaseAsync race it and open the not-yet-moved-into path, silently creating a
+ *    fresh empty DB -> "no such table: tags".
+ */
+async function moveIntoPlace(
+  tmpSqlPath: string,
+  tmpManifestPath: string,
+  currentSqlPath: string,
+  currentManifestPath: string,
+): Promise<void> {
+  await new File(tmpSqlPath).move(new File(currentSqlPath), { overwrite: true })
+  await new File(tmpManifestPath).move(new File(currentManifestPath), { overwrite: true })
+}
+
 async function currentDbHasTags(): Promise<boolean> {
   try {
-    const db = await SQLite.openDatabaseAsync(TAGS_DB_NAME, DB_OPEN_OPTIONS)
+    const db = await openConnection()
     try {
       await db.getAllAsync('SELECT COUNT(*) FROM tags LIMIT 1')
       return true
@@ -278,26 +303,21 @@ async function shouldCopyFromApp(
   return appGeneratedAt > currentGeneratedAt
 }
 
-async function generatedAtFromPath(manifestPath: string): Promise<number> {
-  const manifestFile = new File(manifestPath)
-  const contents = await manifestFile.text()
-  const manifest: DbManifest = JSON.parse(contents)
-  return manifest.generated_at_epoch_seconds
-}
-
 /**
- * The local manifest's generated_at, or 0 if it is missing or unreadable.
+ * The manifest's generated_at, or 0 if it is missing or unreadable.
  *
- * A first-launch seed that died partway through leaves exactly that state -- no
- * manifest, or a truncated one -- and it is also the state in which the user most
- * needs the update check to work. Reading it strictly would throw before we ever
- * reach the network, so the refresh reported Unavailable and the UI blamed the
- * server. Treating "no readable manifest" as older than anything lets the check
- * proceed and download, which is the actual recovery.
+ * A seed that died partway through leaves exactly that state -- no manifest, or a
+ * truncated one -- and it is also the state in which the user most needs both callers
+ * to keep working. Reading it strictly threw before either could act: the update check
+ * never reached the network, so a refresh reported Unavailable and the UI blamed the
+ * server, and the launch path failed before it could re-seed. Treating "no readable
+ * manifest" as older than anything makes both do the recovering thing instead.
  */
-async function currentGeneratedAtOrZero(manifestPath: string): Promise<number> {
+async function generatedAtFromPath(manifestPath: string): Promise<number> {
   try {
-    return await generatedAtFromPath(manifestPath)
+    const contents = await new File(manifestPath).text()
+    const manifest: DbManifest = JSON.parse(contents)
+    return manifest.generated_at_epoch_seconds
   } catch (e) {
     console.debug('No readable local manifest; treating as absent:', e)
     return 0
@@ -324,9 +344,9 @@ export async function backgroundCheckForRemoteUpdates(
 ): Promise<DbUpdateResult> {
   const remoteManifestUrl = `${REMOTE_ASSET_BASE_URL}/${MANIFEST_NAME}`
 
-  // Tolerant read: a missing/corrupt local manifest must not abort the check, since
-  // that is precisely the state a refresh is meant to recover from.
-  const currentGeneratedAt = await currentGeneratedAtOrZero(currentManifestPath)
+  // Tolerant read (see generatedAtFromPath): a missing/corrupt local manifest must not
+  // abort the check, since that is precisely the state a refresh is meant to recover from.
+  const currentGeneratedAt = await generatedAtFromPath(currentManifestPath)
   // Get generated at for remote manifest
   const remoteManifestContents = await getUrl<DbManifest>(remoteManifestUrl)
   const remoteGeneratedAt = remoteManifestContents.generated_at_epoch_seconds
@@ -368,13 +388,9 @@ export async function backgroundCheckForRemoteUpdates(
   // A bad download (HTML error page, truncated response) would otherwise replace
   // the current DB with an empty SQLite file that has no tables.
   //
-  // NOTE: openDatabaseAsync treats its argument as a name relative to
-  // defaultDatabaseDirectory (it just strips a leading slash and prepends the dir),
-  // so passing the full tmpSqlPath URI resolves to a bogus path and silently opens a
-  // brand-new empty DB -> "no such table: tags". The tmp file lives in that same
-  // directory, so open it by basename, exactly as we do for TAGS_DB_NAME elsewhere.
-  const tmpDbName = `${TAGS_DB_NAME}.tmp`
-  const tmpDb = await SQLite.openDatabaseAsync(tmpDbName, DB_OPEN_OPTIONS)
+  // The tmp file lives in the SQLite directory, so openConnection's basename-only
+  // contract applies to it too.
+  const tmpDb = await openConnection(`${TAGS_DB_NAME}.tmp`)
   try {
     const rows = await tmpDb.getAllAsync<{ count: number }>(`SELECT COUNT(*) as count FROM tags`)
     // Reject a missing, unreadable, or empty tags table: a structurally valid but
@@ -391,27 +407,14 @@ export async function backgroundCheckForRemoteUpdates(
   }
   await tmpDb.closeAsync()
 
-  const tmpManifestFile = new File(tmpManifestPath)
-  tmpManifestFile.write(JSON.stringify(remoteManifestContents))
+  new File(tmpManifestPath).write(JSON.stringify(remoteManifestContents))
 
   // Move the validated download into place for the next launch to open. The current
   // session's connection is still open on currentSqlPath; deleting and replacing that
   // file underneath it is safe because the open connection keeps reading its original
   // file via its existing descriptor (POSIX unlink-while-open), while the new bytes
   // take the path for the next openDatabaseAsync. We deliberately do NOT reopen here.
-  //
-  // Delete existing files before moving (move doesn't overwrite).
-  const currentSql = new File(currentSqlPath)
-  if (currentSql.exists) {
-    currentSql.delete()
-  }
-  const currentManifest = new File(currentManifestPath)
-  if (currentManifest.exists) {
-    currentManifest.delete()
-  }
-
-  await tmpSqlFile.move(new File(currentSqlPath))
-  await tmpManifestFile.move(new File(currentManifestPath))
+  await moveIntoPlace(tmpSqlPath, tmpManifestPath, currentSqlPath, currentManifestPath)
   console.debug('Remote DB staged; will be adopted on next launch')
   return DbUpdateResult.Updated
 }

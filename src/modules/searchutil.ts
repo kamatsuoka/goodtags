@@ -44,10 +44,6 @@ export function getSearchParams(state: SearchState, start: number): SearchParams
   }
 }
 
-export async function fetchAndConvertTags(searchParams: SearchParams): Promise<ConvertedTags> {
-  return searchDb(searchParams)
-}
-
 export type DbRow = { [column: string]: any }
 
 const DEBUG_DB_PERF = false
@@ -75,7 +71,8 @@ export async function countTags(): Promise<number> {
   return countRaw[0].count
 }
 
-async function searchDb(searchParams: SearchParams): Promise<ConvertedTags> {
+/** Runs a search against the local DB and converts the rows into tags. */
+export async function fetchAndConvertTags(searchParams: SearchParams): Promise<ConvertedTags> {
   const overallStart = debugDbPerfCurrentTime()
   const { whereVariables, whereClause, suffixClauses, suffixVariables } =
     buildSqlParts(searchParams)

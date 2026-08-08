@@ -84,6 +84,12 @@ Under normal operation the connection isn't swapped while the app runs. It can b
 - a **failed initialization** clears the singleton so the next `getDbConnection()` retries
   from scratch (recovering a broken first-launch seed without needing an app restart).
 
+Both writers install through `installConnection()`, which owns the clear-on-failure rule.
+That belongs to the *slot*, not to either writer: a rejected promise left memoized would
+be replayed by every later caller, and only an app restart would recover. The clear is
+guarded on identity (`dbConnectionPromise === attempt`) so a doomed initialization that
+finishes late can't discard a healthy connection a refresh installed meanwhile.
+
 > This is deliberately simpler than earlier versions, which hot-swapped the connection
 > mid-session behind a hand-rolled reader/writer lock. That machinery was the source of
 > a long tail of subtle concurrency bugs; removing it made a whole class of them
@@ -117,6 +123,13 @@ Both the startup check and the manual refresh go through a single serialized cha
 (`checkForRemoteUpdate`), so two update runs can never write the same `*.tmp` file at once
 and a forced refresh can't be silently satisfied by an in-flight non-forced check.
 
+`checkForRemoteUpdate` is also the one place that decides what a *failure* means: it never
+rejects, mapping any error to `Unavailable`. Both callers want that same answer — the
+startup check has nowhere to report an error, and the manual refresh shows the same
+snackbar whether the download 404'd or came back corrupt — so keeping it there stops each
+layer from re-catching and re-logging the same event in its own words. The exported
+`backgroundCheckForRemoteUpdates` still rejects; that's what the chain wraps.
+
 ## Invariants and gotchas (the *why*)
 
 Each of these fixed a real, recurring bug. Preserve them.
@@ -132,7 +145,9 @@ Each of these fixed a real, recurring bug. Preserve them.
   avoids the double free.
 - **Open by basename, never full path.** `openDatabaseAsync` resolves its argument under
   `defaultDatabaseDirectory`; passing a full URI silently opens a brand-new empty DB.
-  Even the tmp DB is validated by basename (`${TAGS_DB_NAME}.tmp`).
+  Even the tmp DB is validated by basename (`${TAGS_DB_NAME}.tmp`). Every open in the
+  module goes through the one `openConnection(name)` helper, so this and the two
+  `DB_OPEN_OPTIONS` invariants above can't be dropped by a new call site.
 - **Never set `Accept-Encoding` manually** on the download. iOS/Android only transparently
   decompress gzip when the *platform* added the header. Setting it ourselves disables that,
   so we'd write raw gzipped bytes and SQLite would fail with `no such table`.
@@ -142,6 +157,17 @@ Each of these fixed a real, recurring bug. Preserve them.
 - **`await` every `File.move()`.** `File.move()` is async; not awaiting it lets a following
   `openDatabaseAsync` race the in-flight move and open a not-yet-written file (→ empty DB,
   `no such table: tags`).
+- **Pass `{ overwrite: true }` to every `File.move()` onto a live path.** `File.move()`
+  defaults to `overwrite: false` and *rejects* with `DestinationAlreadyExists` when the
+  destination exists — on Android via
+  `if (!spec.overwrite) throw DestinationAlreadyExistsException()` in
+  `fsops/CopyMoveStrategy.kt`, on iOS by falling through to `FileManager.moveItem`.
+  This is a nasty one to test: the destination is absent only on a **first launch**, so
+  omitting the option passes on a fresh install and breaks staging on **every upgrading
+  device**. Both writers go through `moveIntoPlace()`, which is where the option (and the
+  `await` rule above) lives. Note it is *not* an atomic replace — the native side deletes
+  the destination and then moves — so a crash mid-call can still leave the DB moved and
+  the manifest not; that mismatch just triggers a re-seed on the next launch.
 
 ## Tradeoffs and known behaviors
 
@@ -214,7 +240,13 @@ What upgrading would involve, roughly in order:
 6. **Testing** is mostly integration, not unit: the `sqlUtil` tests mock the DB and the
    `searchutil` tests assert the (unchanged) SQL string, so they won't catch behavior
    changes. Build a v2 DB and compare search results against v1 for single-word, prefix,
-   multi-word, and especially **accented** queries, plus the Maestro `db-swap-search` flow.
+   multi-word, and especially **accented** queries.
+
+   > ⚠️ The `db-swap-*` Maestro flows and `scripts/integration-test-db-swap.sh` are
+   > **stale** — they test mid-session hot-swapping, which no longer exists, and the
+   > script blocks on a logcat marker (`Done updating DB from remote`) that was renamed to
+   > `Remote DB staged; will be adopted on next launch`, so it always times out. They need
+   > retargeting at next-launch adoption or deleting before they're useful here.
 
 **ROI:** the concrete win is the `unicode61` tokenizer (accent/case folding), which is
 genuinely useful for a DB full of names. fts5's other headline features (bm25 ranking,
