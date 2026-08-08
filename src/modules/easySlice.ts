@@ -96,7 +96,7 @@ export const EasySearchParams: SearchParams = {
 }
 
 /**
- * Fetch most easy tags from API
+ * Fetch most easy tags
  *
  * @param refresh fetch tags even if already loaded
  */

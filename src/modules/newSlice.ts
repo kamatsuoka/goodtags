@@ -90,7 +90,7 @@ export const NewSearchParams: SearchParams = {
 }
 
 /**
- * Fetch most new tags from API
+ * Fetch most new tags
  *
  * @param refresh fetch tags even if already loaded
  */

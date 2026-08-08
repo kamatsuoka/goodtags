@@ -59,7 +59,7 @@ export const RandomSearchParams: SearchParams = {
 }
 
 /**
- * Fetch random tag from API
+ * Get a random tag
  */
 export const getRandomTag = createAsyncThunk<SearchResult, void, ThunkApiConfig>(
   'random/getRandomTag',
