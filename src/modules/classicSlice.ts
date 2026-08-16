@@ -96,7 +96,7 @@ export const ClassicSearchParams: SearchParams = {
 }
 
 /**
- * Fetch most classic tags from API
+ * Fetch most classic tags
  *
  * @param refresh fetch tags even if already loaded
  */

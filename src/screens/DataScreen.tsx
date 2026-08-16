@@ -9,8 +9,9 @@ import {
 } from '@app/hooks'
 import { useListStyles } from '@app/hooks/useListStyles'
 import { shareFavorites } from '@app/modules/favoritesSlice'
+import { DbUpdateResult, refreshDbNow } from '@app/modules/sqlUtil'
 import { useNavigation } from '@react-navigation/native'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { Divider, List, Portal, Snackbar, useTheme } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -28,8 +29,9 @@ export default function DataScreen() {
   const [snackBarVisible, setSnackBarVisible] = useState(false)
   const [snackBarMessage, setSnackBarMessage] = useState('')
   const [clearingCache, setClearingCache] = useState(false)
+  const [refreshingDb, setRefreshingDb] = useState(false)
   const { landscape } = useWindowShape()
-  const { listStyles, pressableStyle } = useListStyles()
+  const { listStyles } = useListStyles()
 
   const styles = StyleSheet.create({
     container: {
@@ -76,7 +78,7 @@ export default function DataScreen() {
       width: landscape ? undefined : '100%',
       paddingHorizontal: landscape ? 5 : 0,
       marginHorizontal: landscape ? 10 : 0,
-      marginVertical: 20,
+      marginVertical: 10,
     },
   })
 
@@ -89,7 +91,10 @@ export default function DataScreen() {
               faves + labels
             </Text>
             <View style={listStyles.listHolder}>
-              <Pressable
+              <DataRow
+                title="backup"
+                icon={ExportIcon}
+                testID="backup"
                 onPress={async () => {
                   const { message, showSnackBar } = await shareFavorites(favorites)
                   if (showSnackBar) {
@@ -97,21 +102,12 @@ export default function DataScreen() {
                     setSnackBarVisible(true)
                   }
                 }}
-                style={pressableStyle}
-              >
-                <List.Item
-                  title="backup"
-                  left={ExportIcon}
-                  right={RightIcon}
-                  style={listStyles.listItem}
-                  titleStyle={theme.fonts.bodyLarge}
-                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-                  testID="backup"
-                />
-              </Pressable>
+              />
               <Divider />
-              <Pressable
-                style={pressableStyle}
+              <DataRow
+                title="restore"
+                icon={ImportIcon}
+                testID="restore"
                 onPress={async () => {
                   const { message, showSnackBar } = await handleImport()
                   if (showSnackBar) {
@@ -119,17 +115,33 @@ export default function DataScreen() {
                     setSnackBarVisible(true)
                   }
                 }}
-              >
-                <List.Item
-                  title="restore"
-                  left={ImportIcon}
-                  right={RightIcon}
-                  style={listStyles.listItem}
-                  titleStyle={theme.fonts.bodyLarge}
-                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-                  testID="restore"
-                />
-              </Pressable>
+              />
+            </View>
+          </View>
+
+          <View style={styles.column}>
+            <Text variant="titleLarge" style={styles.title}>
+              search database
+            </Text>
+            <View style={listStyles.listHolder}>
+              <DataRow
+                title="refresh"
+                icon={RefreshIcon}
+                testID="refresh_db"
+                disabled={refreshingDb}
+                onPress={async () => {
+                  setRefreshingDb(true)
+                  try {
+                    // Force: always re-download and re-adopt, so this also recovers a
+                    // stale or corrupted local DB (not just "update if newer").
+                    const result = await refreshDbNow(true)
+                    setSnackBarMessage(REFRESH_DB_MESSAGES[result])
+                  } finally {
+                    setRefreshingDb(false)
+                    setSnackBarVisible(true)
+                  }
+                }}
+              />
             </View>
           </View>
 
@@ -138,8 +150,10 @@ export default function DataScreen() {
               pdf cache
             </Text>
             <View style={listStyles.listHolder}>
-              <Pressable
-                style={pressableStyle}
+              <DataRow
+                title="clear cache"
+                icon={ClearIcon}
+                disabled={clearingCache}
                 onPress={async () => {
                   setClearingCache(true)
                   try {
@@ -157,18 +171,7 @@ export default function DataScreen() {
                     setSnackBarVisible(true)
                   }
                 }}
-                disabled={clearingCache}
-              >
-                <List.Item
-                  title="clear cache"
-                  left={ClearIcon}
-                  right={RightIcon}
-                  style={listStyles.listItem}
-                  titleStyle={theme.fonts.bodyLarge}
-                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-                  disabled={clearingCache}
-                />
-              </Pressable>
+              />
             </View>
           </View>
 
@@ -177,21 +180,11 @@ export default function DataScreen() {
               logs
             </Text>
             <View style={listStyles.listHolder}>
-              <Pressable
-                style={pressableStyle}
-                onPress={async () => {
-                  navigation.navigate('Logs')
-                }}
-              >
-                <List.Item
-                  title="view logs"
-                  left={LogsIcon}
-                  right={RightIcon}
-                  style={listStyles.listItem}
-                  titleStyle={theme.fonts.bodyLarge}
-                  titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
-                />
-              </Pressable>
+              <DataRow
+                title="view logs"
+                icon={LogsIcon}
+                onPress={() => navigation.navigate('Logs')}
+              />
             </View>
           </View>
         </View>
@@ -212,8 +205,53 @@ export default function DataScreen() {
   )
 }
 
+const REFRESH_DB_MESSAGES: Record<DbUpdateResult, string> = {
+  [DbUpdateResult.Updated]: 'search database refreshed',
+  // True whichever branch produced it -- "remote isn't newer" or "remote has nothing for
+  // this app's schema version". Both mean the user already has the newest DB they can
+  // get, so the wording deliberately doesn't depend on which one it was.
+  [DbUpdateResult.UpToDate]: 'search database already up to date',
+  // Covers both remaining causes: the download failed, or what came back wasn't a
+  // usable DB. Deliberately not phrased as a network error -- a corrupt download
+  // reaches the server just fine.
+  [DbUpdateResult.Unavailable]: "couldn't download a usable search database",
+}
+
+/**
+ * A tappable row in one of this screen's lists. Every row on the screen carries the same
+ * six presentation props; naming them once here keeps a styling change to one edit
+ * instead of one per action.
+ */
+function DataRow(props: {
+  title: string
+  icon: ComponentProps<typeof List.Item>['left']
+  onPress: () => void
+  disabled?: boolean
+  testID?: string
+}) {
+  const { title, icon, onPress, disabled, testID } = props
+  const theme = useTheme()
+  const { listStyles, pressableStyle } = useListStyles()
+
+  return (
+    <Pressable style={pressableStyle} onPress={onPress} disabled={disabled}>
+      <List.Item
+        title={title}
+        left={icon}
+        right={RightIcon}
+        style={listStyles.listItem}
+        titleStyle={theme.fonts.bodyLarge}
+        titleMaxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}
+        disabled={disabled}
+        testID={testID}
+      />
+    </Pressable>
+  )
+}
+
 const RightIcon = homeIcon('chevron-right')
 const ExportIcon = homeIcon('database-export')
 const ImportIcon = homeIcon('database-import')
 const ClearIcon = homeIcon('broom')
+const RefreshIcon = homeIcon('database-refresh')
 const LogsIcon = homeIcon('file-document-multiple-outline')

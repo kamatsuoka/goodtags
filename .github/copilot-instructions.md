@@ -15,7 +15,7 @@ goodtags is a React Native app (v0.81) for browsing and playing barbershop quart
 ### Data Layer
 - **SQLite database**: Contains all tag metadata, bundled with app and auto-updates from remote server
 - **Database lifecycle**: `warmupDb()` called in `index.js` at startup to initialize DB connection
-- **Dynamic updates**: `DbWrapper` class in `src/modules/sqlUtil.ts` manages safe hot-swapping of DB files while queries are in-flight
+- **Dynamic updates**: `src/modules/sqlUtil.ts` stages a newer remote DB on disk and adopts it on the *next* launch; the live connection is never hot-swapped mid-session. The Data screen's "refresh" (`refreshDbNow`) is the one path that adopts immediately. See `docs/search-database.md`.
 - **Update flow**: On first DB access, copies from app bundle if needed, then checks remote server for newer version in background
 - **Remote sync**: Manifest-based versioning (`manifest.json` + schema versions), DB downloads compressed (~4x smaller with gzip)
 - **Search**: Queries run against local SQLite via `expo-sqlite`, results converted to `Tag` objects by `fetchAndConvertTags()`
@@ -67,7 +67,7 @@ goodtags is a React Native app (v0.81) for browsing and playing barbershop quart
 
 - `App.tsx`: Entry point with Redux Provider, PersistGate, ErrorBoundary, navigation root
 - `src/store.ts`: Redux store config with persistence and migrations
-- `src/modules/sqlUtil.ts`: Database initialization, hot-swapping, remote updates
+- `src/modules/sqlUtil.ts`: Database initialization, remote updates, next-launch adoption
 - `src/navigation/RootStackNavigator.tsx`: Main navigation structure
 - `package.json`: Scripts for build/deploy/version management
 - `deploy/deploy-*.sh`: Automated deployment scripts for both platforms

@@ -76,17 +76,10 @@ jest.mock('expo-file-system', () => {
 // (which references EventEmitter) during Jest runs.
 jest.mock('expo-file-system/legacy', () => ({
   copyAsync: jest.fn(async ({ _, to }: any) => ({ uri: to, exists: true })),
-  EncodingType: {
-    UTF8: 'utf8',
-    BASE64: 'base64',
-  },
 }))
 
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(async () => ({
-    withTransactionAsync: async (cb: () => Promise<void>) => {
-      await cb()
-    },
     getAllAsync: async () => [],
     closeAsync: () => {},
   })),
@@ -195,8 +188,15 @@ console.error = (...args: any[]) => {
 
 console.log = (...args: any[]) => {
   const msg = args[0]
-  if (typeof msg === 'string' && msg.includes('persistConfig.version=')) {
+  if (
+    typeof msg === 'string' &&
+    (msg.includes('persistConfig.version=') || msg.includes('Adding favorite tag'))
+  ) {
     return
   }
   originalLog(...args)
 }
+
+// Debug-level logs are pure noise in test output (e.g. the DB update-flow progress
+// logs and per-query search logging). Silence them; no test asserts on console.debug.
+console.debug = () => {}

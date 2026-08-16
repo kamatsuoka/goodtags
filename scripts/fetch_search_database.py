@@ -96,9 +96,7 @@ ROW_DEFAULTS = {
 }
 
 
-def parse_batches_to_tags(
-    batches: Sequence[Tag]
-) -> Sequence[Tag]:
+def parse_batches_to_tags(batches: Sequence[Tag]) -> Sequence[Tag]:
     return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
 
 
@@ -135,7 +133,10 @@ def validate_tag_count(num_tags: int, previous_count: int | None) -> None:
             f"minimum of {MIN_EXPECTED_TAGS}. The upstream API likely returned a "
             "partial result; not deploying over the existing DB."
         )
-    if previous_count is not None and num_tags < previous_count * MIN_FRACTION_OF_PREVIOUS:
+    if (
+        previous_count is not None
+        and num_tags < previous_count * MIN_FRACTION_OF_PREVIOUS
+    ):
         raise SystemExit(
             f"Aborting deploy: fetched {num_tags} tags, less than "
             f"{MIN_FRACTION_OF_PREVIOUS:.0%} of the previously deployed "
@@ -208,7 +209,7 @@ def generate_sql_db(tags: Sequence[Tag], out_dir: Path) -> str:
         """
     )
     db.execute(
-        # The versions we use don't support fts5 yet
+        # when we migrate to fts5
         # CREATE VIRTUAL TABLE tags_fts USING fts5(title, alt_title, arranger, lyrics, content=tags, content_rowid=id);
         """
         CREATE VIRTUAL TABLE tags_fts USING fts4(title, alt_title, arranger, lyrics, content=tags);
@@ -395,7 +396,7 @@ def deploy_to_gh_pages(out_dir: Path) -> None:
 
 
 def normalize(t: Tag) -> Tag:
-    """normalize a tag before storage""" 
+    """normalize a tag before storage"""
     if posted := t.get("Posted"):
         # convert localized format (like "Sat, 5 Oct 2024") to ISO (yyyy-mm-dd)
         try:

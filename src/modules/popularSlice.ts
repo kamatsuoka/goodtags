@@ -127,7 +127,7 @@ export const PopularSearchParams: SearchParams = {
 }
 
 /**
- * Fetch most popular tags from API
+ * Fetch most popular tags
  *
  * @param refresh fetch tags even if already loaded
  */

@@ -1,394 +1,54 @@
-import { TAGS_DB_NAME } from '@app/constants/sql'
+import { MANIFEST_NAME, TAGS_DB_NAME, VALID_SCHEMA_VERSION } from '@app/constants/sql'
 import getUrl from '@app/modules/getUrl'
-import { backgroundCheckForRemoteUpdates, DbWrapper, InnerDb } from '@app/modules/sqlUtil'
+import {
+  __resetDbStateForTest,
+  backgroundCheckForRemoteUpdates,
+  DbUpdateResult,
+  getDbConnection,
+  refreshDbNow,
+} from '@app/modules/sqlUtil'
 import { setImmediate } from '@testing-library/react-native/build/helpers/timers'
 import { File } from 'expo-file-system'
 import * as SQLite from 'expo-sqlite'
 
 jest.mock('@app/modules/getUrl')
 
+// initializeDbConnection reaches for the DB and manifest bundled into the app, which
+// these two helpers pull in with require(). Jest resolves those to the real files and
+// tries to parse them as JS -- the .sqlite one fails on its own header ("SQLite format
+// 3..." -> Unexpected identifier 'format'). Stub just the two getters; every real
+// constant stays actual.
+jest.mock('@app/constants/sql', () => {
+  const actual = jest.requireActual('@app/constants/sql')
+  return {
+    ...actual,
+    getReactNativeAppSqlModule: () => 1,
+    getReactNativeAppManifestModule: () => ({
+      generated_at_epoch_seconds: 1000,
+      db_name_by_version: { [actual.VALID_SCHEMA_VERSION]: 'tags_db_v1.sqlite.otf' },
+    }),
+  }
+})
+
 const mockGetUrl = getUrl as jest.MockedFunction<typeof getUrl>
 const mockOpenDatabaseAsync = SQLite.openDatabaseAsync as jest.Mock
 const mockFile = File as unknown as jest.Mock
-
-class TestSqliteDatabase implements InnerDb {
-  numTxns: number
-
-  constructor() {
-    this.numTxns = 0
-  }
-
-  async withTransactionAsync(callback: () => Promise<void>) {
-    this.numTxns += 1
-    await callback()
-  }
-
-  async getAllAsync<T = any>(_source: string, ..._params: any[]): Promise<T[]> {
-    return []
-  }
-
-  async closeAsync() {}
-}
 
 /** Wait a little bit for promises to reach a steady state */
 async function settle() {
   await new Promise(setImmediate)
 }
 
-// Implementation of https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
-function promiseWithResolvers<T>(): {
-  promise: Promise<T>
-  resolve: (value: T) => void
-  reject: (reason?: any) => void
-} {
-  let resolve, reject
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res
-    reject = rej
-  })
-  return { promise, resolve: resolve as any, reject: reject as any }
-}
-
-describe('DbWrapper class', () => {
-  describe('replacing the underlying DB', () => {
-    it('should direct new transactions to the new DB', async () => {
-      const db1 = new TestSqliteDatabase()
-      const db2 = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db1)
-
-      await wrapper.runTransactionAsync(async () => {})
-      expect(db1.numTxns).toBe(1)
-      expect(db2.numTxns).toBe(0)
-
-      await wrapper.queueDbReplacement(async () => db2)
-      await settle()
-
-      await wrapper.runTransactionAsync(async () => {})
-      expect(db1.numTxns).toBe(1)
-      expect(db2.numTxns).toBe(1)
-    })
-
-    it('should wait until the last ongoing transaction finishes', async () => {
-      const db = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db)
-
-      const { promise, resolve } = promiseWithResolvers<void>()
-      const t1 = wrapper.runTransactionAsync(async () => await promise)
-      const t2 = wrapper.runTransactionAsync(async () => await promise)
-
-      let hasDoneReplacement = false
-      await wrapper.queueDbReplacement(async () => {
-        hasDoneReplacement = true
-        return db
-      })
-      await settle()
-
-      expect(hasDoneReplacement).toBe(false)
-
-      resolve()
-      await Promise.all([t1, t2])
-      await settle()
-
-      expect(hasDoneReplacement).toBe(true)
-    })
-
-    it('should queue up subsequent transactions while a replacement is ongoing', async () => {
-      const db = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db)
-
-      const { promise, resolve } = promiseWithResolvers<void>()
-      await wrapper.queueDbReplacement(async () => {
-        await promise
-        return db
-      })
-      const t1 = wrapper.runTransactionAsync(async () => {})
-      const t2 = wrapper.runTransactionAsync(async () => {})
-      await settle()
-
-      expect(db.numTxns).toBe(0)
-
-      resolve()
-      await Promise.all([t1, t2])
-      expect(db.numTxns).toBe(2)
-    })
-
-    it("should ignore second replacement if first hasn't started yet", async () => {
-      const db = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db)
-
-      // Prevent replacement from starting by having an ongoing txn
-      const { promise, resolve } = promiseWithResolvers<void>()
-      const t = wrapper.runTransactionAsync(async () => await promise)
-      // Submit the two replacements
-      let replacedA = false
-      let replacedB = false
-      await wrapper.queueDbReplacement(async () => {
-        replacedA = true
-        return db
-      })
-      await wrapper.queueDbReplacement(async () => {
-        replacedB = true
-        return db
-      })
-      // Resolve the txn so the replacement can happen
-      resolve()
-      await t
-      await settle()
-
-      expect(replacedA).toBe(true)
-      expect(replacedB).toBe(false)
-    })
-
-    it('should still run a queued replacement after a transaction throws', async () => {
-      // Regression: runTransactionAsync must restore txnCount even when the
-      // callback throws. Otherwise txnCount stays stuck > 0 and the downloaded
-      // remote DB never gets swapped in.
-      const db1 = new TestSqliteDatabase()
-      const db2 = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db1)
-
-      await expect(
-        wrapper.runTransactionAsync(async () => {
-          throw new Error('query failed (e.g. no such table: tags)')
-        }),
-      ).rejects.toThrow('query failed')
-
-      await wrapper.queueDbReplacement(async () => db2)
-      await settle()
-
-      await wrapper.runTransactionAsync(async () => {})
-      // If txnCount were stuck, the replacement wouldn't have happened and this
-      // would have gone to db1 instead.
-      expect(db2.numTxns).toBe(1)
-    })
-
-    it('should not close the DB while a getAllAsync is in flight', async () => {
-      // Regression for the exsqlite3_finalize SIGABRT crash: getAllAsync must be
-      // counted in txnCount so a replacement can't closeAsync() the DB out from
-      // under an active query.
-      const { promise, resolve } = promiseWithResolvers<void>()
-      let queryInFlight = false
-      let closedWhileQuerying = false
-      const db1: InnerDb = {
-        withTransactionAsync: async cb => cb(),
-        getAllAsync: async () => {
-          queryInFlight = true
-          await promise
-          queryInFlight = false
-          return []
-        },
-        closeAsync: async () => {
-          if (queryInFlight) closedWhileQuerying = true
-        },
-      }
-      const db2 = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db1)
-
-      const query = wrapper.getAllAsync('SELECT 1')
-      await settle() // let the query start and register in txnCount
-
-      await wrapper.queueDbReplacement(async () => db2)
-      await settle()
-      // Replacement must wait: db1 must not be closed while the query runs.
-      expect(closedWhileQuerying).toBe(false)
-
-      resolve()
-      await query
-      await settle()
-      expect(closedWhileQuerying).toBe(false)
-    })
-
-    it('should not be permanently locked if a replacement callback throws', async () => {
-      // Regression: replaceDbInProgress must be cleared even when the replacement
-      // callback throws, otherwise every later query awaits a rejected promise.
-      const db1 = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db1)
-
-      await wrapper.queueDbReplacement(async () => {
-        throw new Error('replacement failed (e.g. file move error)')
-      })
-      await settle()
-
-      // Wrapper should still be usable rather than re-throwing forever.
-      await expect(wrapper.runTransactionAsync(async () => {})).resolves.toBeUndefined()
-    })
-
-    it('keeps the previous open connection when a replacement callback throws', async () => {
-      // Regression for the sticky "no such table: tags" reported on 4.2.3 (iOS):
-      // retrying the search failed but restarting fixed it. A failed background swap
-      // must NOT close the working connection out from under the wrapper -- otherwise
-      // every later query in the session hits a closed/empty DB until app restart.
-      let db1Closed = false
-      let db1Queries = 0
-      const db1: InnerDb = {
-        withTransactionAsync: async cb => cb(),
-        getAllAsync: async () => {
-          db1Queries += 1
-          return []
-        },
-        closeAsync: async () => {
-          db1Closed = true
-        },
-      }
-      const wrapper = new DbWrapper(db1)
-
-      await wrapper.queueDbReplacement(async () => {
-        throw new Error('replacement failed (e.g. file move error)')
-      })
-      await settle()
-
-      // The old connection must remain open...
-      expect(db1Closed).toBe(false)
-      // ...and still serve queries (rather than throwing "no such table").
-      await expect(wrapper.getAllAsync('SELECT 1')).resolves.toEqual([])
-      expect(db1Queries).toBe(1)
-    })
-
-    it('closes the old connection only after a successful replacement', async () => {
-      // The old connection must be closed to avoid leaks, but only once the new one
-      // is in place -- never before, so a failure can't strand the wrapper.
-      let db1Closed = false
-      const db1: InnerDb = {
-        withTransactionAsync: async cb => cb(),
-        getAllAsync: async () => [],
-        closeAsync: async () => {
-          db1Closed = true
-        },
-      }
-      const db2 = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db1)
-
-      await wrapper.queueDbReplacement(async () => {
-        // The old connection must still be open while we build the new one.
-        expect(db1Closed).toBe(false)
-        return db2
-      })
-      await settle()
-
-      expect(db1Closed).toBe(true)
-      await wrapper.runTransactionAsync(async () => {})
-      expect(db2.numTxns).toBe(1)
-    })
-
-    it('should queue second replacement if first has already started', async () => {
-      const db = new TestSqliteDatabase()
-      const wrapper = new DbWrapper(db)
-
-      // Prevent replacement from finishing
-      const { promise, resolve } = promiseWithResolvers<void>()
-      let replacedA = false
-      let replacedB = false
-      await wrapper.queueDbReplacement(async () => {
-        replacedA = true
-        await promise
-        return db
-      })
-      await settle()
-
-      expect(replacedA).toBe(true)
-
-      // Queue the second replacement
-      const q = wrapper.queueDbReplacement(async () => {
-        replacedB = true
-        return db
-      })
-      await settle()
-
-      // Finishing the ongoing replacement
-      resolve()
-      await q
-      await settle()
-
-      expect(replacedB).toBe(true)
-    })
-  })
-
-  describe('file writing operations', () => {
-    // mock binary sqlite database data (minimal valid sqlite header)
-    const createMockSqliteData = (): ArrayBuffer => {
-      // sqlite file format starts with "SQLite format 3\0"
-      const header = 'SQLite format 3\0'
-      const buffer = new ArrayBuffer(100)
-      const view = new Uint8Array(buffer)
-      for (let i = 0; i < header.length; i++) {
-        view[i] = header.charCodeAt(i)
-      }
-      return buffer
-    }
-
-    it('should write ArrayBuffer directly to file without base64 encoding', async () => {
-      const mockData = createMockSqliteData()
-      const mockFileWrite = jest.fn()
-
-      // simulate writing binary data directly
-      mockFileWrite.mockImplementation((data: ArrayBuffer | string) => {
-        // verify we're receiving an ArrayBuffer, not a base64 string
-        expect(data).toBeInstanceOf(ArrayBuffer)
-        const view = new Uint8Array(data as ArrayBuffer)
-        // verify it starts with sqlite magic header
-        expect(String.fromCharCode(...Array.from(view.slice(0, 16)))).toContain('SQLite format 3')
-      })
-
-      // mock file writing function
-      const writeBinaryFile = async (path: string, data: ArrayBuffer) => {
-        const file = { write: mockFileWrite }
-        file.write(data)
-      }
-
-      await writeBinaryFile('test.db', mockData)
-
-      expect(mockFileWrite).toHaveBeenCalledTimes(1)
-    })
-
-    it('should produce identical binary output for base64 vs direct write', () => {
-      const mockData = createMockSqliteData()
-
-      // current approach: base64 encode then write with Base64 encoding flag
-      const base64String = Buffer.from(mockData).toString('base64')
-      const decodedFromBase64 = Buffer.from(base64String, 'base64')
-
-      // proposed approach: write ArrayBuffer directly
-      const directWrite = new Uint8Array(mockData)
-
-      // verify both produce identical binary data
-      expect(decodedFromBase64.length).toBe(directWrite.length)
-      expect(Buffer.from(decodedFromBase64)).toEqual(Buffer.from(directWrite))
-    })
-
-    it('should verify base64 encoding adds ~33% overhead', () => {
-      const mockData = createMockSqliteData()
-
-      const originalSize = mockData.byteLength
-      const base64String = Buffer.from(mockData).toString('base64')
-      const base64Size = base64String.length
-
-      // base64 encoding should increase size by approximately 33%
-      const overhead = (base64Size - originalSize) / originalSize
-      expect(overhead).toBeGreaterThan(0.3)
-      expect(overhead).toBeLessThan(0.4)
-    })
-
-    it('should validate sqlite can read binary data written both ways', () => {
-      const mockData = createMockSqliteData()
-
-      // method 1: base64 round-trip
-      const base64String = Buffer.from(mockData).toString('base64')
-      const fromBase64Buffer = Buffer.from(base64String, 'base64')
-
-      // method 2: direct binary
-      const directBinary = mockData
-
-      // both should have valid sqlite header
-      const checkSqliteHeader = (buffer: ArrayBuffer | Buffer) => {
-        const view = buffer instanceof Buffer ? buffer : new Uint8Array(buffer)
-        const header = String.fromCharCode(...Array.from(view.slice(0, 16)))
-        return header.startsWith('SQLite format 3')
-      }
-
-      expect(checkSqliteHeader(fromBase64Buffer)).toBe(true)
-      expect(checkSqliteHeader(directBinary)).toBe(true)
-    })
-  })
+// Several cases here deliberately trigger failures the module reports with
+// console.error (a failed download, a DB that fails validation). Silence them for this
+// file only -- putting these messages on the global allowlist in setupTests would blind
+// every other suite to them for good.
+let consoleErrorSpy: jest.SpyInstance
+beforeAll(() => {
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+})
+afterAll(() => {
+  consoleErrorSpy.mockRestore()
 })
 
 describe('backgroundCheckForRemoteUpdates', () => {
@@ -398,9 +58,44 @@ describe('backgroundCheckForRemoteUpdates', () => {
   const tmpSqlPath = `${currentSqlPath}.tmp`
   const tmpManifestPath = `${currentManifestPath}.tmp`
 
+  // Recorded by the File mock so tests can assert what happened on disk.
+  let movedFrom: string[]
+  let moves: { from: string; to?: string; overwrite?: boolean }[]
+  let deleted: string[]
+  let defaultFileImpl: any
+
+  const runCheck = () =>
+    backgroundCheckForRemoteUpdates(
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+    )
+
   beforeEach(() => {
     mockGetUrl.mockReset()
     mockOpenDatabaseAsync.mockReset()
+    movedFrom = []
+    moves = []
+    deleted = []
+    defaultFileImpl = mockFile.getMockImplementation()
+
+    // Recording File mock: every File records its own move()/delete() by source uri,
+    // and moves also record their destination and options.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => '{}'),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async (destination?: any, options?: any) => {
+        movedFrom.push(uri)
+        moves.push({ from: uri, to: destination?.uri, overwrite: options?.overwrite })
+      }),
+    }))
 
     // Remote manifest is newer than local (local mock File.text() returns '{}',
     // so currentGeneratedAt is undefined and any remote value counts as newer),
@@ -416,12 +111,125 @@ describe('backgroundCheckForRemoteUpdates', () => {
       return new ArrayBuffer(100) as any
     })
 
-    // Validation query reports a healthy table so the replacement is queued.
+    // Validation query reports a healthy table so the download is staged.
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => [{ count: 6975 }],
       closeAsync: async () => {},
     })
+  })
+
+  afterEach(() => {
+    mockFile.mockImplementation(defaultFileImpl)
+  })
+
+  it('stages the validated download into place for the next launch', async () => {
+    const result = await runCheck()
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // The validated tmp files are moved onto the current paths, each with
+    // overwrite: true. File.move() defaults to overwrite: false and rejects with
+    // DestinationAlreadyExists when the destination is present -- which it is on every
+    // staging after the very first launch, so dropping the option would break staging
+    // for every existing install while still passing on a fresh one.
+    expect(moves).toEqual([
+      { from: tmpSqlPath, to: currentSqlPath, overwrite: true },
+      { from: tmpManifestPath, to: currentManifestPath, overwrite: true },
+    ])
+  })
+
+  it('writes the downloaded DB as raw bytes, not a base64 string', async () => {
+    // Regression: the DB used to be base64-encoded before being written. Writing the
+    // ArrayBuffer's bytes straight through avoids the ~33% encode overhead and an
+    // encoding-flag mismatch that would leave base64 text on disk instead of a DB.
+    const sqlWrites: unknown[] = []
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => '{}'),
+      write: jest.fn((data: unknown) => {
+        if (uri === tmpSqlPath) sqlWrites.push(data)
+      }),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+
+    await runCheck()
+    await settle()
+
+    expect(sqlWrites).toHaveLength(1)
+    expect(sqlWrites[0]).toBeInstanceOf(Uint8Array)
+  })
+
+  it('reports up-to-date and stages nothing when the remote is not newer', async () => {
+    // Local manifest reads back a generated_at at/above the remote's, so there's
+    // nothing to download.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async () => {
+        movedFrom.push(uri)
+      }),
+    }))
+
+    const result = await runCheck()
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.UpToDate)
+    expect(movedFrom).toEqual([])
+    // No download attempted at all -- only the manifest was fetched.
+    expect(mockGetUrl.mock.calls.every(call => String(call[0]).endsWith('manifest.json'))).toBe(
+      true,
+    )
+  })
+
+  it('force: downloads and stages even when the remote is not newer', async () => {
+    // Same not-newer setup as above, but forced -- so it must download and stage the
+    // remote DB anyway (the recovery path).
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async () => {
+        movedFrom.push(uri)
+      }),
+    }))
+
+    const result = await backgroundCheckForRemoteUpdates(
+      currentSqlPath,
+      currentManifestPath,
+      tmpSqlPath,
+      tmpManifestPath,
+      true, // force
+    )
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
+  })
+
+  it('never hot-swaps live connection (opens no DB other than the tmp validation)', async () => {
+    // The whole point of the "adopt on next launch" design: this background path
+    // must not reopen TAGS_DB_NAME into the running app. It opens only the tmp DB to
+    // validate the download; the live connection is left untouched.
+    await runCheck()
+    await settle()
+
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).toEqual([`${TAGS_DB_NAME}.tmp`])
+    expect(openArgs).not.toContain(TAGS_DB_NAME)
   })
 
   it('opens the downloaded tmp DB by basename, never by full path', async () => {
@@ -429,63 +237,40 @@ describe('backgroundCheckForRemoteUpdates', () => {
     // relative to defaultDatabaseDirectory, so passing the full tmpSqlPath URI
     // silently opens a brand-new empty DB -> "no such table: tags". Every DB open
     // in this module must use a bare basename.
-    const wrapper = new DbWrapper(new TestSqliteDatabase())
-
-    await backgroundCheckForRemoteUpdates(
-      wrapper,
-      currentSqlPath,
-      currentManifestPath,
-      tmpSqlPath,
-      tmpManifestPath,
-    )
+    await runCheck()
     await settle()
 
     const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
-    // The tmp DB is validated by basename...
     expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
-    // ...and no open ever receives a path with a directory separator.
     for (const arg of openArgs) {
       expect(arg).not.toContain('/')
     }
   })
 
-  it(
-    'opens every DB with a fresh connection (useNewConnection)' + ' to bypass the shared cache',
-    async () => {
-      // Regression: expo-sqlite's connection cache is keyed by database name and hands
-      // back a cached connection for a name even after we've deleted/moved the file on
-      // disk, yielding "no such table: tags" against a valid DB. Every open in this
-      // module must force a fresh connection so it reflects the current on-disk file.
-      const wrapper = new DbWrapper(new TestSqliteDatabase())
+  it('opens tmp DB with fresh connection (useNewConnection) to bypass the cache', async () => {
+    // Regression: expo-sqlite's connection cache is keyed by database name and hands
+    // back a cached connection for a name even after we've deleted/moved the file on
+    // disk, yielding "no such table: tags" against a valid DB. Every open in this
+    // module must force a fresh connection so it reflects the current on-disk file.
+    await runCheck()
+    await settle()
 
-      await backgroundCheckForRemoteUpdates(
-        wrapper,
-        currentSqlPath,
-        currentManifestPath,
-        tmpSqlPath,
-        tmpManifestPath,
-      )
-      await settle()
+    expect(mockOpenDatabaseAsync.mock.calls.length).toBeGreaterThan(0)
+    for (const call of mockOpenDatabaseAsync.mock.calls) {
+      expect(call[1]?.useNewConnection).toBe(true)
+    }
+  })
 
-      expect(mockOpenDatabaseAsync.mock.calls.length).toBeGreaterThan(0)
-      for (const call of mockOpenDatabaseAsync.mock.calls) {
-        expect(call[1]?.useNewConnection).toBe(true)
-      }
-    },
-  )
-
-  it('awaits File.move before opening the swapped-in DB', async () => {
-    // Regression: File.move() is async (returns Promise<void>). The swap code must
-    // await it before opening the moved-into path, otherwise the open can race the
-    // in-flight move and land on a not-yet-written file, which SQLite silently
-    // opens as a brand-new empty DB -> "no such table: tags".
-    const events: string[] = []
+  it('awaits File.move so staging completes before the function resolves', async () => {
+    // Regression: File.move() is async. If it isn't awaited, the function resolves
+    // while the move is still in flight, so the staged DB may not actually be on disk
+    // (and could be interrupted by app backgrounding). Awaiting guarantees both moves
+    // finish before we report done.
     let resolveMove: () => void = () => {}
     const moveGate = new Promise<void>(resolve => {
       resolveMove = resolve
     })
-    const defaultFileImpl = mockFile.getMockImplementation()
-
+    let sqlMoveDone = false
     mockFile.mockImplementation((uri: string) => ({
       exists: true,
       uri,
@@ -495,44 +280,25 @@ describe('backgroundCheckForRemoteUpdates', () => {
       delete: jest.fn(),
       move: jest.fn(async () => {
         if (uri === tmpSqlPath) {
-          events.push('move-start')
           await moveGate
-          events.push('move-end')
+          sqlMoveDone = true
         }
       }),
     }))
-    mockOpenDatabaseAsync.mockImplementation(async (name: string) => {
-      if (name === TAGS_DB_NAME) {
-        events.push('open')
-      }
-      return {
-        withTransactionAsync: async (cb: () => Promise<void>) => cb(),
-        getAllAsync: async () => [{ count: 6975 }],
-        closeAsync: async () => {},
-      }
+
+    let resolved = false
+    const done = runCheck().then(() => {
+      resolved = true
     })
+    await settle()
 
-    try {
-      const wrapper = new DbWrapper(new TestSqliteDatabase())
-      await backgroundCheckForRemoteUpdates(
-        wrapper,
-        currentSqlPath,
-        currentManifestPath,
-        tmpSqlPath,
-        tmpManifestPath,
-      )
-      await settle()
+    // The move is gated open, so the function must not have resolved yet.
+    expect(resolved).toBe(false)
+    expect(sqlMoveDone).toBe(false)
 
-      // The move is still in flight; the swapped-in DB must not be opened yet.
-      expect(events).toEqual(['move-start'])
-
-      resolveMove()
-      await settle()
-
-      expect(events).toEqual(['move-start', 'move-end', 'open'])
-    } finally {
-      mockFile.mockImplementation(defaultFileImpl)
-    }
+    resolveMove()
+    await done
+    expect(sqlMoveDone).toBe(true)
   })
 
   it('rejects (rather than swallowing) when the download fails', async () => {
@@ -549,31 +315,14 @@ describe('backgroundCheckForRemoteUpdates', () => {
       }
       throw new Error('network down')
     })
-    const wrapper = new DbWrapper(new TestSqliteDatabase())
 
-    await expect(
-      backgroundCheckForRemoteUpdates(
-        wrapper,
-        currentSqlPath,
-        currentManifestPath,
-        tmpSqlPath,
-        tmpManifestPath,
-      ),
-    ).rejects.toThrow('network down')
+    await expect(runCheck()).rejects.toThrow('network down')
   })
 
   it('does not set an Accept-Encoding header on the DB download', async () => {
     // Regression: manually setting Accept-Encoding: gzip disables the platform's
     // transparent gzip decompression, so we'd write compressed bytes to disk.
-    const wrapper = new DbWrapper(new TestSqliteDatabase())
-
-    await backgroundCheckForRemoteUpdates(
-      wrapper,
-      currentSqlPath,
-      currentManifestPath,
-      tmpSqlPath,
-      tmpManifestPath,
-    )
+    await runCheck()
     await settle()
 
     const sqlDownloadCall = mockGetUrl.mock.calls.find(call => String(call[0]).endsWith('.otf'))
@@ -585,31 +334,50 @@ describe('backgroundCheckForRemoteUpdates', () => {
 
   it('discards a downloaded DB whose tags table is missing or unreadable', async () => {
     // The validation that protected us during the gzip incident: a download that
-    // isn't a usable tags DB must be thrown away rather than swapped in.
+    // isn't a usable tags DB must be thrown away rather than staged.
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => {
         throw new Error('no such table: tags')
       },
       closeAsync: async () => {},
     })
-    const wrapper = new DbWrapper(new TestSqliteDatabase())
 
-    await backgroundCheckForRemoteUpdates(
-      wrapper,
-      currentSqlPath,
-      currentManifestPath,
-      tmpSqlPath,
-      tmpManifestPath,
-    )
+    const result = await runCheck()
     await settle()
 
-    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
-    // The tmp DB was opened for validation...
-    expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
-    // ...but validation failed, so no replacement was queued (TAGS_DB_NAME, the
-    // basename used by the swap, is never opened).
-    expect(openArgs).not.toContain(TAGS_DB_NAME)
+    expect(result).toBe(DbUpdateResult.Unavailable)
+    // Validation failed, so nothing is staged: the bad tmp download is deleted and no
+    // file is moved onto the current paths.
+    expect(movedFrom).toEqual([])
+    expect(deleted).toContain(tmpSqlPath)
+  })
+
+  it('downloads and stages when the local manifest is missing or unreadable', async () => {
+    // Regression: reading the local manifest strictly threw before the check ever hit
+    // the network, so a half-seeded install -- no manifest, or a truncated one -- could
+    // never fetch the DB that would fix it. An unreadable manifest means we have
+    // nothing, so the remote is newer by definition and must be downloaded.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => {
+        throw new Error('ENOENT')
+      }),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(() => {
+        deleted.push(uri)
+      }),
+      move: jest.fn(async () => {
+        movedFrom.push(uri)
+      }),
+    }))
+
+    const result = await runCheck()
+    await settle()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    expect(movedFrom).toEqual([tmpSqlPath, tmpManifestPath])
   })
 
   it('discards a downloaded DB whose tags table is empty (count 0)', async () => {
@@ -617,24 +385,325 @@ describe('backgroundCheckForRemoteUpdates', () => {
     // belt-and-suspenders with the server-side floor in
     // scripts/fetch_search_database.py (MIN_EXPECTED_TAGS / MIN_FRACTION_OF_PREVIOUS).
     mockOpenDatabaseAsync.mockResolvedValue({
-      withTransactionAsync: async (cb: () => Promise<void>) => cb(),
       getAllAsync: async () => [{ count: 0 }],
       closeAsync: async () => {},
     })
-    const wrapper = new DbWrapper(new TestSqliteDatabase())
 
-    await backgroundCheckForRemoteUpdates(
-      wrapper,
-      currentSqlPath,
-      currentManifestPath,
-      tmpSqlPath,
-      tmpManifestPath,
-    )
+    const result = await runCheck()
     await settle()
 
+    expect(result).toBe(DbUpdateResult.Unavailable)
+    expect(movedFrom).toEqual([])
+    expect(deleted).toContain(tmpSqlPath)
+  })
+})
+
+describe('refreshDbNow', () => {
+  let defaultFileImpl: any
+
+  beforeEach(() => {
+    mockGetUrl.mockReset()
+    mockOpenDatabaseAsync.mockReset()
+    __resetDbStateForTest()
+    defaultFileImpl = mockFile.getMockImplementation()
+
+    // Healthy validation stub for any opened DB.
+    mockOpenDatabaseAsync.mockResolvedValue({
+      getAllAsync: async () => [{ count: 6975 }],
+      closeAsync: async () => {},
+    })
+  })
+
+  afterEach(() => {
+    mockFile.mockImplementation(defaultFileImpl)
+    __resetDbStateForTest()
+  })
+
+  // Newer remote available -> validated download gets staged.
+  const mockNewerRemote = () => {
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      return new ArrayBuffer(100) as any
+    })
+  }
+
+  it('returns Updated and reopens the connection when a newer DB is staged', async () => {
+    mockNewerRemote()
+
+    const result = await refreshDbNow()
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // Adoption = a fresh open of the live DB name (in addition to the tmp validation open).
     const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
-    // Validated the tmp DB, found it empty, and queued no replacement.
-    expect(openArgs).toContain(`${TAGS_DB_NAME}.tmp`)
+    expect(openArgs).toContain(TAGS_DB_NAME)
+  })
+
+  it('returns UpToDate and does NOT reopen when the remote is not newer', async () => {
+    // Local manifest is at/above the remote generated_at.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+    mockNewerRemote()
+
+    const result = await refreshDbNow()
+
+    expect(result).toBe(DbUpdateResult.UpToDate)
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
     expect(openArgs).not.toContain(TAGS_DB_NAME)
+  })
+
+  it('returns Unavailable (not a rejection) when the download fails', async () => {
+    // Manual refresh must surface a friendly result, not throw, on network failure.
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      throw new Error('network down')
+    })
+
+    await expect(refreshDbNow()).resolves.toBe(DbUpdateResult.Unavailable)
+  })
+
+  it('force: re-downloads and reopens even when the local DB looks current', async () => {
+    // On-disk manifest is NEWER than the remote, so a normal refresh would say
+    // "up to date". Force must still download and re-adopt -- this is the recovery
+    // path for a stale/corrupted local DB.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => JSON.stringify({ generated_at_epoch_seconds: 9999 })),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+    mockNewerRemote() // remote generated_at 2000 < local 9999
+
+    const result = await refreshDbNow(true)
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // It actually downloaded the DB (not just the manifest) and reopened the connection.
+    const dbFetches = mockGetUrl.mock.calls.filter(c => String(c[0]).endsWith('.otf'))
+    expect(dbFetches).toHaveLength(1)
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).toContain(TAGS_DB_NAME)
+  })
+
+  it('recovers (not Unavailable) when the local manifest is missing', async () => {
+    // The user-facing half of the same regression: with no readable local manifest the
+    // refresh used to report Unavailable, which the Data screen showed as a server
+    // problem even though the network was fine. It must actually recover instead.
+    mockFile.mockImplementation((uri: string) => ({
+      exists: true,
+      uri,
+      text: jest.fn(async () => {
+        throw new Error('ENOENT')
+      }),
+      write: jest.fn(),
+      copy: jest.fn(),
+      delete: jest.fn(),
+      move: jest.fn(async () => {}),
+    }))
+    mockNewerRemote()
+
+    const result = await refreshDbNow(true)
+
+    expect(result).toBe(DbUpdateResult.Updated)
+    // And the recovered DB is adopted into the running app.
+    const openArgs = mockOpenDatabaseAsync.mock.calls.map(call => call[0])
+    expect(openArgs).toContain(TAGS_DB_NAME)
+  })
+
+  it('serializes concurrent refreshes so their downloads never overlap', async () => {
+    // The startup check and a manual refresh (or a double-tap) must not run two
+    // downloads into the same tmp file at once.
+    let active = 0
+    let maxActive = 0
+    mockGetUrl.mockImplementation(async (url: string) => {
+      active += 1
+      maxActive = Math.max(maxActive, active)
+      await new Promise(setImmediate) // hold the "request" open across a tick
+      active -= 1
+      if (url.endsWith('manifest.json')) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { 1: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      return new ArrayBuffer(100) as any
+    })
+
+    const [a, b] = await Promise.all([refreshDbNow(true), refreshDbNow(true)])
+
+    expect(a).toBe(DbUpdateResult.Updated)
+    expect(b).toBe(DbUpdateResult.Updated)
+    // Never more than one update operation touching the network at a time.
+    expect(maxActive).toBe(1)
+  })
+})
+
+describe('getDbConnection', () => {
+  let defaultFileImpl: any
+  // Each open returns a distinct object so tests can assert *which* connection a
+  // caller was handed, not just that it got something.
+  let openId: number
+
+  /** Opens of the live DB name, ignoring the `.tmp` opens used to validate downloads. */
+  const liveOpens = () =>
+    mockOpenDatabaseAsync.mock.calls.filter(call => call[0] === TAGS_DB_NAME).length
+
+  const healthyDb = () => ({
+    id: (openId += 1),
+    getAllAsync: async () => [{ count: 6975 }],
+    closeAsync: async () => {},
+  })
+
+  beforeEach(() => {
+    mockGetUrl.mockReset()
+    mockOpenDatabaseAsync.mockReset()
+    __resetDbStateForTest()
+    defaultFileImpl = mockFile.getMockImplementation()
+    openId = 0
+
+    // The remote advertises no DB for our schema version, so the background update
+    // check that initializeDbConnection fires resolves quietly without downloading.
+    mockGetUrl.mockResolvedValue({
+      generated_at_epoch_seconds: 2000,
+      db_name_by_version: {},
+    } as any)
+
+    mockOpenDatabaseAsync.mockImplementation(async () => healthyDb())
+  })
+
+  afterEach(() => {
+    mockFile.mockImplementation(defaultFileImpl)
+    __resetDbStateForTest()
+  })
+
+  it('runs one initialization for callers that arrive together', async () => {
+    // The memo holds the in-flight *promise*, not the resolved connection, so callers
+    // that arrive in the same tick share one attempt instead of each kicking off their
+    // own run of the delete-and-move seeding logic.
+    const [a, b, c] = await Promise.all([getDbConnection(), getDbConnection(), getDbConnection()])
+    await settle()
+
+    expect(a).toBe(b)
+    expect(b).toBe(c)
+    // A single initialization: one probe open (currentDbHasTags) + one open to hand out.
+    expect(liveOpens()).toBe(2)
+  })
+
+  it('reuses the connection on later calls instead of reinitializing', async () => {
+    const first = await getDbConnection()
+    const second = await getDbConnection()
+    await settle()
+
+    expect(second).toBe(first)
+    expect(liveOpens()).toBe(2)
+  })
+
+  it('retries initialization on the next call after a failure', async () => {
+    // Regression: a rejected attempt used to stay cached on the singleton forever, so
+    // every later caller re-threw the same error and the only fix was an app restart.
+    // A transient failure (Metro not up yet, momentary FS error) must be recoverable.
+    let failOpen = true
+    mockOpenDatabaseAsync.mockImplementation(async (name: string) => {
+      if (name === TAGS_DB_NAME && failOpen) throw new Error('disk on fire')
+      return healthyDb()
+    })
+
+    await expect(getDbConnection()).rejects.toThrow('disk on fire')
+
+    failOpen = false
+    await expect(getDbConnection()).resolves.toBeDefined()
+    await settle()
+  })
+
+  it('shares one failed attempt among callers that arrive together', async () => {
+    // Clearing the singleton on failure must not let simultaneous callers each start
+    // their own initialization -- that would run the file delete/move logic
+    // concurrently, the exact hazard the memo exists to prevent.
+    mockOpenDatabaseAsync.mockImplementation(async (name: string) => {
+      if (name === TAGS_DB_NAME) throw new Error('disk on fire')
+      return healthyDb()
+    })
+
+    const results = await Promise.allSettled([
+      getDbConnection(),
+      getDbConnection(),
+      getDbConnection(),
+    ])
+    await settle()
+
+    expect(results.map(r => r.status)).toEqual(['rejected', 'rejected', 'rejected'])
+    // One attempt total, not three: the probe open plus the open that threw.
+    expect(liveOpens()).toBe(2)
+  })
+
+  it('a late-failing attempt does not discard a connection refreshDbNow installed', async () => {
+    // refreshDbNow can adopt a healthy connection while a doomed initialization is
+    // still in flight. When that attempt finally fails it must only clear the
+    // singleton if it still owns it -- otherwise it throws away the just-refreshed
+    // connection and forces a needless re-initialization.
+    let releaseDoomedOpen: () => void = () => {}
+    const doomedOpen = new Promise<void>(resolve => {
+      releaseDoomedOpen = resolve
+    })
+    let opens = 0
+    mockOpenDatabaseAsync.mockImplementation(async (name: string) => {
+      if (name === TAGS_DB_NAME) {
+        opens += 1
+        // Open 1 is the currentDbHasTags probe; open 2 is the initialization's real
+        // openConnection(). Park that one so the refresh below lands mid-flight.
+        if (opens === 2) {
+          await doomedOpen
+          throw new Error('disk on fire')
+        }
+      }
+      return healthyDb()
+    })
+
+    // The remote does have a DB for our schema version, so a forced refresh reports Updated.
+    mockGetUrl.mockImplementation(async (url: string) => {
+      if (url.endsWith(MANIFEST_NAME)) {
+        return {
+          generated_at_epoch_seconds: 2000,
+          db_name_by_version: { [VALID_SCHEMA_VERSION]: 'tags_db_v1.sqlite.otf' },
+        } as any
+      }
+      return new ArrayBuffer(100) as any
+    })
+
+    const doomed = getDbConnection()
+    // Attach a handler now so the eventual rejection is never an unhandled one.
+    const doomedError = doomed.catch(e => e)
+    await settle()
+
+    await expect(refreshDbNow(true)).resolves.toBe(DbUpdateResult.Updated)
+    const adopted = await getDbConnection()
+
+    // Now let the original attempt fail, well after the refresh replaced it.
+    releaseDoomedOpen()
+    expect((await doomedError).message).toBe('disk on fire')
+    await settle()
+
+    const opensAfterFailure = opens
+    expect(await getDbConnection()).toBe(adopted)
+    // Still handing out the refreshed connection, with no re-initialization.
+    expect(opens).toBe(opensAfterFailure)
   })
 })
