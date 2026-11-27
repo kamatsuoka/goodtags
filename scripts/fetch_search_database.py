@@ -41,8 +41,57 @@ MIN_EXPECTED_TAGS = 5000
 # floor but still represent a big regression.
 MIN_FRACTION_OF_PREVIOUS = 0.9
 
+# Upstream sometimes blackholes the connection outright -- the SYN goes unanswered.
+# With no explicit timeout `requests` inherits the OS-level TCP connect timeout
+# (over two minutes), so a single dead attempt burns more wall clock than several
+# short ones would. These values fit three attempts into roughly the time one bare
+# attempt used to take.
+REQUEST_TIMEOUT_SECONDS = 15
+MAX_ATTEMPTS = 3
+RETRY_DELAY_SECONDS = 30
+
 
 type Tag = MutableMapping[str, Any]
+
+
+T = TypeVar("T")
+
+
+def ensure_list(val: T | list[T]) -> list[T]:
+    """Coerce an xmltodict value to a list.
+
+    xmltodict collapses a repeated element to a bare value when a document happens
+    to contain exactly one of it, so any `<tag>` or `<video>` list can arrive as a
+    single dict.
+    """
+    if isinstance(val, list):
+        return val
+    else:
+        return [val]
+
+
+def get_with_retries(params: dict[str, str]) -> requests.Response:
+    """GET from the API, retrying a few times before failing the run.
+
+    Every connection failure we've seen has hit the first request of a crawl and
+    never one midway through, so when the host answers at all it keeps answering
+    for the whole crawl. A couple of spaced retries is the cheap thing to try.
+    """
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        try:
+            response = requests.get(
+                API_URL, params=params, timeout=REQUEST_TIMEOUT_SECONDS
+            )
+            response.raise_for_status()
+            return response
+        except requests.RequestException as e:
+            if attempt == MAX_ATTEMPTS:
+                raise
+            delay = RETRY_DELAY_SECONDS * attempt
+            print(f"Request failed (attempt {attempt}/{MAX_ATTEMPTS}): {e}")
+            print(f"Retrying in {delay}s")
+            time.sleep(delay)
+    raise AssertionError("unreachable: the loop above either returns or raises")
 
 
 def fetch_xml_batches(max_batches: int | None = None) -> Sequence[Tag]:
@@ -50,24 +99,33 @@ def fetch_xml_batches(max_batches: int | None = None) -> Sequence[Tag]:
     batches = []
     i = 0
     while not max_batches or i < max_batches:
-        response = requests.get(
-            API_URL,
-            params={
+        response = get_with_retries(
+            {
                 "Sortby": "posted",
                 "n": str(PAGE_SIZE),
                 "start": str(i * PAGE_SIZE + 1),
-            },
+            }
         )
 
-        response.raise_for_status()
         data = xmltodict.parse(
             response.content.decode(encoding="utf-8", errors="backslashreplace")
         )
+        tags_element = data.get("tags") or {}
+        page_tags = ensure_list(tags_element["tag"]) if "tag" in tags_element else []
+        if not page_tags:
+            # We ran off the end of the list: the previous page held exactly
+            # PAGE_SIZE tags, so the loop asked for one more page and got nothing
+            # back. Not an error, so stop here. An empty *first* page does mean
+            # something is wrong upstream, and `validate_tag_count` refuses to
+            # deploy that.
+            print(f"Page {i} came back empty; assuming end of list")
+            break
+
+        # Store the coerced list so downstream consumers never see a bare dict.
+        tags_element["tag"] = page_tags
         batches.append(data)
-        print(
-            f"Fetched page {i} ({data['tags']['tag'][0]['id']} - {data['tags']['tag'][-1]['id']})"
-        )
-        if int(data["tags"]["@count"]) < PAGE_SIZE:
+        print(f"Fetched page {i} ({page_tags[0]['id']} - {page_tags[-1]['id']})")
+        if int(tags_element.get("@count", len(page_tags))) < PAGE_SIZE:
             break
 
         i += 1
@@ -97,7 +155,22 @@ ROW_DEFAULTS = {
 
 
 def parse_batches_to_tags(batches: Sequence[Tag]) -> Sequence[Tag]:
-    return [ROW_DEFAULTS | t for batch in batches for t in batch["tags"]["tag"]]
+    """Flatten the fetched pages into one row per tag id.
+
+    Paging is offset-based (`start=N`) over a list the server sorts by `posted`, so
+    the same tag can land on two pages whenever that ordering shifts under us
+    mid-crawl -- a tag posted while we page through, or ties in `posted` broken
+    differently between requests. Left in, the duplicate surfaces much later as an
+    `IntegrityError` on the `tags.id` primary key, failing the run after every page
+    has already been fetched.
+    """
+    rows = [
+        ROW_DEFAULTS | t for batch in batches for t in ensure_list(batch["tags"]["tag"])
+    ]
+    by_id = {t["id"]: t for t in rows}
+    if len(by_id) < len(rows):
+        print(f"Dropped {len(rows) - len(by_id)} duplicate tag(s) across pages")
+    return list(by_id.values())
 
 
 def read_previous_tag_count(out_dir: Path) -> int | None:
@@ -298,14 +371,6 @@ def generate_sql_db(tags: Sequence[Tag], out_dir: Path) -> str:
         """,
         tags,
     )
-
-    T = TypeVar("T")
-
-    def ensure_list(val: T | list[T]) -> list[T]:
-        if isinstance(val, list):
-            return val
-        else:
-            return [val]
 
     db.executemany(
         """
