@@ -42,6 +42,14 @@ app bundle (build-time seed) ──▶ <documents>/SQLite/tags_db.sqlite ──�
   `MIN_EXPECTED_TAGS` (5000) tags, or fewer than `MIN_FRACTION_OF_PREVIOUS` (90%) of the
   previous deploy's count. This stops a bad upstream fetch from pushing a broken/empty
   DB to every client. (The client also validates independently — see below.)
+- **The fetch tolerates a flaky upstream.** Three things that each used to fail the
+  nightly run outright: requests carry an explicit timeout and are retried a few
+  times (`REQUEST_TIMEOUT_SECONDS`, `MAX_ATTEMPTS`, `RETRY_DELAY_SECONDS`) because
+  the API periodically blackholes the connection; pages are deduplicated by tag id,
+  because offset paging over a `posted`-sorted list can hand back the same tag twice
+  and break the `tags.id` primary key; and an empty trailing page ends the crawl
+  instead of raising, which happens whenever the tag count is an exact multiple of
+  `PAGE_SIZE`.
 - **The `.otf` extension is intentional.** GitHub Pages transparently gzips `.otf` but
   not `.sqlite`, so the DB is named `tags_db_v{N}.sqlite.otf` to get ~4x over-the-wire
   compression. It is a normal SQLite file once decompressed.
